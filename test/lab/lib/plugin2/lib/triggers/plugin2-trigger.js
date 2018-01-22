@@ -11,7 +11,7 @@ var Service = function(params) {
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
 
-  LX.has('conlog') && LX.log('conlog', LT.stringify({
+  LX.has('conlog') && LX.log('conlog', LT.toMessage({
     tags: [ 'test-plugin2', 'constructor-begin' ],
     text: ' + constructor begin'
   }));
@@ -25,7 +25,7 @@ var Service = function(params) {
   server.on('error', function(err) {
     LX.has('error') && LX.log('error', LT.add({
       error: err
-    }).stringify({
+    }).toMessage({
       tags: [ 'test-plugin2', 'server-error' ],
       text: ' - Server Error: {error}',
       reset: true
@@ -61,7 +61,7 @@ var Service = function(params) {
     });
   };
 
-  LX.has('conlog') && LX.log('conlog', LT.stringify({
+  LX.has('conlog') && LX.log('conlog', LT.toMessage({
     tags: [ 'test-plugin2', 'constructor-end' ],
     text: ' - constructor end!'
   }));
