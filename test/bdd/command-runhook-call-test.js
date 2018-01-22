@@ -9,46 +9,54 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var util = require('util');
 var DevebotApi = require('devebot-api');
+var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
+var Envar = require('../lab/utils/envar');
 
 describe('devebot:command:runhook:call', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	var app, api;
+	var envar = new Envar();
 
 	var logStats = {};
 	var logCounter = LogTracer.accumulationAppender.bind(null, logStats, [
 		{
 			matchingField: 'checkpoint',
-			filter: /plugin1-routine1-.*/g,
-			counterField: 'plugin1Routine1Count'
+			matchingRule: /plugin1-routine1-.*/g,
+			countTo: 'plugin1Routine1Count'
 		},
 		{
 			matchingField: 'checkpoint',
-			filter: /plugin1-routine2-.*/g,
-			counterField: 'plugin1Routine2Count'
+			matchingRule: /plugin1-routine2-.*/g,
+			countTo: 'plugin1Routine2Count'
 		}
 	]);
 	var logScraper = LogTracer.accumulationAppender.bind(null, logStats, [
 		{
 			anyTags: [ 'logolite-metadata', 'devebot-metadata' ],
-			storageField: 'blockLoggingState'
+			storeTo: 'blockLoggingState'
 		},
 		{
 			matchingField: 'checkpoint',
-			filter: 'plugin1-routine1-injected-names',
+			matchingRule: 'plugin1-routine1-injected-names',
 			selectedFields: ['injectedServiceNames', 'blockId', 'instanceId'],
-			storageField: 'plugin1Routine1State'
+			storeTo: 'plugin1Routine1State'
 		},
 		{
 			matchingField: 'checkpoint',
-			filter: 'plugin1-routine2-injected-names',
+			matchingRule: 'plugin1-routine2-injected-names',
 			selectedFields: ['injectedServiceNames', 'blockId', 'instanceId'],
-			storageField: 'plugin1Routine2State'
+			storeTo: 'plugin1Routine2State'
 		}
 	]);
 
 	before(function() {
+		envar.setup({
+			LOGOLITE_ALWAYS_ENABLED: 'all'
+		});
+		LogConfig.reset();
+		LogTracer.reset();
 		LogTracer.clearStringifyInterceptors();
 		LogTracer.addStringifyInterceptor(logCounter);
 		LogTracer.addStringifyInterceptor(logScraper);
@@ -153,5 +161,6 @@ describe('devebot:command:runhook:call', function() {
 
 	after(function() {
 		LogTracer.clearStringifyInterceptors();
+		envar.reset();
 	});
 });
