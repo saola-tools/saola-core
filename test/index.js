@@ -28,15 +28,15 @@ module.exports = {
 		}, ext);
 	},
 	getAppHome: function(appName) {
-		return path.join(__dirname, appName);
+		return path.join(__dirname, 'app', appName);
 	},
 	getApp: function(appName) {
-		appName = appName || 'app';
+		appName = appName || 'default';
 		return require(this.getAppHome(appName));
 	},
 	getAppCfgDir: function(appName, cfgName) {
 		cfgName = cfgName || 'config';
-		return path.join(__dirname, appName, cfgName);
+		return path.join(__dirname, 'app', appName, cfgName);
 	},
 	getLibHome: function(libName) {
 		return path.join(__dirname, './lib/', libName);
@@ -48,7 +48,7 @@ module.exports = {
 		return path.join(this.getLibHome(libName), 'config');
 	},
 	getDevebotHome: function() {
-		return path.join(__dirname, '../../');
+		return path.join(__dirname, '../');
 	},
 	getDevebot: function() {
 		return require(this.getDevebotHome());

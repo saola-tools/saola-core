@@ -1,26 +1,27 @@
 'use strict';
 
-var Devebot = require('../index').getDevebot();
+var lab = require('../../index');
+var Devebot = lab.getDevebot();
 
 var app = Devebot.launchApplication({
   appRootPath: __dirname
 }, [
 	{
 		name: 'plugin1',
-		path: __dirname + '/../lib/plugin1'
+		path: lab.getLibHome('plugin1')
 	},
 	{
 		name: 'plugin2',
-		path: __dirname + '/../lib/plugin2'
+		path: lab.getLibHome('plugin2')
 	}
 ], [
 	{
 		name: 'bridge1',
-		path: __dirname + '/../lib/bridge1'
+		path: lab.getLibHome('bridge1')
 	},
 	{
 		name: 'bridge2',
-		path: __dirname + '/../lib/bridge2'
+		path: lab.getLibHome('bridge2')
 	}
 ]);
 

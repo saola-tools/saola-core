@@ -1,6 +1,6 @@
 'use strict';
 
-var lab = require('../lab');
+var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
@@ -17,7 +17,7 @@ describe('devebot:loggingFactory', function() {
 
 		before(function() {
 			envtool.setup({
-				LOGOLITE_DEBUGLOG: null,
+				LOGOLITE_DEBUGLOG_ENABLED: null,
 				LOGOLITE_MOCKLOGGER_ENABLED: 'true'
 			});
 		});

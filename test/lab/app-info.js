@@ -2,7 +2,7 @@
 
 var argv = require('minimist')(process.argv.slice(2));
 
-var appName = argv['app'] || argv['a'] || 'app-simple';
+var appName = argv['app'] || argv['a'] || 'simple';
 
 var main = require('./index').getApp(appName);
 main.runner.invoke(function(injektor) {
