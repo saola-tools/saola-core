@@ -4,7 +4,7 @@ var lab = require('../lab');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('bdd:devebot:command:runhook:call');
+var debugx = Devebot.require('pinbug')('bdd:devebot:command:execution');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var util = require('util');
@@ -13,7 +13,7 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 
-describe('devebot:command:runhook:call', function() {
+describe('devebot:command:execution', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	var app, api;
