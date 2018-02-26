@@ -1,6 +1,6 @@
 'use strict';
 
-var lab = require('../lab');
+var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
@@ -17,7 +17,7 @@ describe('devebot:config:loader', function() {
 
 	describe('default configuration (without profile & sandbox)', function() {
 		it('load application configuration', function() {
-			var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('app-tdd-cfg'), [
+			var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('tdd-cfg'), [
 				lab.getLibHome('plugin1'),
 				lab.getLibHome('plugin2'),
 				lab.getDevebotHome()
@@ -34,7 +34,7 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.profile.default"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'config'), 'profile.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'profile.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
 					{}));
 
@@ -47,7 +47,7 @@ describe('devebot:config:loader', function() {
 			assert.deepEqual(
 				lodash.get(cfgLoader,"config.sandbox.default"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'config'), 'sandbox.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
@@ -58,13 +58,13 @@ describe('devebot:config:loader', function() {
 	describe('customize configDir and staging', function() {
 		before(function() {
 			envtool.setup({
-				NODE_DEVEBOT_CONFIG_DIR: path.join(__dirname, '../lab/app-tdd-cfg/newcfg'),
+				NODE_DEVEBOT_CONFIG_DIR: path.join(__dirname, '../app/tdd-cfg/newcfg'),
 				NODE_DEVEBOT_CONFIG_ENV: 'dev'
 			});
 		});
 
 		it('load application configuration (without customized profile, sandbox)', function() {
-			var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('app-tdd-cfg'), [
+			var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('tdd-cfg'), [
 				lab.getLibHome('plugin1'),
 				lab.getLibHome('plugin2'),
 				lab.getDevebotHome()
@@ -81,7 +81,7 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.profile.staging"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'profile.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'profile.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
 					{}));
 
@@ -94,7 +94,7 @@ describe('devebot:config:loader', function() {
 			assert.deepEqual(
 				lodash.get(cfgLoader,"config.sandbox.default"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
@@ -109,14 +109,14 @@ describe('devebot:config:loader', function() {
 	describe('private sandbox configurations', function() {
 		before(function() {
 			envtool.setup({
-				NODE_DEVEBOT_CONFIG_DIR: path.join(__dirname, '../lab/app-tdd-cfg/newcfg'),
+				NODE_DEVEBOT_CONFIG_DIR: path.join(__dirname, '../app/tdd-cfg/newcfg'),
 				NODE_DEVEBOT_CONFIG_ENV: 'dev',
 				NODE_DEVEBOT_SANDBOX: 'ev1,ev2'
 			});
 		});
 
 		it('load application configuration (without private sandboxes)', function() {
-			var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('app-tdd-cfg'), [
+			var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('tdd-cfg'), [
 				lab.getLibHome('plugin1'),
 				lab.getLibHome('plugin2'),
 				lab.getDevebotHome()
@@ -133,7 +133,7 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.profile.staging"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'profile.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'profile.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
 					{}));
 
@@ -153,9 +153,9 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.sandbox.staging"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
@@ -165,7 +165,7 @@ describe('devebot:config:loader', function() {
 		it('load application configuration with single private sandboxes', function() {
 			var cfgLoader = new ConfigLoader('app', {
 				privateSandboxes: 'bs1'
-			}, lab.getAppHome('app-tdd-cfg'), [
+			}, lab.getAppHome('tdd-cfg'), [
 				lab.getLibHome('plugin1'),
 				lab.getLibHome('plugin2'),
 				lab.getDevebotHome()
@@ -182,7 +182,7 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.profile.staging"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'profile.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'profile.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
 					{}));
 
@@ -204,10 +204,10 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.sandbox.staging"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_bs1.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs1.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
@@ -217,7 +217,7 @@ describe('devebot:config:loader', function() {
 		it('load application configuration with multiple private sandboxes', function() {
 			var cfgLoader = new ConfigLoader('app', {
 				privateSandboxes: ['bs1', 'bs2']
-			}, lab.getAppHome('app-tdd-cfg'), [
+			}, lab.getAppHome('tdd-cfg'), [
 				lab.getLibHome('plugin1'),
 				lab.getLibHome('plugin2'),
 				lab.getDevebotHome()
@@ -234,7 +234,7 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.profile.staging"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'profile.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'profile.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
 					{}));
 
@@ -257,11 +257,11 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.sandbox.staging"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_bs2.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_bs1.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs2.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs1.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
@@ -271,7 +271,7 @@ describe('devebot:config:loader', function() {
 		it('the order of listed sandbox labels is sensitive', function() {
 			var cfgLoader = new ConfigLoader('app', {
 				privateSandboxes: 'bs2, bs1'
-			}, lab.getAppHome('app-tdd-cfg'), [
+			}, lab.getAppHome('tdd-cfg'), [
 				lab.getLibHome('plugin1'),
 				lab.getLibHome('plugin2'),
 				lab.getDevebotHome()
@@ -286,7 +286,7 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.profile.staging"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'profile.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'profile.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
 					{}));
 
@@ -309,11 +309,11 @@ describe('devebot:config:loader', function() {
 			assert.deepInclude(
 				lodash.get(cfgLoader,"config.sandbox.staging"),
 				lodash.defaultsDeep(
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_bs1.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_bs2.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
-					loader(path.join(lab.getAppCfgDir('app-tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs1.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs2.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
+					loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
 					loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
 					loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),

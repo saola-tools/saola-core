@@ -1,6 +1,6 @@
 'use strict';
 
-var lab = require('../lab');
+var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
