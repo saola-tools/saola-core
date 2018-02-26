@@ -11,14 +11,12 @@ var util = require('util');
 var DevebotApi = require('devebot-api');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var Envar = require('../lab/utils/envar');
+var envtool = require('logolite/envtool');
 
 describe('devebot:command:runhook:call', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	var app, api;
-	var envar = new Envar();
-
 	var logStats = {};
 	var logCounter = LogTracer.accumulationAppender.bind(null, logStats, [
 		{
@@ -52,7 +50,7 @@ describe('devebot:command:runhook:call', function() {
 	]);
 
 	before(function() {
-		envar.setup({
+		envtool.setup({
 			LOGOLITE_ALWAYS_ENABLED: 'all'
 		});
 		LogConfig.reset();
@@ -161,6 +159,6 @@ describe('devebot:command:runhook:call', function() {
 
 	after(function() {
 		LogTracer.clearStringifyInterceptors();
-		envar.reset();
+		envtool.reset();
 	});
 });

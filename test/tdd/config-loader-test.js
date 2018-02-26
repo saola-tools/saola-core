@@ -11,7 +11,7 @@ var expect = require('chai').expect;
 var path = require('path');
 var util = require('util');
 var ConfigLoader = require('../../lib/backbone/config-loader');
-var Envar = require('../lab/utils/envar');
+var envtool = require('logolite/envtool');
 
 describe('devebot:config:loader', function() {
 
@@ -56,9 +56,8 @@ describe('devebot:config:loader', function() {
 	});
 
 	describe('customize configDir and staging', function() {
-		var envar = new Envar();
 		before(function() {
-			envar.setup({
+			envtool.setup({
 				NODE_DEVEBOT_CONFIG_DIR: path.join(__dirname, '../lab/app-tdd-cfg/newcfg'),
 				NODE_DEVEBOT_CONFIG_ENV: 'dev'
 			});
@@ -103,14 +102,13 @@ describe('devebot:config:loader', function() {
 		});
 
 		after(function() {
-			envar.reset();
+			envtool.reset();
 		});
 	});
 
 	describe('private sandbox configurations', function() {
-		var envar = new Envar();
 		before(function() {
-			envar.setup({
+			envtool.setup({
 				NODE_DEVEBOT_CONFIG_DIR: path.join(__dirname, '../lab/app-tdd-cfg/newcfg'),
 				NODE_DEVEBOT_CONFIG_ENV: 'dev',
 				NODE_DEVEBOT_SANDBOX: 'ev1,ev2'
@@ -323,7 +321,7 @@ describe('devebot:config:loader', function() {
 		});
 
 		after(function() {
-			envar.reset();
+			envtool.reset();
 		});
 	});
 });
