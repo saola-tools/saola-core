@@ -15,7 +15,8 @@ describe('devebot:application', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	var app;
-	var logStats = {};
+	var serverStats = {};
+	var moduleStats = {};
 
 	before(function() {
 		envtool.setup({
@@ -25,7 +26,20 @@ describe('devebot:application', function() {
 		LogTracer.reset();
 		LogTracer.setupDefaultInterceptors([
 			{
-				accumulator: logStats,
+				accumulator: serverStats,
+				mappings: [
+					{
+						anyTags: [ 'devebot-server-start' ],
+						countTo: 'startingCount'
+					},
+					{
+						anyTags: [ 'devebot-server-close' ],
+						countTo: 'stoppingCount'
+					}
+				]
+			},
+			{
+				accumulator: moduleStats,
 				mappings: [
 					{
 						anyTags: [ 'devebot-metadata' ],
@@ -45,7 +59,7 @@ describe('devebot:application', function() {
 	});
 
 	beforeEach(function() {
-		LogTracer.reset().empty(logStats);
+		LogTracer.reset().empty(serverStats).empty(moduleStats);
 	});
 
 	it('total of constructor startpoints must equal to constructor endpoints', function(done) {
@@ -80,10 +94,11 @@ describe('devebot:application', function() {
 
 		app.server.start()
 			.then(function() {
-				false && console.log(JSON.stringify(logStats, null, 2));
-				assert.isAbove(logStats.constructorBeginTotal, 0);
-				assert.equal(logStats.constructorBeginTotal, logStats.constructorEndTotal);
-				var metadata = lodash.map(logStats.metadata, function(item) {
+				assert.equal(serverStats.startingCount, 3);
+				false && console.log(JSON.stringify(moduleStats, null, 2));
+				assert.isAbove(moduleStats.constructorBeginTotal, 0);
+				assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
+				var metadata = lodash.map(moduleStats.metadata, function(item) {
 					return item && item.blockName
 				});
 				assert.includeMembers(metadata, devebotScopes);
@@ -95,6 +110,7 @@ describe('devebot:application', function() {
 				return app.server.teardown();
 			})
 			.then(function() {
+				assert.equal(serverStats.stoppingCount, 3);
 				done();
 			})
 			.catch(function(err) {
