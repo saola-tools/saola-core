@@ -41,7 +41,7 @@ describe('devebot:configuration', function() {
 					}
 				});
 
-				false && expect(appinfo).to.deep.include({
+				expect(appinfo).to.deep.include({
 					"layerware": [
 						{
 							"version": "0.1.1",

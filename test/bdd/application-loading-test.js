@@ -93,8 +93,11 @@ describe('devebot:application', function() {
 		];
 
 		app.server.start()
-			.then(function() {
+			.then(function(info) {
 				assert.equal(serverStats.startingCount, 3);
+				return info;
+			})
+			.then(function(info) {
 				false && console.log(JSON.stringify(moduleStats, null, 2));
 				assert.isAbove(moduleStats.constructorBeginTotal, 0);
 				assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
@@ -104,9 +107,6 @@ describe('devebot:application', function() {
 				assert.includeMembers(metadata, devebotScopes);
 				assert.includeMembers(metadata, plugin2Scopes);
 				assert.includeMembers(metadata, bridge2Scopes);
-				return true;
-			})
-			.then(function() {
 				return app.server.teardown();
 			})
 			.then(function() {
