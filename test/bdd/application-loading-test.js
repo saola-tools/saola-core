@@ -50,11 +50,45 @@ describe('devebot:application', function() {
 
 	it('total of constructor startpoints must equal to constructor endpoints', function(done) {
 		app = lab.getApp();
+		var devebotScopes = [
+			"devebot/configLoader",
+			"devebot/kernel",
+			"devebot/server",
+			"devebot",
+			"devebot/bridgeLoader",
+			"devebot/schemaValidator",
+			"devebot/pluginLoader",
+			"devebot/sandboxManager",
+			"devebot/jobqueueBinder",
+			"devebot/runhookManager",
+			"devebot/scriptExecutor",
+			"devebot/scriptRenderer",
+			"devebot/securityManager",
+			"devebot/repeatedTimer"
+		];
+		var plugin1Scopes = [];
+		var plugin2Scopes = [
+			"plugin2/plugin2Service",
+			"plugin2/plugin2Trigger"
+		];
+		var bridge1Scopes = [];
+		var bridge2Scopes = [
+			"bridge2/anyname2a",
+			"bridge2/anyname2b",
+			"bridge2/anyname2c"
+		];
+
 		app.server.start()
 			.then(function() {
 				false && console.log(JSON.stringify(logStats, null, 2));
 				assert.isAbove(logStats.constructorBeginTotal, 0);
 				assert.equal(logStats.constructorBeginTotal, logStats.constructorEndTotal);
+				var metadata = lodash.map(logStats.metadata, function(item) {
+					return item && item.blockName
+				});
+				assert.includeMembers(metadata, devebotScopes);
+				assert.includeMembers(metadata, plugin2Scopes);
+				assert.includeMembers(metadata, bridge2Scopes);
 				return true;
 			})
 			.then(function() {
