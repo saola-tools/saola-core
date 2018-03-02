@@ -68,16 +68,26 @@ chores.loadServiceByNames = function(serviceMap, serviceFolder, serviceNames) {
   });
 };
 
+chores.isArray = function(a) {
+  return a instanceof Array;
+}
+
+chores.isString = function(s) {
+  return typeof(s) === 'string';
+}
+
 chores.stringKebabCase = function kebabCase(str) {
-  return (str || '').toLowerCase().replace(/\s/g, '-');
+  if (!chores.isString(str)) return str;
+  return str.toLowerCase().replace(/\s{1,}/g, '-');
 };
 
 chores.stringLabelCase = function labelCase(str) {
-  return (str || '').toUpperCase().replace(/-/g, '_');
+  if (!chores.isString(str)) return str;
+  return str.toUpperCase().replace(/\W{1,}/g, '_');
 };
 
 chores.stringCamelCase = function camelCase(str) {
-  if (typeof str !== 'string') return str;
+  if (!chores.isString(str)) return str;
   return str.replace(/-([a-z])/g, function (m, w) {
     return w.toUpperCase();
   });
@@ -124,9 +134,10 @@ chores.homedir = (typeof os.homedir === 'function') ? os.homedir : function() {
 
 chores.getBlockRef = function(filename, blockScope) {
   if (filename == null) return null;
-  blockScope = blockScope || 'devebot';
   var blockName = chores.stringCamelCase(path.basename(filename, '.js'));
-  return [blockScope, blockName].join(chores.getSeparator());
+  blockScope = blockScope || 'devebot';
+  if (!chores.isArray(blockScope)) blockScope = [blockScope];
+  return blockScope.concat(blockName).join(chores.getSeparator());
 }
 
 chores.DEFAULT_SECTOR_ID_FIELD = 'blockId';
