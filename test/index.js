@@ -1,5 +1,7 @@
 'use strict';
 
+var constx = require('../lib/utils/constx');
+var fs = require('fs');
 var lodash = require('lodash');
 var path = require('path');
 
@@ -58,5 +60,13 @@ module.exports = {
 	},
 	getDefaultTimeout: function() {
 		return 60000;
+	},
+	getFrameworkInfo: function() {
+		try {
+			var pkgFile = this.getDevebotHome() + '/package.json';
+			return lodash.pick(JSON.parse(fs.readFileSync(pkgFile, 'utf8')), constx.APPINFO.FIELDS);
+		} catch(err) {
+			return {};
+		}
 	}
 }

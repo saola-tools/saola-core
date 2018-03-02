@@ -62,10 +62,7 @@ chores.loadServiceByNames = function(serviceMap, serviceFolder, serviceNames) {
     var serviceConstructor = loader(filepath);
     if (lodash.isFunction(serviceConstructor)) {
       var serviceEntry = {};
-      var entryPath = serviceName.replace(/-([a-z])/g, function (m, w) {
-        return w.toUpperCase();
-      });
-      serviceEntry[entryPath] = serviceConstructor;
+      serviceEntry[chores.stringCamelCase(serviceName)] = serviceConstructor;
       lodash.defaults(serviceMap, serviceEntry);
     }
   });
@@ -80,7 +77,7 @@ chores.stringLabelCase = function labelCase(str) {
 };
 
 chores.stringCamelCase = function camelCase(str) {
-  if (!str) return str;
+  if (typeof str !== 'string') return str;
   return str.replace(/-([a-z])/g, function (m, w) {
     return w.toUpperCase();
   });

@@ -27,18 +27,7 @@ describe('devebot:configuration', function() {
 					"description": "Devebot Demo Application",
 					"author": "devebot",
 					"license": "ISC",
-					"framework": {
-						"version": "0.2.6",
-						"name": "devebot",
-						"description": "Nodejs Microservice Framework",
-						"homepage": "https://github.com/devebot/devebot#readme",
-						"author": {
-							"name": "Devebot",
-							"email": "contact@devebot.com",
-							"url": "https://github.com/devebot"
-						},
-						"license": "MIT"
-					}
+					"framework": lab.getFrameworkInfo()
 				});
 
 				expect(appinfo).to.deep.include({
