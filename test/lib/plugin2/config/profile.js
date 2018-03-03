@@ -1,7 +1,8 @@
 module.exports = {
   newFeatures: {
     plugin2: {
-      logoliteEnabled: true
+      logoliteEnabled: true,
+      sandboxConfig: true
     }
   }
 }

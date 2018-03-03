@@ -11,7 +11,7 @@ var Service = function(params) {
 
   debugx.enabled && debugx(' + constructor begin ...');
 
-  var pluginCfg = lodash.get(params, ['sandboxConfig', 'plugins', 'plugin1'], {});
+  var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
   var server = http.createServer();
 

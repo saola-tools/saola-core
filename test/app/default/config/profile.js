@@ -9,7 +9,7 @@ module.exports = {
     transports: {
       console: {
         type: 'console',
-        level: 'debug',
+        level: 'error',
         json: false,
         timestamp: true,
         colorize: true

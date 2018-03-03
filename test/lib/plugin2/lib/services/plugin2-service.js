@@ -15,7 +15,7 @@ var Service = function(params) {
     text: ' + constructor begin'
   }));
 
-  var pluginCfg = lodash.get(params, ['sandboxConfig', 'plugins', 'plugin2'], {});
+  var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
   LX.has('conlog') && LX.log('conlog', LT.add({
     pluginCfg: pluginCfg
   }).toMessage({

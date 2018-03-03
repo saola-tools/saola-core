@@ -2,6 +2,7 @@
 
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
+var chores = Devebot.require('chores');
 var http = require('http');
 
 var Service = function(params) {
@@ -18,7 +19,7 @@ var Service = function(params) {
 
   self.logger = params.loggingFactory.getLogger();
 
-  var pluginCfg = lodash.get(params, ['sandboxConfig', 'plugins', 'plugin2'], {});
+  var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
   var server = http.createServer();
 
@@ -44,7 +45,7 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        (pluginCfg && pluginCfg.verbose !== false || LX.has('conlog')) &&
+        (pluginCfg && pluginCfg.verbose !== false || chores.isVerboseForced('plugin2')) &&
         console.log('plugin2 webserver is listening at http://%s:%s', host, port);
         resolved(serverInstance);
       });
@@ -54,7 +55,7 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        (pluginCfg && pluginCfg.verbose !== false || LX.has('conlog')) &&
+        (pluginCfg && pluginCfg.verbose !== false || chores.isVerboseForced('plugin2')) &&
         console.log('plugin2 webserver has been closed');
         resolved();
       });
