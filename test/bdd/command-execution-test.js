@@ -64,15 +64,7 @@ describe('devebot:command:execution', function() {
 
 	beforeEach(function(done) {
 		LogTracer.reset().empty(logStats);
-		app.server.start().then(function() {
-			done();
-		});
-	});
-
-	afterEach(function(done) {
-		app.server.teardown().then(function() {
-			done();
-		});
+		app.server.start().asCallback(done);
 	});
 
 	it('definition should contain runhook-call command', function(done) {
@@ -155,6 +147,10 @@ describe('devebot:command:execution', function() {
 			debugx.enabled && debugx(JSON.stringify(error, null, 2));
 			done(error);
 		});
+	});
+
+	afterEach(function(done) {
+		app.server.teardown().asCallback(done);
 	});
 
 	after(function() {

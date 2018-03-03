@@ -20,17 +20,8 @@ describe('devebot:runhook:progress:meter', function() {
 	});
 
 	beforeEach(function(done) {
-		app.server.start().then(function() {
-			done();
-		});
 		api = new DevebotApi(lab.getApiConfig());
-	});
-
-	afterEach(function(done) {
-		api = null;
-		app.server.teardown().then(function() {
-			done();
-		});
+		app.server.start().asCallback(done);
 	});
 
 	it('direct runhook should return correct result', function(done) {
@@ -153,6 +144,11 @@ describe('devebot:runhook:progress:meter', function() {
 			assert.isString(error.details[0].data.message);
 			done();
 		});
+	});
+
+	afterEach(function(done) {
+		api = null;
+		app.server.teardown().asCallback(done);
 	});
 });
 

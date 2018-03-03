@@ -21,15 +21,7 @@ describe('devebot:command:definition', function() {
 	});
 
 	beforeEach(function(done) {
-		app.server.start().then(function() {
-			done();
-		});
-	});
-
-	afterEach(function(done) {
-		app.server.teardown().then(function() {
-			done();
-		});
+		app.server.start().asCallback(done);
 	});
 
 	it('definition should contain default commands', function(done) {
@@ -71,5 +63,9 @@ describe('devebot:command:definition', function() {
 
 			done();
 		});
+	});
+
+	afterEach(function(done) {
+		app.server.teardown().asCallback(done);
 	});
 });
