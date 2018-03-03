@@ -80,7 +80,10 @@ describe('devebot:application', function() {
 			"devebot/securityManager",
 			"devebot/repeatedTimer"
 		];
-		var plugin1Scopes = [];
+		var plugin1Scopes = [
+			"plugin1/plugin1Service",
+			"plugin1/plugin1Trigger"
+		];
 		var plugin2Scopes = [
 			"plugin2/plugin2Service",
 			"plugin2/plugin2Trigger"
@@ -110,8 +113,13 @@ describe('devebot:application', function() {
 				});
 				false && console.log(JSON.stringify(metadata, null, 2));
 				assert.includeMembers(metadata, devebotScopes);
+				assert.includeMembers(metadata, plugin1Scopes);
 				assert.includeMembers(metadata, plugin2Scopes);
+				assert.includeMembers(metadata, bridge1Scopes);
 				assert.includeMembers(metadata, bridge2Scopes);
+				assert.equal(metadata.length, devebotScopes.length +
+						plugin1Scopes.length + plugin2Scopes.length +
+						bridge1Scopes.length + bridge2Scopes.length);
 				return info;
 			})
 			.delay(100)
