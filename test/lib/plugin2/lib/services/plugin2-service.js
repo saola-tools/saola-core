@@ -30,7 +30,7 @@ var Service = function(params) {
 };
 
 Service.argumentSchema = {
-  "id": "plugin2Service",
+  "$id": "plugin2Service",
   "type": "object",
   "properties": {
     "sandboxName": {

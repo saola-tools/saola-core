@@ -68,7 +68,7 @@ var Service = function(params) {
 };
 
 Service.argumentSchema = {
-  "id": "plugin2Trigger",
+  "$id": "plugin2Trigger",
   "type": "object",
   "properties": {
     "sandboxName": {
