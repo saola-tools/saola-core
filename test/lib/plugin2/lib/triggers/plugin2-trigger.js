@@ -45,8 +45,8 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        (pluginCfg && pluginCfg.verbose !== false || chores.isVerboseForced('plugin2')) &&
-        console.log('plugin2 webserver is listening at http://%s:%s', host, port);
+        chores.isVerboseForced('plugin2', pluginCfg) &&
+            console.log('plugin2 webserver is listening at http://%s:%s', host, port);
         resolved(serverInstance);
       });
     });
@@ -55,8 +55,8 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        (pluginCfg && pluginCfg.verbose !== false || chores.isVerboseForced('plugin2')) &&
-        console.log('plugin2 webserver has been closed');
+        chores.isVerboseForced('plugin2', pluginCfg) &&
+            console.log('plugin2 webserver has been closed');
         resolved();
       });
     });

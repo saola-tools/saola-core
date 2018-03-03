@@ -85,7 +85,10 @@ describe('devebot:application', function() {
 			"plugin2/plugin2Service",
 			"plugin2/plugin2Trigger"
 		];
-		var bridge1Scopes = [];
+		var bridge1Scopes = [
+			"bridge1/anyname1a",
+			"bridge1/anyname1b"
+		];
 		var bridge2Scopes = [
 			"bridge2/anyname2a",
 			"bridge2/anyname2b",
@@ -105,6 +108,7 @@ describe('devebot:application', function() {
 				var metadata = lodash.map(moduleStats.metadata, function(item) {
 					return item && item.blockName
 				});
+				false && console.log(JSON.stringify(metadata, null, 2));
 				assert.includeMembers(metadata, devebotScopes);
 				assert.includeMembers(metadata, plugin2Scopes);
 				assert.includeMembers(metadata, bridge2Scopes);

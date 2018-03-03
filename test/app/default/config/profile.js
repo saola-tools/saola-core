@@ -17,6 +17,9 @@ module.exports = {
     }
   },
   newFeatures: {
+    bridge1: {
+      logoliteEnabled: true
+    },
     bridge2: {
       logoliteEnabled: true
     }

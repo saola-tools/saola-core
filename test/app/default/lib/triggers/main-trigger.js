@@ -3,6 +3,7 @@
 var http = require('http');
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
+var chores = Devebot.require('chores');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
 
 var Service = function(params) {
@@ -34,8 +35,8 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        (mainCfg && mainCfg.verbose !== false || debugx.enabled) &&
-        console.log('%s is listening at http://%s:%s', Service.argumentSchema.id, host, port);
+        chores.isVerboseForced('demo-app', mainCfg) &&
+        console.log('%s is listening at http://%s:%s', Service.argumentSchema.$id, host, port);
         resolved(serverInstance);
       });
     });
@@ -44,8 +45,8 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        (mainCfg && mainCfg.verbose !== false || debugx.enabled) &&
-        console.log('%s has been closed', Service.argumentSchema.id);
+        chores.isVerboseForced('demo-app', mainCfg) &&
+        console.log('%s has been closed', Service.argumentSchema.$id);
         resolved();
       });
     });
