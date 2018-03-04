@@ -64,6 +64,23 @@ describe('tdd:devebot:base:bootstrap', function() {
     });
 
     it('launch application with empty root directory (as string)', function() {
+      var app = bootstrap.launchApplication(null, [], []);
+      var cfg = app.config;
+      assert.equal(cfg.appName, 'devebot-application');
+      assert.deepEqual(cfg.appinfo, {
+        layerware: [],
+        framework: lab.getFrameworkInfo()
+      });
+      assert.sameMembers(cfg.bridgeRefs, []);
+      assert.sameDeepMembers(lodash.map(cfg.pluginRefs, item => {
+        return lodash.pick(item, ['type', 'name'])
+      }), [{
+        type: 'framework',
+        name: 'devebot'
+      }]);
+    });
+
+    it('launch application with empty root directory (as string)', function() {
       var app = bootstrap.launchApplication(lab.getAppHome('empty'), [], []);
       assertAppConfig(app);
     });
