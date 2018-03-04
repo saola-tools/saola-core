@@ -17,7 +17,8 @@ describe('tdd:devebot:core:config-loader', function() {
 
 	describe('default configuration (without profile & sandbox)', function() {
 		it('load configuration of nothing (empty loader)', function() {
-			var cfgLoader = new ConfigLoader(); // null, null, null, null
+			// appName: null, appOptions: null, appRootDir: null, libRootDirs: null
+			var cfgLoader = new ConfigLoader();
 			false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 			assert.deepEqual(cfgLoader.config, {
 				"profile": {
@@ -61,7 +62,7 @@ describe('tdd:devebot:core:config-loader', function() {
 			assert.deepEqual(lodash.get(cfgLoader,"config.sandbox.staging"), {});
 		});
 
-		it('load application configuration', function() {
+		it('load application configuration (without options)', function() {
 			var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('tdd-cfg'), [
 				lab.getLibHome('plugin1'),
 				lab.getLibHome('plugin2'),
@@ -97,8 +98,8 @@ describe('tdd:devebot:core:config-loader', function() {
 	describe('customize configDir and staging', function() {
 		before(function() {
 			envtool.setup({
-				NODE_DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
-				NODE_DEVEBOT_CONFIG_ENV: 'dev'
+				DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
+				DEVEBOT_CONFIG_ENV: 'dev'
 			});
 		});
 
@@ -148,9 +149,9 @@ describe('tdd:devebot:core:config-loader', function() {
 	describe('private sandbox configurations', function() {
 		before(function() {
 			envtool.setup({
-				NODE_DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
-				NODE_DEVEBOT_CONFIG_ENV: 'dev',
-				NODE_DEVEBOT_SANDBOX: 'ev1,ev2'
+				DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
+				DEVEBOT_CONFIG_ENV: 'dev',
+				DEVEBOT_SANDBOX: 'ev1,ev2'
 			});
 		});
 
