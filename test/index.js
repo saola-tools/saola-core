@@ -1,5 +1,6 @@
 'use strict';
 
+var chores = require('../lib/utils/chores');
 var constx = require('../lib/utils/constx');
 var fs = require('fs');
 var lodash = require('lodash');
@@ -62,11 +63,6 @@ module.exports = {
 		return 60000;
 	},
 	getFrameworkInfo: function() {
-		try {
-			var pkgFile = this.getDevebotHome() + '/package.json';
-			return lodash.pick(JSON.parse(fs.readFileSync(pkgFile, 'utf8')), constx.APPINFO.FIELDS);
-		} catch(err) {
-			return {};
-		}
+		return chores.loadPackageInfo(this.getDevebotHome());
 	}
 }
