@@ -26,6 +26,24 @@ describe('tdd:devebot:base:bootstrap', function() {
 		LogConfig.reset();
   });
 
+  describe('require()', function() {
+    var pkgs = {
+      chores: '../../lib/utils/chores.js',
+      loader: '../../lib/utils/loader.js',
+      pinbug: '../../lib/utils/pinbug.js'
+    }
+    lodash.forEach([
+      'bluebird', 'lodash', 'injektor', 'logolite', 'schemato'
+    ], function(pkgName) {
+      pkgs[pkgName] = pkgName;
+    });
+    it('require() returns correct exported packages', function() {
+      lodash.forOwn(pkgs, function(pkgPath, pkgName) {
+        assert.equal(bootstrap.require(pkgName), require(pkgPath));
+      });
+    });
+  });
+
   describe('launchApplication()', function() {
     var assertAppConfig = function(app) {
       var cfg = app.config;
