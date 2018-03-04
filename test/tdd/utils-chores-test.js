@@ -13,7 +13,7 @@ var util = require('util');
 var chores = require('../../lib/utils/chores');
 var envtool = require('logolite/envtool');
 
-describe('devebot:utils:chores', function() {
+describe('tdd:devebot:utils:chores', function() {
   describe('loadServiceByNames()', function() {
     var serviceFolder = path.join(__dirname, '../lib/testcode/services');
     var serviceNames = ['service1', 'service2'];

@@ -15,7 +15,7 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 
-describe('devebot:base:bootstrap', function() {
+describe('tdd:devebot:base:bootstrap', function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {

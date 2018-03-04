@@ -12,7 +12,7 @@ var util = require('util');
 var LoggingFactory = require('../../lib/backbone/logging-factory');
 var envtool = require('logolite/envtool');
 
-describe('devebot:loggingFactory', function() {
+describe('tdd:devebot:loggingFactory', function() {
 	describe('extend Tracer using branch() method', function() {
 
 		before(function() {

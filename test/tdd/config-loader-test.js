@@ -13,7 +13,7 @@ var util = require('util');
 var ConfigLoader = require('../../lib/backbone/config-loader');
 var envtool = require('logolite/envtool');
 
-describe('devebot:config:loader', function() {
+describe('tdd:devebot:config:loader', function() {
 
 	describe('default configuration (without profile & sandbox)', function() {
 		it('load application configuration', function() {
