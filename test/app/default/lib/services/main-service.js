@@ -11,7 +11,7 @@ var Service = function(params) {
 
   var self = this;
 
-  var logger = self.logger = params.loggingFactory.getLogger();
+  var logger = params.loggingFactory.getLogger();
 
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
   debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));

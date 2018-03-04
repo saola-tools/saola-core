@@ -17,8 +17,6 @@ var Service = function(params) {
     text: ' + constructor begin'
   }));
 
-  self.logger = params.loggingFactory.getLogger();
-
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
   var server = http.createServer();

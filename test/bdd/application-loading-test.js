@@ -65,6 +65,8 @@ describe('devebot:application', function() {
 	it('total of constructor startpoints must equal to constructor endpoints', function(done) {
 		app = lab.getApp();
 		var devebotScopes = [
+			"devebot/bootstrap",
+			"devebot/appinfoLoader",
 			"devebot/configLoader",
 			"devebot/kernel",
 			"devebot/server",
