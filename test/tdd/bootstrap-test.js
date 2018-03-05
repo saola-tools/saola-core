@@ -235,6 +235,90 @@ describe('tdd:devebot:base:bootstrap', function() {
         }
       });
     });
+
+    it('expand empty context with complete plugins (nested and overlap plugins)', function() {
+      var output = expandExtensions(null, [
+        {
+          name: 'sublib1',
+          path: lab.getLibHome('sublib1')
+        },
+        {
+          name: 'plugin1',
+          path: lab.getLibHome('plugin1')
+        },
+        {
+          name: 'plugin2',
+          path: lab.getLibHome('plugin2')
+        },
+        {
+          name: 'sublib2',
+          path: lab.getLibHome('sublib2')
+        },
+        {
+          name: 'plugin3',
+          path: lab.getLibHome('plugin3')
+        },
+        {
+          name: 'plugin4',
+          path: lab.getLibHome('plugin4')
+        }
+      ], [
+        {
+          name: 'bridge1',
+          path: lab.getLibHome('bridge1')
+        },
+        {
+          name: 'bridge2',
+          path: lab.getLibHome('bridge2')
+        },
+        {
+          name: 'bridge3',
+          path: lab.getLibHome('bridge3')
+        },
+        {
+          name: 'bridge4',
+          path: lab.getLibHome('bridge4')
+        }
+      ]);
+      assert.isArray(output.libRootPaths);
+      output.libRootPaths = lodash.map(output.libRootPaths, replaceLibPath);
+      assert.isObject(output.pluginRefs);
+      output.pluginRefs = lodash.mapValues(output.pluginRefs, function(v) {
+        v.path = replaceLibPath(v.path);
+        return v;
+      });
+      assert.isObject(output.bridgeRefs);
+      output.bridgeRefs = lodash.mapValues(output.bridgeRefs, function(v) {
+        v.path = replaceLibPath(v.path);
+        return v;
+      });
+      false && console.log('expandExtensions(): ', output);
+      assert.deepEqual(output, {
+        libRootPaths:
+          ['/test/lib/sublib1',
+            '/test/lib/plugin1',
+            '/test/lib/plugin2',
+            '/test/lib/sublib2',
+            '/test/lib/plugin3',
+            '/test/lib/plugin4'],
+        pluginRefs:
+          {
+            sublib1: { name: 'sublib1', path: '/test/lib/sublib1/index.js' },
+            plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+            plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
+            sublib2: { name: 'sublib2', path: '/test/lib/sublib2/index.js' },
+            plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' },
+            plugin4: { name: 'plugin4', path: '/test/lib/plugin4/index.js' }
+          },
+        bridgeRefs:
+          {
+            bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+            bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
+            bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' },
+            bridge4: { name: 'bridge4', path: '/test/lib/bridge4/index.js' }
+          }
+      });
+    });
   });
 
   after(function() {
