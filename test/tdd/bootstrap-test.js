@@ -14,6 +14,7 @@ var bootstrap = require('../../lib/bootstrap');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
+var rewire = require('rewire');
 
 describe('tdd:devebot:base:bootstrap', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -113,8 +114,137 @@ describe('tdd:devebot:base:bootstrap', function() {
     });
   });
 
+  describe('expandExtensions()', function() {
+    var bootstrap = rewire('../../lib/bootstrap');
+    var expandExtensions = bootstrap.__get__('expandExtensions');
+    assert.isNotNull(expandExtensions);
+
+    it('expand empty parameters', function() {
+      var output = expandExtensions();
+      false && console.log('expandExtensions(): ', output);
+      assert.deepEqual(output, {
+        libRootPaths: [],
+        bridgeRefs: {},
+        pluginRefs: {}
+      });
+    });
+
+    it('expand empty context with a list of plugins', function() {
+      var output = expandExtensions(null, [
+        {
+          name: 'my-plugin1',
+          path: lab.getLibHome('plugin1')
+        },
+        {
+          name: 'my-plugin2',
+          path: lab.getLibHome('plugin2')
+        }
+      ], null);
+      false && console.log('expandExtensions(): ', output);
+      assert.isArray(output.libRootPaths);
+      output.libRootPaths = lodash.map(output.libRootPaths, replaceLibPath);
+      assert.isObject(output.pluginRefs);
+      output.pluginRefs = lodash.mapValues(output.pluginRefs, function(v) {
+        v.path = replaceLibPath(v.path);
+        return v;
+      });
+      assert.deepEqual(output, {
+        libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
+        pluginRefs: {
+          'my-plugin1': { name: 'my-plugin1', path: '/test/lib/plugin1/index.js' },
+          'my-plugin2': { name: 'my-plugin2', path: '/test/lib/plugin2/index.js' }
+        },
+        bridgeRefs: {}
+      });
+    });
+
+    it('expand empty context with a list of bridges', function() {
+      var output = expandExtensions(null, [], [
+        {
+          name: 'my-bridge1',
+          path: lab.getLibHome('bridge1')
+        },
+        {
+          name: 'my-bridge2',
+          path: lab.getLibHome('bridge2')
+        }
+      ]);
+      false && console.log('expandExtensions(): ', output);
+      assert.isObject(output.bridgeRefs);
+      output.bridgeRefs = lodash.mapValues(output.bridgeRefs, function(v) {
+        v.path = replaceLibPath(v.path);
+        return v;
+      });
+      assert.deepEqual(output, {
+        libRootPaths: [],
+        pluginRefs: {},
+        bridgeRefs: {
+          'my-bridge1': { name: 'my-bridge1', path: '/test/lib/bridge1/index.js' },
+          'my-bridge2': { name: 'my-bridge2', path: '/test/lib/bridge2/index.js' }
+        }
+      });
+    });
+
+    it('expand empty context with a list of plugins and a list of bridges', function() {
+      var output = expandExtensions(null, [
+        {
+          name: 'my-plugin1',
+          path: lab.getLibHome('plugin1')
+        },
+        {
+          name: 'my-plugin2',
+          path: lab.getLibHome('plugin2')
+        },
+        {
+          name: 'my-plugin3',
+          path: lab.getLibHome('plugin3')
+        }
+      ], [
+        {
+          name: 'my-bridge1',
+          path: lab.getLibHome('bridge1')
+        },
+        {
+          name: 'my-bridge2',
+          path: lab.getLibHome('bridge2')
+        }
+      ]);
+      false && console.log('expandExtensions(): ', output);
+      assert.isArray(output.libRootPaths);
+      output.libRootPaths = lodash.map(output.libRootPaths, replaceLibPath);
+      assert.isObject(output.pluginRefs);
+      output.pluginRefs = lodash.mapValues(output.pluginRefs, function(v) {
+        v.path = replaceLibPath(v.path);
+        return v;
+      });
+      assert.isObject(output.bridgeRefs);
+      output.bridgeRefs = lodash.mapValues(output.bridgeRefs, function(v) {
+        v.path = replaceLibPath(v.path);
+        return v;
+      });
+      assert.deepEqual(output, {
+        libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
+        pluginRefs: {
+          'my-plugin1': { name: 'my-plugin1', path: '/test/lib/plugin1/index.js' },
+          'my-plugin2': { name: 'my-plugin2', path: '/test/lib/plugin2/index.js' },
+          'my-plugin3': { name: 'my-plugin3', path: '/test/lib/plugin3/index.js' }
+        },
+        bridgeRefs: {
+          'my-bridge1': { name: 'my-bridge1', path: '/test/lib/bridge1/index.js' },
+          'my-bridge2': { name: 'my-bridge2', path: '/test/lib/bridge2/index.js' }
+        }
+      });
+    });
+  });
+
   after(function() {
 		LogTracer.clearStringifyInterceptors();
 		envtool.reset();
 	});
 });
+
+var LIB_PATH_PATTERN = /(.*)test\/lib\/([^\/].*)(\/?.*)/g;
+var replaceLibPath = function(p) {
+  if (typeof p !== 'string') return p;
+  return p.replace(LIB_PATH_PATTERN, '/test/lib/$2$3');
+}
