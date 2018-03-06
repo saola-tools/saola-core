@@ -69,7 +69,7 @@ describe('tdd:devebot:core:logging-factory', function() {
 						level: 0,
 						color: 'orange'
 					}
-				},
+				}
 			}
 
 			var expected = {
@@ -104,7 +104,7 @@ describe('tdd:devebot:core:logging-factory', function() {
 			var output = transformLoggingLabels(loggerCfg.labels);
 			false && console.log('transformLoggingLabels(): ', output);
 			assert.deepEqual(output, expected);
-		})
+		});
 	});
 
 	describe('extend Tracer using branch() method', function() {
