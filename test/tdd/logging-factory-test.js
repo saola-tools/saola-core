@@ -4,15 +4,109 @@ var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('tdd:devebot:loggingFactory');
+var debugx = Devebot.require('pinbug')('tdd:devebot:core:logging-factory');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var path = require('path');
 var util = require('util');
 var LoggingFactory = require('../../lib/backbone/logging-factory');
 var envtool = require('logolite/envtool');
+var rewire = require('rewire');
 
-describe('tdd:devebot:loggingFactory', function() {
+describe('tdd:devebot:core:logging-factory', function() {
+
+	describe('logging backward compatible', function() {
+		var LoggingFactory = rewire('../../lib/backbone/logging-factory');
+    var transformLoggingLabels = LoggingFactory.__get__('transformLoggingLabels');
+		assert.isNotNull(transformLoggingLabels);
+		
+		it('transformLoggingLabels() accept null parameter', function() {
+			var output = transformLoggingLabels(null);
+			true && console.log('transformLoggingLabels(): ', output);
+			assert.deepEqual(output, {});
+		});
+
+		it('transformLoggingLabels() accept empty parameter', function() {
+			var output = transformLoggingLabels({});
+			true && console.log('transformLoggingLabels(): ', output);
+			assert.deepEqual(output, {});
+		});
+
+		it('transformLoggingLabels() transform logging labels correctly', function() {
+			var loggerCfg = {
+				labels: {
+					verbose: {
+						level: 6,
+						color: 'magenta',
+						link: 'silly'
+					},
+					debug: {
+						level: 5,
+						color: 'blue',
+						link: 'debug'
+					},
+					info: {
+						level: 4,
+						color: 'cyan',
+						link: 'trace'
+					},
+					trace: {
+						level: 3,
+						color: 'green',
+						link: 'info'
+					},
+					warn: {
+						level: 2,
+						color: 'yellow',
+						link: 'warn'
+					},
+					error: {
+						level: 1,
+						color: 'red',
+						link: 'error'
+					},
+					fatal: {
+						level: 0,
+						color: 'orange'
+					}
+				},
+			}
+
+			var expected = {
+				levels: {
+					verbose: 6,
+					debug: 5,
+					info: 4,
+					trace: 3,
+					warn: 2,
+					error: 1,
+					fatal: 0
+				},
+				colors: {
+					verbose: 'magenta',
+					debug: 'blue',
+					info: 'cyan',
+					trace: 'green',
+					warn: 'yellow',
+					error: 'red',
+					fatal: 'orange'
+				},
+				mappings: {
+					silly: 'verbose',
+					debug: 'debug',
+					trace: 'info',
+					info: 'trace',
+					warn: 'warn',
+					error: 'error'
+				}
+			}
+
+			var output = transformLoggingLabels(loggerCfg.labels);
+			false && console.log('transformLoggingLabels(): ', output);
+			assert.deepEqual(output, expected);
+		})
+	});
+
 	describe('extend Tracer using branch() method', function() {
 
 		before(function() {
