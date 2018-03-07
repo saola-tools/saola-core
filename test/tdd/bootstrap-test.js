@@ -369,6 +369,65 @@ describe('tdd:devebot:base:bootstrap', function() {
     });
   });
 
+  describe('registerLayerware()', function() {
+    beforeEach(function() {
+      LogTracer.reset();
+    });
+
+    it('register a new plugin with empty parameters', function() {
+      var pluginLauncher = bootstrap.registerLayerware(null, [], []);
+      var pluginStore = pluginLauncher();
+      false && console.log(JSON.stringify(pluginStore, null, 2));
+      assert.deepEqual(pluginStore, { libRootPaths: [], bridgeRefs: {}, pluginRefs: {} });
+    });
+
+    it('register a new plugin with nested and overlap sub-plugins', function() {
+      var pluginLauncher = bootstrap.registerLayerware(null, [
+        {
+          name: 'sublib1',
+          path: lab.getLibHome('sublib1')
+        },
+        {
+          name: 'sublib2',
+          path: lab.getLibHome('sublib2')
+        }
+      ], []);
+      var output = pluginLauncher();
+      output.libRootPaths = lodash.map(output.libRootPaths, replaceLibPath);
+      output.pluginRefs = lodash.mapValues(output.pluginRefs, function(v) {
+        v.path = replaceLibPath(v.path);
+        return v;
+      });
+      output.bridgeRefs = lodash.mapValues(output.bridgeRefs, function(v) {
+        v.path = replaceLibPath(v.path);
+        return v;
+      });
+      false && console.log('pluginLauncher(): ', output);
+      assert.deepEqual(output, {
+        libRootPaths:
+          ['/test/lib/sublib1',
+            '/test/lib/plugin1',
+            '/test/lib/plugin2',
+            '/test/lib/sublib2',
+            '/test/lib/plugin3'],
+        pluginRefs:
+          {
+            sublib1: { name: 'sublib1', path: '/test/lib/sublib1/index.js' },
+            sublib2: { name: 'sublib2', path: '/test/lib/sublib2/index.js' },
+            plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+            plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
+            plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+          },
+        bridgeRefs:
+          {
+            bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+            bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
+            bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
+          }
+      });
+    });
+  });
+
   after(function() {
 		LogTracer.clearStringifyInterceptors();
 		envtool.reset();
