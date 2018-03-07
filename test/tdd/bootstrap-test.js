@@ -108,14 +108,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('plugin2')
         }
       ], null);
+      output = replaceObjectFields(output);
       false && console.log('expandExtensions(): ', output);
-      assert.isArray(output.libRootPaths);
-      output.libRootPaths = lodash.map(output.libRootPaths, replaceLibPath);
-      assert.isObject(output.pluginRefs);
-      output.pluginRefs = lodash.mapValues(output.pluginRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
       assert.deepEqual(output, {
         libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
         pluginRefs: {
@@ -137,12 +131,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('bridge2')
         }
       ]);
+      output = replaceObjectFields(output);
       false && console.log('expandExtensions(): ', output);
-      assert.isObject(output.bridgeRefs);
-      output.bridgeRefs = lodash.mapValues(output.bridgeRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
       assert.deepEqual(output, {
         libRootPaths: [],
         pluginRefs: {},
@@ -177,19 +167,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('bridge2')
         }
       ]);
-      false && console.log('expandExtensions(): ', output);
-      assert.isArray(output.libRootPaths);
-      output.libRootPaths = lodash.map(output.libRootPaths, replaceLibPath);
-      assert.isObject(output.pluginRefs);
-      output.pluginRefs = lodash.mapValues(output.pluginRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
-      assert.isObject(output.bridgeRefs);
-      output.bridgeRefs = lodash.mapValues(output.bridgeRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
+      output = replaceObjectFields(output);
       assert.deepEqual(output, {
         libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
         pluginRefs: {
@@ -215,18 +193,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('sublib2')
         }
       ]);
-      assert.isArray(output.libRootPaths);
-      output.libRootPaths = lodash.map(output.libRootPaths, replaceLibPath);
-      assert.isObject(output.pluginRefs);
-      output.pluginRefs = lodash.mapValues(output.pluginRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
-      assert.isObject(output.bridgeRefs);
-      output.bridgeRefs = lodash.mapValues(output.bridgeRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
+      output = replaceObjectFields(output);
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
@@ -296,18 +263,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('bridge4')
         }
       ]);
-      assert.isArray(output.libRootPaths);
-      output.libRootPaths = lodash.map(output.libRootPaths, replaceLibPath);
-      assert.isObject(output.pluginRefs);
-      output.pluginRefs = lodash.mapValues(output.pluginRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
-      assert.isObject(output.bridgeRefs);
-      output.bridgeRefs = lodash.mapValues(output.bridgeRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
+      output = replaceObjectFields(output);
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
@@ -429,16 +385,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('sublib2')
         }
       ], []);
-      var output = pluginLauncher();
-      output.libRootPaths = lodash.map(output.libRootPaths, replaceLibPath);
-      output.pluginRefs = lodash.mapValues(output.pluginRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
-      output.bridgeRefs = lodash.mapValues(output.bridgeRefs, function(v) {
-        v.path = replaceLibPath(v.path);
-        return v;
-      });
+      var output = replaceObjectFields(pluginLauncher());
       false && console.log('pluginLauncher(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
