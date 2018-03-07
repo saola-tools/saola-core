@@ -50,10 +50,10 @@ describe('tdd:devebot:base:bootstrap', function() {
       var cfg = app.config;
       false && console.log('SHOW [app.config]: ', cfg);
       assert.hasAllKeys(cfg, [
-        'profile', 'sandbox', 'appName', 'appinfo', 'bridgeRefs', 'pluginRefs'
+        'profile', 'sandbox', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
       ]);
       assert.equal(cfg.appName, 'devebot-application');
-      assert.deepEqual(cfg.appinfo, {
+      assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
       });
@@ -86,7 +86,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       var app = bootstrap.launchApplication(null, [], []);
       var cfg = app.config;
       assert.equal(cfg.appName, 'devebot-application');
-      assert.deepEqual(cfg.appinfo, {
+      assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
       });

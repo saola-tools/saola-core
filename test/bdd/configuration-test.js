@@ -19,9 +19,9 @@ describe('devebot:configuration', function() {
 
 		it('configuration has been loaded correctly', function(done) {
 			app.runner.invoke(function(injektor) {
-				var appinfo = injektor.lookup('appinfo');
-				debugx.enabled && debugx('appinfo: %s', JSON.stringify(appinfo, null, 2));
-				expect(appinfo).to.deep.include({
+				var appInfo = injektor.lookup('appInfo');
+				debugx.enabled && debugx('appInfo: %s', JSON.stringify(appInfo, null, 2));
+				expect(appInfo).to.deep.include({
 					"version": "0.1.0",
 					"name": "demo-app",
 					"description": "Devebot Demo Application",
@@ -30,7 +30,7 @@ describe('devebot:configuration', function() {
 					"framework": lab.getFrameworkInfo()
 				});
 
-				expect(appinfo).to.deep.include({
+				expect(appInfo).to.deep.include({
 					"layerware": [
 						{
 							"version": "0.1.1",
