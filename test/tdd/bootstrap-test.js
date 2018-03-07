@@ -27,6 +27,43 @@ describe('tdd:devebot:base:bootstrap', function() {
 		LogConfig.reset();
   });
 
+  describe('replaceObjectFields()', function() {
+    it('should do nothing with empty object', function() {
+      assert.deepEqual(replaceObjectFields({}), {});
+      assert.deepEqual(replaceObjectFields(null), null);
+      assert.deepEqual(replaceObjectFields('hello'), 'hello');
+    });
+    it('should replace the matched string fields only', function() {
+      assert.deepEqual(replaceObjectFields({
+        libRootPaths: [
+          '/some/path/here/test/lib/plugin1',
+          '/some/path/here/test/lib/plugin2',
+          '/some/path/here/test/lib/plugin3'
+        ],
+        pluginRefs: {
+          'plugin1': { name: 'plugin1', path: '/some/path/here/test/lib/plugin1/index.js' },
+          'plugin2': { name: 'plugin2', path: '/some/path/here/test/lib/plugin2/index.js' },
+          'plugin3': { name: 'plugin3', path: '/some/path/here/test/lib/plugin3/index.js' }
+        },
+        bridgeRefs: {
+          'bridge1': { name: 'bridge1', path: '/some/path/here/test/lib/bridge1/index.js' },
+          'bridge2': { name: 'bridge2', path: '/some/path/here/test/lib/bridge2/index.js' }
+        }
+      }), {
+        libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
+        pluginRefs: {
+          'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+          'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
+          'plugin3': { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+        },
+        bridgeRefs: {
+          'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+          'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+        }
+      });
+    });
+  });
+
   describe('require()', function() {
     var pkgs = {
       chores: '../../lib/utils/chores.js',
@@ -438,4 +475,26 @@ var LIB_PATH_PATTERN = /(.*)test\/lib\/([^\/].*)(\/?.*)/g;
 var replaceLibPath = function(p) {
   if (typeof p !== 'string') return p;
   return p.replace(LIB_PATH_PATTERN, '/test/lib/$2$3');
+}
+
+var replaceObjectFields = function(obj) {
+  var replaceFields = function(queue) {
+    if (queue.length > 0) {
+      var o = queue.shift();
+      if (lodash.isObject(o)) {
+        lodash.forEach(lodash.keys(o), function(key) {
+          if (lodash.isObject(o[key])) {
+            queue.push(o[key]);
+            return;
+          }
+          if (lodash.isString(o[key])) {
+            o[key] = replaceLibPath(o[key]);
+          }
+        })
+      }
+      replaceFields(queue);
+    }
+  }
+  replaceFields([obj]);
+  return obj;
 }
