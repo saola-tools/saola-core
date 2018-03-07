@@ -45,75 +45,6 @@ describe('tdd:devebot:base:bootstrap', function() {
     });
   });
 
-  describe('launchApplication()', function() {
-    var assertAppConfig = function(app) {
-      var cfg = app.config;
-      false && console.log('SHOW [app.config]: ', cfg);
-      assert.hasAllKeys(cfg, [
-        'profile', 'sandbox', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
-      ]);
-      assert.equal(cfg.appName, 'devebot-application');
-      assert.deepEqual(cfg.appInfo, {
-        layerware: [],
-        framework: lab.getFrameworkInfo()
-      });
-      assert.sameMembers(cfg.bridgeRefs, []);
-      assert.sameDeepMembers(lodash.map(cfg.pluginRefs, item => {
-        return lodash.pick(item, ['type', 'name'])
-      }), [{
-        type: 'application',
-        name: 'devebot-application'
-      },
-      {
-        type: 'framework',
-        name: 'devebot'
-      }]);
-    }
-
-    var assertAppRunner = function(app) {
-      var runner = app.runner;
-    }
-
-    var assertAppServer = function(app) {
-      var runner = app.runner;
-    }
-
-    beforeEach(function() {
-      LogTracer.reset();
-    });
-
-    it('launch application with empty root directory (as string)', function() {
-      var app = bootstrap.launchApplication(null, [], []);
-      var cfg = app.config;
-      assert.equal(cfg.appName, 'devebot-application');
-      assert.deepEqual(cfg.appInfo, {
-        layerware: [],
-        framework: lab.getFrameworkInfo()
-      });
-      assert.sameMembers(cfg.bridgeRefs, []);
-      assert.sameDeepMembers(lodash.map(cfg.pluginRefs, item => {
-        return lodash.pick(item, ['type', 'name'])
-      }), [{
-        type: 'framework',
-        name: 'devebot'
-      }]);
-    });
-
-    it('launch application with empty root directory (as string)', function() {
-      var app = bootstrap.launchApplication(lab.getAppHome('empty'), [], []);
-      assertAppConfig(app);
-    });
-
-    it('launch application with empty root directory (in context)', function() {
-      var app = bootstrap.launchApplication({
-        appRootPath: lab.getAppHome('empty')
-      }, [], []);
-      assertAppConfig(app);
-      assertAppRunner(app);
-      assertAppServer(app);
-    });
-  });
-
   describe('expandExtensions()', function() {
     var bootstrap = rewire('../../lib/bootstrap');
     var expandExtensions = bootstrap.__get__('expandExtensions');
@@ -366,6 +297,75 @@ describe('tdd:devebot:base:bootstrap', function() {
             bridge4: { name: 'bridge4', path: '/test/lib/bridge4/index.js' }
           }
       });
+    });
+  });
+
+  describe('launchApplication()', function() {
+    var assertAppConfig = function(app) {
+      var cfg = app.config;
+      false && console.log('SHOW [app.config]: ', cfg);
+      assert.hasAllKeys(cfg, [
+        'profile', 'sandbox', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
+      ]);
+      assert.equal(cfg.appName, 'devebot-application');
+      assert.deepEqual(cfg.appInfo, {
+        layerware: [],
+        framework: lab.getFrameworkInfo()
+      });
+      assert.sameMembers(cfg.bridgeRefs, []);
+      assert.sameDeepMembers(lodash.map(cfg.pluginRefs, item => {
+        return lodash.pick(item, ['type', 'name'])
+      }), [{
+        type: 'application',
+        name: 'devebot-application'
+      },
+      {
+        type: 'framework',
+        name: 'devebot'
+      }]);
+    }
+
+    var assertAppRunner = function(app) {
+      var runner = app.runner;
+    }
+
+    var assertAppServer = function(app) {
+      var runner = app.runner;
+    }
+
+    beforeEach(function() {
+      LogTracer.reset();
+    });
+
+    it('launch application with empty root directory (as string)', function() {
+      var app = bootstrap.launchApplication(null, [], []);
+      var cfg = app.config;
+      assert.equal(cfg.appName, 'devebot-application');
+      assert.deepEqual(cfg.appInfo, {
+        layerware: [],
+        framework: lab.getFrameworkInfo()
+      });
+      assert.sameMembers(cfg.bridgeRefs, []);
+      assert.sameDeepMembers(lodash.map(cfg.pluginRefs, item => {
+        return lodash.pick(item, ['type', 'name'])
+      }), [{
+        type: 'framework',
+        name: 'devebot'
+      }]);
+    });
+
+    it('launch application with empty root directory (as string)', function() {
+      var app = bootstrap.launchApplication(lab.getAppHome('empty'), [], []);
+      assertAppConfig(app);
+    });
+
+    it('launch application with empty root directory (in context)', function() {
+      var app = bootstrap.launchApplication({
+        appRootPath: lab.getAppHome('empty')
+      }, [], []);
+      assertAppConfig(app);
+      assertAppRunner(app);
+      assertAppServer(app);
     });
   });
 
