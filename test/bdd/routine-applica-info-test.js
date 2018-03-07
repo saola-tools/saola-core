@@ -18,6 +18,9 @@ describe('devebot:command:applica:info', function() {
 
 		before(function() {
 			app = lab.getApp();
+		});
+
+		beforeEach(function() {
 			api = new DevebotApi(lab.getApiConfig({
 				ws: app.runner.listen()
 			}));
@@ -31,30 +34,71 @@ describe('devebot:command:applica:info', function() {
 				});
 			}).then(function(defs) {
 				var cmd = lodash.keyBy(defs.commands, 'name')['applica-info'];
+				false && console.log(cmd);
 				assert.isNotNull(cmd);
+				assert.deepEqual(cmd, {
+					package: 'devebot',
+					name: 'applica-info',
+					alias: 'app-info',
+					description: 'Display application information',
+					options: []
+				});
 				done();
 			});
 		});
 
 		it('invoked [applica-info] command return correct result', function(done) {
 			new Promise(function(resolved, rejected) {
-				api.on('failed', function(result) {
-					rejected(result);
-				});
-				api.on('completed', function(result) {
-					resolved(result);
-				});
-				api.execCommand({
-					name: 'applica-info',
-					options: {}
-				});
+				api
+					.on('failed', function(result) {
+						rejected(result);
+					})
+					.on('completed', function(result) {
+						resolved(result);
+					})
+					.execCommand({
+						name: 'applica-info',
+						options: {}
+					});
 			}).then(function(result) {
-				debugx.enabled && debugx(JSON.stringify(result, null, 2));
+				false && console.log(JSON.stringify(result, null, 2));
+				assert.equal(result.state, "completed");
+				assert.deepEqual(result.command, {
+					"name": "applica-info",
+					"options": {}
+				});
+				assert.deepEqual(result.details, [
+					{
+						"type": "json",
+						"title": "Application Information",
+						"data": {
+							"version": "0.1.0",
+							"name": "demo-app",
+							"description": "Devebot Demo Application",
+							"author": "devebot",
+							"license": "ISC",
+							"layerware": [
+								{
+									"version": "0.1.1",
+									"name": "plugin1",
+									"description": "",
+									"author": "devebot",
+									"license": "ISC"
+								},
+								{
+									"version": "0.1.2",
+									"name": "plugin2",
+									"description": "",
+									"author": "devebot",
+									"license": "ISC"
+								}
+							],
+							"framework": lab.getFrameworkInfo()
+						}
+					}
+				]);
 				done();
-			}).catch(function(error) {
-				debugx.enabled && debugx(JSON.stringify(error, null, 2));
-				done(error);
-			});
+			}).catch(done);
 		});
 	});
 
@@ -78,32 +122,70 @@ describe('devebot:command:applica:info', function() {
 				});
 			}).then(function(defs) {
 				var cmd = lodash.keyBy(defs.commands, 'name')['applica-info'];
+				false && console.log(cmd);
 				assert.isNotNull(cmd);
+				assert.deepEqual(cmd, {
+					package: 'devebot',
+					name: 'applica-info',
+					alias: 'app-info',
+					description: 'Display application information',
+					options: []
+				});
 				done();
-			}).catch(function(error) {
-				done(error);
-			});
+			}).catch(done);
 		});
 
 		it('invoked [applica-info] command return correct result', function(done) {
 			new Promise(function(resolved, rejected) {
-				api.on('failed', function(result) {
-					rejected(result);
-				});
-				api.on('completed', function(result) {
-					resolved(result);
-				});
-				api.execCommand({
-					name: 'applica-info',
-					options: {}
-				});
+				api
+					.on('failed', function(result) {
+						rejected(result);
+					})
+					.on('completed', function(result) {
+						resolved(result);
+					})
+					.execCommand({
+						name: 'applica-info',
+						options: {}
+					});
 			}).then(function(result) {
-				debugx.enabled && debugx(JSON.stringify(result, null, 2));
+				assert.equal(result.state, "completed");
+				assert.deepEqual(result.command, {
+					"name": "applica-info",
+					"options": {}
+				});
+				assert.deepEqual(result.details, [
+					{
+						"type": "json",
+						"title": "Application Information",
+						"data": {
+							"version": "0.1.0",
+							"name": "demo-app",
+							"description": "Devebot Demo Application",
+							"author": "devebot",
+							"license": "ISC",
+							"layerware": [
+								{
+									"version": "0.1.1",
+									"name": "plugin1",
+									"description": "",
+									"author": "devebot",
+									"license": "ISC"
+								},
+								{
+									"version": "0.1.2",
+									"name": "plugin2",
+									"description": "",
+									"author": "devebot",
+									"license": "ISC"
+								}
+							],
+							"framework": lab.getFrameworkInfo()
+						}
+					}
+				]);
 				done();
-			}).catch(function(error) {
-				debugx.enabled && debugx(JSON.stringify(error, null, 2));
-				done(error);
-			});
+			}).catch(done);
 		});
 
 		afterEach(function(done) {
