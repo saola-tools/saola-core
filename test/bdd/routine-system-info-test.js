@@ -4,13 +4,13 @@ var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('bdd:devebot:command:system:info');
+var debugx = Devebot.require('pinbug')('bdd:devebot:command:system-info');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var util = require('util');
 var DevebotApi = require('devebot-api');
 
-describe('devebot:command:system:info', function() {
+describe('bdd:devebot:command:system-info', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	var app, api;
@@ -32,30 +32,68 @@ describe('devebot:command:system:info', function() {
 			});
 		}).then(function(defs) {
 			var cmd = lodash.keyBy(defs.commands, 'name')['system-info'];
+			false && console.log(cmd);
 			assert.isNotNull(cmd);
+			assert.deepEqual(cmd, {
+				package: 'devebot',
+				name: 'system-info',
+				alias: 'sys-info',
+				description: 'Display the system information (configuration, logger, sandbox)',
+				options: []
+			});
 			done();
-		});
+		}).catch(done);
 	});
 
 	it('invoked [system-info] command return correct result', function(done) {
 		new Promise(function(resolved, rejected) {
-			api.on('failed', function(result) {
-				rejected(result);
-			});
-			api.on('completed', function(result) {
-				resolved(result);
-			});
-			api.execCommand({
-				name: 'system-info',
-				options: {}
-			});
+			api
+				.on('failed', function(result) {
+					rejected(result);
+				})
+				.on('completed', function(result) {
+					resolved(result);
+				})
+				.execCommand({
+					name: 'system-info',
+					options: {}
+				});
 		}).then(function(result) {
-			debugx.enabled && debugx(JSON.stringify(result, null, 2));
+			false && console.log(JSON.stringify(result, null, 2));
+			assert.equal(result.state, "completed");
+			assert.deepEqual(result.command, {
+				"name": "system-info",
+				"options": {}
+			});
+			assert.lengthOf(result.details, 1);
+			var info = result.details[0];
+			assert.deepInclude(lodash.pick(info, ['type', 'title', 'label']), {
+				"type": "record",
+				"title": "OS information",
+				"label": {
+					"os_platform": "Platform",
+					"os_arch": "Architecture",
+					"os_cpus": "CPUs",
+					"os_hostname": "Hostname",
+					"os_network_interface": "Network",
+					"os_totalmem": "Total memory (MB)",
+					"os_freemem": "Free memory (MB)",
+					"os_loadavg": "Load averages",
+					"os_uptime": "System uptime (h)"
+				}
+			});
+			assert.containsAllKeys(info.data, [
+				'os_platform', 'os_arch', 'os_hostname', 'os_network_interface'
+			]);
+			assert.isArray(info.data.os_cpus);
+			assert.isNotEmpty(info.data.os_cpus);
+			assert.isAbove(info.data.os_totalmem, 0);
+			assert.isAtMost(info.data.os_freemem, info.data.os_totalmem);
+			assert.isAbove(info.data.os_uptime, 0);
+			assert.isArray(info.data.os_loadavg);
+			assert.lengthOf(info.data.os_loadavg, 3);
 			done();
-		}).catch(function(error) {
-			debugx.enabled && debugx(JSON.stringify(error, null, 2));
-			done(error);
-		});
+		}).catch(done);
 	});
 
 	afterEach(function(done) {
