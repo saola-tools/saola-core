@@ -29,38 +29,41 @@ describe('tdd:devebot:base:bootstrap', function() {
 
   describe('replaceObjectFields()', function() {
     it('should do nothing with empty object', function() {
-      assert.deepEqual(replaceObjectFields({}), {});
-      assert.deepEqual(replaceObjectFields(null), null);
-      assert.deepEqual(replaceObjectFields('hello'), 'hello');
+      assert.deepEqual(replaceObjectFields({}, DEFAULT_CONTEXT), {});
+      assert.deepEqual(replaceObjectFields(null, DEFAULT_CONTEXT), null);
+      assert.deepEqual(replaceObjectFields('hello', DEFAULT_CONTEXT), 'hello');
     });
     it('should replace the matched string fields only', function() {
-      assert.deepEqual(replaceObjectFields({
-        libRootPaths: [
-          '/some/path/here/test/lib/plugin1',
-          '/some/path/here/test/lib/plugin2',
-          '/some/path/here/test/lib/plugin3'
-        ],
-        pluginRefs: {
-          'plugin1': { name: 'plugin1', path: '/some/path/here/test/lib/plugin1/index.js' },
-          'plugin2': { name: 'plugin2', path: '/some/path/here/test/lib/plugin2/index.js' },
-          'plugin3': { name: 'plugin3', path: '/some/path/here/test/lib/plugin3/index.js' }
-        },
-        bridgeRefs: {
-          'bridge1': { name: 'bridge1', path: '/some/path/here/test/lib/bridge1/index.js' },
-          'bridge2': { name: 'bridge2', path: '/some/path/here/test/lib/bridge2/index.js' }
+      assert.deepEqual(
+        replaceObjectFields({
+          libRootPaths: [
+            '/some/path/here/test/lib/plugin1',
+            '/some/path/here/test/lib/plugin2',
+            '/some/path/here/test/lib/plugin3'
+          ],
+          pluginRefs: {
+            'plugin1': { name: 'plugin1', path: '/some/path/here/test/lib/plugin1/index.js' },
+            'plugin2': { name: 'plugin2', path: '/some/path/here/test/lib/plugin2/index.js' },
+            'plugin3': { name: 'plugin3', path: '/some/path/here/test/lib/plugin3/index.js' }
+          },
+          bridgeRefs: {
+            'bridge1': { name: 'bridge1', path: '/some/path/here/test/lib/bridge1/index.js' },
+            'bridge2': { name: 'bridge2', path: '/some/path/here/test/lib/bridge2/index.js' }
+          }
+        }, DEFAULT_CONTEXT),
+        {
+          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
+          pluginRefs: {
+            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
+            'plugin3': { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+          },
+          bridgeRefs: {
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+          }
         }
-      }), {
-        libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
-        pluginRefs: {
-          'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-          'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-          'plugin3': { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
-        },
-        bridgeRefs: {
-          'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-          'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
-        }
-      });
+      );
     });
   });
 
@@ -108,7 +111,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('plugin2')
         }
       ], null);
-      output = replaceObjectFields(output);
+      output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
@@ -131,7 +134,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('bridge2')
         }
       ]);
-      output = replaceObjectFields(output);
+      output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths: [],
@@ -167,7 +170,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('bridge2')
         }
       ]);
-      output = replaceObjectFields(output);
+      output = replaceObjectFields(output, DEFAULT_CONTEXT);
       assert.deepEqual(output, {
         libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
         pluginRefs: {
@@ -193,7 +196,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('sublib2')
         }
       ]);
-      output = replaceObjectFields(output);
+      output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
@@ -263,7 +266,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('bridge4')
         }
       ]);
-      output = replaceObjectFields(output);
+      output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
@@ -368,7 +371,7 @@ describe('tdd:devebot:base:bootstrap', function() {
     });
 
     it('register a new plugin with empty parameters', function() {
-      var pluginLauncher = bootstrap.registerLayerware(null, [], []);
+      var pluginLauncher = bootstrap.registerLayerware();
       var pluginStore = pluginLauncher();
       false && console.log(JSON.stringify(pluginStore, null, 2));
       assert.deepEqual(pluginStore, { libRootPaths: [], bridgeRefs: {}, pluginRefs: {} });
@@ -385,7 +388,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('sublib2')
         }
       ], []);
-      var output = replaceObjectFields(pluginLauncher());
+      var output = replaceObjectFields(pluginLauncher(), DEFAULT_CONTEXT);
       false && console.log('pluginLauncher(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
@@ -418,13 +421,29 @@ describe('tdd:devebot:base:bootstrap', function() {
 	});
 });
 
-var LIB_PATH_PATTERN = /(.*)test\/lib\/([^\/].*)(\/?.*)/g;
-var replaceLibPath = function(p) {
+var DEFAULT_CONTEXT = {
+  replacers: [
+    {
+      pattern: /(.*)test\/lib\/([^\/].*)(\/?.*)/g,
+      replacement: '/test/lib/$2$3'
+    }
+  ]
+};
+
+var replaceLibPath = function(p, context) {
   if (typeof p !== 'string') return p;
-  return p.replace(LIB_PATH_PATTERN, '/test/lib/$2$3');
+  context = context || DEFAULT_CONTEXT;
+  context.replacers = context.replacers || [];
+  for(var i=0; i<context.replacers.length; i++) {
+    var replacer = context.replacers[i];
+    if (p.match(replacer.pattern)) {
+      return p.replace(replacer.pattern, replacer.replacement);
+    }
+  }
+  return p;
 }
 
-var replaceObjectFields = function(obj) {
+var replaceObjectFields = function(obj, context) {
   var replaceFields = function(queue) {
     if (queue.length > 0) {
       var o = queue.shift();
@@ -435,7 +454,7 @@ var replaceObjectFields = function(obj) {
             return;
           }
           if (lodash.isString(o[key])) {
-            o[key] = replaceLibPath(o[key]);
+            o[key] = replaceLibPath(o[key], context);
           }
         })
       }
