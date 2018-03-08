@@ -31,6 +31,11 @@ var Service = function(params) {
     }));
   });
 
+  server.on('request', function(req, res) {
+    res.writeHead(200);
+    res.end('plugin2 webserver');
+  });
+
   self.getServer = function() {
     return server;
   };

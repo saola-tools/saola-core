@@ -19,6 +19,11 @@ var Service = function(params) {
     debugx.enabled && debugx('Server Error: %s', JSON.stringify(err));
   });
 
+  server.on('request', function(req, res) {
+    res.writeHead(200);
+    res.end('sub-plugin1 webserver');
+  });
+
   self.getServer = function() {
     return server;
   };
