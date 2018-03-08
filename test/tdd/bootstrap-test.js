@@ -368,9 +368,8 @@ describe('tdd:devebot:base:bootstrap', function() {
 
     it('launch application with full components', function() {
       var app = lab.getApp('fullapp');
-      var cfg = app.config;
-      var output = replaceObjectFields(cfg, DEFAULT_CONTEXT);
-      false && console.log('fullapp config: ', JSON.stringify(output, null, 2));
+      var cfg = replaceObjectFields(app.config, DEFAULT_CONTEXT);
+      false && console.log('fullapp config: ', JSON.stringify(cfg, null, 2));
       assert.hasAllKeys(cfg, [
         'profile', 'sandbox', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
       ]);
@@ -569,6 +568,7 @@ var replaceObjectFields = function(obj, context) {
       replaceFields(queue);
     }
   }
+  obj = lodash.cloneDeep(obj);
   replaceFields([obj]);
   return obj;
 }
