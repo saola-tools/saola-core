@@ -200,11 +200,13 @@ describe('tdd:devebot:base:bootstrap', function() {
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
-          ['/test/lib/sub-plugin1',
+          [
+            '/test/lib/sub-plugin1',
             '/test/lib/plugin1',
             '/test/lib/plugin2',
             '/test/lib/sub-plugin2',
-            '/test/lib/plugin3'],
+            '/test/lib/plugin3'
+          ],
         pluginRefs:
           {
             'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
@@ -270,12 +272,14 @@ describe('tdd:devebot:base:bootstrap', function() {
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
-          ['/test/lib/sub-plugin1',
+          [
+            '/test/lib/sub-plugin1',
             '/test/lib/plugin1',
             '/test/lib/plugin2',
             '/test/lib/sub-plugin2',
             '/test/lib/plugin3',
-            '/test/lib/plugin4'],
+            '/test/lib/plugin4'
+          ],
         pluginRefs:
           {
             'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
@@ -368,8 +372,9 @@ describe('tdd:devebot:base:bootstrap', function() {
 
     it('launch application with full components', function() {
       var app = lab.getApp('fullapp');
+      false && console.log('fullapp app.config: ', JSON.stringify(app.config, null, 2));
       var cfg = replaceObjectFields(app.config, DEFAULT_CONTEXT);
-      false && console.log('fullapp config: ', JSON.stringify(cfg, null, 2));
+      false && console.log('fullapp cfg: ', JSON.stringify(cfg, null, 2));
       assert.hasAllKeys(cfg, [
         'profile', 'sandbox', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
       ]);
@@ -499,11 +504,13 @@ describe('tdd:devebot:base:bootstrap', function() {
       false && console.log('pluginLauncher(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
-          ['/test/lib/sub-plugin1',
+          [
+            '/test/lib/sub-plugin1',
             '/test/lib/plugin1',
             '/test/lib/plugin2',
             '/test/lib/sub-plugin2',
-            '/test/lib/plugin3'],
+            '/test/lib/plugin3'
+          ],
         pluginRefs:
           {
             'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },

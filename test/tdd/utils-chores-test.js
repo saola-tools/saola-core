@@ -19,7 +19,8 @@ describe('tdd:devebot:utils:chores', function() {
     var serviceNames = ['service1', 'service2'];
     it('should load service modules by names', function() {
       var serviceMap = {};
-      chores.loadServiceByNames(serviceMap, serviceFolder, serviceNames);
+      var result = chores.loadServiceByNames(serviceMap, serviceFolder, serviceNames);
+      assert.equal(result, serviceMap);
       assert.sameMembers(lodash.keys(serviceMap), serviceNames);
       var totalConstructors = lodash.reduce(lodash.values(serviceMap), function(sum, f) {
         return lodash.isFunction(f) ? (sum + 1) : sum;
