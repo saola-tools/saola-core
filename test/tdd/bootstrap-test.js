@@ -333,21 +333,23 @@ describe('tdd:devebot:base:bootstrap', function() {
       LogTracer.reset();
     });
 
-    it('launch application with empty root directory (as string)', function() {
-      var app = bootstrap.launchApplication(null, [], []);
-      var cfg = app.config;
+    it('launch application with empty parameters', function() {
+      var app = bootstrap.launchApplication();
+      var cfg = replaceObjectFields(app.config);
+      false && console.log('Application config: ', JSON.stringify(cfg, null, 2));
       assert.equal(cfg.appName, 'devebot-application');
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
       });
-      assert.sameMembers(cfg.bridgeRefs, []);
-      assert.sameDeepMembers(lodash.map(cfg.pluginRefs, item => {
-        return lodash.pick(item, ['type', 'name'])
-      }), [{
-        type: 'framework',
-        name: 'devebot'
-      }]);
+      assert.sameDeepMembers(cfg.bridgeRefs, []);
+      assert.sameDeepMembers(cfg.pluginRefs, [
+        {
+          "type": "framework",
+          "name": "devebot",
+          "path": "/devebot/index.js"
+        }
+      ]);
     });
 
     it('launch application with empty root directory (as string)', function() {
@@ -362,6 +364,112 @@ describe('tdd:devebot:base:bootstrap', function() {
       assertAppConfig(app);
       assertAppRunner(app);
       assertAppServer(app);
+    });
+
+    it('launch application with full components', function() {
+      var app = lab.getApp('fullapp');
+      var cfg = app.config;
+      var output = replaceObjectFields(cfg, DEFAULT_CONTEXT);
+      false && console.log('fullapp config: ', JSON.stringify(output, null, 2));
+      assert.hasAllKeys(cfg, [
+        'profile', 'sandbox', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
+      ]);
+      assert.equal(cfg.appName, 'fullapp');
+      assert.deepEqual(cfg.appInfo, {
+        "version": "0.1.0",
+        "name": "fullapp",
+        "description": "Devebot Demo Application",
+        "author": "devebot",
+        "license": "ISC",
+        "layerware": [
+          {
+            "version": "0.1.1",
+            "name": "sublib1",
+            "description": "",
+            "author": "devebot",
+            "license": "ISC"
+          },
+          {
+            "version": "0.1.2",
+            "name": "sublib2",
+            "description": "",
+            "author": "devebot",
+            "license": "ISC"
+          },
+          {
+            "version": "0.1.1",
+            "name": "plugin1",
+            "description": "",
+            "author": "devebot",
+            "license": "ISC"
+          },
+          {
+            "version": "0.1.2",
+            "name": "plugin2",
+            "description": "",
+            "author": "devebot",
+            "license": "ISC"
+          },
+          {
+            "version": "0.1.3",
+            "name": "plugin3",
+            "description": "",
+            "author": "devebot",
+            "license": "ISC"
+          }
+        ],
+        "framework": lab.getFrameworkInfo()
+      });
+      assert.sameDeepMembers(cfg.bridgeRefs, [
+        {
+          "name": "bridge3",
+          "path": "/test/lib/bridge3/index.js"
+        },
+        {
+          "name": "bridge4",
+          "path": "/test/lib/bridge4/index.js"
+        },
+        {
+          "name": "bridge1",
+          "path": "/test/lib/bridge1/index.js"
+        },
+        {
+          "name": "bridge2",
+          "path": "/test/lib/bridge2/index.js"
+        }
+      ]);
+      assert.sameDeepMembers(cfg.pluginRefs, [
+        {
+          "type": "application",
+          "name": "fullapp",
+          "path": "/test/app/fullapp/index.js"
+        },
+        {
+          "name": "sublib1",
+          "path": "/test/lib/sublib1/index.js"
+        },
+        {
+          "name": "sublib2",
+          "path": "/test/lib/sublib2/index.js"
+        },
+        {
+          "name": "plugin1",
+          "path": "/test/lib/plugin1/index.js"
+        },
+        {
+          "name": "plugin2",
+          "path": "/test/lib/plugin2/index.js"
+        },
+        {
+          "name": "plugin3",
+          "path": "/test/lib/plugin3/index.js"
+        },
+        {
+          "type": "framework",
+          "name": "devebot",
+          "path": "/devebot/index.js"
+        }
+      ]);
     });
   });
 
@@ -424,8 +532,8 @@ describe('tdd:devebot:base:bootstrap', function() {
 var DEFAULT_CONTEXT = {
   replacers: [
     {
-      pattern: /(.*)test\/lib\/([^\/].*)(\/?.*)/g,
-      replacement: '/test/lib/$2$3'
+      pattern: /^(?!https).*\/(devebot|test\/lib|test\/app)\/([^\/].*)(\/?.*)/g,
+      replacement: '/$1/$2$3'
     }
   ]
 };
