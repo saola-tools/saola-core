@@ -43,11 +43,11 @@ var createPluginLoader = function() {
     name: "fullapp",
     path: require.resolve(lab.getAppHome('fullapp'))
   }, {
-    name: 'sublib1',
-    path: require.resolve(lab.getLibHome('sublib1'))
+    name: 'sub-plugin1',
+    path: require.resolve(lab.getLibHome('sub-plugin1'))
   }, {
-    name: 'sublib2',
-    path: require.resolve(lab.getLibHome('sublib2'))
+    name: 'sub-plugin2',
+    path: require.resolve(lab.getLibHome('sub-plugin2'))
   }];
   var app = lab.getApp('fullapp');
   injektor.registerObject('pluginRefs', app.config.pluginRefs);
@@ -95,10 +95,10 @@ describe('tdd:devebot:core:plugin-loader', function() {
             }
           }
         },
-        "sublib1/sandbox": {
+        "sub-plugin1/sandbox": {
           "default": {
-            "moduleId": "sublib1",
-            "pluginName": "sublib1",
+            "moduleId": "sub-plugin1",
+            "pluginName": "subPlugin1",
             "type": "sandbox",
             "subtype": "default",
             "schema": {
@@ -114,10 +114,10 @@ describe('tdd:devebot:core:plugin-loader', function() {
             }
           }
         },
-        "sublib2/sandbox": {
+        "sub-plugin2/sandbox": {
           "default": {
-            "moduleId": "sublib2",
-            "pluginName": "sublib2",
+            "moduleId": "sub-plugin2",
+            "pluginName": "subPlugin2",
             "type": "sandbox",
             "subtype": "default",
             "schema": {

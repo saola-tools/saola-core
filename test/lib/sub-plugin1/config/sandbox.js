@@ -1,8 +1,8 @@
 module.exports = {
   plugins: {
-    sublib2: {
+    subPlugin1: {
       host: "localhost",
-      port: 17722
+      port: 17721
     }
   }
 }

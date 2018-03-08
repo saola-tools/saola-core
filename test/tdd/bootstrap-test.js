@@ -188,27 +188,27 @@ describe('tdd:devebot:base:bootstrap', function() {
     it('expand empty context with nested and overlap plugins', function() {
       var output = expandExtensions(null, [
         {
-          name: 'sublib1',
-          path: lab.getLibHome('sublib1')
+          name: 'sub-plugin1',
+          path: lab.getLibHome('sub-plugin1')
         },
         {
-          name: 'sublib2',
-          path: lab.getLibHome('sublib2')
+          name: 'sub-plugin2',
+          path: lab.getLibHome('sub-plugin2')
         }
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
-          ['/test/lib/sublib1',
+          ['/test/lib/sub-plugin1',
             '/test/lib/plugin1',
             '/test/lib/plugin2',
-            '/test/lib/sublib2',
+            '/test/lib/sub-plugin2',
             '/test/lib/plugin3'],
         pluginRefs:
           {
-            sublib1: { name: 'sublib1', path: '/test/lib/sublib1/index.js' },
-            sublib2: { name: 'sublib2', path: '/test/lib/sublib2/index.js' },
+            'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
+            'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
             plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
             plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
             plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
@@ -225,8 +225,8 @@ describe('tdd:devebot:base:bootstrap', function() {
     it('expand empty context with complete plugins (nested and overlap plugins)', function() {
       var output = expandExtensions(null, [
         {
-          name: 'sublib1',
-          path: lab.getLibHome('sublib1')
+          name: 'sub-plugin1',
+          path: lab.getLibHome('sub-plugin1')
         },
         {
           name: 'plugin1',
@@ -237,8 +237,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('plugin2')
         },
         {
-          name: 'sublib2',
-          path: lab.getLibHome('sublib2')
+          name: 'sub-plugin2',
+          path: lab.getLibHome('sub-plugin2')
         },
         {
           name: 'plugin3',
@@ -270,18 +270,18 @@ describe('tdd:devebot:base:bootstrap', function() {
       false && console.log('expandExtensions(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
-          ['/test/lib/sublib1',
+          ['/test/lib/sub-plugin1',
             '/test/lib/plugin1',
             '/test/lib/plugin2',
-            '/test/lib/sublib2',
+            '/test/lib/sub-plugin2',
             '/test/lib/plugin3',
             '/test/lib/plugin4'],
         pluginRefs:
           {
-            sublib1: { name: 'sublib1', path: '/test/lib/sublib1/index.js' },
+            'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
             plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
             plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-            sublib2: { name: 'sublib2', path: '/test/lib/sublib2/index.js' },
+            'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
             plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' },
             plugin4: { name: 'plugin4', path: '/test/lib/plugin4/index.js' }
           },
@@ -383,14 +383,14 @@ describe('tdd:devebot:base:bootstrap', function() {
         "layerware": [
           {
             "version": "0.1.1",
-            "name": "sublib1",
+            "name": "sub-plugin1",
             "description": "",
             "author": "devebot",
             "license": "ISC"
           },
           {
             "version": "0.1.2",
-            "name": "sublib2",
+            "name": "sub-plugin2",
             "description": "",
             "author": "devebot",
             "license": "ISC"
@@ -444,12 +444,12 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/app/fullapp/index.js"
         },
         {
-          "name": "sublib1",
-          "path": "/test/lib/sublib1/index.js"
+          "name": "sub-plugin1",
+          "path": "/test/lib/sub-plugin1/index.js"
         },
         {
-          "name": "sublib2",
-          "path": "/test/lib/sublib2/index.js"
+          "name": "sub-plugin2",
+          "path": "/test/lib/sub-plugin2/index.js"
         },
         {
           "name": "plugin1",
@@ -487,27 +487,27 @@ describe('tdd:devebot:base:bootstrap', function() {
     it('register a new plugin with nested and overlap sub-plugins', function() {
       var pluginLauncher = bootstrap.registerLayerware(null, [
         {
-          name: 'sublib1',
-          path: lab.getLibHome('sublib1')
+          name: 'sub-plugin1',
+          path: lab.getLibHome('sub-plugin1')
         },
         {
-          name: 'sublib2',
-          path: lab.getLibHome('sublib2')
+          name: 'sub-plugin2',
+          path: lab.getLibHome('sub-plugin2')
         }
       ], []);
       var output = replaceObjectFields(pluginLauncher(), DEFAULT_CONTEXT);
       false && console.log('pluginLauncher(): ', output);
       assert.deepEqual(output, {
         libRootPaths:
-          ['/test/lib/sublib1',
+          ['/test/lib/sub-plugin1',
             '/test/lib/plugin1',
             '/test/lib/plugin2',
-            '/test/lib/sublib2',
+            '/test/lib/sub-plugin2',
             '/test/lib/plugin3'],
         pluginRefs:
           {
-            sublib1: { name: 'sublib1', path: '/test/lib/sublib1/index.js' },
-            sublib2: { name: 'sublib2', path: '/test/lib/sublib2/index.js' },
+            'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
+            'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
             plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
             plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
             plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' }

@@ -1,6 +1,6 @@
 {
-  "name": "sublib2",
-  "version": "0.1.2",
+  "name": "sub-plugin1",
+  "version": "0.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {

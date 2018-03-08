@@ -2,7 +2,7 @@
 
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:sublib2:sublibService');
+var debugx = Devebot.require('pinbug')('devebot:test:lab:sub-plugin2:sublibService');
 
 var Service = function(params) {
   var self = this;

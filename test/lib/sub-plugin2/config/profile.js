@@ -1,6 +1,6 @@
 module.exports = {
   newFeatures: {
-    sublib1: {
+    subPlugin2: {
       logoliteEnabled: true,
       sandboxConfig: true
     }

@@ -2,7 +2,7 @@
 
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:sublib1:sublibTrigger');
+var debugx = Devebot.require('pinbug')('devebot:test:lab:sub-plugin1:sublibTrigger');
 var http = require('http');
 
 var Service = function(params) {
@@ -32,7 +32,7 @@ var Service = function(params) {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
         (pluginCfg && pluginCfg.verbose !== false || debugx.enabled) &&
-        console.log('sublib1 webserver is listening at http://%s:%s', host, port);
+        console.log('sub-plugin1 webserver is listening at http://%s:%s', host, port);
         resolved(serverInstance);
       });
     });
@@ -42,7 +42,7 @@ var Service = function(params) {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
         (pluginCfg && pluginCfg.verbose !== false || debugx.enabled) &&
-        console.log('sublib1 webserver has been closed');
+        console.log('sub-plugin1 webserver has been closed');
         resolved();
       });
     });

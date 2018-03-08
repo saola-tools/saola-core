@@ -7,12 +7,12 @@ var app = Devebot.launchApplication({
   appRootPath: __dirname
 }, [
 	{
-		name: 'sublib1',
-		path: lab.getLibHome('sublib1')
+		name: 'sub-plugin1',
+		path: lab.getLibHome('sub-plugin1')
 	},
 	{
-		name: 'sublib2',
-		path: lab.getLibHome('sublib2')
+		name: 'sub-plugin2',
+		path: lab.getLibHome('sub-plugin2')
 	}
 ], [
 	{
