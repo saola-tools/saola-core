@@ -308,7 +308,7 @@ describe('tdd:devebot:base:bootstrap', function() {
         layerware: [],
         framework: lab.getFrameworkInfo()
       });
-      assert.sameMembers(cfg.bridgeRefs, []);
+      assert.sameDeepMembers(cfg.bridgeRefs, []);
       assert.sameDeepMembers(lodash.map(cfg.pluginRefs, item => {
         return lodash.pick(item, ['type', 'name'])
       }), [{
