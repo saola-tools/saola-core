@@ -68,6 +68,37 @@ var lab = module.exports = {
 	}
 }
 
+lab.createBridgeLoader = function(appName) {
+  var profileConfig = {};
+  var bridgeRefs = [];
+  if (appName) {
+    var app = lab.getApp(appName);
+    profileConfig = app.config.profile || {
+      logger: {
+        transports: {
+          console: {
+            type: 'console',
+            level: 'debug',
+            json: false,
+            timestamp: true,
+            colorize: true
+          }
+        }
+      }
+    }
+    bridgeRefs = app.config.bridgeRefs;
+  }
+  var injektor = new Injektor({ separator: chores.getSeparator() });
+  lodash.forOwn(chores.loadServiceByNames({}, path.join(lab.getDevebotHome(), 'lib/backbone'), [
+    'bridge-loader', 'schema-validator', 'logging-factory'
+  ]), function(constructor, serviceName) {
+    injektor.defineService(serviceName, constructor, chores.injektorContext);
+  });
+  injektor.registerObject('profileConfig', profileConfig);
+	injektor.registerObject('bridgeRefs', bridgeRefs);
+  return injektor.lookup('bridgeLoader');
+}
+
 lab.createPluginLoader = function(appName) {
   var profileConfig = {};
   var pluginRefs = [];
