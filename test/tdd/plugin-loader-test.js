@@ -35,6 +35,9 @@ describe('tdd:devebot:core:plugin-loader', function() {
         if (lodash.isFunction(lodash.get(routine, 'object.handler', null))) {
           routine.object.handler = '[Function]';
         }
+        if (lodash.isFunction(lodash.get(routine, 'object.info.validate', null))) {
+          lodash.set(routine, 'object.info.validate', '[Function]');
+        }
         if (lodash.isString(lodash.get(routine, 'object.info.description', null))) {
           lodash.set(routine, 'object.info.description', '[String]');
         }
@@ -64,6 +67,219 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var routineMap = transformResult(originMap);
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
       assert.deepEqual(routineMap, {
+        "devebot/applica-info": {
+          "moduleId": "devebot",
+          "name": "applica-info",
+          "object": {
+            "info": {
+              "alias": "app-info",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/logger-info": {
+          "moduleId": "devebot",
+          "name": "logger-info",
+          "object": {
+            "info": {
+              "alias": "log-info",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/logger-reset": {
+          "moduleId": "devebot",
+          "name": "logger-reset",
+          "object": {
+            "info": {
+              "alias": "log-reset",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/logger-set": {
+          "moduleId": "devebot",
+          "name": "logger-set",
+          "object": {
+            "info": {
+              "alias": "log-set",
+              "description": "[String]",
+              "options": [
+                {
+                  "abbr": "t",
+                  "name": "transports",
+                  "description": "[String]",
+                  "required": false
+                },
+                {
+                  "abbr": "e",
+                  "name": "enabled",
+                  "description": "[String]",
+                  "required": false
+                },
+                {
+                  "abbr": "l",
+                  "name": "level",
+                  "description": "[String]",
+                  "required": false
+                }
+              ]
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/sandbox-info": {
+          "moduleId": "devebot",
+          "name": "sandbox-info",
+          "object": {
+            "info": {
+              "alias": "sb-info",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/system-info": {
+          "moduleId": "devebot",
+          "name": "system-info",
+          "object": {
+            "info": {
+              "alias": "sys-info",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        }
+      });
+    });
+    it('load routines from complete application', function() {
+      var pluginLoader = lab.createPluginLoader('fullapp');
+      var originMap = {};
+      pluginLoader.loadRoutines(originMap);
+      false && console.log('routineMap: ', JSON.stringify(originMap, null, 2));
+      var routineMap = transformResult(originMap);
+      false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
+      assert.deepInclude(routineMap, {
+        "fullapp/main-cmd1": {
+          "moduleId": "fullapp",
+          "name": "main-cmd1",
+          "object": {
+            "info": {
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "fullapp/main-cmd2": {
+          "moduleId": "fullapp",
+          "name": "main-cmd2",
+          "object": {
+            "info": {
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "plugin1/plugin1-routine1": {
+          "moduleId": "plugin1",
+          "name": "plugin1-routine1",
+          "object": {
+            "info": {
+              "description": "[String]",
+              "options": []
+            },
+            "mode": "direct",
+            "handler": "[Function]"
+          }
+        },
+        "plugin1/plugin1-routine2": {
+          "moduleId": "plugin1",
+          "name": "plugin1-routine2",
+          "object": {
+            "info": {
+              "description": "[String]",
+              "options": []
+            },
+            "mode": "remote",
+            "handler": "[Function]"
+          }
+        },
+        "plugin2/plugin2-routine1": {
+          "moduleId": "plugin2",
+          "name": "plugin2-routine1",
+          "object": {
+            "info": {
+              "description": "[String]",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "number": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                }
+              },
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "plugin2/plugin2-routine3": {
+          "moduleId": "plugin2",
+          "name": "plugin2-routine3",
+          "object": {
+            "info": {
+              "description": "[String]",
+              "validate": "[Function]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "plugin3/plugin3-routine1": {
+          "moduleId": "plugin3",
+          "name": "plugin3-routine1",
+          "object": {
+            "info": {
+              "description": "[String]",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "number": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                }
+              },
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "plugin3/plugin3-routine3": {
+          "moduleId": "plugin3",
+          "name": "plugin3-routine3",
+          "object": {
+            "info": {
+              "description": "[String]",
+              "validate": "[Function]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
         "devebot/applica-info": {
           "moduleId": "devebot",
           "name": "applica-info",
