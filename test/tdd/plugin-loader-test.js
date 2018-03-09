@@ -41,7 +41,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var originMap = {};
       pluginLoader.loadRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(originMap, null, 2));
-      var routineMap = lodash.mapValues(originMap.routine, function(routine) {
+      var routineMap = lodash.mapValues(originMap, function(routine) {
         routine = lodash.cloneDeep(routine);
         if (lodash.isFunction(lodash.get(routine, 'object.handler', null))) {
           routine.object.handler = '[Function]';
@@ -171,7 +171,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       false && console.log('schemaMap: ', JSON.stringify(schemaMap, null, 2));
       assert.deepEqual(schemaMap, {});
     });
-    it('load all of valid schemas in all components', function() {
+    it('load all of valid schemas from complete application', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
       var schemaMap = {};
       pluginLoader.loadSchemas(schemaMap);
@@ -257,7 +257,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       assert.deepEqual(serviceMap, {});
     });
-    it('load all of valid services in all components', function() {
+    it('load all of valid services from complete application', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
       var originMap = {};
       pluginLoader.loadServices(originMap);
@@ -466,7 +466,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
       assert.deepEqual(triggerMap, {});
     });
-    it('load all of valid triggers in all components', function() {
+    it('load all of valid triggers from complete application', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
       var originMap = {};
       pluginLoader.loadTriggers(originMap);
