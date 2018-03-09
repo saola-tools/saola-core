@@ -29,19 +29,8 @@ describe('tdd:devebot:core:plugin-loader', function() {
   });
 
   describe('loadRoutines()', function() {
-    it('load routines from empty application', function() {
-      var pluginLoader = lab.createPluginLoader();
-      var routineMap = {};
-      pluginLoader.loadRoutines(routineMap);
-      false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
-      assert.deepEqual(routineMap, {});
-    });
-    it('load routines from simplest application', function() {
-      var pluginLoader = lab.createPluginLoader('simple');
-      var originMap = {};
-      pluginLoader.loadRoutines(originMap);
-      false && console.log('routineMap: ', JSON.stringify(originMap, null, 2));
-      var routineMap = lodash.mapValues(originMap, function(routine) {
+    var transformResult = function(originMap) {
+      return lodash.mapValues(originMap, function(routine) {
         routine = lodash.cloneDeep(routine);
         if (lodash.isFunction(lodash.get(routine, 'object.handler', null))) {
           routine.object.handler = '[Function]';
@@ -59,6 +48,20 @@ describe('tdd:devebot:core:plugin-loader', function() {
         }
         return routine;
       });
+    }
+    it('load routines from empty application', function() {
+      var pluginLoader = lab.createPluginLoader();
+      var routineMap = {};
+      pluginLoader.loadRoutines(routineMap);
+      false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
+      assert.deepEqual(routineMap, {});
+    });
+    it('load routines from simplest application', function() {
+      var pluginLoader = lab.createPluginLoader('simple');
+      var originMap = {};
+      pluginLoader.loadRoutines(originMap);
+      false && console.log('routineMap: ', JSON.stringify(originMap, null, 2));
+      var routineMap = transformResult(originMap);
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
       assert.deepEqual(routineMap, {
         "devebot/applica-info": {
