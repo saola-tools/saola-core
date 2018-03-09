@@ -173,7 +173,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
             'construktor.argumentSchema'
           ]), lodash.omit(service, ['construktor']));
       });
-      true && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
+      false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       assert.deepInclude(serviceMap, {
         "fullapp/mainService": {
           "moduleId": "fullapp",
@@ -351,6 +351,201 @@ describe('tdd:devebot:core:plugin-loader', function() {
             }
           }
         }
+      });
+    });
+
+    describe('loadTriggers()', function() {
+      it('load triggers from empty application', function() {
+        var pluginLoader = createPluginLoader();
+        var triggerMap = {};
+        pluginLoader.loadTriggers(triggerMap);
+        false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
+        assert.deepEqual(triggerMap, {});
+      });
+      it('load triggers from simplest application', function() {
+        var pluginLoader = createPluginLoader('simple');
+        var triggerMap = {};
+        pluginLoader.loadTriggers(triggerMap);
+        false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
+        assert.deepEqual(triggerMap, {});
+      });
+      it('load all of valid triggers in all components', function() {
+        var pluginLoader = createPluginLoader('fullapp');
+        var originMap = {};
+        pluginLoader.loadTriggers(originMap);
+        errorHandler.barrier({exitOnError: true});
+        false && console.log('triggerMap: ', util.inspect(originMap, { depth: 5 }));
+        var triggerMap = lodash.mapValues(originMap, function(trigger) {
+          return lodash.assign(lodash.pick(trigger, [
+              'construktor.argumentProperties',
+              'construktor.argumentSchema'
+            ]), lodash.omit(trigger, ['construktor']));
+        });
+        false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
+        assert.deepInclude(triggerMap, {
+          "fullapp/mainTrigger": {
+            "construktor": {
+              "argumentSchema": {
+                "$id": "mainTrigger",
+                "type": "object",
+                "properties": {
+                  "sandboxName": {
+                    "type": "string"
+                  },
+                  "sandboxConfig": {
+                    "type": "object"
+                  },
+                  "profileName": {
+                    "type": "string"
+                  },
+                  "profileConfig": {
+                    "type": "object"
+                  },
+                  "loggingFactory": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "moduleId": "fullapp",
+            "name": "mainTrigger"
+          },
+          "sub-plugin1/sublibTrigger": {
+            "construktor": {
+              "argumentSchema": {
+                "$id": "sublibTrigger",
+                "type": "object",
+                "properties": {
+                  "sandboxName": {
+                    "type": "string"
+                  },
+                  "sandboxConfig": {
+                    "type": "object"
+                  },
+                  "profileName": {
+                    "type": "string"
+                  },
+                  "profileConfig": {
+                    "type": "object"
+                  },
+                  "loggingFactory": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "moduleId": "sub-plugin1",
+            "name": "sublibTrigger"
+          },
+          "sub-plugin2/sublibTrigger": {
+            "construktor": {
+              "argumentSchema": {
+                "$id": "sublibTrigger",
+                "type": "object",
+                "properties": {
+                  "sandboxName": {
+                    "type": "string"
+                  },
+                  "sandboxConfig": {
+                    "type": "object"
+                  },
+                  "profileName": {
+                    "type": "string"
+                  },
+                  "profileConfig": {
+                    "type": "object"
+                  },
+                  "loggingFactory": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "moduleId": "sub-plugin2",
+            "name": "sublibTrigger"
+          },
+          "plugin1/plugin1Trigger": {
+            "construktor": {
+              "argumentSchema": {
+                "$id": "plugin1Trigger",
+                "type": "object",
+                "properties": {
+                  "sandboxName": {
+                    "type": "string"
+                  },
+                  "sandboxConfig": {
+                    "type": "object"
+                  },
+                  "profileName": {
+                    "type": "string"
+                  },
+                  "profileConfig": {
+                    "type": "object"
+                  },
+                  "loggingFactory": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "moduleId": "plugin1",
+            "name": "plugin1Trigger"
+          },
+          "plugin2/plugin2Trigger": {
+            "construktor": {
+              "argumentSchema": {
+                "$id": "plugin2Trigger",
+                "type": "object",
+                "properties": {
+                  "sandboxName": {
+                    "type": "string"
+                  },
+                  "sandboxConfig": {
+                    "type": "object"
+                  },
+                  "profileName": {
+                    "type": "string"
+                  },
+                  "profileConfig": {
+                    "type": "object"
+                  },
+                  "loggingFactory": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "moduleId": "plugin2",
+            "name": "plugin2Trigger"
+          },
+          "plugin3/plugin3Trigger": {
+            "construktor": {
+              "argumentSchema": {
+                "$id": "plugin3Trigger",
+                "type": "object",
+                "properties": {
+                  "sandboxName": {
+                    "type": "string"
+                  },
+                  "sandboxConfig": {
+                    "type": "object"
+                  },
+                  "profileName": {
+                    "type": "string"
+                  },
+                  "profileConfig": {
+                    "type": "object"
+                  },
+                  "loggingFactory": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "moduleId": "plugin3",
+            "name": "plugin3Trigger"
+          }
+        });
       });
     });
   });
