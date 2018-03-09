@@ -28,6 +28,134 @@ describe('tdd:devebot:core:plugin-loader', function() {
 		LogConfig.reset();
   });
 
+  describe('loadRoutines()', function() {
+    it('load routines from empty application', function() {
+      var pluginLoader = lab.createPluginLoader();
+      var routineMap = {};
+      pluginLoader.loadRoutines(routineMap);
+      false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
+      assert.deepEqual(routineMap, {});
+    });
+    it('load routines from simplest application', function() {
+      var pluginLoader = lab.createPluginLoader('simple');
+      var originMap = {};
+      pluginLoader.loadRoutines(originMap);
+      false && console.log('routineMap: ', JSON.stringify(originMap, null, 2));
+      var routineMap = lodash.mapValues(originMap.routine, function(routine) {
+        routine = lodash.cloneDeep(routine);
+        if (lodash.isFunction(lodash.get(routine, 'object.handler', null))) {
+          routine.object.handler = '[Function]';
+        }
+        if (lodash.isString(lodash.get(routine, 'object.info.description', null))) {
+          lodash.set(routine, 'object.info.description', '[String]');
+        }
+        if (lodash.isArray(lodash.get(routine, 'object.info.options', null))) {
+          routine.object.info.options = lodash.map(routine.object.info.options, function(opt) {
+            if (lodash.isString(opt.description)) {
+              opt.description = '[String]'
+            }
+            return opt;
+          });
+        }
+        return routine;
+      });
+      false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
+      assert.deepEqual(routineMap, {
+        "devebot/applica-info": {
+          "moduleId": "devebot",
+          "name": "applica-info",
+          "object": {
+            "info": {
+              "alias": "app-info",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/logger-info": {
+          "moduleId": "devebot",
+          "name": "logger-info",
+          "object": {
+            "info": {
+              "alias": "log-info",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/logger-reset": {
+          "moduleId": "devebot",
+          "name": "logger-reset",
+          "object": {
+            "info": {
+              "alias": "log-reset",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/logger-set": {
+          "moduleId": "devebot",
+          "name": "logger-set",
+          "object": {
+            "info": {
+              "alias": "log-set",
+              "description": "[String]",
+              "options": [
+                {
+                  "abbr": "t",
+                  "name": "transports",
+                  "description": "[String]",
+                  "required": false
+                },
+                {
+                  "abbr": "e",
+                  "name": "enabled",
+                  "description": "[String]",
+                  "required": false
+                },
+                {
+                  "abbr": "l",
+                  "name": "level",
+                  "description": "[String]",
+                  "required": false
+                }
+              ]
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/sandbox-info": {
+          "moduleId": "devebot",
+          "name": "sandbox-info",
+          "object": {
+            "info": {
+              "alias": "sb-info",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        },
+        "devebot/system-info": {
+          "moduleId": "devebot",
+          "name": "system-info",
+          "object": {
+            "info": {
+              "alias": "sys-info",
+              "description": "[String]",
+              "options": []
+            },
+            "handler": "[Function]"
+          }
+        }
+      });
+    });
+  });
+
   describe('loadSchemas()', function() {
     it('load schemas from empty application', function() {
       var pluginLoader = lab.createPluginLoader();
