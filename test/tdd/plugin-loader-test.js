@@ -11,43 +11,11 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var path = require('path');
 var util = require('util');
-var Injektor = require('injektor');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
 var errorHandler = require(path.join(lab.getDevebotHome(), 'lib/backbone/error-handler')).instance;
-
-var createPluginLoader = function(appName) {
-  var profileConfig = {};
-  var pluginRefs = [];
-  if (appName) {
-    var app = lab.getApp(appName);
-    profileConfig = app.config.profile || {
-      logger: {
-        transports: {
-          console: {
-            type: 'console',
-            level: 'debug',
-            json: false,
-            timestamp: true,
-            colorize: true
-          }
-        }
-      }
-    }
-    pluginRefs = app.config.pluginRefs;
-  }
-  var injektor = new Injektor({ separator: chores.getSeparator() });
-  lodash.forOwn(chores.loadServiceByNames({}, path.join(lab.getDevebotHome(), 'lib/backbone'), [
-    'plugin-loader', 'schema-validator', 'logging-factory'
-  ]), function(constructor, serviceName) {
-    injektor.defineService(serviceName, constructor, chores.injektorContext);
-  });
-  injektor.registerObject('profileConfig', profileConfig);
-  injektor.registerObject('pluginRefs', pluginRefs);
-  return injektor.lookup('pluginLoader');
-}
 
 describe('tdd:devebot:core:plugin-loader', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -62,21 +30,21 @@ describe('tdd:devebot:core:plugin-loader', function() {
 
   describe('loadSchemas()', function() {
     it('load schemas from empty application', function() {
-      var pluginLoader = createPluginLoader();
+      var pluginLoader = lab.createPluginLoader();
       var schemaMap = {};
       pluginLoader.loadSchemas(schemaMap);
       false && console.log('schemaMap: ', JSON.stringify(schemaMap, null, 2));
       assert.deepEqual(schemaMap, {});
     });
     it('load schemas from simplest application', function() {
-      var pluginLoader = createPluginLoader('simple');
+      var pluginLoader = lab.createPluginLoader('simple');
       var schemaMap = {};
       pluginLoader.loadSchemas(schemaMap);
       false && console.log('schemaMap: ', JSON.stringify(schemaMap, null, 2));
       assert.deepEqual(schemaMap, {});
     });
     it('load all of valid schemas in all components', function() {
-      var pluginLoader = createPluginLoader('fullapp');
+      var pluginLoader = lab.createPluginLoader('fullapp');
       var schemaMap = {};
       pluginLoader.loadSchemas(schemaMap);
       errorHandler.barrier({exitOnError: true});
@@ -148,21 +116,21 @@ describe('tdd:devebot:core:plugin-loader', function() {
 
   describe('loadServices()', function() {
     it('load services from empty application', function() {
-      var pluginLoader = createPluginLoader();
+      var pluginLoader = lab.createPluginLoader();
       var serviceMap = {};
       pluginLoader.loadServices(serviceMap);
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       assert.deepEqual(serviceMap, {});
     });
     it('load services from simplest application', function() {
-      var pluginLoader = createPluginLoader('simple');
+      var pluginLoader = lab.createPluginLoader('simple');
       var serviceMap = {};
       pluginLoader.loadServices(serviceMap);
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       assert.deepEqual(serviceMap, {});
     });
     it('load all of valid services in all components', function() {
-      var pluginLoader = createPluginLoader('fullapp');
+      var pluginLoader = lab.createPluginLoader('fullapp');
       var originMap = {};
       pluginLoader.loadServices(originMap);
       errorHandler.barrier({exitOnError: true});
@@ -357,21 +325,21 @@ describe('tdd:devebot:core:plugin-loader', function() {
 
   describe('loadTriggers()', function() {
     it('load triggers from empty application', function() {
-      var pluginLoader = createPluginLoader();
+      var pluginLoader = lab.createPluginLoader();
       var triggerMap = {};
       pluginLoader.loadTriggers(triggerMap);
       false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
       assert.deepEqual(triggerMap, {});
     });
     it('load triggers from simplest application', function() {
-      var pluginLoader = createPluginLoader('simple');
+      var pluginLoader = lab.createPluginLoader('simple');
       var triggerMap = {};
       pluginLoader.loadTriggers(triggerMap);
       false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
       assert.deepEqual(triggerMap, {});
     });
     it('load all of valid triggers in all components', function() {
-      var pluginLoader = createPluginLoader('fullapp');
+      var pluginLoader = lab.createPluginLoader('fullapp');
       var originMap = {};
       pluginLoader.loadTriggers(originMap);
       errorHandler.barrier({exitOnError: true});

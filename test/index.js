@@ -5,8 +5,9 @@ var constx = require('../lib/utils/constx');
 var fs = require('fs');
 var lodash = require('lodash');
 var path = require('path');
+var Injektor = require('injektor');
 
-module.exports = {
+var lab = module.exports = {
 	getApiConfig: function(ext) {
 		ext = ext || {};
 		return lodash.merge({
@@ -65,4 +66,35 @@ module.exports = {
 	getFrameworkInfo: function() {
 		return chores.loadPackageInfo(this.getDevebotHome());
 	}
+}
+
+lab.createPluginLoader = function(appName) {
+  var profileConfig = {};
+  var pluginRefs = [];
+  if (appName) {
+    var app = lab.getApp(appName);
+    profileConfig = app.config.profile || {
+      logger: {
+        transports: {
+          console: {
+            type: 'console',
+            level: 'debug',
+            json: false,
+            timestamp: true,
+            colorize: true
+          }
+        }
+      }
+    }
+    pluginRefs = app.config.pluginRefs;
+  }
+  var injektor = new Injektor({ separator: chores.getSeparator() });
+  lodash.forOwn(chores.loadServiceByNames({}, path.join(lab.getDevebotHome(), 'lib/backbone'), [
+    'plugin-loader', 'schema-validator', 'logging-factory'
+  ]), function(constructor, serviceName) {
+    injektor.defineService(serviceName, constructor, chores.injektorContext);
+  });
+  injektor.registerObject('profileConfig', profileConfig);
+  injektor.registerObject('pluginRefs', pluginRefs);
+  return injektor.lookup('pluginLoader');
 }
