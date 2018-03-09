@@ -16,4 +16,6 @@ var Service = function(params) {
   debugx.enabled && debugx(' - constructor end!');
 };
 
+Service.referenceList = [ 'sublibTrigger' ]
+
 module.exports = Service;

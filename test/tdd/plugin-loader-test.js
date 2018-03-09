@@ -168,39 +168,35 @@ describe('tdd:devebot:core:plugin-loader', function() {
       errorHandler.barrier({exitOnError: true});
       false && console.log('serviceMap: ', util.inspect(originMap, { depth: 5 }));
       var serviceMap = lodash.mapValues(originMap, function(service) {
-        return lodash.assign(lodash.omit(service, ['construktor']), {
-          construktor: lodash.pick(service, [
+        return lodash.assign(lodash.pick(service, [
             'construktor.argumentProperties',
             'construktor.argumentSchema'
-          ])
-        });
+          ]), lodash.omit(service, ['construktor']));
       });
-      false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
+      true && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       assert.deepInclude(serviceMap, {
         "fullapp/mainService": {
           "moduleId": "fullapp",
           "name": "mainService",
           "construktor": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "mainService",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+            "argumentSchema": {
+              "$id": "mainService",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
                 }
               }
             }
@@ -210,26 +206,27 @@ describe('tdd:devebot:core:plugin-loader', function() {
           "moduleId": "sub-plugin1",
           "name": "sublibService",
           "construktor": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "sublibService",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+            "argumentSchema": {
+              "$id": "sublibService",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
+                },
+                "sublibTrigger": {
+                  "type": "object"
                 }
               }
             }
@@ -239,26 +236,35 @@ describe('tdd:devebot:core:plugin-loader', function() {
           "moduleId": "sub-plugin2",
           "name": "sublibService",
           "construktor": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "sublibService",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+            "argumentProperties": [
+              "sandboxName",
+              "sandboxConfig",
+              "profileName",
+              "profileConfig",
+              "loggingFactory",
+              "sublibTrigger"
+            ],
+            "argumentSchema": {
+              "$id": "sublibService",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
+                },
+                "sublibTrigger": {
+                  "type": "object"
                 }
               }
             }
@@ -268,26 +274,24 @@ describe('tdd:devebot:core:plugin-loader', function() {
           "moduleId": "plugin1",
           "name": "plugin1Service",
           "construktor": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "plugin1Service",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+            "argumentSchema": {
+              "$id": "plugin1Service",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
                 }
               }
             }
@@ -297,26 +301,24 @@ describe('tdd:devebot:core:plugin-loader', function() {
           "moduleId": "plugin2",
           "name": "plugin2Service",
           "construktor": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "plugin2Service",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+            "argumentSchema": {
+              "$id": "plugin2Service",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
                 }
               }
             }
@@ -326,26 +328,24 @@ describe('tdd:devebot:core:plugin-loader', function() {
           "moduleId": "plugin3",
           "name": "plugin3Service",
           "construktor": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "plugin3Service",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+            "argumentSchema": {
+              "$id": "plugin3Service",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
                 }
               }
             }
