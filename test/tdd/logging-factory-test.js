@@ -22,13 +22,13 @@ describe('tdd:devebot:core:logging-factory', function() {
 		
 		it('transformLoggingLabels() accept null parameter', function() {
 			var output = transformLoggingLabels(null);
-			true && console.log('transformLoggingLabels(): ', output);
+			false && console.log('transformLoggingLabels(): ', output);
 			assert.deepEqual(output, {});
 		});
 
 		it('transformLoggingLabels() accept empty parameter', function() {
 			var output = transformLoggingLabels({});
-			true && console.log('transformLoggingLabels(): ', output);
+			false && console.log('transformLoggingLabels(): ', output);
 			assert.deepEqual(output, {});
 		});
 
@@ -105,6 +105,8 @@ describe('tdd:devebot:core:logging-factory', function() {
 			false && console.log('transformLoggingLabels(): ', output);
 			assert.deepEqual(output, expected);
 		});
+
+		it('old logging messages are mapped to new logging labels');
 	});
 
 	describe('extend Tracer using branch() method', function() {

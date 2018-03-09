@@ -169,7 +169,10 @@ describe('tdd:devebot:core:plugin-loader', function() {
       false && console.log('serviceMap: ', util.inspect(originMap, { depth: 5 }));
       var serviceMap = lodash.mapValues(originMap, function(service) {
         return lodash.assign(lodash.omit(service, ['construktor']), {
-          construktor: lodash.pick(service, ['construktor.argumentSchema'])
+          construktor: lodash.pick(service, [
+            'construktor.argumentProperties',
+            'construktor.argumentSchema'
+          ])
         });
       });
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
