@@ -153,12 +153,15 @@ var transformLoggingLabels = function(loglabelConfig) {
   lodash.forOwn(loglabelConfig, function(info, label) {
     result.levels[label] = info.level;
     result.colors[label] = info.color;
-    if (lodash.isString(info.link) && !lodash.isEmpty(info.link)) {
-      result.mappings[info.link] = label;
-    }
+    var links = lodash.isArray(info.link) ? info.link : [info.link];
+    lodash.forEach(links, function(link) {
+      if (lodash.isString(link) && !lodash.isEmpty(link)) {
+        result.mappings[link] = label;
+      }
+    });
   });
   return result;
-}
+};
 
 Service.argumentSchema = {
   "$id": "loggingFactory",

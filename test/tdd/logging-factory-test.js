@@ -151,7 +151,7 @@ describe('tdd:devebot:core:logging-factory', function() {
 							level_e: {
 								level: 0,
 								color: 'red',
-								link: 'error'
+								link: ['error', 'fatal']
 							}
 						},
 						transports: {
@@ -177,16 +177,38 @@ describe('tdd:devebot:core:logging-factory', function() {
 					level_t: 2,
 					level_w: 1,
 					level_e: 0
-				}
+				},
+				level: 'level_i'
 			});
 			LogAdapter.addInterceptor(mockLogger);
 
+			rootLogger.log('silly', 'Silly message #1');
 			rootLogger.log('error', 'Error message #1');
 			rootLogger.log('error', 'Error message #2');
-			rootLogger.log('debug', 'Debug message #1');
+			rootLogger.log('trace', 'Trace message #1');
+			rootLogger.log('fatal', 'Error message #3');
 
 			var msgs = mockLogger._reset();
 			false && console.log(JSON.stringify(msgs, null, 2));
+
+			assert.deepEqual(msgs, [
+				{
+					"severity": "level_e",
+					"payload": "Error message #1"
+				},
+				{
+					"severity": "level_e",
+					"payload": "Error message #2"
+				},
+				{
+					"severity": "level_t",
+					"payload": "Trace message #1"
+				},
+				{
+					"severity": "level_e",
+					"payload": "Error message #3"
+				}
+			]);
     });
 
 		after(function() {
