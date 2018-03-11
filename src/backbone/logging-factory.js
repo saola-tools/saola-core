@@ -153,7 +153,7 @@ var transformLoggingLabels = function(loglabelConfig) {
   lodash.forOwn(loglabelConfig, function(info, label) {
     result.levels[label] = info.level;
     result.colors[label] = info.color;
-    var links = lodash.isArray(info.link) ? info.link : [info.link];
+    var links = lodash.isArray(info.inflow) ? info.inflow : [info.inflow];
     lodash.forEach(links, function(link) {
       if (lodash.isString(link) && !lodash.isEmpty(link)) {
         result.mappings[link] = label;

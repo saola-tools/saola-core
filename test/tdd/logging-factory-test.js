@@ -50,32 +50,32 @@ describe('tdd:devebot:core:logging-factory', function() {
 					verbose: {
 						level: 6,
 						color: 'magenta',
-						link: 'silly'
+						inflow: 'silly'
 					},
 					debug: {
 						level: 5,
 						color: 'blue',
-						link: 'debug'
+						inflow: 'debug'
 					},
 					info: {
 						level: 4,
 						color: 'cyan',
-						link: 'trace'
+						inflow: 'trace'
 					},
 					trace: {
 						level: 3,
 						color: 'green',
-						link: 'info'
+						inflow: 'info'
 					},
 					warn: {
 						level: 2,
 						color: 'yellow',
-						link: 'warn'
+						inflow: 'warn'
 					},
 					error: {
 						level: 1,
 						color: 'red',
-						link: 'error'
+						inflow: 'error'
 					},
 					fatal: {
 						level: 0,
@@ -126,32 +126,32 @@ describe('tdd:devebot:core:logging-factory', function() {
 							level_s: {
 								level: 5,
 								color: 'magenta',
-								link: 'silly'
+								inflow: 'silly'
 							},
 							level_d: {
 								level: 4,
 								color: 'blue',
-								link: 'debug'
+								inflow: 'debug'
 							},
 							level_i: {
 								level: 3,
 								color: 'cyan',
-								link: 'info'
+								inflow: 'info'
 							},
 							level_t: {
 								level: 2,
 								color: 'green',
-								link: 'trace'
+								inflow: 'trace'
 							},
 							level_w: {
 								level: 1,
 								color: 'yellow',
-								link: 'warn'
+								inflow: 'warn'
 							},
 							level_e: {
 								level: 0,
 								color: 'red',
-								link: ['error', 'fatal']
+								inflow: ['error', 'fatal']
 							}
 						},
 						transports: {
