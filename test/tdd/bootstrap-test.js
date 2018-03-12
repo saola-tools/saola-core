@@ -23,8 +23,8 @@ describe('tdd:devebot:base:bootstrap', function() {
     envtool.setup({
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
-		});
-		LogConfig.reset();
+    });
+    LogConfig.reset();
   });
 
   describe('replaceObjectFields()', function() {
@@ -530,9 +530,9 @@ describe('tdd:devebot:base:bootstrap', function() {
   });
 
   after(function() {
-		LogTracer.clearStringifyInterceptors();
-		envtool.reset();
-	});
+    LogTracer.clearStringifyInterceptors();
+    envtool.reset();
+  });
 });
 
 var DEFAULT_CONTEXT = {

@@ -24,8 +24,8 @@ describe('tdd:devebot:core:bridge-loader', function() {
     envtool.setup({
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
-		});
-		LogConfig.reset();
+    });
+    LogConfig.reset();
   });
 
   describe('loadDialects()', function() {
@@ -210,7 +210,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
   });
 
   after(function() {
-		LogTracer.clearStringifyInterceptors();
-		envtool.reset();
-	});
+    LogTracer.clearStringifyInterceptors();
+    envtool.reset();
+  });
 });

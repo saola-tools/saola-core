@@ -20,27 +20,23 @@ describe('tdd:devebot:core:error-handler', function() {
 
   before(function() {
     envtool.setup({
+      NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
+    errorHandler.reset();
   });
 
-  describe('validate config/schemas', function() {
+  describe('barrier()', function() {
     var loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot-kernel', 'loadSchemas' ],
-          storeTo: 'schemaValidation'
-        }, {
-          allTags: [ 'devebot-kernel', 'config-schema-synchronizing' ],
-          storeTo: 'schemaValidation'
-        }, {
-          allTags: [ 'devebot-kernel', 'config-schema-validating' ],
-          storeTo: 'schemaValidation'
+          allTags: [ 'devebot-error-handler', 'examine' ],
+          storeTo: 'errorSummary'
         }]
       }]);
     });
@@ -49,14 +45,9 @@ describe('tdd:devebot:core:error-handler', function() {
       LogTracer.reset().empty(loggingStore);
     });
 
-    it.skip('load all of schemas from kernel constructor', function() {
-      var _bk_exit = process.exit;
-      process.exit = console.log.bind(console);
+    it('pass if no error has occurred');
 
-      process.exit(1);
-
-      process.exit = _bk_exit;
-    });
+    it('exit if there are some errors occurred');
 
     after(function() {
       LogTracer.clearStringifyInterceptors();
@@ -64,6 +55,7 @@ describe('tdd:devebot:core:error-handler', function() {
   });
 
   after(function() {
-		envtool.reset();
-	});
+    envtool.reset();
+    errorHandler.reset();
+  });
 });

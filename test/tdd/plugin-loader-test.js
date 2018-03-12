@@ -25,8 +25,8 @@ describe('tdd:devebot:core:plugin-loader', function() {
     envtool.setup({
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
-		});
-		LogConfig.reset();
+    });
+    LogConfig.reset();
   });
 
   describe('loadRoutines()', function() {
@@ -868,7 +868,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
   });
 
   after(function() {
-		LogTracer.clearStringifyInterceptors();
-		envtool.reset();
-	});
+    LogTracer.clearStringifyInterceptors();
+    envtool.reset();
+  });
 });

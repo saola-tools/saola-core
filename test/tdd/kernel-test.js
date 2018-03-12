@@ -3,6 +3,7 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:base:kernel');
@@ -22,10 +23,13 @@ describe('tdd:devebot:base:kernel', function() {
 
   before(function() {
     envtool.setup({
+      NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all'
+      LOGOLITE_ALWAYS_MUTED: 'all',
+      DEVEBOT_FORCING_SILENT: 'error-handler'
     });
     LogConfig.reset();
+    errorHandler.reset();
   });
 
   describe('validate config/schemas', function() {
@@ -44,7 +48,7 @@ describe('tdd:devebot:base:kernel', function() {
           allTags: [ 'devebot-kernel', 'config-schema-validating' ],
           storeTo: 'schemaValidation'
         }, {
-          allTags: [ 'devebot-error-handler', 'barrier' ],
+          allTags: [ 'devebot-error-handler', 'examine' ],
           storeTo: 'errorSummary'
         }]
       }]);
@@ -54,7 +58,9 @@ describe('tdd:devebot:base:kernel', function() {
       LogTracer.reset().empty(loggingStore);
     });
 
-    it('load all of schemas from kernel constructor', function() {
+    it('kernel constructor is ok if no error has occurred in validating', function() {
+      var unhook = lab.preventExit();
+
       var kernel = lab.createKernel('fullapp');
 
       var configMap = lodash.get(loggingStore, 'schemaValidation.0.configMap', {});
@@ -219,10 +225,32 @@ describe('tdd:devebot:base:kernel', function() {
         }
       });
 
+      // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
+      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
       var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
         'totalOfErrors', 'errors'
       ]);
       assert.deepEqual(errorSummary, { totalOfErrors: 0, errors: [] });
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 0);
+    });
+
+    it('loading an invalid sandbox configure application make program exit', function() {
+      var unhook = lab.preventExit();
+      var kernel = lab.createKernel('invalid-cfg');
+
+      // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
+      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
+      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.1', {}), [
+        'totalOfErrors', 'errors'
+      ]);
+      assert.equal(errorSummary.totalOfErrors, 2);
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 1);
     });
 
     after(function() {
@@ -231,6 +259,7 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   after(function() {
-		envtool.reset();
-	});
+    envtool.reset();
+    errorHandler.reset();
+  });
 });
