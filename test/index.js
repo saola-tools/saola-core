@@ -129,3 +129,14 @@ lab.createPluginLoader = function(appName) {
   injektor.registerObject('pluginRefs', pluginRefs);
   return injektor.lookup('pluginLoader');
 }
+
+lab.createKernel = function(appName) {
+	var _config = null;
+	if (appName) {
+		var app = lab.getApp(appName);
+		_config = app.config;
+	}
+	if (_config === null) return null;
+	var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
+	return new Kernel(_config);
+}

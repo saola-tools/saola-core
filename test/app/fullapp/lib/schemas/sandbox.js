@@ -13,6 +13,7 @@ module.exports = {
       "verbose": {
         "type": "boolean"
       }
-    }
+    },
+    "required": ["host", "port"]
   }
 };
