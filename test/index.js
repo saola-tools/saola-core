@@ -2,6 +2,7 @@
 
 var chores = require('../lib/utils/chores');
 var constx = require('../lib/utils/constx');
+var debugx = require('../lib/utils/pinbug')('devebot:test:lab');
 var fs = require('fs');
 var lodash = require('lodash');
 var path = require('path');
@@ -139,4 +140,25 @@ lab.createKernel = function(appName) {
 	if (_config === null) return null;
 	var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
 	return new Kernel(_config);
+}
+
+lab.preventExit = function(block) {
+	var refExit = process.exit;
+
+	process.exit = function(code) {
+		debugx.enabled && debugx(' - process.exit(%s) is invoked', code);
+	}
+
+	var unhook = function() {
+		if (typeof refExit === 'function') {
+			process.exit = refExit;
+			refExit = null;
+		}
+	}
+
+	if (typeof block === 'function') {
+		block(unhook);
+	}
+
+	return unhook;
 }

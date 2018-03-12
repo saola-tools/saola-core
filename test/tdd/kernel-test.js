@@ -35,7 +35,7 @@ describe('tdd:devebot:base:kernel', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot-kernel', 'loadSchemas' ],
+          allTags: [ 'devebot-kernel', 'config-schema-loading' ],
           storeTo: 'schemaValidation'
         }, {
           allTags: [ 'devebot-kernel', 'config-schema-synchronizing' ],
@@ -65,7 +65,7 @@ describe('tdd:devebot:base:kernel', function() {
       false && console.log('configSchema: %s', JSON.stringify(configSchema, null, 2));
 
       var result = lodash.get(loggingStore, 'schemaValidation.2.validatingResult', []);
-      true && lodash.forEach(result, function(item) {
+      false && lodash.forEach(result, function(item) {
         console.log('- validation result: %s', JSON.stringify(lodash.omit(item, ['stack'])));
         if (item.hasError) {
           console.log('  - stack:\n%s', item.stack);
