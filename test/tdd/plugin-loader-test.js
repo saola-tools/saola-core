@@ -416,7 +416,8 @@ describe('tdd:devebot:core:plugin-loader', function() {
                 "verbose": {
                   "type": "boolean"
                 }
-              }
+              },
+              "required": ["host", "port"]
             }
           }
         },

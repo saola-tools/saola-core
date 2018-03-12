@@ -28,7 +28,7 @@ describe('tdd:devebot:base:kernel', function() {
     LogConfig.reset();
   });
 
-  describe.only('validate config/schemas', function() {
+  describe('validate config/schemas', function() {
     var loggingStore = {};
 
     before(function() {
