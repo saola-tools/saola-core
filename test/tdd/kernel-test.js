@@ -43,6 +43,9 @@ describe('tdd:devebot:base:kernel', function() {
         }, {
           allTags: [ 'devebot-kernel', 'config-schema-validating' ],
           storeTo: 'schemaValidation'
+        }, {
+          allTags: [ 'devebot-error-handler', 'barrier' ],
+          storeTo: 'errorSummary'
         }]
       }]);
     });
@@ -215,6 +218,11 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       });
+
+      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        'totalOfErrors', 'errors'
+      ]);
+      assert.deepEqual(errorSummary, { totalOfErrors: 0, errors: [] });
     });
 
     after(function() {

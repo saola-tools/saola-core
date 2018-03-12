@@ -47,7 +47,10 @@ function ErrorHandler(params) {
   this.barrier = function(options) {
     options = options || {};
     var summary = this.examine();
-    LX.has('silly') && LX.log('silly', LT.add(summary).toMessage({
+    LX.has('silly') && LX.log('silly', LT.add({
+      totalOfErrors: summary.numberOfErrors,
+      errors: summary.failedServices
+    }).toMessage({
       tags: [ 'devebot-error-handler', 'barrier' ],
       text: ' - Total of errors: ${totalOfErrors}'
     }));
