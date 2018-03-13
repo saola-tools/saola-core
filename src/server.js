@@ -20,12 +20,13 @@ function Server(params) {
   // init the default parameters
   params = params || {};
 
-  var loggingWrapper = new LoggingWrapper(chores.getBlockRef(__filename));
+  var componentID = chores.getBlockRef(__filename);
+  var loggingWrapper = new LoggingWrapper(componentID);
   var LX = loggingWrapper.getLogger();
   var LT = loggingWrapper.getTracer();
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'constructor-begin' ],
+  LX.has('silly') && LX.log('silly', LT.toMessage({
+    tags: [ componentID, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
 
@@ -70,8 +71,8 @@ function Server(params) {
   var mode = ['silent', 'heartbeat', 'command'].indexOf(devebotCfg.mode);
 
   this.start = function() {
-    LX.has('conlog') && LX.log('conlog', LT.toMessage({
-      tags: [ 'devebot-server-start', 'starting' ],
+    LX.has('silly') && LX.log('silly', LT.toMessage({
+      tags: [ componentID, 'start()' ],
       text: 'start() is invoked'
     }));
     return Promise.resolve().then(function() {
@@ -90,14 +91,14 @@ function Server(params) {
         });
       });
     }).then(function() {
-      LX.has('conlog') && LX.log('conlog', LT.toMessage({
-        tags: [ 'devebot-server-start', 'webserver-started' ],
+      LX.has('silly') && LX.log('silly', LT.toMessage({
+        tags: [ componentID, 'start()' ],
         text: 'webserver has started'
       }));
       return sandboxManager.startTriggers();
     }).then(function(info) {
-      LX.has('conlog') && LX.log('conlog', LT.toMessage({
-        tags: [ 'devebot-server-start', 'triggers-started' ],
+      LX.has('silly') && LX.log('silly', LT.toMessage({
+        tags: [ componentID, 'start()' ],
         text: 'triggers have started'
       }));
       return info;
@@ -106,15 +107,15 @@ function Server(params) {
 
   var serverCloseEvent;
   this.teardown = function() {
-    LX.has('conlog') && LX.log('conlog', LT.toMessage({
-      tags: [ 'devebot-server-close', 'closing' ],
+    LX.has('silly') && LX.log('silly', LT.toMessage({
+      tags: [ componentID, 'close()' ],
       text: 'close() is invoked'
     }));
     return Promise.resolve().then(function() {
       return sandboxManager.stopTriggers();
     }).then(function() {
-      LX.has('conlog') && LX.log('conlog', LT.toMessage({
-        tags: [ 'devebot-server-close', 'triggers-stopped' ],
+      LX.has('silly') && LX.log('silly', LT.toMessage({
+        tags: [ componentID, 'close()', 'triggers-stopped' ],
         text: 'triggers have stopped'
       }));
       if (mode == 0) return Promise.resolve();
@@ -137,8 +138,8 @@ function Server(params) {
         });
       });
     }).then(function() {
-      LX.has('conlog') && LX.log('conlog', LT.toMessage({
-        tags: [ 'devebot-server-close', 'webserver-stopped' ],
+      LX.has('silly') && LX.log('silly', LT.toMessage({
+        tags: [ componentID, 'close()', 'webserver-stopped' ],
         text: 'webserver has stopped'
       }));
       chores.isVerboseForced('devebot', devebotCfg) &&
@@ -184,8 +185,8 @@ function Server(params) {
     LX.has('conlog') && LX.log('conlog', ' - Websocket@server has an error: <%s>', JSON.stringify(error));
   });
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'constructor-end' ],
+  LX.has('silly') && LX.log('silly', LT.toMessage({
+    tags: [ componentID, 'constructor-end' ],
     text: ' - constructor has finished'
   }));
 }

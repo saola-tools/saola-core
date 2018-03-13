@@ -35,7 +35,7 @@ describe('tdd:devebot:core:error-handler', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot-error-handler', 'examine' ],
+          allTags: [ 'devebot/errorHandler', 'examine' ],
           storeTo: 'errorSummary'
         }]
       }]);

@@ -6,23 +6,23 @@ var Devebot = lab.getDevebot();
 var app = Devebot.launchApplication({
   appRootPath: __dirname
 }, [
-	{
-		name: 'sub-plugin1',
-		path: lab.getLibHome('sub-plugin1')
-	},
-	{
-		name: 'sub-plugin2',
-		path: lab.getLibHome('sub-plugin2')
-	}
+  {
+    name: 'sub-plugin1',
+    path: lab.getLibHome('sub-plugin1')
+  },
+  {
+    name: 'sub-plugin2',
+    path: lab.getLibHome('sub-plugin2')
+  }
 ], [
-	{
-		name: 'bridge3',
-		path: lab.getLibHome('bridge3')
-	},
-	{
-		name: 'bridge4',
-		path: lab.getLibHome('bridge4')
-	}
+  {
+    name: 'bridge3',
+    path: lab.getLibHome('bridge3')
+  },
+  {
+    name: 'bridge4',
+    path: lab.getLibHome('bridge4')
+  }
 ]);
 
 if (require.main === module) app.server.start();

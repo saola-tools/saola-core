@@ -39,16 +39,18 @@ describe('tdd:devebot:base:kernel', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot-kernel', 'config-schema-loading' ],
+          allTags: [ 'devebot/kernel', 'config-schema-loading' ],
           storeTo: 'schemaValidation'
         }, {
-          allTags: [ 'devebot-kernel', 'config-schema-synchronizing' ],
+          allTags: [ 'devebot/kernel', 'config-schema-synchronizing' ],
           storeTo: 'schemaValidation'
         }, {
-          allTags: [ 'devebot-kernel', 'config-schema-validating' ],
+          allTags: [ 'devebot/kernel', 'config-schema-validating' ],
           storeTo: 'schemaValidation'
         }, {
-          allTags: [ 'devebot-error-handler', 'examine' ],
+          allTags: [ 'devebot/errorHandler', 'examine' ],
+          matchingField: 'invoker',
+          matchingRule: 'devebot/kernel',
           storeTo: 'errorSummary'
         }]
       }]);
@@ -243,8 +245,8 @@ describe('tdd:devebot:base:kernel', function() {
 
       // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
       false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.1', {}), [
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
         'totalOfErrors', 'errors'
       ]);
       assert.equal(errorSummary.totalOfErrors, 2);

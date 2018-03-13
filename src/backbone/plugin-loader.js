@@ -11,12 +11,13 @@ var errorHandler = require('./error-handler').instance;
 function PluginLoader(params) {
   params = params || {};
 
-  var loggingFactory = params.loggingFactory.branch(chores.getBlockRef(__filename));
+  var componentID = chores.getBlockRef(__filename);
+  var loggingFactory = params.loggingFactory.branch(componentID);
   var LX = loggingFactory.getLogger();
   var LT = loggingFactory.getTracer();
 
   LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'constructor-begin' ],
+    tags: [ componentID, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
 

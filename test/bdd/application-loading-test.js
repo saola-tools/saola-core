@@ -29,11 +29,11 @@ describe('devebot:application', function() {
 				accumulator: serverStats,
 				mappings: [
 					{
-						anyTags: [ 'devebot-server-start' ],
+						allTags: [ 'devebot/server', 'start()' ],
 						countTo: 'startingCount'
 					},
 					{
-						anyTags: [ 'devebot-server-close' ],
+						allTags: [ 'devebot/server', 'close()' ],
 						countTo: 'stoppingCount'
 					}
 				]
