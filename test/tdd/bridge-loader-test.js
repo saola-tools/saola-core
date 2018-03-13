@@ -15,7 +15,8 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
-var errorHandler = require(path.join(lab.getDevebotHome(), 'lib/backbone/error-handler')).instance;
+var errorHandlerPath = path.join(lab.getDevebotHome(), 'lib/backbone/error-handler');
+var errorHandler = require(errorHandlerPath).instance;
 
 describe('tdd:devebot:core:bridge-loader', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -26,6 +27,12 @@ describe('tdd:devebot:core:bridge-loader', function() {
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
+  });
+
+  describe('loadSchemas()', function() {
+    it('load schemas from empty application');
+    it('load schemas from simplest application');
+    it('load all of valid schemas from complete application');
   });
 
   describe('loadDialects()', function() {
