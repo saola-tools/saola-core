@@ -142,6 +142,31 @@ lab.createPluginLoader = function(appName, injectedObjects) {
   return injektor.lookup('pluginLoader');
 }
 
+lab.createRunhookManager = function(appName, injectedObjects) {
+  injectedObjects = lodash.assign({
+    appName: appName || 'unknown',
+    appInfo: {},
+    injectedHandlers: {}
+  }, injectedObjects);
+  if (appName) {
+    var app = lab.getApp(appName);
+    injectedObjects.appName = app.config.appName;
+    injectedObjects.appInfo = app.config.appInfo;
+    injectedObjects.profileName = app.config.profile.names.join(',');
+    injectedObjects.profileConfig = app.config.profile.mixture;
+    injectedObjects.sandboxName = app.config.sandbox.names.join(',');
+    injectedObjects.sandboxConfig = app.config.sandbox.mixture;
+    injectedObjects.pluginRefs = app.config.pluginRefs;
+    injectedObjects.injectedHandlers = {};
+  }
+  var injektor = new Injektor({ separator: chores.getSeparator() });
+  _attachInjectedObjects(injektor, injectedObjects);
+  _loadBackboneServices(injektor, [
+    'runhook-manager', 'plugin-loader', 'schema-validator', 'logging-factory', 'jobqueue-binder'
+  ]);
+  return injektor.lookup('runhookManager');
+}
+
 lab.createKernel = function(appName) {
   var _config = null;
   if (appName) {
@@ -151,6 +176,53 @@ lab.createKernel = function(appName) {
   if (_config === null) return null;
   var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
   return new Kernel(_config);
+}
+
+lab.simplifyCommands = function(commands) {
+  var transformCommand = function(command) {
+    command = lodash.cloneDeep(command);
+    if (lodash.isFunction(lodash.get(command, 'validate', null))) {
+      lodash.set(command, 'validate', '[Function]');
+    }
+    if (lodash.isString(lodash.get(command, 'description', null))) {
+      lodash.set(command, 'description', '[String]');
+    }
+    if (lodash.isArray(lodash.get(command, 'options', null))) {
+      command.options = lodash.map(command.options, function(opt) {
+        if (lodash.isString(opt.description)) {
+          opt.description = '[String]'
+        }
+        return opt;
+      });
+    }
+    return command;
+  };
+  return lodash.map(commands, transformCommand);
+}
+
+lab.simplifyRoutines = function(routines) {
+  var transformRoutine = function(routine) {
+    routine = lodash.cloneDeep(routine);
+    if (lodash.isFunction(lodash.get(routine, 'object.handler', null))) {
+      routine.object.handler = '[Function]';
+    }
+    if (lodash.isFunction(lodash.get(routine, 'object.info.validate', null))) {
+      lodash.set(routine, 'object.info.validate', '[Function]');
+    }
+    if (lodash.isString(lodash.get(routine, 'object.info.description', null))) {
+      lodash.set(routine, 'object.info.description', '[String]');
+    }
+    if (lodash.isArray(lodash.get(routine, 'object.info.options', null))) {
+      routine.object.info.options = lodash.map(routine.object.info.options, function(opt) {
+        if (lodash.isString(opt.description)) {
+          opt.description = '[String]'
+        }
+        return opt;
+      });
+    }
+    return routine;
+  };
+  return lodash.mapValues(routines, transformRoutine);
 }
 
 lab.preventExit = function(block) {

@@ -30,29 +30,6 @@ describe('tdd:devebot:core:plugin-loader', function() {
   });
 
   describe('loadRoutines()', function() {
-    var transformResult = function(originMap) {
-      return lodash.mapValues(originMap, function(routine) {
-        routine = lodash.cloneDeep(routine);
-        if (lodash.isFunction(lodash.get(routine, 'object.handler', null))) {
-          routine.object.handler = '[Function]';
-        }
-        if (lodash.isFunction(lodash.get(routine, 'object.info.validate', null))) {
-          lodash.set(routine, 'object.info.validate', '[Function]');
-        }
-        if (lodash.isString(lodash.get(routine, 'object.info.description', null))) {
-          lodash.set(routine, 'object.info.description', '[String]');
-        }
-        if (lodash.isArray(lodash.get(routine, 'object.info.options', null))) {
-          routine.object.info.options = lodash.map(routine.object.info.options, function(opt) {
-            if (lodash.isString(opt.description)) {
-              opt.description = '[String]'
-            }
-            return opt;
-          });
-        }
-        return routine;
-      });
-    }
     it('load routines from empty application', function() {
       var pluginLoader = lab.createPluginLoader();
       var routineMap = {};
@@ -65,7 +42,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var originMap = {};
       pluginLoader.loadRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(originMap, null, 2));
-      var routineMap = transformResult(originMap);
+      var routineMap = lab.simplifyRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
       assert.deepEqual(routineMap, {
         "devebot/applica-info": {
@@ -166,7 +143,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var originMap = {};
       pluginLoader.loadRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(originMap, null, 2));
-      var routineMap = transformResult(originMap);
+      var routineMap = lab.simplifyRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
       assert.deepInclude(routineMap, {
         "fullapp/main-cmd1": {
