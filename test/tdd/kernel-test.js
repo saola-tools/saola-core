@@ -243,7 +243,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     it('loading an invalid sandbox configure application make program exit', function() {
       var unhook = lab.preventExit();
-      var kernel = lab.createKernel('invalid-cfg');
+      var kernel = lab.createKernel('invalid-schema');
 
       // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
       false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));

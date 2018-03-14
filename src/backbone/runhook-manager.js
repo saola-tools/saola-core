@@ -20,14 +20,15 @@ var Service = function(params) {
   params = params || {};
   var self = this;
 
-  var loggingFactory = params.loggingFactory.branch(chores.getBlockRef(__filename));
+  var crateID = chores.getBlockRef(__filename);
+  var loggingFactory = params.loggingFactory.branch(crateID);
   var LX = loggingFactory.getLogger();
   var LT = loggingFactory.getTracer();
 
-  LX.has('conlog') && LX.log('conlog', LT.add({
+  LX.has('silly') && LX.log('silly', LT.add({
     sandboxName: params.sandboxName
   }).toMessage({
-    tags: [ 'constructor-begin' ],
+    tags: [ crateID, 'constructor-begin' ],
     text: ' + constructor start in sandbox <{sandboxName}>'
   }));
 
@@ -243,8 +244,8 @@ var Service = function(params) {
     routineStore.registerObject(value.name, value.object, { scope: value.moduleId });
   });
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'constructor-end' ],
+  LX.has('silly') && LX.log('silly', LT.toMessage({
+    tags: [ crateID, 'constructor-end' ],
     text: ' - constructor has finished'
   }));
 };

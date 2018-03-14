@@ -13,7 +13,8 @@ var Service = function(params) {
 
   var self = this;
 
-  var logger = params.loggingFactory.getLogger();
+  var LX = params.loggingFactory.getLogger();
+  var LT = params.loggingFactory.getTracer();
 
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
 

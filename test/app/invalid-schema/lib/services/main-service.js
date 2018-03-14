@@ -8,10 +8,10 @@ var Service = function(params) {
   debugx.enabled && debugx(' + constructor begin ...');
 
   params = params || {};
-
   var self = this;
 
-  var logger = params.loggingFactory.getLogger();
+  var LX = params.loggingFactory.getLogger();
+  var LT = params.loggingFactory.getTracer();
 
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
   debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));

@@ -1,5 +1,5 @@
 {
-  "name": "invalid-cfg",
+  "name": "invalid-config",
   "version": "0.1.0",
   "description": "Devebot Demo Application",
   "main": "index.js",
