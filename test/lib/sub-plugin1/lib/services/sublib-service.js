@@ -13,6 +13,10 @@ var Service = function(params) {
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
   debugx.enabled && debugx('configuration: %s', JSON.stringify(pluginCfg));
 
+  this.getConfig = function() {
+    return pluginCfg;
+  }
+
   debugx.enabled && debugx(' - constructor end!');
 };
 

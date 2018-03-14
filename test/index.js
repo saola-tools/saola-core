@@ -82,6 +82,17 @@ var _loadBackboneServices = function(injektor, names) {
   });
 }
 
+lab.createKernel = function(appName) {
+  var _config = null;
+  if (appName) {
+    var app = lab.getApp(appName);
+    _config = app.config;
+  }
+  if (_config === null) return null;
+  var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
+  return new Kernel(_config);
+}
+
 lab.createBridgeLoader = function(appName, injectedObjects) {
   injectedObjects = injectedObjects || {
     profileConfig: {},
@@ -167,15 +178,34 @@ lab.createRunhookManager = function(appName, injectedObjects) {
   return injektor.lookup('runhookManager');
 }
 
-lab.createKernel = function(appName) {
-  var _config = null;
+lab.createSandboxManager = function(appName, injectedObjects) {
+  injectedObjects = lodash.assign({
+    appName: appName || 'unknown',
+    appInfo: {},
+    profileNames: [ 'default' ],
+    profileConfig: {},
+    sandboxNames: [ 'default' ],
+    sandboxConfig: {},
+    bridgeRefs: [],
+    pluginRefs: []
+  }, injectedObjects);
   if (appName) {
     var app = lab.getApp(appName);
-    _config = app.config;
+    injectedObjects.appName = app.config.appName;
+    injectedObjects.appInfo = app.config.appInfo;
+    injectedObjects.profileNames = app.config.profile.names;
+    injectedObjects.profileConfig = app.config.profile.mixture;
+    injectedObjects.sandboxNames = app.config.sandbox.names;
+    injectedObjects.sandboxConfig = app.config.sandbox.mixture;
+    injectedObjects.bridgeRefs = app.config.bridgeRefs;
+    injectedObjects.pluginRefs = app.config.pluginRefs;
   }
-  if (_config === null) return null;
-  var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
-  return new Kernel(_config);
+  var injektor = new Injektor({ separator: chores.getSeparator() });
+  _attachInjectedObjects(injektor, injectedObjects);
+  _loadBackboneServices(injektor, [
+    'sandbox-manager', 'bridge-loader', 'plugin-loader', 'schema-validator', 'logging-factory'
+  ]);
+  return injektor.lookup('sandboxManager');
 }
 
 lab.simplifyCommands = function(commands) {
