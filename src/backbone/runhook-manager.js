@@ -92,6 +92,7 @@ var Service = function(params) {
       commandName: command.name,
       command: command
     }).toMessage({
+      tags: [ crateID, 'execute', 'begin' ],
       text: '{commandName}#{requestId} - validate: {command}'
     }));
     var routine = getRunhook(command);
@@ -99,11 +100,12 @@ var Service = function(params) {
     var payload = command.data;
     var schema = routine && routine.info && routine.info.schema;
     if (schema && lodash.isObject(schema)) {
-      LX.has('conlog') && LX.log('conlog', reqTr.add({
+      LX.has('silly') && LX.log('silly', reqTr.add({
         commandName: command.name,
         payload: payload,
         schema: schema
       }).toMessage({
+        tags: [ crateID, 'execute', 'validate-by-schema' ],
         text: '{commandName}#{requestId} - validate payload: {payload} by schema: {schema}'
       }));
       var result = params.schemaValidator.validate(payload, schema);
@@ -116,10 +118,11 @@ var Service = function(params) {
     }
     var validate = routine && routine.info && routine.info.validate;
     if (validate && lodash.isFunction(validate)) {
-      LX.has('conlog') && LX.log('conlog', reqTr.add({
+      LX.has('silly') && LX.log('silly', reqTr.add({
         commandName: command.name,
         payload: payload
       }).toMessage({
+        tags: [ crateID, 'execute', 'validate-by-method' ],
         text: '{commandName}#{requestId} - validate payload: {payload} using validate()'
       }));
       if (!validate(payload)) {
@@ -137,6 +140,7 @@ var Service = function(params) {
     LX.has('trace') && LX.log('trace', reqTr.add({
       commandName: command.name
     }).toMessage({
+      tags: [ crateID, 'execute', 'enqueue' ],
       text: '{commandName}#{requestId} - enqueue'
     }));
 
@@ -203,6 +207,7 @@ var Service = function(params) {
       commandName: command.name,
       command: command
     }).toMessage({
+      tags: [ crateID, 'process', 'begin' ],
       text: '{commandName}#{requestId} - process: {command}'
     }));
 
@@ -211,15 +216,17 @@ var Service = function(params) {
     var options = command.options;
     var payload = command.data || command.payload;
     if (lodash.isFunction(handler)) {
+      LX.has('trace') && LX.log('trace', reqTr.add({
+        commandName: command.name,
+        command: command,
+        predefinedContext: predefinedContext
+      }).toMessage({
+        tags: [ crateID, 'process', 'handler-invoked' ],
+        text: '{commandName}#{requestId} - handler is invoked'
+      }));
       if (predefinedContext) {
         return Promise.resolve().then(handler.bind(null, options, payload, context));
       } else {
-        LX.has('trace') && LX.log('trace', reqTr.add({
-          commandName: command.name,
-          command: command
-        }).toMessage({
-          text: '{commandName}#{requestId} - handler is invoked'
-        }));
         return Promise.resolve().then(handler.bind(buildRunhookInstance(command.name), options, payload, context));
       }
     } else {
