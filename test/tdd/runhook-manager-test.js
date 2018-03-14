@@ -63,6 +63,51 @@ describe('tdd:devebot:core:runhook-manager', function() {
           "options": []
         },
         {
+          "package": "sub-plugin1",
+          "name": "routine0",
+          "description": "[String]",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "number": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "options": []
+        },
+        {
+          "package": "sub-plugin1",
+          "name": "routine1",
+          "description": "[String]",
+          "options": []
+        },
+        {
+          "package": "sub-plugin2",
+          "name": "routine0",
+          "description": "[String]",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "number": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "options": []
+        },
+        {
+          "package": "sub-plugin2",
+          "name": "routine2",
+          "description": "[String]",
+          "validate": "[Function]",
+          "options": []
+        },
+        {
           "package": "plugin1",
           "name": "plugin1-routine1",
           "description": "[String]",
@@ -184,14 +229,62 @@ describe('tdd:devebot:core:runhook-manager', function() {
       ]);
     });
 
-    it.skip('check command is available correctly', function() {
+    it('check command is available correctly', function() {
       var runhookManager = lab.createRunhookManager('fullapp');
       assert.isFalse(runhookManager.isAvailable({ name: 'main-cmd0' }));
       assert.isFalse(runhookManager.isAvailable({ name: 'main-cmd0', package: 'fullapp' }));
+
       assert.isTrue(runhookManager.isAvailable({ name: 'main-cmd1' }));
       assert.isTrue(runhookManager.isAvailable({ name: 'main-cmd1', package: 'fullapp' }));
       assert.isTrue(runhookManager.isAvailable({ name: 'main-cmd2' }));
       assert.isTrue(runhookManager.isAvailable({ name: 'main-cmd2', package: 'fullapp' }));
+      assert.isTrue(runhookManager.isAvailable({ name: 'plugin1-routine1', package: 'plugin1' }));
+      assert.isTrue(runhookManager.isAvailable({ name: 'plugin2-routine3', package: 'plugin2' }));
+      assert.isTrue(runhookManager.isAvailable({ name: 'plugin3-routine3', package: 'plugin3' }));
+      assert.isTrue(runhookManager.isAvailable({ name: 'applica-info' }));
+      assert.isTrue(runhookManager.isAvailable({ name: 'system-info', package: 'devebot' }));
+
+      assert.isFalse(runhookManager.isAvailable({ name: 'routine0' }));
+      assert.isTrue(runhookManager.isAvailable({ name: 'routine0', package: 'sub-plugin1' }));
+      assert.isTrue(runhookManager.isAvailable({ name: 'routine0', package: 'sub-plugin2' }));
+      assert.isTrue(runhookManager.isAvailable({ name: 'routine1' }));
+      assert.isTrue(runhookManager.isAvailable({ name: 'routine2' }));
+    });
+
+    it('retrieve the unique named routine with/without suggested package', function() {
+      var runhookManager = lab.createRunhookManager('fullapp');
+
+      var runhook1 = runhookManager.getRunhook({ name: 'routine1' });
+      assert.isFunction(runhook1.handler);
+
+      var runhook1_1 = runhookManager.getRunhook({ name: 'routine1', package: 'sub-routine1' });
+      assert.equal(runhook1_1, runhook1);
+
+      var runhook1_2 = runhookManager.getRunhook({ name: 'routine1', package: 'sub-routine2' });
+      assert.equal(runhook1_2, runhook1);
+
+      var runhook2 = runhookManager.getRunhook({ name: 'routine2' });
+      assert.isFunction(runhook2.handler);
+
+      var runhook2_1 = runhookManager.getRunhook({ name: 'routine2', package: 'sub-routine1' });
+      assert.equal(runhook2_1, runhook2);
+
+      var runhook2_2 = runhookManager.getRunhook({ name: 'routine2', package: 'sub-routine2' });
+      assert.equal(runhook2_2, runhook2);
+
+      assert.notEqual(runhook1, runhook2);
+    });
+
+    it('retrieve the same named routines from different packages', function() {
+      var runhookManager = lab.createRunhookManager('fullapp');
+
+      var runhook0_1 = runhookManager.getRunhook({ name: 'routine0', package: 'sub-plugin1' });
+      assert.isFunction(runhook0_1.handler);
+
+      var runhook0_2 = runhookManager.getRunhook({ name: 'routine0', package: 'sub-plugin2' });
+      assert.isFunction(runhook0_2.handler);
+
+      assert.notEqual(runhook0_1, runhook0_2);
     });
 
     after(function() {
