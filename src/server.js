@@ -20,13 +20,13 @@ function Server(params) {
   // init the default parameters
   params = params || {};
 
-  var componentID = chores.getBlockRef(__filename);
-  var loggingWrapper = new LoggingWrapper(componentID);
+  var crateID = chores.getBlockRef(__filename);
+  var loggingWrapper = new LoggingWrapper(crateID);
   var LX = loggingWrapper.getLogger();
   var LT = loggingWrapper.getTracer();
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
-    tags: [ componentID, 'constructor-begin' ],
+    tags: [ crateID, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
 
@@ -72,7 +72,7 @@ function Server(params) {
 
   this.start = function() {
     LX.has('silly') && LX.log('silly', LT.toMessage({
-      tags: [ componentID, 'start()' ],
+      tags: [ crateID, 'start()' ],
       text: 'start() is invoked'
     }));
     return Promise.resolve().then(function() {
@@ -85,20 +85,20 @@ function Server(params) {
           var host = serverInstance.address().address;
           var port = serverInstance.address().port;
           chores.isVerboseForced('devebot', devebotCfg) &&
-              console.log(appName + ' is listening at %s://%s:%s%s', 
+              console.log(appName + ' is listening on %s://%s:%s%s', 
                   sslEnabled?'wss':'ws', host, port, appRootUrl);
           onResolved(serverInstance);
         });
       });
     }).then(function() {
       LX.has('silly') && LX.log('silly', LT.toMessage({
-        tags: [ componentID, 'start()' ],
+        tags: [ crateID, 'start()' ],
         text: 'webserver has started'
       }));
       return sandboxManager.startTriggers();
     }).then(function(info) {
       LX.has('silly') && LX.log('silly', LT.toMessage({
-        tags: [ componentID, 'start()' ],
+        tags: [ crateID, 'start()' ],
         text: 'triggers have started'
       }));
       return info;
@@ -108,14 +108,14 @@ function Server(params) {
   var serverCloseEvent;
   this.teardown = function() {
     LX.has('silly') && LX.log('silly', LT.toMessage({
-      tags: [ componentID, 'close()' ],
+      tags: [ crateID, 'close()' ],
       text: 'close() is invoked'
     }));
     return Promise.resolve().then(function() {
       return sandboxManager.stopTriggers();
     }).then(function() {
       LX.has('silly') && LX.log('silly', LT.toMessage({
-        tags: [ componentID, 'close()', 'triggers-stopped' ],
+        tags: [ crateID, 'close()', 'triggers-stopped' ],
         text: 'triggers have stopped'
       }));
       if (mode == 0) return Promise.resolve();
@@ -139,7 +139,7 @@ function Server(params) {
       });
     }).then(function() {
       LX.has('silly') && LX.log('silly', LT.toMessage({
-        tags: [ componentID, 'close()', 'webserver-stopped' ],
+        tags: [ crateID, 'close()', 'webserver-stopped' ],
         text: 'webserver has stopped'
       }));
       chores.isVerboseForced('devebot', devebotCfg) &&
@@ -186,7 +186,7 @@ function Server(params) {
   });
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
-    tags: [ componentID, 'constructor-end' ],
+    tags: [ crateID, 'constructor-end' ],
     text: ' - constructor has finished'
   }));
 }

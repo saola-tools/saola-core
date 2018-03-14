@@ -14,13 +14,13 @@ chores.loadServiceByNames(CONSTRUCTORS, path.join(__dirname, 'backbone'), [
 ]);
 
 function Kernel(params) {
-  var componentID = chores.getBlockRef(__filename);
-  var loggingWrapper = new LoggingWrapper(componentID);
+  var crateID = chores.getBlockRef(__filename);
+  var loggingWrapper = new LoggingWrapper(crateID);
   var LX = loggingWrapper.getLogger();
   var LT = loggingWrapper.getTracer();
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
-    tags: [ componentID, 'constructor-begin' ],
+    tags: [ crateID, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
 
@@ -52,7 +52,7 @@ function Kernel(params) {
     configMap: params,
     schemaMap: schemaMap
   }).toMessage({
-    tags: [ componentID, 'config-schema-loading' ],
+    tags: [ crateID, 'config-schema-loading' ],
     text: ' - Sandbox schemas: ${schemaMap}'
   }));
 
@@ -84,7 +84,7 @@ function Kernel(params) {
     configObject: configObject,
     configSchema: configSchema
   }).toMessage({
-    tags: [ componentID, 'config-schema-synchronizing' ],
+    tags: [ crateID, 'config-schema-synchronizing' ],
     text: ' - Synchronize the structure of configuration data and schemas'
   }));
 
@@ -116,7 +116,7 @@ function Kernel(params) {
         config: crateConfig,
         schema: crateSchema
       }).toMessage({
-        tags: [ componentID, 'sandbox-config-validation-skipped' ],
+        tags: [ crateID, 'sandbox-config-validation-skipped' ],
         text: ' - Validate sandboxConfig[${name}] is skipped'
       }));
     }
@@ -137,7 +137,7 @@ function Kernel(params) {
   LX.has('silly') && LX.log('silly', LT.add({
     validatingResult: result
   }).toMessage({
-    tags: [ componentID, 'config-schema-validating' ],
+    tags: [ crateID, 'config-schema-validating' ],
     text: ' - Validating sandbox configuration using schemas'
   }));
 
@@ -150,7 +150,7 @@ function Kernel(params) {
   this._injektor = injektor;
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
-    tags: [ componentID, 'constructor-end' ],
+    tags: [ crateID, 'constructor-end' ],
     text: ' - constructor has finished'
   }));
 }

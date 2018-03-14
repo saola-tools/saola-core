@@ -9,15 +9,15 @@ var Service = function(params) {
   var self = this;
   params = params || {};
 
-  var componentID = chores.getBlockRef(__filename);
-  var loggingFactory = params.loggingFactory.branch(componentID);
+  var crateID = chores.getBlockRef(__filename);
+  var loggingFactory = params.loggingFactory.branch(crateID);
   var LX = loggingFactory.getLogger();
   var LT = loggingFactory.getTracer();
 
   LX.has('silly') && LX.log('silly', LT.add({
     sandboxName: params.sandboxName
   }).toMessage({
-    tags: [ componentID, 'constructor-begin' ],
+    tags: [ crateID, 'constructor-begin' ],
     text: ' + constructor start in sandbox <{sandboxName}>'
   }));
 
@@ -58,7 +58,7 @@ var Service = function(params) {
   });
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
-    tags: [ componentID, 'constructor-end' ],
+    tags: [ crateID, 'constructor-end' ],
     text: ' - constructor has finished'
   }));
 };

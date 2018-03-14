@@ -44,13 +44,13 @@ var Service = function(params) {
     sandboxNames: sandboxNames,
     sandboxCfg: util.inspect(sandboxConfig),
   }).toMessage({
-    text: ' - load the sandbox[{sandboxNames}] with configuration: {sandboxCfg}'
+    text: ' - load the sandbox${sandboxNames} with configuration: ${sandboxCfg}'
   }));
 
   LX.has('conlog') && LX.log('conlog', LT.add({
     sandboxNames: sandboxNames
   }).toMessage({
-    text: ' - create sandbox[{sandboxNames}].injektor object'
+    text: ' - create sandbox${sandboxNames}.injektor object'
   }));
 
   var sandboxInjektor = new Injektor({ separator: chores.getSeparator() });

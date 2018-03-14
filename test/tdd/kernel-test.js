@@ -239,6 +239,8 @@ describe('tdd:devebot:base:kernel', function() {
       assert.equal(totalOfExit, 0);
     });
 
+    it('loading an invalid profile configure application make program exit');
+
     it('loading an invalid sandbox configure application make program exit', function() {
       var unhook = lab.preventExit();
       var kernel = lab.createKernel('invalid-cfg');
