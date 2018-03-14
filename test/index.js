@@ -69,12 +69,27 @@ var lab = module.exports = {
   }
 }
 
-lab.createBridgeLoader = function(appName) {
-  var profileConfig = {};
-  var bridgeRefs = [];
+var _attachInjectedObjects = function(injektor, injectedObjects) {
+  lodash.forOwn(injectedObjects, function(injectedObject, name) {
+    injektor.registerObject(name, injectedObject, chores.injektorContext);
+  });
+}
+
+var _loadBackboneServices = function(injektor, names) {
+  var bbPath = path.join(lab.getDevebotHome(), 'lib/backbone');
+  lodash.forOwn(chores.loadServiceByNames({}, bbPath, names), function(constructor, name) {
+    injektor.defineService(name, constructor, chores.injektorContext);
+  });
+}
+
+lab.createBridgeLoader = function(appName, injectedObjects) {
+  injectedObjects = injectedObjects || {
+    profileConfig: {},
+    bridgeRefs: []
+  };
   if (appName) {
     var app = lab.getApp(appName);
-    profileConfig = app.config.profile || {
+    injectedObjects.profileConfig = app.config.profile || {
       logger: {
         transports: {
           console: {
@@ -87,25 +102,24 @@ lab.createBridgeLoader = function(appName) {
         }
       }
     }
-    bridgeRefs = app.config.bridgeRefs;
+    injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
   }
   var injektor = new Injektor({ separator: chores.getSeparator() });
-  lodash.forOwn(chores.loadServiceByNames({}, path.join(lab.getDevebotHome(), 'lib/backbone'), [
+  _attachInjectedObjects(injektor, injectedObjects);
+  _loadBackboneServices(injektor, [
     'bridge-loader', 'schema-validator', 'logging-factory'
-  ]), function(constructor, serviceName) {
-    injektor.defineService(serviceName, constructor, chores.injektorContext);
-  });
-  injektor.registerObject('profileConfig', profileConfig);
-  injektor.registerObject('bridgeRefs', bridgeRefs);
+  ]);
   return injektor.lookup('bridgeLoader');
 }
 
-lab.createPluginLoader = function(appName) {
-  var profileConfig = {};
-  var pluginRefs = [];
+lab.createPluginLoader = function(appName, injectedObjects) {
+  injectedObjects = injectedObjects || {
+    profileConfig: {},
+    pluginRefs: []
+  };
   if (appName) {
     var app = lab.getApp(appName);
-    profileConfig = app.config.profile || {
+    injectedObjects.profileConfig = app.config.profile || {
       logger: {
         transports: {
           console: {
@@ -118,16 +132,13 @@ lab.createPluginLoader = function(appName) {
         }
       }
     }
-    pluginRefs = app.config.pluginRefs;
+    injectedObjects.pluginRefs = app.config.pluginRefs || [];
   }
   var injektor = new Injektor({ separator: chores.getSeparator() });
-  lodash.forOwn(chores.loadServiceByNames({}, path.join(lab.getDevebotHome(), 'lib/backbone'), [
+  _attachInjectedObjects(injektor, injectedObjects);
+  _loadBackboneServices(injektor, [
     'plugin-loader', 'schema-validator', 'logging-factory'
-  ]), function(constructor, serviceName) {
-    injektor.defineService(serviceName, constructor, chores.injektorContext);
-  });
-  injektor.registerObject('profileConfig', profileConfig);
-  injektor.registerObject('pluginRefs', pluginRefs);
+  ]);
   return injektor.lookup('pluginLoader');
 }
 
