@@ -104,6 +104,13 @@ describe('tdd:devebot:base:kernel', function() {
               "refName": "plugin2"
             }
           },
+          "anyname1c": {
+            "bridge1": {
+              "refPath": "sandbox -> bridge1 -> anyname1c",
+              "refType": "plugin",
+              "refName": "plugin2"
+            }
+          },
           "anyname2a": {
             "bridge2": {
               "refPath": "sandbox -> bridge2 -> anyname2a",

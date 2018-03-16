@@ -104,6 +104,7 @@ describe('devebot:command:execution', function() {
 				"plugin2/plugin2Service",
 				"bridge1/anyname1a",
 				"bridge1/anyname1b",
+				"bridge1/anyname1c",
 				"bridge2/anyname2a",
 				"bridge2/anyname2b",
 				"bridge2/anyname2c"
@@ -138,6 +139,7 @@ describe('devebot:command:execution', function() {
 				"plugin2/plugin2Service",
 				"bridge1/anyname1a",
 				"bridge1/anyname1b",
+				"bridge1/anyname1c",
 				"bridge2/anyname2a",
 				"bridge2/anyname2b",
 				"bridge2/anyname2c"

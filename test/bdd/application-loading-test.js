@@ -92,7 +92,8 @@ describe('devebot:application', function() {
 		];
 		var bridge1Scopes = [
 			"bridge1/anyname1a",
-			"bridge1/anyname1b"
+			"bridge1/anyname1b",
+			"bridge1/anyname1c"
 		];
 		var bridge2Scopes = [
 			"bridge2/anyname2a",
