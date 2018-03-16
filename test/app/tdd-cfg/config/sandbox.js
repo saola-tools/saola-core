@@ -5,24 +5,21 @@ module.exports = {
     "verbose": true
   },
   bridges: {
-    "anyname1a": {
-      "bridge1": {
-        "refPath": "sandbox -> bridge1 -> anyname1a"
+    "bridge1": {
+      "plugin1": {
+        "anyname1a": {
+          "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
+        },
+        "anyname1c": {
+          "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
+        }
       }
     },
-    "anyname1b": {
-      "bridge1": {
-        "refPath": "sandbox -> bridge1 -> anyname1b"
-      }
-    },
-    "anyname2a": {
-      "bridge2": {
-        "refPath": "sandbox -> bridge2 -> anyname2a"
-      }
-    },
-    "anyname2b": {
-      "bridge2": {
-        "refPath": "sandbox -> bridge2 -> anyname2b"
+    "bridge2": {
+      "plugin2": {
+        "anyname2b": {
+          "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
+        }
       }
     }
   },

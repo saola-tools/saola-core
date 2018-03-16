@@ -21,6 +21,7 @@ function Loader(appName, appOptions, appRootDir, libRootDirs) {
   var loggingWrapper = new LoggingWrapper(crateID);
   var LX = loggingWrapper.getLogger();
   var LT = loggingWrapper.getTracer();
+  var CTX = { logger: LX, tracer: LT };
 
   var label = chores.stringLabelCase(appName);
 
@@ -77,8 +78,9 @@ function Loader(appName, appOptions, appRootDir, libRootDirs) {
         LX.has('conlog') && LX.log('conlog', LT.add({
           defaultFile: defaultFile
         }).toMessage({
-          text: ' + load the default config: ${defaultFile}'}));
-        config[configType]['default'] = loadConfigFile(defaultFile);
+          text: ' + load the default config: ${defaultFile}'
+        }));
+        config[configType]['default'] = transformConfig(CTX, configType, loadConfigFile(defaultFile), 'application');
       }
 
       LX.has('conlog') && LX.log('conlog', LT.toMessage({
@@ -87,7 +89,7 @@ function Loader(appName, appOptions, appRootDir, libRootDirs) {
       libRootDirs.forEach(function(libRootDir) {
         var defaultFile = path.join(libRootDir, CONFIG_SUBDIR, configType + '.js');
         config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
-          loadConfigFile(defaultFile));
+            transformConfig(CTX, configType, loadConfigFile(defaultFile), 'plugin'));
       });
 
       LX.has('conlog') && LX.log('conlog', LT.add({
@@ -108,7 +110,7 @@ function Loader(appName, appOptions, appRootDir, libRootDirs) {
           }).toMessage({
             text: ' - load the environment config: ${configFile}'
           }));
-          var configObj = lodash.defaultsDeep(loadConfigFile(configFile), accum);
+          var configObj = lodash.defaultsDeep(transformConfig(CTX, configType, loadConfigFile(configFile), 'application'), accum);
           if (configObj.disabled) return accum;
           config[configType]['names'].push(mixtureItem[1]);
           return configObj;
@@ -248,3 +250,43 @@ function Loader(appName, appOptions, appRootDir, libRootDirs) {
 }
 
 module.exports = Loader;
+
+let transformConfig = function(ctx, configType, configData, moduleType, moduleName) {
+  if (false && configType === CONFIG_SANDBOX_NAME) {
+    return transformSandboxConfig(ctx, configData, moduleType, moduleName);
+  }
+  return configData;
+}
+
+let transformSandboxConfig = function(ctx, sandboxConfig, moduleType, moduleName) {
+  let { logger: LX, tracer: LT } = ctx || this;
+  if (lodash.isEmpty(sandboxConfig) || !lodash.isObject(sandboxConfig)) {
+    return sandboxConfig;
+  }
+  if (lodash.isObject(sandboxConfig.bridges)) {
+    let newBridges = {};
+    let cfgBridges = sandboxConfig.bridges || {};
+    lodash.forOwn(cfgBridges, function(bridgeCfg, cfgName) {
+      if (lodash.isObject(bridgeCfg) && !lodash.isEmpty(bridgeCfg)) {
+        if (moduleType === 'application') {
+          newBridges[cfgName] = newBridges[cfgName] || {};
+          lodash.merge(newBridges[cfgName], bridgeCfg);
+        } else
+        if (moduleType === 'plugin') {
+          moduleName = moduleName || '*';
+          let bridgeNames = lodash.keys(bridgeCfg);
+          if (bridgeNames.length === 1) {
+            let bridgeName = bridgeNames[0];
+            newBridges[bridgeName] = newBridges[bridgeName] || {};
+            newBridges[bridgeName][moduleName] = newBridges[bridgeName][moduleName] || {};
+            if (lodash.isObject(bridgeCfg[bridgeName])) {
+              newBridges[bridgeName][moduleName][cfgName] = bridgeCfg[bridgeName];
+            }
+          }
+        }
+      }
+    });
+    sandboxConfig.bridges = newBridges;
+  }
+  return sandboxConfig;
+}

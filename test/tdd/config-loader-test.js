@@ -11,7 +11,10 @@ var expect = require('chai').expect;
 var path = require('path');
 var util = require('util');
 var ConfigLoader = require('../../lib/backbone/config-loader');
+var LogAdapter = require('logolite').LogAdapter;
+var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
+var rewire = require('rewire');
 
 describe('tdd:devebot:core:config-loader', function() {
 
@@ -358,6 +361,184 @@ describe('tdd:devebot:core:config-loader', function() {
           loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
           loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
           {}));
+    });
+
+    describe('bridge configure transformation', function() {
+      var ConfigLoader = rewire('../../lib/backbone/config-loader');
+      var transformSandboxConfig = ConfigLoader.__get__('transformSandboxConfig');
+  
+      it('transform sandboxConfig.bridges from application', function() {
+        var sandboxConfig = {
+          "plugins": {
+            "plugin1": {},
+            "plugin2": {}
+          },
+          "bridges": {
+            "bridge1": {
+              "plugin1": {
+                "anyname1a": {
+                  "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
+                },
+                "anyname1c": {
+                  "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
+                }
+              }
+            },
+            "bridge2": {
+              "plugin2": {
+                "anyname2b": {
+                  "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
+                }
+              }
+            }
+          }
+        };
+        var exptectedConfig = {
+          "plugins": {
+            "plugin1": {},
+            "plugin2": {}
+          },
+          "bridges": {
+            "bridge1": {
+              "plugin1": {
+                "anyname1a": {
+                  "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
+                },
+                "anyname1c": {
+                  "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
+                }
+              }
+            },
+            "bridge2": {
+              "plugin2": {
+                "anyname2b": {
+                  "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
+                }
+              }
+            }
+          }
+        };
+        var transformedCfg = transformSandboxConfig({
+          logger: LogAdapter.getLogger(),
+          tracer: LogTracer.ROOT
+        }, sandboxConfig, 'application');
+        false && console.log(JSON.stringify(transformedCfg, null, 2));
+        assert.deepInclude(transformedCfg, exptectedConfig);
+      });
+  
+      it('transform sandboxConfig.bridges from a plugin (without name)', function() {
+        var sandboxConfig = {
+          "plugins": {
+            "plugin1": {},
+            "plugin2": {}
+          },
+          "bridges": {
+            "anyname1a": {
+              "bridge1": {
+                "refPath": "sandbox -> bridge1 -> anyname1a"
+              }
+            },
+            "anyname1c": {
+              "bridge1": {
+                "refPath": "sandbox -> bridge1 -> anyname1c"
+              }
+            },
+            "anyname2b": {
+              "bridge2": {
+                "refPath": "sandbox -> bridge2 -> anyname2b"
+              }
+            }
+          }
+        };
+        var exptectedConfig = {
+          "plugins": {
+            "plugin1": {},
+            "plugin2": {}
+          },
+          "bridges": {
+            "bridge1": {
+              "*": {
+                "anyname1a": {
+                  "refPath": "sandbox -> bridge1 -> anyname1a"
+                },
+                "anyname1c": {
+                  "refPath": "sandbox -> bridge1 -> anyname1c"
+                }
+              }
+            },
+            "bridge2": {
+              "*": {
+                "anyname2b": {
+                  "refPath": "sandbox -> bridge2 -> anyname2b"
+                }
+              }
+            }
+          }
+        };
+        var transformedCfg = transformSandboxConfig({
+          logger: LogAdapter.getLogger(),
+          tracer: LogTracer.ROOT
+        }, sandboxConfig, 'plugin');
+        false && console.log(JSON.stringify(transformedCfg, null, 2));
+        assert.deepInclude(transformedCfg, exptectedConfig);
+      });
+
+      it('transform sandboxConfig.bridges from a named plugin', function() {
+        var sandboxConfig = {
+          "plugins": {
+            "plugin1": {},
+            "plugin2": {}
+          },
+          "bridges": {
+            "anyname1a": {
+              "bridge1": {
+                "refPath": "sandbox -> bridge1 -> anyname1a"
+              }
+            },
+            "anyname1b": {
+              "bridge1": {
+                "refPath": "sandbox -> bridge1 -> anyname1b"
+              }
+            },
+            "anyname3a": {
+              "bridge3": {
+                "refPath": "sandbox -> bridge3 -> anyname3a"
+              }
+            }
+          }
+        };
+        var exptectedConfig = {
+          "plugins": {
+            "plugin1": {},
+            "plugin2": {}
+          },
+          "bridges": {
+            "bridge1": {
+              "plugin1": {
+                "anyname1a": {
+                  "refPath": "sandbox -> bridge1 -> anyname1a"
+                },
+                "anyname1b": {
+                  "refPath": "sandbox -> bridge1 -> anyname1b"
+                }
+              }
+            },
+            "bridge3": {
+              "plugin1": {
+                "anyname3a": {
+                  "refPath": "sandbox -> bridge3 -> anyname3a"
+                }
+              }
+            }
+          }
+        };
+        var transformedCfg = transformSandboxConfig({
+          logger: LogAdapter.getLogger(),
+          tracer: LogTracer.ROOT
+        }, sandboxConfig, 'plugin', 'plugin1');
+        false && console.log(JSON.stringify(transformedCfg, null, 2));
+        assert.deepInclude(transformedCfg, exptectedConfig);
+      });
     });
 
     after(function() {
