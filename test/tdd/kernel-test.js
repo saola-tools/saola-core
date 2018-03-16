@@ -83,7 +83,7 @@ describe('tdd:devebot:base:kernel', function() {
         }
       });
 
-      assert.deepEqual(configObject.sandbox, {
+      assert.deepInclude(configObject.sandbox, {
         "application": {
           "host": "0.0.0.0",
           "port": 17700,
@@ -92,7 +92,9 @@ describe('tdd:devebot:base:kernel', function() {
         "bridges": {
           "anyname1a": {
             "bridge1": {
-              "refPath": "sandbox -> bridge1 -> anyname1a"
+              "refPath": "sandbox -> bridge1 -> anyname1a",
+              "refType": "plugin",
+              "refName": "plugin1"
             }
           },
           "anyname1b": {
@@ -102,7 +104,9 @@ describe('tdd:devebot:base:kernel', function() {
           },
           "anyname2a": {
             "bridge2": {
-              "refPath": "sandbox -> bridge2 -> anyname2a"
+              "refPath": "sandbox -> bridge2 -> anyname2a",
+              "refType": "plugin",
+              "refName": "plugin2"
             }
           },
           "anyname2b": {

@@ -10,5 +10,14 @@ module.exports = {
         field4: [ 1, 2, 3, null, "4" ]
       }
     }
+  },
+  bridges: {
+    "anyname1a": {
+      "bridge1": {
+        "refPath": "sandbox -> bridge1 -> anyname1a",
+        "refType": "plugin",
+        "refName": "plugin1"
+      }
+    },
   }
 }
