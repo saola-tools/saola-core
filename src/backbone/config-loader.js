@@ -16,7 +16,7 @@ var CONFIG_SANDBOX_NAME = process.env.DEVEBOT_CONFIG_SANDBOX_NAME || 'sandbox';
 var CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME];
 var CONFIG_VAR_NAMES = { ctxName: 'PROFILE', boxName: 'SANDBOX', cfgDir: 'CONFIG_DIR', cfgEnv: 'CONFIG_ENV' };
 
-function Loader(appName, appOptions, appRootDir, libRootDirs) {
+function Loader(appName, appOptions, appRef, libRefs) {
   var crateID = chores.getBlockRef(__filename);
   var loggingWrapper = new LoggingWrapper(crateID);
   var LX = loggingWrapper.getLogger();
@@ -25,8 +25,21 @@ function Loader(appName, appOptions, appRootDir, libRootDirs) {
 
   var label = chores.stringLabelCase(appName);
 
+  var appRootDir = null;
+  if (appRef && lodash.isString(appRef.path)) {
+    appRootDir = path.dirname(appRef.path);
+  };
+  var libRootDirs = lodash.map(libRefs, function(libRef) {
+    return path.dirname(libRef.path);
+  });
+
   LX.has('silly') && LX.log('silly', LT.add({
     appName: appName,
+    appOptions: appOptions,
+    appRef: appRef,
+    appRootDir: appRootDir,
+    libRefs: libRefs,
+    libRootDirs: libRootDirs,
     label: label
   }).toMessage({
     tags: [ crateID, 'constructor-begin' ],

@@ -18,6 +18,24 @@ var rewire = require('rewire');
 
 describe('tdd:devebot:core:config-loader', function() {
 
+  var appRef = {
+    name: 'tdd-cfg',
+    type: 'application',
+    path: path.join(lab.getAppHome('tdd-cfg'), 'index.js')
+  };
+
+  var libRefs = [{
+    name: 'plugin1',
+    path: path.join(lab.getLibHome('plugin1'), 'index.js')
+  },{
+    name: 'plugin2',
+    path: path.join(lab.getLibHome('plugin2'), 'index.js')
+  },{
+    name: 'devebot',
+    type: 'framework',
+    path: path.join(lab.getDevebotHome(), 'index.js')
+  }];
+
   describe('default configuration (without profile & sandbox)', function() {
     it('load configuration of nothing (empty loader)', function() {
       // appName: null, appOptions: null, appRootDir: null, libRootDirs: null
@@ -37,11 +55,7 @@ describe('tdd:devebot:core:config-loader', function() {
 
     it('load configuration of empty application', function() {
       // appName: empty-app, appOptions: null, appRootDir: null, libRootDirs: [...]
-      var cfgLoader = new ConfigLoader('empty-app', null, null, [
-        lab.getLibHome('plugin1'),
-        lab.getLibHome('plugin2'),
-        lab.getDevebotHome()
-      ]);
+      var cfgLoader = new ConfigLoader('empty-app', null, null, libRefs);
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
       // Profile configuration
@@ -66,11 +80,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('load application configuration (without options)', function() {
-      var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('tdd-cfg'), [
-        lab.getLibHome('plugin1'),
-        lab.getLibHome('plugin2'),
-        lab.getDevebotHome()
-      ]);
+      var cfgLoader = new ConfigLoader('app', null, appRef, libRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -107,11 +117,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('load application configuration (without customized profile, sandbox)', function() {
-      var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('tdd-cfg'), [
-        lab.getLibHome('plugin1'),
-        lab.getLibHome('plugin2'),
-        lab.getDevebotHome()
-      ]);
+      var cfgLoader = new ConfigLoader('app', null, appRef, libRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -159,11 +165,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('load application configuration (without private sandboxes)', function() {
-      var cfgLoader = new ConfigLoader('app', null, lab.getAppHome('tdd-cfg'), [
-        lab.getLibHome('plugin1'),
-        lab.getLibHome('plugin2'),
-        lab.getDevebotHome()
-      ]);
+      var cfgLoader = new ConfigLoader('app', null, appRef, libRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -208,11 +210,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('load application configuration with single private sandboxes', function() {
       var cfgLoader = new ConfigLoader('app', {
         privateSandboxes: 'bs1'
-      }, lab.getAppHome('tdd-cfg'), [
-        lab.getLibHome('plugin1'),
-        lab.getLibHome('plugin2'),
-        lab.getDevebotHome()
-      ]);
+      }, appRef, libRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -260,11 +258,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('load application configuration with multiple private sandboxes', function() {
       var cfgLoader = new ConfigLoader('app', {
         privateSandboxes: ['bs1', 'bs2']
-      }, lab.getAppHome('tdd-cfg'), [
-        lab.getLibHome('plugin1'),
-        lab.getLibHome('plugin2'),
-        lab.getDevebotHome()
-      ]);
+      }, appRef, libRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -314,11 +308,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('the order of listed sandbox labels is sensitive', function() {
       var cfgLoader = new ConfigLoader('app', {
         privateSandboxes: 'bs2, bs1'
-      }, lab.getAppHome('tdd-cfg'), [
-        lab.getLibHome('plugin1'),
-        lab.getLibHome('plugin2'),
-        lab.getDevebotHome()
-      ]);
+      }, appRef, libRefs);
 
       // Profile configuration
       assert.deepEqual(
