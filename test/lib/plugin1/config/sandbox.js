@@ -19,5 +19,19 @@ module.exports = {
         "refName": "plugin1"
       }
     },
+    "anyname2a": {
+      "bridge2": {
+        "refPath": "sandbox -> bridge2 -> anyname2a",
+        "refType": "plugin",
+        "refName": "plugin1"
+      }
+    },
+    "anyname2c": {
+      "bridge2": {
+        "refPath": "sandbox -> bridge2 -> anyname2c",
+        "refType": "plugin",
+        "refName": "plugin1"
+      }
+    }
   }
 }

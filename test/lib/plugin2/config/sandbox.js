@@ -12,9 +12,16 @@ module.exports = {
     }
   },
   bridges: {
-    "anyname2a": {
+    "anyname1b": {
+      "bridge1": {
+        "refPath": "sandbox -> bridge1 -> anyname1b",
+        "refType": "plugin",
+        "refName": "plugin2"
+      }
+    },
+    "anyname2b": {
       "bridge2": {
-        "refPath": "sandbox -> bridge2 -> anyname2a",
+        "refPath": "sandbox -> bridge2 -> anyname2b",
         "refType": "plugin",
         "refName": "plugin2"
       }

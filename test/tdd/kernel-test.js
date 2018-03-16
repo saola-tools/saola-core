@@ -99,24 +99,30 @@ describe('tdd:devebot:base:kernel', function() {
           },
           "anyname1b": {
             "bridge1": {
-              "refPath": "sandbox -> bridge1 -> anyname1b"
+              "refPath": "sandbox -> bridge1 -> anyname1b",
+              "refType": "plugin",
+              "refName": "plugin2"
             }
           },
           "anyname2a": {
             "bridge2": {
               "refPath": "sandbox -> bridge2 -> anyname2a",
               "refType": "plugin",
-              "refName": "plugin2"
+              "refName": "plugin1"
             }
           },
           "anyname2b": {
             "bridge2": {
-              "refPath": "sandbox -> bridge2 -> anyname2b"
+              "refPath": "sandbox -> bridge2 -> anyname2b",
+              "refType": "plugin",
+              "refName": "plugin2"
             }
           },
           "anyname2c": {
             "bridge2": {
-              "refPath": "sandbox -> bridge2 -> anyname2c"
+              "refPath": "sandbox -> bridge2 -> anyname2c",
+              "refType": "plugin",
+              "refName": "plugin1"
             }
           }
         },
