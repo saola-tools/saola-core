@@ -9,12 +9,21 @@ var Service = function(params) {
 
   params = params || {};
 
-  dgx.enabled && dgx(' - params: %s', JSON.stringify(params, null, 2));
+  var LX = this.logger, LT = this.tracer;
 
-  this.logger.has('debug') && this.logger.log('debug', this.tracer.add({
+  LX.has('debug') && LX.log('debug', LT.add({
     message: 'configuration',
     data: params
-  }).toMessage());
+  }).toMessage({
+    tags: [ 'bridge2', 'configuration' ],
+    message: 'Configuration: ${data}'
+  }));
+
+  dgx.enabled && dgx(' - params: %s', JSON.stringify(params, null, 2));
+
+  this.getConfig = function() {
+    return lodash.cloneDeep(params);
+  }
 
   dgx.enabled && dgx(' - constructor end!');
 };

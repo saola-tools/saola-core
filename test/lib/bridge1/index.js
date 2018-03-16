@@ -11,6 +11,10 @@ var Service = function(params) {
 
   dgx.enabled && dgx(' - params: %s', JSON.stringify(params, null, 2));
 
+  this.getConfig = function() {
+    return lodash.cloneDeep(params);
+  }
+
   dgx.enabled && dgx(' - constructor end!');
 };
 
