@@ -25,21 +25,11 @@ function Loader(appName, appOptions, appRef, libRefs) {
 
   var label = chores.stringLabelCase(appName);
 
-  var appRootDir = null;
-  if (appRef && lodash.isString(appRef.path)) {
-    appRootDir = path.dirname(appRef.path);
-  };
-  var libRootDirs = lodash.map(libRefs, function(libRef) {
-    return path.dirname(libRef.path);
-  });
-
   LX.has('silly') && LX.log('silly', LT.add({
     appName: appName,
     appOptions: appOptions,
     appRef: appRef,
-    appRootDir: appRootDir,
     libRefs: libRefs,
-    libRootDirs: libRootDirs,
     label: label
   }).toMessage({
     tags: [ crateID, 'constructor-begin' ],
@@ -48,8 +38,16 @@ function Loader(appName, appOptions, appRef, libRefs) {
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
 
-  var loadConfig = function(appName, appOptions, appRootDir, libRootDirs, profileName, sandboxName, customDir, customEnv) {
+  var loadConfig = function(appName, appOptions, appRef, libRefs, profileName, sandboxName, customDir, customEnv) {
     appOptions = appOptions || {};
+
+    var appRootDir = null;
+    if (appRef && lodash.isString(appRef.path)) {
+      appRootDir = path.dirname(appRef.path);
+    };
+    var libRootDirs = lodash.map(libRefs, function(libRef) {
+      return path.dirname(libRef.path);
+    });
     libRootDirs = libRootDirs || [];
 
     var config = {};
@@ -246,7 +244,7 @@ function Loader(appName, appOptions, appRef, libRefs) {
   appOptions = appOptions || {};
 
   var config = loadConfig
-      .bind(null, appName, appOptions, appRootDir, libRootDirs)
+      .bind(null, appName, appOptions, appRef, libRefs)
       .apply(null, Object.keys(CONFIG_VAR_NAMES).map(function(varName) {
         return readVariable(label, CONFIG_VAR_NAMES[varName]);
       }));
