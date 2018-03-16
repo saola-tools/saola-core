@@ -103,11 +103,11 @@ describe('tdd:devebot:base:bootstrap', function() {
     it('expand empty context with a list of plugins', function() {
       var output = expandExtensions(null, [
         {
-          name: 'my-plugin1',
+          name: 'plugin1',
           path: lab.getLibHome('plugin1')
         },
         {
-          name: 'my-plugin2',
+          name: 'plugin2',
           path: lab.getLibHome('plugin2')
         }
       ], null);
@@ -116,21 +116,24 @@ describe('tdd:devebot:base:bootstrap', function() {
       assert.deepEqual(output, {
         libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
         pluginRefs: {
-          'my-plugin1': { name: 'my-plugin1', path: '/test/lib/plugin1/index.js' },
-          'my-plugin2': { name: 'my-plugin2', path: '/test/lib/plugin2/index.js' }
+          'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+          'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' }
         },
-        bridgeRefs: {}
+        bridgeRefs: {
+          'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+          'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+        }
       });
     });
 
     it('expand empty context with a list of bridges', function() {
       var output = expandExtensions(null, [], [
         {
-          name: 'my-bridge1',
+          name: 'bridge1',
           path: lab.getLibHome('bridge1')
         },
         {
-          name: 'my-bridge2',
+          name: 'bridge2',
           path: lab.getLibHome('bridge2')
         }
       ]);
@@ -140,8 +143,8 @@ describe('tdd:devebot:base:bootstrap', function() {
         libRootPaths: [],
         pluginRefs: {},
         bridgeRefs: {
-          'my-bridge1': { name: 'my-bridge1', path: '/test/lib/bridge1/index.js' },
-          'my-bridge2': { name: 'my-bridge2', path: '/test/lib/bridge2/index.js' }
+          'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+          'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
         }
       });
     });
@@ -149,24 +152,24 @@ describe('tdd:devebot:base:bootstrap', function() {
     it('expand empty context with a list of plugins and a list of bridges', function() {
       var output = expandExtensions(null, [
         {
-          name: 'my-plugin1',
+          name: 'plugin1',
           path: lab.getLibHome('plugin1')
         },
         {
-          name: 'my-plugin2',
+          name: 'plugin2',
           path: lab.getLibHome('plugin2')
         },
         {
-          name: 'my-plugin3',
+          name: 'plugin3',
           path: lab.getLibHome('plugin3')
         }
       ], [
         {
-          name: 'my-bridge1',
+          name: 'bridge1',
           path: lab.getLibHome('bridge1')
         },
         {
-          name: 'my-bridge2',
+          name: 'bridge2',
           path: lab.getLibHome('bridge2')
         }
       ]);
@@ -174,13 +177,13 @@ describe('tdd:devebot:base:bootstrap', function() {
       assert.deepEqual(output, {
         libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
         pluginRefs: {
-          'my-plugin1': { name: 'my-plugin1', path: '/test/lib/plugin1/index.js' },
-          'my-plugin2': { name: 'my-plugin2', path: '/test/lib/plugin2/index.js' },
-          'my-plugin3': { name: 'my-plugin3', path: '/test/lib/plugin3/index.js' }
+          'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+          'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
+          'plugin3': { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
         },
         bridgeRefs: {
-          'my-bridge1': { name: 'my-bridge1', path: '/test/lib/bridge1/index.js' },
-          'my-bridge2': { name: 'my-bridge2', path: '/test/lib/bridge2/index.js' }
+          'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+          'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
         }
       });
     });
