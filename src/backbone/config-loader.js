@@ -45,10 +45,6 @@ function Loader(appName, appOptions, appRef, libRefs) {
     if (appRef && lodash.isString(appRef.path)) {
       appRootDir = path.dirname(appRef.path);
     };
-    var libRootDirs = lodash.map(libRefs, function(libRef) {
-      return path.dirname(libRef.path);
-    });
-    libRootDirs = libRootDirs || [];
 
     var config = {};
 
@@ -97,10 +93,13 @@ function Loader(appName, appOptions, appRef, libRefs) {
       LX.has('conlog') && LX.log('conlog', LT.toMessage({
         text: ' + load the default config from plugins'
       }));
-      libRootDirs.forEach(function(libRootDir) {
+      lodash.forEach(libRefs, function(libRef) {
+        var libRootDir = path.dirname(libRef.path);
+        var libType = libRef.type || 'plugin';
+        var libName = libRef.name;
         var defaultFile = path.join(libRootDir, CONFIG_SUBDIR, configType + '.js');
         config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
-            transformConfig(CTX, configType, loadConfigFile(defaultFile), 'plugin'));
+            transformConfig(CTX, configType, loadConfigFile(defaultFile), libType, libName));
       });
 
       LX.has('conlog') && LX.log('conlog', LT.add({
