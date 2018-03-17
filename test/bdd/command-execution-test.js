@@ -3,6 +3,7 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('bdd:devebot:command:execution');
 var assert = require('chai').assert;
@@ -48,6 +49,7 @@ describe('devebot:command:execution', function() {
 			storeTo: 'plugin1Routine2State'
 		}
 	]);
+	var bridgeRefs = [];
 
 	before(function() {
 		envtool.setup({
@@ -58,7 +60,31 @@ describe('devebot:command:execution', function() {
 		LogTracer.clearStringifyInterceptors();
 		LogTracer.addStringifyInterceptor(logCounter);
 		LogTracer.addStringifyInterceptor(logScraper);
-		app = lab.getApp();
+		app = lab.getApp('default');
+		bridgeRefs = [
+			"demo-app/mainService",
+			"plugin1/plugin1Service",
+			"plugin2/plugin2Service",
+			"plugin1>bridge1/anyname1a",
+			"plugin2>bridge1/anyname1b",
+			"plugin2>bridge1/anyname1c",
+			"plugin1>bridge2/anyname2a",
+			"plugin2>bridge2/anyname2b",
+			"plugin1>bridge2/anyname2c"
+		];
+		if (chores.isOldFeatures()) {
+			bridgeRefs = [
+				"demo-app/mainService",
+				"plugin1/plugin1Service",
+				"plugin2/plugin2Service",
+				"bridge1/anyname1a",
+				"bridge1/anyname1b",
+				"bridge1/anyname1c",
+				"bridge2/anyname2a",
+				"bridge2/anyname2b",
+				"bridge2/anyname2c"
+			];
+		}
 		api = new DevebotApi(lab.getApiConfig());
 	});
 
@@ -98,17 +124,7 @@ describe('devebot:command:execution', function() {
 			assert.equal(logStats['plugin1Routine1Count'], 3);
 			assert.isArray(logStats['plugin1Routine1State']);
 			assert.equal(logStats['plugin1Routine1State'].length, 1);
-			assert.sameMembers(logStats['plugin1Routine1State'][0]['injectedServiceNames'], [
-				"demo-app/mainService",
-				"plugin1/plugin1Service",
-				"plugin2/plugin2Service",
-				"bridge1/anyname1a",
-				"bridge1/anyname1b",
-				"bridge1/anyname1c",
-				"bridge2/anyname2a",
-				"bridge2/anyname2b",
-				"bridge2/anyname2c"
-			]);
+			assert.sameMembers(logStats['plugin1Routine1State'][0]['injectedServiceNames'], bridgeRefs);
 			done();
 		}).catch(function(error) {
 			debugx.enabled && debugx(JSON.stringify(error, null, 2));
@@ -133,17 +149,7 @@ describe('devebot:command:execution', function() {
 			assert.equal(logStats['plugin1Routine2Count'], 3);
 			assert.isArray(logStats['plugin1Routine2State']);
 			assert.equal(logStats['plugin1Routine2State'].length, 1);
-			assert.sameMembers(logStats['plugin1Routine2State'][0]['injectedServiceNames'], [
-				"demo-app/mainService",
-				"plugin1/plugin1Service",
-				"plugin2/plugin2Service",
-				"bridge1/anyname1a",
-				"bridge1/anyname1b",
-				"bridge1/anyname1c",
-				"bridge2/anyname2a",
-				"bridge2/anyname2b",
-				"bridge2/anyname2c"
-			]);
+			assert.sameMembers(logStats['plugin1Routine2State'][0]['injectedServiceNames'], bridgeRefs);
 			done();
 		}).catch(function(error) {
 			debugx.enabled && debugx(JSON.stringify(error, null, 2));

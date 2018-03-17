@@ -3,6 +3,7 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('bdd:devebot:application-loading-test');
 var assert = require('chai').assert;
@@ -91,15 +92,28 @@ describe('devebot:application', function() {
 			"plugin2/plugin2Trigger"
 		];
 		var bridge1Scopes = [
-			"bridge1/anyname1a",
-			"bridge1/anyname1b",
-			"bridge1/anyname1c"
+			"plugin1>bridge1/anyname1a",
+			"plugin2>bridge1/anyname1b",
+			"plugin2>bridge1/anyname1c"
 		];
 		var bridge2Scopes = [
-			"bridge2/anyname2a",
-			"bridge2/anyname2b",
-			"bridge2/anyname2c"
+			"plugin1>bridge2/anyname2a",
+			"plugin2>bridge2/anyname2b",
+			"plugin1>bridge2/anyname2c"
 		];
+
+		if (chores.isOldFeatures()) {
+			bridge1Scopes = [
+				"bridge1/anyname1a",
+				"bridge1/anyname1b",
+				"bridge1/anyname1c"
+			];
+			bridge2Scopes = [
+				"bridge2/anyname2a",
+				"bridge2/anyname2b",
+				"bridge2/anyname2c"
+			];
+		}
 
 		app.server.start()
 			.then(function(info) {

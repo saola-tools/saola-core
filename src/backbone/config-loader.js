@@ -262,7 +262,10 @@ function Loader(appName, appOptions, appRef, libRefs) {
 module.exports = Loader;
 
 let transformConfig = function(ctx, configType, configData, moduleType, moduleName) {
-  if (false && configType === CONFIG_SANDBOX_NAME) {
+  if (chores.isOldFeatures()) {
+    return configData;
+  }
+  if (configType === CONFIG_SANDBOX_NAME) {
     return transformSandboxConfig(ctx, configData, moduleType, moduleName);
   }
   return configData;
@@ -274,29 +277,31 @@ let transformSandboxConfig = function(ctx, sandboxConfig, moduleType, moduleName
     return sandboxConfig;
   }
   if (lodash.isObject(sandboxConfig.bridges)) {
-    let newBridges = {};
     let cfgBridges = sandboxConfig.bridges || {};
-    lodash.forOwn(cfgBridges, function(bridgeCfg, cfgName) {
-      if (lodash.isObject(bridgeCfg) && !lodash.isEmpty(bridgeCfg)) {
-        if (moduleType === 'application') {
-          newBridges[cfgName] = newBridges[cfgName] || {};
-          lodash.merge(newBridges[cfgName], bridgeCfg);
-        } else
-        if (moduleType === 'plugin') {
-          moduleName = moduleName || '*';
-          let bridgeNames = lodash.keys(bridgeCfg);
-          if (bridgeNames.length === 1) {
-            let bridgeName = bridgeNames[0];
-            newBridges[bridgeName] = newBridges[bridgeName] || {};
-            newBridges[bridgeName][moduleName] = newBridges[bridgeName][moduleName] || {};
-            if (lodash.isObject(bridgeCfg[bridgeName])) {
-              newBridges[bridgeName][moduleName][cfgName] = bridgeCfg[bridgeName];
+    if (!cfgBridges.__status__) {
+      let newBridges = { __status__: true };
+      lodash.forOwn(cfgBridges, function(bridgeCfg, cfgName) {
+        if (lodash.isObject(bridgeCfg) && !lodash.isEmpty(bridgeCfg)) {
+          if (moduleType === 'application') {
+            newBridges[cfgName] = newBridges[cfgName] || {};
+            lodash.merge(newBridges[cfgName], bridgeCfg);
+          } else
+          if (moduleType === 'plugin') {
+            moduleName = moduleName || '*';
+            let bridgeNames = lodash.keys(bridgeCfg);
+            if (bridgeNames.length === 1) {
+              let bridgeName = bridgeNames[0];
+              newBridges[bridgeName] = newBridges[bridgeName] || {};
+              newBridges[bridgeName][moduleName] = newBridges[bridgeName][moduleName] || {};
+              if (lodash.isObject(bridgeCfg[bridgeName])) {
+                newBridges[bridgeName][moduleName][cfgName] = bridgeCfg[bridgeName];
+              }
             }
           }
         }
-      }
-    });
-    sandboxConfig.bridges = newBridges;
+      });
+      sandboxConfig.bridges = newBridges;
+    }
   }
   return sandboxConfig;
 }

@@ -157,7 +157,11 @@ function BridgeLoader(params) {
       return result;
     }
 
-    var uniqueName = [bridgeRecord.moduleId, dialectName].join(chores.getSeparator());
+    var moduleId = [pluginName, bridgeRecord.moduleId].join('>');;
+    if (chores.isOldFeatures()) {
+      moduleId = bridgeRecord.moduleId;
+    }
+    var uniqueName = [moduleId, dialectName].join(chores.getSeparator());
 
     var bridgeConstructor = bridgeRecord.construktor;
     if (!lodash.isFunction(bridgeConstructor)) {
@@ -176,15 +180,19 @@ function BridgeLoader(params) {
     }));
 
     var configPath;
-    switch(optType) {
-      case 0:
-        configPath = ['sandboxConfig', 'bridges', dialectName, bridgeCode];
-        break;
-      case 1:
-        configPath = ['sandboxConfig', 'bridges', bridgeCode, dialectName];
-        break;
-      default:
-        configPath = ['sandboxConfig', 'bridges', bridgeCode];
+    if (chores.isOldFeatures()) {
+      switch(optType) {
+        case 0:
+          configPath = ['sandboxConfig', 'bridges', dialectName, bridgeCode];
+          break;
+        case 1:
+          configPath = ['sandboxConfig', 'bridges', bridgeCode, dialectName];
+          break;
+        default:
+          configPath = ['sandboxConfig', 'bridges', bridgeCode];
+      }
+    } else {
+      configPath = ['sandboxConfig', 'bridges', bridgeCode, pluginName, dialectName];
     }
 
     function dialectConstructor(kwargs) {
@@ -275,10 +283,14 @@ function BridgeLoader(params) {
     };
 
     result[uniqueName] = {
-      moduleId: bridgeRecord.moduleId,
+      moduleId: moduleId,
       name: dialectName,
       construktor: dialectConstructor
     };
+
+    if (pluginName) {
+      result[uniqueName].pluginName = pluginName;
+    }
 
     LX.has('conlog') && LX.log('conlog', LT.add({
       dialectName: dialectName
@@ -317,42 +329,59 @@ function BridgeLoader(params) {
     }
 
     var bridgeDialects = {};
-    switch(optType) {
-      case 0:
-        lodash.forOwn(dialectOptions, function(dialectConfig, dialectName) {
-          var bridgeCode = lodash.findKey(dialectConfig, function(o, k) {
-            return lodash.isObject(o) && bridgeConstructors[k];
+    if (chores.isOldFeatures()) {
+      switch(optType) {
+        case 0:
+          lodash.forOwn(dialectOptions, function(dialectConfig, dialectName) {
+            var bridgeCode = lodash.findKey(dialectConfig, function(o, k) {
+              return lodash.isObject(o) && bridgeConstructors[k];
+            });
+            if (bridgeCode) {
+              lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
+                bridgeCode,
+                bridgeRecord: bridgeConstructors[bridgeCode],
+                dialectName,
+                optType
+              }));
+            }
           });
-          if (bridgeCode) {
+          break;
+        case 1:
+          lodash.forOwn(dialectOptions, function(dialectMap, bridgeCode) {
+            lodash.forOwn(dialectMap, function(dialectConfig, dialectName) {
+              lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
+                bridgeCode,
+                bridgeRecord: bridgeConstructors[bridgeCode],
+                dialectName,
+                optType}));
+            });
+          });
+          break;
+        default:
+          lodash.forOwn(dialectOptions, function(bridgeConfig, bridgeCode) {
             lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
+              bridgeCode,
+              bridgeRecord: bridgeConstructors[bridgeCode],
+              dialectName: bridgeCode + 'Wrapper',
+              optType
+            }));
+          });
+      }
+    } else {
+      lodash.forOwn(dialectOptions, function(bridgeMap, bridgeCode) {
+        if (!bridgeCode || !bridgeConstructors[bridgeCode]) return;
+        lodash.forOwn(bridgeMap, function(pluginMap, pluginName) {
+          lodash.forOwn(pluginMap, function(dialectConfig, dialectName) {
+            lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
+              pluginName,
               bridgeCode,
               bridgeRecord: bridgeConstructors[bridgeCode],
               dialectName,
               optType
             }));
-          }
-        });
-        break;
-      case 1:
-        lodash.forOwn(dialectOptions, function(dialectMap, bridgeCode) {
-          lodash.forOwn(dialectMap, function(dialectConfig, dialectName) {
-            lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
-              bridgeCode,
-              bridgeRecord: bridgeConstructors[bridgeCode],
-              dialectName,
-              optType}));
           });
         });
-        break;
-      default:
-        lodash.forOwn(dialectOptions, function(bridgeConfig, bridgeCode) {
-          lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
-            bridgeCode,
-            bridgeRecord: bridgeConstructors[bridgeCode],
-            dialectName: bridgeCode + 'Wrapper',
-            optType
-          }));
-        });
+      });
     }
 
     LX.has('silly') && LX.log('silly', LT.add({

@@ -389,6 +389,7 @@ describe('tdd:devebot:core:config-loader', function() {
             "plugin2": {}
           },
           "bridges": {
+            "__status__": true,
             "bridge1": {
               "plugin1": {
                 "anyname1a": {
@@ -446,6 +447,7 @@ describe('tdd:devebot:core:config-loader', function() {
             "plugin2": {}
           },
           "bridges": {
+            "__status__": true,
             "bridge1": {
               "*": {
                 "anyname1a": {
@@ -503,6 +505,7 @@ describe('tdd:devebot:core:config-loader', function() {
             "plugin2": {}
           },
           "bridges": {
+            "__status__": true,
             "bridge1": {
               "plugin1": {
                 "anyname1a": {

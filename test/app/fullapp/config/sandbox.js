@@ -1,3 +1,9 @@
+'use strict';
+
+var lab = require('../../../index');
+var Devebot = lab.getDevebot();
+var chores = Devebot.require('chores');
+
 module.exports = {
   application: {
     "host": "0.0.0.0",
@@ -5,6 +11,65 @@ module.exports = {
     "verbose": false
   },
   bridges: {
+    "bridge1": {
+      "plugin1": {
+        "anyname1a": {
+          "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a",
+          "refType": "application",
+          "refName": "fullapp"
+        }
+      },
+      "plugin2": {
+        "anyname1b": {
+          "refPath": "sandbox -> bridge1 -> plugin2 -> anyname1b",
+          "refType": "application",
+          "refName": "fullapp"
+        },
+        "anyname1c": {
+          "refPath": "sandbox -> bridge1 -> plugin2 -> anyname1c",
+          "refType": "application",
+          "refName": "fullapp"
+        }
+      }
+    },
+    "bridge2": {
+      "plugin1": {
+        "anyname2a": {
+          "refPath": "sandbox -> bridge2 -> plugin1 -> anyname2a",
+          "refType": "application",
+          "refName": "fullapp"
+        },
+        "anyname2c": {
+          "refPath": "sandbox -> bridge2 -> plugin1 -> anyname2c",
+          "refType": "application",
+          "refName": "fullapp"
+        }
+      },
+      "plugin2": {
+        "anyname2b": {
+          "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b",
+          "refType": "application",
+          "refName": "fullapp"
+        }
+      }
+    }
+  },
+  plugins: {
+    "plugin1": {
+      "host": "0.0.0.0",
+      "port": 17701,
+      "verbose": false
+    },
+    "plugin2": {
+      "host": "0.0.0.0",
+      "port": 17702,
+      "verbose": false
+    }
+  }
+}
+
+if (chores.isOldFeatures()) {
+  module.exports.bridges = {
     "anyname1a": {
       "bridge1": {
         "refPath": "sandbox -> bridge1 -> anyname1a"
@@ -30,17 +95,5 @@ module.exports = {
         "refPath": "sandbox -> bridge2 -> anyname2c"
       }
     }
-  },
-  plugins: {
-    "plugin1": {
-      "host": "0.0.0.0",
-      "port": 17701,
-      "verbose": false
-    },
-    "plugin2": {
-      "host": "0.0.0.0",
-      "port": 17702,
-      "verbose": false
-    }
   }
-}
+};

@@ -89,6 +89,12 @@ lab.createKernel = function(appName) {
     _config = app.config;
   }
   if (_config === null) return null;
+
+  if (false) {
+    console.log('==@ createKernel() with: %s', JSON.stringify(_config, null, 2));
+    console.log('==/ createKernel() ========');
+  }
+
   var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
   return new Kernel(_config);
 }
@@ -191,6 +197,7 @@ lab.createSandboxManager = function(appName, injectedObjects) {
   }, injectedObjects);
   if (appName) {
     var app = lab.getApp(appName);
+    false && console.log('[%s].config: %s', appName, JSON.stringify(app.config, null, 2));
     injectedObjects.appName = app.config.appName;
     injectedObjects.appInfo = app.config.appInfo;
     injectedObjects.profileNames = app.config.profile.names;

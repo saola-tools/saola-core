@@ -71,6 +71,49 @@ describe('tdd:devebot:core:bridge-loader', function() {
     it('load all of valid dialects from all of components', function() {
       var bridgeLoader = lab.createBridgeLoader('fullapp');
       var bridgeConfig = {
+        "bridge1": {
+          "plugin1": {
+            "anyname1a": {
+              "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          },
+          "plugin2": {
+            "anyname1b": {
+              "refPath": "sandbox -> bridge1 -> plugin2 -> anyname1b",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          }
+        },
+        "bridge2": {
+          "plugin1": {
+            "anyname2a": {
+              "refPath": "sandbox -> bridge2 -> plugin1 -> anyname2a",
+              "refType": "application",
+              "refName": "fullapp"
+            },
+            "anyname2c": {
+              "refPath": "sandbox -> bridge2 -> plugin1 -> anyname2c",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          }
+        },
+        "bridge3": {
+          "plugin1": {
+            "anyname3a": {
+              "refPath": "sandbox -> bridge3 -> plugin1 -> anyname3a",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          }
+        }
+      };
+
+      if (chores.isOldFeatures())
+      bridgeConfig = {
         "anyname1a": {
           "bridge1": {
             "refPath": "sandbox -> bridge1 -> anyname1a"
@@ -103,7 +146,151 @@ describe('tdd:devebot:core:bridge-loader', function() {
           ]), lodash.omit(dialect, ['construktor']));
       });
       false && console.log('dialectMap: ', JSON.stringify(dialectMap, null, 2));
-      assert.deepInclude(dialectMap, {
+      var expectedMap = {
+        "plugin1>bridge1/anyname1a": {
+          "construktor": {
+            "argumentSchema": {
+              "$id": "anyname1a",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "moduleId": "plugin1>bridge1",
+          "name": "anyname1a",
+          "pluginName": "plugin1"
+        },
+        "plugin2>bridge1/anyname1b": {
+          "construktor": {
+            "argumentSchema": {
+              "$id": "anyname1b",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "moduleId": "plugin2>bridge1",
+          "name": "anyname1b",
+          "pluginName": "plugin2"
+        },
+        "plugin1>bridge2/anyname2a": {
+          "construktor": {
+            "argumentSchema": {
+              "$id": "anyname2a",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "moduleId": "plugin1>bridge2",
+          "name": "anyname2a",
+          "pluginName": "plugin1"
+        },
+        "plugin1>bridge2/anyname2c": {
+          "construktor": {
+            "argumentSchema": {
+              "$id": "anyname2c",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "moduleId": "plugin1>bridge2",
+          "name": "anyname2c",
+          "pluginName": "plugin1"
+        },
+        "plugin1>bridge3/anyname3a": {
+          "construktor": {
+            "argumentSchema": {
+              "$id": "anyname3a",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "moduleId": "plugin1>bridge3",
+          "name": "anyname3a",
+          "pluginName": "plugin1"
+        }
+      };
+
+      if (chores.isOldFeatures())
+      expectedMap = {
         "bridge1/anyname1a": {
           "construktor": {
             "argumentSchema": {
@@ -212,7 +399,8 @@ describe('tdd:devebot:core:bridge-loader', function() {
           "moduleId": "bridge3",
           "name": "anyname3a"
         }
-      });
+      }
+      assert.deepInclude(dialectMap, expectedMap);
     });
   });
 
