@@ -178,7 +178,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "moduleId": "application>bridge1",
+          "crateScope": "application>bridge1",
           "name": "anyname1z",
           "pluginName": "application"
         },
@@ -206,7 +206,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "moduleId": "plugin1>bridge1",
+          "crateScope": "plugin1>bridge1",
           "name": "anyname1a",
           "pluginName": "plugin1"
         },
@@ -234,7 +234,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "moduleId": "plugin2>bridge1",
+          "crateScope": "plugin2>bridge1",
           "name": "anyname1b",
           "pluginName": "plugin2"
         },
@@ -262,7 +262,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "moduleId": "plugin1>bridge2",
+          "crateScope": "plugin1>bridge2",
           "name": "anyname2a",
           "pluginName": "plugin1"
         },
@@ -290,7 +290,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "moduleId": "plugin1>bridge2",
+          "crateScope": "plugin1>bridge2",
           "name": "anyname2c",
           "pluginName": "plugin1"
         },
@@ -318,7 +318,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "moduleId": "plugin1>bridge3",
+          "crateScope": "plugin1>bridge3",
           "name": "anyname3a",
           "pluginName": "plugin1"
         }
@@ -350,7 +350,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
                 }
               }
             },
-            "moduleId": "bridge1",
+            "crateScope": "bridge1",
             "name": "anyname1a"
           },
           "bridge1/anyname1b": {
@@ -377,7 +377,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
                 }
               }
             },
-            "moduleId": "bridge1",
+            "crateScope": "bridge1",
             "name": "anyname1b"
           },
           "bridge2/anyname2a": {
@@ -404,7 +404,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
                 }
               }
             },
-            "moduleId": "bridge2",
+            "crateScope": "bridge2",
             "name": "anyname2a"
           },
           "bridge3/anyname3a": {
@@ -431,7 +431,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
                 }
               }
             },
-            "moduleId": "bridge3",
+            "crateScope": "bridge3",
             "name": "anyname3a"
           }
         }

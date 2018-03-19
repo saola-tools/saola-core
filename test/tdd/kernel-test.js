@@ -249,7 +249,7 @@ describe('tdd:devebot:base:kernel', function() {
       });
       assert.deepEqual(configSchema.sandbox, {
         "application": {
-          "moduleId": "application",
+          "crateScope": "application",
           "schema": {
             "type": "object",
             "properties": {
@@ -271,7 +271,7 @@ describe('tdd:devebot:base:kernel', function() {
         },
         "plugins": {
           "subPlugin1": {
-            "moduleId": "sub-plugin1",
+            "crateScope": "sub-plugin1",
             "schema": {
               "type": "object",
               "properties": {
@@ -285,7 +285,7 @@ describe('tdd:devebot:base:kernel', function() {
             }
           },
           "subPlugin2": {
-            "moduleId": "sub-plugin2",
+            "crateScope": "sub-plugin2",
             "schema": {
               "type": "object",
               "properties": {

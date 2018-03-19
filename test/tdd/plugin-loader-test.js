@@ -46,7 +46,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
       assert.deepEqual(routineMap, {
         "devebot/applica-info": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "applica-info",
           "object": {
             "info": {
@@ -58,7 +58,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/logger-info": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "logger-info",
           "object": {
             "info": {
@@ -70,7 +70,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/logger-reset": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "logger-reset",
           "object": {
             "info": {
@@ -82,7 +82,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/logger-set": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "logger-set",
           "object": {
             "info": {
@@ -113,7 +113,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/sandbox-info": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "sandbox-info",
           "object": {
             "info": {
@@ -125,7 +125,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/system-info": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "system-info",
           "object": {
             "info": {
@@ -147,7 +147,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
       assert.deepInclude(routineMap, {
         "fullapp/main-cmd1": {
-          "moduleId": "application",
+          "crateScope": "application",
           "name": "main-cmd1",
           "object": {
             "info": {
@@ -158,7 +158,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "fullapp/main-cmd2": {
-          "moduleId": "application",
+          "crateScope": "application",
           "name": "main-cmd2",
           "object": {
             "info": {
@@ -169,7 +169,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "plugin1/plugin1-routine1": {
-          "moduleId": "plugin1",
+          "crateScope": "plugin1",
           "name": "plugin1-routine1",
           "object": {
             "info": {
@@ -181,7 +181,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "plugin1/plugin1-routine2": {
-          "moduleId": "plugin1",
+          "crateScope": "plugin1",
           "name": "plugin1-routine2",
           "object": {
             "info": {
@@ -193,7 +193,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "plugin2/plugin2-routine1": {
-          "moduleId": "plugin2",
+          "crateScope": "plugin2",
           "name": "plugin2-routine1",
           "object": {
             "info": {
@@ -214,7 +214,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "plugin2/plugin2-routine3": {
-          "moduleId": "plugin2",
+          "crateScope": "plugin2",
           "name": "plugin2-routine3",
           "object": {
             "info": {
@@ -226,7 +226,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "plugin3/plugin3-routine1": {
-          "moduleId": "plugin3",
+          "crateScope": "plugin3",
           "name": "plugin3-routine1",
           "object": {
             "info": {
@@ -247,7 +247,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "plugin3/plugin3-routine3": {
-          "moduleId": "plugin3",
+          "crateScope": "plugin3",
           "name": "plugin3-routine3",
           "object": {
             "info": {
@@ -259,7 +259,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/applica-info": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "applica-info",
           "object": {
             "info": {
@@ -271,7 +271,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/logger-info": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "logger-info",
           "object": {
             "info": {
@@ -283,7 +283,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/logger-reset": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "logger-reset",
           "object": {
             "info": {
@@ -295,7 +295,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/logger-set": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "logger-set",
           "object": {
             "info": {
@@ -326,7 +326,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/sandbox-info": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "sandbox-info",
           "object": {
             "info": {
@@ -338,7 +338,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "devebot/system-info": {
-          "moduleId": "devebot",
+          "crateScope": "devebot",
           "name": "system-info",
           "object": {
             "info": {
@@ -377,7 +377,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       assert.deepInclude(schemaMap, {
         "fullapp/sandbox": {
           "default": {
-            "moduleId": "application",
+            "crateScope": "application",
             "pluginCode": "application",
             "type": "sandbox",
             "subtype": "default",
@@ -400,7 +400,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         },
         "sub-plugin1/sandbox": {
           "default": {
-            "moduleId": "sub-plugin1",
+            "crateScope": "sub-plugin1",
             "pluginCode": "subPlugin1",
             "type": "sandbox",
             "subtype": "default",
@@ -419,7 +419,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         },
         "sub-plugin2/sandbox": {
           "default": {
-            "moduleId": "sub-plugin2",
+            "crateScope": "sub-plugin2",
             "pluginCode": "subPlugin2",
             "type": "sandbox",
             "subtype": "default",
@@ -470,7 +470,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       assert.deepInclude(serviceMap, {
         "fullapp/mainService": {
-          "moduleId": "application",
+          "crateScope": "application",
           "name": "mainService",
           "construktor": {
             "argumentSchema": {
@@ -497,7 +497,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "sub-plugin1/sublibService": {
-          "moduleId": "sub-plugin1",
+          "crateScope": "sub-plugin1",
           "name": "sublibService",
           "construktor": {
             "argumentSchema": {
@@ -527,7 +527,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "sub-plugin2/sublibService": {
-          "moduleId": "sub-plugin2",
+          "crateScope": "sub-plugin2",
           "name": "sublibService",
           "construktor": {
             "argumentProperties": [
@@ -565,7 +565,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "plugin1/plugin1Service": {
-          "moduleId": "plugin1",
+          "crateScope": "plugin1",
           "name": "plugin1Service",
           "construktor": {
             "argumentSchema": {
@@ -592,7 +592,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "plugin2/plugin2Service": {
-          "moduleId": "plugin2",
+          "crateScope": "plugin2",
           "name": "plugin2Service",
           "construktor": {
             "argumentSchema": {
@@ -619,7 +619,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "plugin3/plugin3Service": {
-          "moduleId": "plugin3",
+          "crateScope": "plugin3",
           "name": "plugin3Service",
           "construktor": {
             "argumentSchema": {
@@ -702,7 +702,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               }
             }
           },
-          "moduleId": "application",
+          "crateScope": "application",
           "name": "mainTrigger"
         },
         "sub-plugin1/sublibTrigger": {
@@ -729,7 +729,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               }
             }
           },
-          "moduleId": "sub-plugin1",
+          "crateScope": "sub-plugin1",
           "name": "sublibTrigger"
         },
         "sub-plugin2/sublibTrigger": {
@@ -756,7 +756,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               }
             }
           },
-          "moduleId": "sub-plugin2",
+          "crateScope": "sub-plugin2",
           "name": "sublibTrigger"
         },
         "plugin1/plugin1Trigger": {
@@ -783,7 +783,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               }
             }
           },
-          "moduleId": "plugin1",
+          "crateScope": "plugin1",
           "name": "plugin1Trigger"
         },
         "plugin2/plugin2Trigger": {
@@ -810,7 +810,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               }
             }
           },
-          "moduleId": "plugin2",
+          "crateScope": "plugin2",
           "name": "plugin2Trigger"
         },
         "plugin3/plugin3Trigger": {
@@ -837,7 +837,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               }
             }
           },
-          "moduleId": "plugin3",
+          "crateScope": "plugin3",
           "name": "plugin3Trigger"
         }
       });
