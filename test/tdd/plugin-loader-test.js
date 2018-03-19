@@ -900,6 +900,8 @@ describe('tdd:devebot:core:plugin-loader', function() {
       };
       if (chores.isOldFeatures()) {
         delete expectedMap['fullapp/mainTrigger']['construktor']['argumentProperties'];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["connector1#wrapper"];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["connector2#wrapper"];
         delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["application/bridge1#anyname1z"];
         delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["application/bridge2#anyname2z"];
         delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["plugin2/bridge1#anyname1b"];

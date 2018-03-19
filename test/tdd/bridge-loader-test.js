@@ -116,6 +116,24 @@ describe('tdd:devebot:core:bridge-loader', function() {
               "refName": "fullapp"
             }
           }
+        },
+        "connector1": {
+          "application": {
+            "wrapper": {
+              "refPath": "sandbox -> connector1 -> application -> wrapper",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          }
+        },
+        "connector2": {
+          "application": {
+            "wrapper": {
+              "refPath": "sandbox -> connector2 -> application -> wrapper",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          }
         }
       };
 
@@ -321,6 +339,62 @@ describe('tdd:devebot:core:bridge-loader', function() {
           "crateScope": "plugin1",
           "name": "bridge3#anyname3a",
           "pluginName": "plugin1"
+        },
+        "application/devebot-co-connector1/wrapper": {
+          "construktor": {
+            "argumentSchema": {
+              "$id": "wrapper",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "crateScope": "application",
+          "name": "connector1#wrapper",
+          "pluginName": "application"
+        },
+        "application/devebot-co-connector2/wrapper": {
+          "construktor": {
+            "argumentSchema": {
+              "$id": "wrapper",
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "crateScope": "application",
+          "name": "connector2#wrapper",
+          "pluginName": "application"
         }
       };
 
