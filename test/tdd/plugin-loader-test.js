@@ -714,6 +714,8 @@ describe('tdd:devebot:core:plugin-loader', function() {
               "loggingFactory",
               "application/bridge1#anyname1z",
               "application/bridge2#anyname2z",
+              "connector1#wrapper",
+              "connector2#wrapper",
               "plugin2/bridge1#anyname1b",
               "plugin2/bridge2#anyname2b"
             ],
@@ -740,6 +742,12 @@ describe('tdd:devebot:core:plugin-loader', function() {
                   "type": "object"
                 },
                 "application/bridge2#anyname2z": {
+                  "type": "object"
+                },
+                "connector1#wrapper": {
+                  "type": "object"
+                },
+                "connector2#wrapper": {
                   "type": "object"
                 },
                 "plugin2/bridge1#anyname1b": {

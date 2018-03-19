@@ -148,18 +148,18 @@ describe('tdd:devebot:base:kernel', function() {
         },
         "connector1": {
           "application": {
-            "connector1Wrapper1": {
+            "wrapper": {
               "refName": "fullapp",
-              "refPath": "sandbox -> connector1 -> application -> connector1Wrapper1",
+              "refPath": "sandbox -> connector1 -> application -> wrapper",
               "refType": "application"
             }
           }
         },
         "connector2": {
           "application": {
-            "connector2Wrapper1": {
+            "wrapper": {
               "refName": "fullapp",
-              "refPath": "sandbox -> connector2 -> application -> connector2Wrapper1",
+              "refPath": "sandbox -> connector2 -> application -> wrapper",
               "refType": "application"
             }
           }

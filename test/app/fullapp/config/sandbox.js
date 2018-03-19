@@ -74,8 +74,8 @@ module.exports = {
     },
     "connector1": {
       "application": {
-        "connector1Wrapper1": {
-          "refPath": "sandbox -> connector1 -> application -> connector1Wrapper1",
+        "wrapper": {
+          "refPath": "sandbox -> connector1 -> application -> wrapper",
           "refType": "application",
           "refName": "fullapp"
         }
@@ -83,8 +83,8 @@ module.exports = {
     },
     "connector2": {
       "application": {
-        "connector2Wrapper1": {
-          "refPath": "sandbox -> connector2 -> application -> connector2Wrapper1",
+        "wrapper": {
+          "refPath": "sandbox -> connector2 -> application -> wrapper",
           "refType": "application",
           "refName": "fullapp"
         }

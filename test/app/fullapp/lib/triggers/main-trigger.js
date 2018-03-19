@@ -64,6 +64,8 @@ if (!chores.isOldFeatures()) {
   Service.referenceList = [
     'application/bridge1#anyname1z',
     'application/bridge2#anyname2z',
+    'connector1#wrapper',
+    'connector2#wrapper',
     'plugin2/bridge1#anyname1b',
     'plugin2/bridge2#anyname2b'
   ]
