@@ -477,9 +477,9 @@ describe('tdd:devebot:core:plugin-loader', function() {
               "profileName",
               "profileConfig",
               "loggingFactory",
-              "application>bridge1/anyname1z",
-              "plugin1>bridge1/anyname1a",
-              "plugin1>bridge2/anyname2a"
+              "application/bridge1#anyname1z",
+              "plugin1/bridge1#anyname1a",
+              "plugin1/bridge2#anyname2a"
             ],
             "argumentSchema": {
               "$id": "mainService",
@@ -500,13 +500,13 @@ describe('tdd:devebot:core:plugin-loader', function() {
                 "loggingFactory": {
                   "type": "object"
                 },
-                "application>bridge1/anyname1z": {
+                "application/bridge1#anyname1z": {
                   "type": "object"
                 },
-                "plugin1>bridge1/anyname1a": {
+                "plugin1/bridge1#anyname1a": {
                   "type": "object"
                 },
-                "plugin1>bridge2/anyname2a": {
+                "plugin1/bridge2#anyname2a": {
                   "type": "object"
                 }
               }
@@ -667,9 +667,9 @@ describe('tdd:devebot:core:plugin-loader', function() {
       };
       if (chores.isOldFeatures()) {
         delete expectedMap['fullapp/mainService']['construktor']['argumentProperties'];
-        delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["application>bridge1/anyname1z"];
-        delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["plugin1>bridge1/anyname1a"];
-        delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["plugin1>bridge2/anyname2a"];
+        delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["application/bridge1#anyname1z"];
+        delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["plugin1/bridge1#anyname1a"];
+        delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["plugin1/bridge2#anyname2a"];
       }
       assert.deepInclude(serviceMap, expectedMap);
     });
@@ -712,10 +712,10 @@ describe('tdd:devebot:core:plugin-loader', function() {
               "profileName",
               "profileConfig",
               "loggingFactory",
-              "application>bridge1/anyname1z",
-              "application>bridge2/anyname2z",
-              "plugin2>bridge1/anyname1b",
-              "plugin2>bridge2/anyname2b"
+              "application/bridge1#anyname1z",
+              "application/bridge2#anyname2z",
+              "plugin2/bridge1#anyname1b",
+              "plugin2/bridge2#anyname2b"
             ],
             "argumentSchema": {
               "$id": "mainTrigger",
@@ -736,16 +736,16 @@ describe('tdd:devebot:core:plugin-loader', function() {
                 "loggingFactory": {
                   "type": "object"
                 },
-                "application>bridge1/anyname1z": {
+                "application/bridge1#anyname1z": {
                   "type": "object"
                 },
-                "application>bridge2/anyname2z": {
+                "application/bridge2#anyname2z": {
                   "type": "object"
                 },
-                "plugin2>bridge1/anyname1b": {
+                "plugin2/bridge1#anyname1b": {
                   "type": "object"
                 },
-                "plugin2>bridge2/anyname2b": {
+                "plugin2/bridge2#anyname2b": {
                   "type": "object"
                 }
               }
@@ -892,10 +892,10 @@ describe('tdd:devebot:core:plugin-loader', function() {
       };
       if (chores.isOldFeatures()) {
         delete expectedMap['fullapp/mainTrigger']['construktor']['argumentProperties'];
-        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["application>bridge1/anyname1z"];
-        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["application>bridge2/anyname2z"];
-        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["plugin2>bridge1/anyname1b"];
-        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["plugin2>bridge2/anyname2b"];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["application/bridge1#anyname1z"];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["application/bridge2#anyname2z"];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["plugin2/bridge1#anyname1b"];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["plugin2/bridge2#anyname2b"];
       }
       assert.deepInclude(triggerMap, expectedMap);
     });

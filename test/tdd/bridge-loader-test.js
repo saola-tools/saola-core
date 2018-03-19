@@ -154,7 +154,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
       });
       false && console.log('dialectMap: ', JSON.stringify(dialectMap, null, 2));
       var expectedMap = {
-        "application>bridge1/anyname1z": {
+        "application/bridge1/anyname1z": {
           "construktor": {
             "argumentSchema": {
               "$id": "anyname1z",
@@ -178,11 +178,11 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "crateScope": "application>bridge1",
-          "name": "anyname1z",
+          "crateScope": "application",
+          "name": "bridge1#anyname1z",
           "pluginName": "application"
         },
-        "plugin1>bridge1/anyname1a": {
+        "plugin1/bridge1/anyname1a": {
           "construktor": {
             "argumentSchema": {
               "$id": "anyname1a",
@@ -206,11 +206,11 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "crateScope": "plugin1>bridge1",
-          "name": "anyname1a",
+          "crateScope": "plugin1",
+          "name": "bridge1#anyname1a",
           "pluginName": "plugin1"
         },
-        "plugin2>bridge1/anyname1b": {
+        "plugin2/bridge1/anyname1b": {
           "construktor": {
             "argumentSchema": {
               "$id": "anyname1b",
@@ -234,11 +234,11 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "crateScope": "plugin2>bridge1",
-          "name": "anyname1b",
+          "crateScope": "plugin2",
+          "name": "bridge1#anyname1b",
           "pluginName": "plugin2"
         },
-        "plugin1>bridge2/anyname2a": {
+        "plugin1/bridge2/anyname2a": {
           "construktor": {
             "argumentSchema": {
               "$id": "anyname2a",
@@ -262,11 +262,11 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "crateScope": "plugin1>bridge2",
-          "name": "anyname2a",
+          "crateScope": "plugin1",
+          "name": "bridge2#anyname2a",
           "pluginName": "plugin1"
         },
-        "plugin1>bridge2/anyname2c": {
+        "plugin1/bridge2/anyname2c": {
           "construktor": {
             "argumentSchema": {
               "$id": "anyname2c",
@@ -290,11 +290,11 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "crateScope": "plugin1>bridge2",
-          "name": "anyname2c",
+          "crateScope": "plugin1",
+          "name": "bridge2#anyname2c",
           "pluginName": "plugin1"
         },
-        "plugin1>bridge3/anyname3a": {
+        "plugin1/bridge3/anyname3a": {
           "construktor": {
             "argumentSchema": {
               "$id": "anyname3a",
@@ -318,8 +318,8 @@ describe('tdd:devebot:core:bridge-loader', function() {
               }
             }
           },
-          "crateScope": "plugin1>bridge3",
-          "name": "anyname3a",
+          "crateScope": "plugin1",
+          "name": "bridge3#anyname3a",
           "pluginName": "plugin1"
         }
       };

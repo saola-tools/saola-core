@@ -22,9 +22,9 @@ var Service = function(params) {
 
 if (!chores.isOldFeatures()) {
   Service.referenceList = [
-    'application>bridge1/anyname1z',
-    'plugin1>bridge1/anyname1a',
-    'plugin1>bridge2/anyname2a'
+    'application/bridge1#anyname1z',
+    'plugin1/bridge1#anyname1a',
+    'plugin1/bridge2#anyname2a'
   ]
 }
 

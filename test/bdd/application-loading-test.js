@@ -92,14 +92,14 @@ describe('devebot:application', function() {
 			"plugin2/plugin2Trigger"
 		];
 		var bridge1Scopes = [
-			"plugin1>bridge1/anyname1a",
-			"plugin2>bridge1/anyname1b",
-			"plugin2>bridge1/anyname1c"
+			"plugin1/bridge1#anyname1a",
+			"plugin2/bridge1#anyname1b",
+			"plugin2/bridge1#anyname1c"
 		];
 		var bridge2Scopes = [
-			"plugin1>bridge2/anyname2a",
-			"plugin2>bridge2/anyname2b",
-			"plugin1>bridge2/anyname2c"
+			"plugin1/bridge2#anyname2a",
+			"plugin2/bridge2#anyname2b",
+			"plugin1/bridge2#anyname2c"
 		];
 
 		if (chores.isOldFeatures()) {

@@ -65,12 +65,12 @@ describe('devebot:command:execution', function() {
 			"application/mainService",
 			"plugin1/plugin1Service",
 			"plugin2/plugin2Service",
-			"plugin1>bridge1/anyname1a",
-			"plugin2>bridge1/anyname1b",
-			"plugin2>bridge1/anyname1c",
-			"plugin1>bridge2/anyname2a",
-			"plugin2>bridge2/anyname2b",
-			"plugin1>bridge2/anyname2c"
+			"plugin1/bridge1#anyname1a",
+			"plugin2/bridge1#anyname1b",
+			"plugin2/bridge1#anyname1c",
+			"plugin1/bridge2#anyname2a",
+			"plugin2/bridge2#anyname2b",
+			"plugin1/bridge2#anyname2c"
 		];
 		if (chores.isOldFeatures()) {
 			injectedServiceNames = [
