@@ -45,7 +45,31 @@ describe('tdd:devebot:core:error-handler', function() {
       LogTracer.reset().empty(loggingStore);
     });
 
-    it('pass if no error has occurred');
+    it('pass if no error has occurred', function() {
+      var unhook = lab.preventExit();
+      errorHandler.collect();
+      errorHandler.collect({
+        hasError: false,
+        stage: 'instantiating',
+        type: 'ROUTINE'
+      });
+      errorHandler.collect([{
+        hasError: false,
+        stage: 'instantiating',
+        type: 'ROUTINE'
+      }, {
+        hasError: false,
+        stage: 'instantiating',
+        type: 'SERVICE'
+      }, {
+        hasError: false,
+        stage: 'instantiating',
+        type: 'TRIGGER'
+      }]);
+      errorHandler.barrier({exitOnError: true});
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 0);
+    });
 
     it('exit if there are some errors occurred');
 
