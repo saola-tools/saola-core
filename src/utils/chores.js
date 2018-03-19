@@ -162,6 +162,14 @@ chores.isSpecialPlugin = function(pluginDescriptorOrRef) {
   return null;
 }
 
+chores.getPluginRefBy = function(selectedField, pluginDescriptor) {
+  var pluginRef = pluginDescriptor[selectedField];
+  if (chores.isSpecialPlugin(pluginDescriptor)) {
+    pluginRef = pluginDescriptor.type;
+  }
+  return pluginRef;
+}
+
 chores.getBlockRef = function(filename, blockScope) {
   if (filename == null) return null;
   var blockName = chores.stringCamelCase(path.basename(filename, '.js'));

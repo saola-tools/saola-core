@@ -22,6 +22,7 @@ function PluginLoader(params) {
   }));
 
   var pluginRootDirs = lodash.map(params.pluginRefs, function(pluginRef) {
+    pluginRef.code = pluginRef.code || chores.stringCamelCase(pluginRef.name);
     pluginRef.pathDir = path.dirname(pluginRef.path);
     return pluginRef;
   });
@@ -68,22 +69,8 @@ function PluginLoader(params) {
     return hasSeparatedDir(scriptType) ? '.*\.js' : constx[scriptType].ROOT_KEY + '_.*\.js';
   }
 
-  var getPluginRefByName = function(pluginDescriptor) {
-    var pluginRef = pluginDescriptor.name;
-    if (chores.isSpecialPlugin(pluginDescriptor)) {
-      pluginRef = pluginDescriptor.type;
-    }
-    return pluginRef;
-  }
-
-  var getPluginRefByCode = function(pluginDescriptor) {
-    pluginDescriptor.code = pluginDescriptor.code || chores.stringCamelCase(pluginDescriptor.name);
-    var pluginRef = pluginDescriptor.code;
-    if (chores.isSpecialPlugin(pluginDescriptor)) {
-      pluginRef = pluginDescriptor.type;
-    }
-    return pluginRef;
-  }
+  var getPluginRefByName = chores.getPluginRefBy.bind(chores, 'name');
+  var getPluginRefByCode = chores.getPluginRefBy.bind(chores, 'code');
 
   var loadAllScripts = function(scriptMap, scriptType, scriptContext, pluginRootDirs) {
     var self = this;
