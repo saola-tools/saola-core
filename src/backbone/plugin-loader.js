@@ -68,15 +68,21 @@ function PluginLoader(params) {
     return hasSeparatedDir(scriptType) ? '.*\.js' : constx[scriptType].ROOT_KEY + '_.*\.js';
   }
 
-  var specialPlugins = ['application', 'devebot'];
-
-  var getPluginName = function(pluginRootDir) {
-    pluginRootDir.code = pluginRootDir.code || chores.stringCamelCase(pluginRootDir.name);
-    var pluginName = pluginRootDir.code;
-    if (specialPlugins.indexOf(pluginRootDir.type) >= 0) {
-      pluginName = pluginRootDir.type;
+  var getPluginRefByName = function(pluginDescriptor) {
+    var pluginRef = pluginDescriptor.name;
+    if (chores.isSpecialPlugin(pluginDescriptor)) {
+      pluginRef = pluginDescriptor.type;
     }
-    return pluginName;
+    return pluginRef;
+  }
+
+  var getPluginRefByCode = function(pluginDescriptor) {
+    pluginDescriptor.code = pluginDescriptor.code || chores.stringCamelCase(pluginDescriptor.name);
+    var pluginRef = pluginDescriptor.code;
+    if (chores.isSpecialPlugin(pluginDescriptor)) {
+      pluginRef = pluginDescriptor.type;
+    }
+    return pluginRef;
   }
 
   var loadAllScripts = function(scriptMap, scriptType, scriptContext, pluginRootDirs) {
@@ -264,7 +270,7 @@ function PluginLoader(params) {
           text: ' - schema validation pass'
         }));
         opStatus.hasError = false;
-        var pluginName = getPluginName(pluginRootDir);
+        var pluginCode = getPluginRefByCode(pluginRootDir);
         var typeName = schemaObject.type || schemaFile.replace('.js', '').toLowerCase();
         var subtypeName = schemaObject.subtype || 'default';
         var uniqueName = [pluginRootDir.name, typeName].join(chores.getSeparator());
@@ -272,7 +278,7 @@ function PluginLoader(params) {
         entry[uniqueName] = entry[uniqueName] || {};
         entry[uniqueName][subtypeName] = {
           moduleId: pluginRootDir.name,
-          pluginName: pluginName,
+          pluginCode: pluginCode,
           type: typeName,
           subtype: subtypeName,
           schema: schemaObject.schema
@@ -384,7 +390,7 @@ function PluginLoader(params) {
       return result;
     }
 
-    var pluginName = getPluginName(pluginRootDir);
+    var pluginCode = getPluginRefByCode(pluginRootDir);
     var uniqueName = [pluginRootDir.name, wrapperName].join(chores.getSeparator());
 
     function wrapperConstructor(kwargs) {
@@ -395,19 +401,19 @@ function PluginLoader(params) {
         isWrapped = true;
         return kwargs = lodash.clone(kwargs);
       }
-      var newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', pluginName], {});
+      var newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', pluginCode], {});
       LX.has('conlog') && LX.log('conlog', LT.add({
-        pluginName: pluginName,
+        pluginCode: pluginCode,
         newFeatures: newFeatures
       }).toMessage({
-        text: ' - newFeatures[${pluginName}]: ${newFeatures}'
+        text: ' - newFeatures[${pluginCode}]: ${newFeatures}'
       }));
       if (newFeatures.sandboxConfig) {
         kwargs = getWrappedParams();
-        if (specialPlugins.indexOf(pluginRootDir.type) >= 0) {
-          kwargs.sandboxConfig = lodash.get(kwargs, ['sandboxConfig', pluginName], {});
+        if (chores.isSpecialPlugin(pluginRootDir)) {
+          kwargs.sandboxConfig = lodash.get(kwargs, ['sandboxConfig', pluginCode], {});
         } else {
-          kwargs.sandboxConfig = lodash.get(kwargs, ['sandboxConfig', 'plugins', pluginName], {});
+          kwargs.sandboxConfig = lodash.get(kwargs, ['sandboxConfig', 'plugins', pluginCode], {});
         }
       }
       // wrap getLogger() and add getTracer()

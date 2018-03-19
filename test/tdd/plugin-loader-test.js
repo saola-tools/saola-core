@@ -378,7 +378,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "fullapp/sandbox": {
           "default": {
             "moduleId": "fullapp",
-            "pluginName": "application",
+            "pluginCode": "application",
             "type": "sandbox",
             "subtype": "default",
             "schema": {
@@ -401,7 +401,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "sub-plugin1/sandbox": {
           "default": {
             "moduleId": "sub-plugin1",
-            "pluginName": "subPlugin1",
+            "pluginCode": "subPlugin1",
             "type": "sandbox",
             "subtype": "default",
             "schema": {
@@ -420,7 +420,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "sub-plugin2/sandbox": {
           "default": {
             "moduleId": "sub-plugin2",
-            "pluginName": "subPlugin2",
+            "pluginCode": "subPlugin2",
             "type": "sandbox",
             "subtype": "default",
             "schema": {
