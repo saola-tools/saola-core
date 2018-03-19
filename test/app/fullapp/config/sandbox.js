@@ -12,6 +12,13 @@ module.exports = {
   },
   bridges: {
     "bridge1": {
+      "application": {
+        "anyname1z": {
+          "refPath": "sandbox -> bridge1 -> application -> anyname1z",
+          "refType": "application",
+          "refName": "fullapp"
+        }
+      },
       "plugin1": {
         "anyname1a": {
           "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a",
