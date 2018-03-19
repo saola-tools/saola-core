@@ -71,6 +71,24 @@ module.exports = {
           "refName": "fullapp"
         }
       }
+    },
+    "connector1": {
+      "application": {
+        "connector1Wrapper1": {
+          "refPath": "sandbox -> connector1 -> application -> connector1Wrapper1",
+          "refType": "application",
+          "refName": "fullapp"
+        }
+      }
+    },
+    "connector2": {
+      "application": {
+        "connector2Wrapper1": {
+          "refPath": "sandbox -> connector2 -> application -> connector2Wrapper1",
+          "refType": "application",
+          "refName": "fullapp"
+        }
+      }
     }
   },
   plugins: {

@@ -22,6 +22,14 @@ var app = Devebot.launchApplication({
   {
     name: 'bridge4',
     path: lab.getLibHome('bridge4')
+  },
+  {
+    name: 'devebot-co-connector1',
+    path: lab.getLibHome('devebot-co-connector1')
+  },
+  {
+    name: 'devebot-co-connector2',
+    path: lab.getLibHome('devebot-co-connector2')
   }
 ]);
 

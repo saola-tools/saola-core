@@ -443,6 +443,14 @@ describe('tdd:devebot:base:bootstrap', function() {
         {
           "name": "bridge2",
           "path": "/test/lib/bridge2/index.js"
+        },
+        {
+          "name": "devebot-co-connector1",
+          "path": "/test/lib/devebot-co-connector1/index.js"
+        },
+        {
+          "name": "devebot-co-connector2",
+          "path": "/test/lib/devebot-co-connector2/index.js"
         }
       ]);
       assert.sameDeepMembers(cfg.pluginRefs, [
