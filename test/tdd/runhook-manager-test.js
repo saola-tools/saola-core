@@ -51,13 +51,13 @@ describe('tdd:devebot:core:runhook-manager', function() {
       false && console.log(JSON.stringify(commands, null, 2));
       assert.sameDeepMembers(commands, [
         {
-          "package": "fullapp",
+          "package": "application",
           "name": "main-cmd1",
           "description": "[String]",
           "options": []
         },
         {
-          "package": "fullapp",
+          "package": "application",
           "name": "main-cmd2",
           "description": "[String]",
           "options": []

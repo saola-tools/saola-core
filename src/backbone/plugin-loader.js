@@ -151,9 +151,10 @@ function PluginLoader(params) {
           opStatus.hasError = false;
           var scriptName = scriptFile.replace('.js', '').toLowerCase();
           var uniqueName = [pluginRootDir.name, scriptName].join(chores.getSeparator());
+          var pluginName = getPluginRefByName(pluginRootDir);
           var entry = {};
           entry[uniqueName] = {
-            moduleId: pluginRootDir.name,
+            moduleId: pluginName,
             name: scriptName,
             object: scriptObject
           };
@@ -270,6 +271,7 @@ function PluginLoader(params) {
           text: ' - schema validation pass'
         }));
         opStatus.hasError = false;
+        var pluginName = getPluginRefByName(pluginRootDir);
         var pluginCode = getPluginRefByCode(pluginRootDir);
         var typeName = schemaObject.type || schemaFile.replace('.js', '').toLowerCase();
         var subtypeName = schemaObject.subtype || 'default';
@@ -277,7 +279,7 @@ function PluginLoader(params) {
         var entry = {};
         entry[uniqueName] = entry[uniqueName] || {};
         entry[uniqueName][subtypeName] = {
-          moduleId: pluginRootDir.name,
+          moduleId: pluginName,
           pluginCode: pluginCode,
           type: typeName,
           subtype: subtypeName,
@@ -390,6 +392,7 @@ function PluginLoader(params) {
       return result;
     }
 
+    var pluginName = getPluginRefByName(pluginRootDir);
     var pluginCode = getPluginRefByCode(pluginRootDir);
     var uniqueName = [pluginRootDir.name, wrapperName].join(chores.getSeparator());
 
@@ -470,14 +473,14 @@ function PluginLoader(params) {
     }));
 
     result[uniqueName] = {
-      moduleId: pluginRootDir.name,
+      moduleId: pluginName,
       name: wrapperName,
       construktor: wrapperConstructor
     };
 
     LX.has('conlog') && LX.log('conlog', LT.add({
       uniqueName: uniqueName,
-      moduleId: pluginRootDir.name,
+      moduleId: pluginName,
       name: wrapperName
     }).toMessage({
       text: ' - build gadget wrapper (${name}) has done.'

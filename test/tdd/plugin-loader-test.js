@@ -147,7 +147,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
       assert.deepInclude(routineMap, {
         "fullapp/main-cmd1": {
-          "moduleId": "fullapp",
+          "moduleId": "application",
           "name": "main-cmd1",
           "object": {
             "info": {
@@ -158,7 +158,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           }
         },
         "fullapp/main-cmd2": {
-          "moduleId": "fullapp",
+          "moduleId": "application",
           "name": "main-cmd2",
           "object": {
             "info": {
@@ -377,7 +377,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       assert.deepInclude(schemaMap, {
         "fullapp/sandbox": {
           "default": {
-            "moduleId": "fullapp",
+            "moduleId": "application",
             "pluginCode": "application",
             "type": "sandbox",
             "subtype": "default",
@@ -470,7 +470,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       assert.deepInclude(serviceMap, {
         "fullapp/mainService": {
-          "moduleId": "fullapp",
+          "moduleId": "application",
           "name": "mainService",
           "construktor": {
             "argumentSchema": {
@@ -702,7 +702,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               }
             }
           },
-          "moduleId": "fullapp",
+          "moduleId": "application",
           "name": "mainTrigger"
         },
         "sub-plugin1/sublibTrigger": {

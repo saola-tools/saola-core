@@ -49,7 +49,7 @@ describe('devebot:command:execution', function() {
 			storeTo: 'plugin1Routine2State'
 		}
 	]);
-	var bridgeRefs = [];
+	var injectedServiceNames = [];
 
 	before(function() {
 		envtool.setup({
@@ -61,8 +61,8 @@ describe('devebot:command:execution', function() {
 		LogTracer.addStringifyInterceptor(logCounter);
 		LogTracer.addStringifyInterceptor(logScraper);
 		app = lab.getApp('default');
-		bridgeRefs = [
-			"demo-app/mainService",
+		injectedServiceNames = [
+			"application/mainService",
 			"plugin1/plugin1Service",
 			"plugin2/plugin2Service",
 			"plugin1>bridge1/anyname1a",
@@ -73,8 +73,8 @@ describe('devebot:command:execution', function() {
 			"plugin1>bridge2/anyname2c"
 		];
 		if (chores.isOldFeatures()) {
-			bridgeRefs = [
-				"demo-app/mainService",
+			injectedServiceNames = [
+				"application/mainService",
 				"plugin1/plugin1Service",
 				"plugin2/plugin2Service",
 				"bridge1/anyname1a",
@@ -124,7 +124,7 @@ describe('devebot:command:execution', function() {
 			assert.equal(logStats['plugin1Routine1Count'], 3);
 			assert.isArray(logStats['plugin1Routine1State']);
 			assert.equal(logStats['plugin1Routine1State'].length, 1);
-			assert.sameMembers(logStats['plugin1Routine1State'][0]['injectedServiceNames'], bridgeRefs);
+			assert.sameMembers(logStats['plugin1Routine1State'][0]['injectedServiceNames'], injectedServiceNames);
 			done();
 		}).catch(function(error) {
 			debugx.enabled && debugx(JSON.stringify(error, null, 2));
@@ -149,7 +149,7 @@ describe('devebot:command:execution', function() {
 			assert.equal(logStats['plugin1Routine2Count'], 3);
 			assert.isArray(logStats['plugin1Routine2State']);
 			assert.equal(logStats['plugin1Routine2State'].length, 1);
-			assert.sameMembers(logStats['plugin1Routine2State'][0]['injectedServiceNames'], bridgeRefs);
+			assert.sameMembers(logStats['plugin1Routine2State'][0]['injectedServiceNames'], injectedServiceNames);
 			done();
 		}).catch(function(error) {
 			debugx.enabled && debugx(JSON.stringify(error, null, 2));

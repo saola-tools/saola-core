@@ -249,7 +249,7 @@ describe('tdd:devebot:base:kernel', function() {
       });
       assert.deepEqual(configSchema.sandbox, {
         "application": {
-          "moduleId": "fullapp",
+          "moduleId": "application",
           "schema": {
             "type": "object",
             "properties": {
