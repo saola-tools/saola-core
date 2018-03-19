@@ -298,10 +298,6 @@ function BridgeLoader(params) {
       construktor: dialectConstructor
     };
 
-    if (pluginName) {
-      result[uniqueName].pluginName = pluginName;
-    }
-
     LX.has('conlog') && LX.log('conlog', LT.add({
       dialectName: dialectName
     }).toMessage({

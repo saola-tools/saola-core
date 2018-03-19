@@ -197,8 +197,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
             }
           },
           "crateScope": "application",
-          "name": "bridge1#anyname1z",
-          "pluginName": "application"
+          "name": "bridge1#anyname1z"
         },
         "plugin1/bridge1/anyname1a": {
           "construktor": {
@@ -225,8 +224,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
             }
           },
           "crateScope": "plugin1",
-          "name": "bridge1#anyname1a",
-          "pluginName": "plugin1"
+          "name": "bridge1#anyname1a"
         },
         "plugin2/bridge1/anyname1b": {
           "construktor": {
@@ -253,8 +251,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
             }
           },
           "crateScope": "plugin2",
-          "name": "bridge1#anyname1b",
-          "pluginName": "plugin2"
+          "name": "bridge1#anyname1b"
         },
         "plugin1/bridge2/anyname2a": {
           "construktor": {
@@ -281,8 +278,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
             }
           },
           "crateScope": "plugin1",
-          "name": "bridge2#anyname2a",
-          "pluginName": "plugin1"
+          "name": "bridge2#anyname2a"
         },
         "plugin1/bridge2/anyname2c": {
           "construktor": {
@@ -309,8 +305,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
             }
           },
           "crateScope": "plugin1",
-          "name": "bridge2#anyname2c",
-          "pluginName": "plugin1"
+          "name": "bridge2#anyname2c"
         },
         "plugin1/bridge3/anyname3a": {
           "construktor": {
@@ -337,8 +332,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
             }
           },
           "crateScope": "plugin1",
-          "name": "bridge3#anyname3a",
-          "pluginName": "plugin1"
+          "name": "bridge3#anyname3a"
         },
         "application/devebot-co-connector1/wrapper": {
           "construktor": {
@@ -365,8 +359,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
             }
           },
           "crateScope": "application",
-          "name": "connector1#wrapper",
-          "pluginName": "application"
+          "name": "connector1#wrapper"
         },
         "application/devebot-co-connector2/wrapper": {
           "construktor": {
@@ -393,8 +386,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
             }
           },
           "crateScope": "application",
-          "name": "connector2#wrapper",
-          "pluginName": "application"
+          "name": "connector2#wrapper"
         }
       };
 
