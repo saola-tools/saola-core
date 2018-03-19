@@ -258,16 +258,14 @@ function PluginLoader(params) {
           text: ' - schema validation pass'
         }));
         opStatus.hasError = false;
-        var pluginName = getPluginRefByName(pluginRootDir);
-        var pluginCode = getPluginRefByCode(pluginRootDir);
         var typeName = schemaObject.type || schemaFile.replace('.js', '').toLowerCase();
         var subtypeName = schemaObject.subtype || 'default';
         var uniqueName = [pluginRootDir.name, typeName].join(chores.getSeparator());
         var entry = {};
         entry[uniqueName] = entry[uniqueName] || {};
         entry[uniqueName][subtypeName] = {
-          moduleId: pluginName,
-          pluginCode: pluginCode,
+          moduleId: getPluginRefByName(pluginRootDir),
+          pluginCode: getPluginRefByCode(pluginRootDir),
           type: typeName,
           subtype: subtypeName,
           schema: schemaObject.schema
@@ -400,7 +398,7 @@ function PluginLoader(params) {
       }));
       if (newFeatures.sandboxConfig) {
         kwargs = getWrappedParams();
-        if (chores.isSpecialPlugin(pluginRootDir)) {
+        if (chores.isSpecialPlugin(pluginRootDir.type)) {
           kwargs.sandboxConfig = lodash.get(kwargs, ['sandboxConfig', pluginCode], {});
         } else {
           kwargs.sandboxConfig = lodash.get(kwargs, ['sandboxConfig', 'plugins', pluginCode], {});
