@@ -2,8 +2,8 @@
 
 var http = require('http');
 var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
+var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
 
 var Service = function(params) {
@@ -59,5 +59,14 @@ var Service = function(params) {
 
   debugx.enabled && debugx(' - constructor end!');
 };
+
+if (!chores.isOldFeatures()) {
+  Service.referenceList = [
+    'application>bridge1/anyname1z',
+    'application>bridge2/anyname2z',
+    'plugin2>bridge1/anyname1b',
+    'plugin2>bridge2/anyname2b'
+  ]
+}
 
 module.exports = Service;

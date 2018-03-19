@@ -114,6 +114,18 @@ describe('tdd:devebot:base:kernel', function() {
           }
         },
         "bridge2": {
+          "application": {
+            "anyname2y": {
+              "refPath": "sandbox -> bridge2 -> application -> anyname2y",
+              "refType": "application",
+              "refName": "fullapp"
+            },
+            "anyname2z": {
+              "refPath": "sandbox -> bridge2 -> application -> anyname2z",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          },
           "plugin1": {
             "anyname2a": {
               "refPath": "sandbox -> bridge2 -> plugin1 -> anyname2a",

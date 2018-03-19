@@ -468,11 +468,19 @@ describe('tdd:devebot:core:plugin-loader', function() {
           ]), lodash.omit(service, ['construktor']));
       });
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
-      assert.deepInclude(serviceMap, {
+      var expectedMap = {
         "fullapp/mainService": {
-          "crateScope": "application",
-          "name": "mainService",
           "construktor": {
+            "argumentProperties": [
+              "sandboxName",
+              "sandboxConfig",
+              "profileName",
+              "profileConfig",
+              "loggingFactory",
+              "application>bridge1/anyname1z",
+              "plugin1>bridge1/anyname1a",
+              "plugin1>bridge2/anyname2a"
+            ],
             "argumentSchema": {
               "$id": "mainService",
               "type": "object",
@@ -491,14 +499,23 @@ describe('tdd:devebot:core:plugin-loader', function() {
                 },
                 "loggingFactory": {
                   "type": "object"
+                },
+                "application>bridge1/anyname1z": {
+                  "type": "object"
+                },
+                "plugin1>bridge1/anyname1a": {
+                  "type": "object"
+                },
+                "plugin1>bridge2/anyname2a": {
+                  "type": "object"
                 }
               }
             }
-          }
+          },
+          "crateScope": "application",
+          "name": "mainService"
         },
         "sub-plugin1/sublibService": {
-          "crateScope": "sub-plugin1",
-          "name": "sublibService",
           "construktor": {
             "argumentSchema": {
               "$id": "sublibService",
@@ -524,11 +541,11 @@ describe('tdd:devebot:core:plugin-loader', function() {
                 }
               }
             }
-          }
+          },
+          "crateScope": "sub-plugin1",
+          "name": "sublibService"
         },
         "sub-plugin2/sublibService": {
-          "crateScope": "sub-plugin2",
-          "name": "sublibService",
           "construktor": {
             "argumentProperties": [
               "sandboxName",
@@ -562,11 +579,11 @@ describe('tdd:devebot:core:plugin-loader', function() {
                 }
               }
             }
-          }
+          },
+          "crateScope": "sub-plugin2",
+          "name": "sublibService"
         },
         "plugin1/plugin1Service": {
-          "crateScope": "plugin1",
-          "name": "plugin1Service",
           "construktor": {
             "argumentSchema": {
               "$id": "plugin1Service",
@@ -589,11 +606,11 @@ describe('tdd:devebot:core:plugin-loader', function() {
                 }
               }
             }
-          }
+          },
+          "crateScope": "plugin1",
+          "name": "plugin1Service"
         },
         "plugin2/plugin2Service": {
-          "crateScope": "plugin2",
-          "name": "plugin2Service",
           "construktor": {
             "argumentSchema": {
               "$id": "plugin2Service",
@@ -616,11 +633,11 @@ describe('tdd:devebot:core:plugin-loader', function() {
                 }
               }
             }
-          }
+          },
+          "crateScope": "plugin2",
+          "name": "plugin2Service"
         },
         "plugin3/plugin3Service": {
-          "crateScope": "plugin3",
-          "name": "plugin3Service",
           "construktor": {
             "argumentSchema": {
               "$id": "plugin3Service",
@@ -643,9 +660,18 @@ describe('tdd:devebot:core:plugin-loader', function() {
                 }
               }
             }
-          }
+          },
+          "crateScope": "plugin3",
+          "name": "plugin3Service"
         }
-      });
+      };
+      if (chores.isOldFeatures()) {
+        delete expectedMap['fullapp/mainService']['construktor']['argumentProperties'];
+        delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["application>bridge1/anyname1z"];
+        delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["plugin1>bridge1/anyname1a"];
+        delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["plugin1>bridge2/anyname2a"];
+      }
+      assert.deepInclude(serviceMap, expectedMap);
     });
   });
 
@@ -677,9 +703,20 @@ describe('tdd:devebot:core:plugin-loader', function() {
           ]), lodash.omit(trigger, ['construktor']));
       });
       false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
-      assert.deepInclude(triggerMap, {
+      var expectedMap = {
         "fullapp/mainTrigger": {
           "construktor": {
+            "argumentProperties": [
+              "sandboxName",
+              "sandboxConfig",
+              "profileName",
+              "profileConfig",
+              "loggingFactory",
+              "application>bridge1/anyname1z",
+              "application>bridge2/anyname2z",
+              "plugin2>bridge1/anyname1b",
+              "plugin2>bridge2/anyname2b"
+            ],
             "argumentSchema": {
               "$id": "mainTrigger",
               "type": "object",
@@ -697,6 +734,18 @@ describe('tdd:devebot:core:plugin-loader', function() {
                   "type": "object"
                 },
                 "loggingFactory": {
+                  "type": "object"
+                },
+                "application>bridge1/anyname1z": {
+                  "type": "object"
+                },
+                "application>bridge2/anyname2z": {
+                  "type": "object"
+                },
+                "plugin2>bridge1/anyname1b": {
+                  "type": "object"
+                },
+                "plugin2>bridge2/anyname2b": {
                   "type": "object"
                 }
               }
@@ -840,7 +889,15 @@ describe('tdd:devebot:core:plugin-loader', function() {
           "crateScope": "plugin3",
           "name": "plugin3Trigger"
         }
-      });
+      };
+      if (chores.isOldFeatures()) {
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentProperties'];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["application>bridge1/anyname1z"];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["application>bridge2/anyname2z"];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["plugin2>bridge1/anyname1b"];
+        delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["plugin2>bridge2/anyname2b"];
+      }
+      assert.deepInclude(triggerMap, expectedMap);
     });
   });
 

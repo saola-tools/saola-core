@@ -1,6 +1,7 @@
 'use strict';
 
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainService');
 
@@ -18,5 +19,13 @@ var Service = function(params) {
 
   debugx.enabled && debugx(' - constructor end!');
 };
+
+if (!chores.isOldFeatures()) {
+  Service.referenceList = [
+    'application>bridge1/anyname1z',
+    'plugin1>bridge1/anyname1a',
+    'plugin1>bridge2/anyname2a'
+  ]
+}
 
 module.exports = Service;
