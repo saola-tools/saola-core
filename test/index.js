@@ -99,6 +99,35 @@ lab.createKernel = function(appName) {
   return new Kernel(_config);
 }
 
+lab.createBasicServices = function(appName, injectedObjects) {
+  injectedObjects = injectedObjects || {
+    profileConfig: {}
+  };
+  if (appName) {
+    var app = lab.getApp(appName);
+    injectedObjects.profileConfig = app.config.profile || {
+      logger: {
+        transports: {
+          console: {
+            type: 'console',
+            level: 'debug',
+            json: false,
+            timestamp: true,
+            colorize: true
+          }
+        }
+      }
+    }
+  }
+  var injektor = new Injektor({ separator: chores.getSeparator() });
+  _attachInjectedObjects(injektor, injectedObjects);
+  _loadBackboneServices(injektor, [ 'schema-validator', 'logging-factory' ]);
+  return {
+    loggingFactory: injektor.lookup('loggingFactory'),
+    schemaValidator: injektor.lookup('schemaValidator')
+  }
+}
+
 lab.createBridgeLoader = function(appName, injectedObjects) {
   injectedObjects = injectedObjects || {
     profileConfig: {},
@@ -213,6 +242,10 @@ lab.createSandboxManager = function(appName, injectedObjects) {
     'sandbox-manager', 'bridge-loader', 'plugin-loader', 'schema-validator', 'logging-factory'
   ]);
   return injektor.lookup('sandboxManager');
+}
+
+lab.createSchemaValidator = function() {
+
 }
 
 lab.simplifyCommands = function(commands) {

@@ -15,6 +15,7 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
+var sinon = require('sinon');
 var errorHandlerPath = path.join(lab.getDevebotHome(), 'lib/backbone/error-handler');
 var errorHandler = require(errorHandlerPath).instance;
 
@@ -31,6 +32,182 @@ describe('tdd:devebot:base:kernel', function() {
     LogConfig.reset();
     errorHandler.reset();
   });
+
+  describe('validateBridgeConfig()', function() {
+    var validateBridgeConfig = rewire('../../lib/kernel').__get__('validateBridgeConfig');
+    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
+    var LX = loggingFactory.getLogger();
+    var LT = loggingFactory.getTracer();
+    var bridgeLoader = {
+      loadMetadata: function() {}
+    };
+    sinon.stub(bridgeLoader, 'loadMetadata').callsFake(function(bridgeMetadata) {
+      lodash.assign(bridgeMetadata, {
+        "bridge1": {
+          "name": "bridge1",
+          "metadata": null
+        },
+        "bridge2": {
+          "name": "bridge2",
+          "metadata": null
+        },
+        "bridge3": {
+          "name": "bridge3",
+          "metadata": null
+        },
+        "bridge4": {
+          "name": "bridge4",
+          "metadata": null
+        },
+        "connector1": {
+          "name": "devebot-co-connector1",
+          "metadata": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                },
+                "verbose": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "host",
+                "port"
+              ]
+            }
+          }
+        },
+        "connector2": {
+          "name": "devebot-co-connector2",
+          "metadata": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "params": {
+                  "type": "object"
+                },
+                "handler": {}
+              },
+              "required": [
+                "params"
+              ]
+            }
+          }
+        }
+      });
+    });
+
+    it("result should be ok if bridge config is valid with bridge schema", function() {
+      var result = [];
+      validateBridgeConfig({LX, LT, bridgeLoader, schemaValidator}, {
+        "bridge1": {
+          "application": {
+            "anyname1z": {
+              "refPath": "sandbox -> bridge1 -> application -> anyname1z",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          },
+          "plugin1": {
+            "anyname1a": {
+              "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          },
+          "plugin2": {
+            "anyname1b": {
+              "refPath": "sandbox -> bridge1 -> plugin2 -> anyname1b",
+              "refType": "application",
+              "refName": "fullapp"
+            },
+            "anyname1c": {
+              "refPath": "sandbox -> bridge1 -> plugin2 -> anyname1c",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          }
+        },
+        "bridge2": {
+          "application": {
+            "anyname2y": {
+              "refPath": "sandbox -> bridge2 -> application -> anyname2y",
+              "refType": "application",
+              "refName": "fullapp"
+            },
+            "anyname2z": {
+              "refPath": "sandbox -> bridge2 -> application -> anyname2z",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          },
+          "plugin1": {
+            "anyname2a": {
+              "refPath": "sandbox -> bridge2 -> plugin1 -> anyname2a",
+              "refType": "application",
+              "refName": "fullapp"
+            },
+            "anyname2c": {
+              "refPath": "sandbox -> bridge2 -> plugin1 -> anyname2c",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          },
+          "plugin2": {
+            "anyname2b": {
+              "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b",
+              "refType": "application",
+              "refName": "fullapp"
+            }
+          }
+        },
+        "connector1": {
+          "application": {
+            "wrapper": {
+              "refPath": "sandbox -> connector1 -> application -> wrapper",
+              "refType": "application",
+              "refName": "fullapp",
+              "host": "0.0.0.0",
+              "port": 19090
+            }
+          }
+        },
+        "connector2": {
+          "application": {
+            "wrapper": {
+              "refPath": "sandbox -> connector2 -> application -> wrapper",
+              "refType": "application",
+              "refName": "fullapp",
+              "params": {
+                "username": "admin",
+                "password": "88888888"
+              }
+            }
+          }
+        }
+      }, result);
+      false && console.log('validation result: %s', JSON.stringify(result, null, 2));
+      assert.sameDeepMembers(result, [
+        {
+          "stage": "bridge/schema",
+          "name": "application/connector1#wrapper",
+          "type": "bridge",
+          "hasError": false
+        },
+        {
+          "stage": "bridge/schema",
+          "name": "application/connector2#wrapper",
+          "type": "bridge",
+          "hasError": false
+        }
+      ]);
+    });
+  })
 
   describe('validate config/schemas', function() {
     var loggingStore = {};
@@ -343,9 +520,7 @@ describe('tdd:devebot:base:kernel', function() {
       assert.equal(totalOfExit, 0);
     });
 
-    it('loading an invalid profile configure application make program exit');
-
-    it('loading an invalid sandbox configure application make program exit', function() {
+    it("loading an invalid plugin's configuration make program exit", function() {
       var unhook = lab.preventExit();
       var kernel = lab.createKernel('invalid-schema');
 

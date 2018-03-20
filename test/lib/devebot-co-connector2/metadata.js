@@ -2,11 +2,16 @@ module.exports = {
   schema: {
     "type": "object",
     "properties": {
-      "params": {
-        "type": "object"
+      "refPath": {
+        "type": "string"
       },
-      "handler": {}
+      "refType": {
+        "type": "string"
+      },
+      "refName": {
+        "type": "string"
+      }
     },
-    "required": ["params"]
+    "required": ["refName", "refType"]
   }
 }

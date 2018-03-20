@@ -73,20 +73,17 @@ describe('tdd:devebot:core:bridge-loader', function() {
             "schema": {
               "type": "object",
               "properties": {
-                "host": {
+                "refPath": {
                   "type": "string"
                 },
-                "port": {
-                  "type": "number"
+                "refType": {
+                  "type": "string"
                 },
-                "verbose": {
-                  "type": "boolean"
+                "refName": {
+                  "type": "string"
                 }
               },
-              "required": [
-                "host",
-                "port"
-              ]
+              "required": ["refName", "refType"]
             }
           }
         },
@@ -96,14 +93,17 @@ describe('tdd:devebot:core:bridge-loader', function() {
             "schema": {
               "type": "object",
               "properties": {
-                "params": {
-                  "type": "object"
+                "refPath": {
+                  "type": "string"
                 },
-                "handler": {}
+                "refType": {
+                  "type": "string"
+                },
+                "refName": {
+                  "type": "string"
+                }
               },
-              "required": [
-                "params"
-              ]
+              "required": ["refName", "refType"]
             }
           }
         }

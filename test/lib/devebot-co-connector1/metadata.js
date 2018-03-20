@@ -2,16 +2,16 @@ module.exports = {
   schema: {
     "type": "object",
     "properties": {
-      "host": {
+      "refPath": {
         "type": "string"
       },
-      "port": {
-        "type": "number"
+      "refType": {
+        "type": "string"
       },
-      "verbose": {
-        "type": "boolean"
+      "refName": {
+        "type": "string"
       }
     },
-    "required": ["host", "port"]
+    "required": ["refName", "refType"]
   }
 }
