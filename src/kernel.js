@@ -6,6 +6,7 @@ var path = require('path');
 var chores = require('./utils/chores.js');
 var LoggingWrapper = require('./backbone/logging-wrapper.js');
 var errorHandler = require('./backbone/error-handler.js').instance;
+var blockRef = chores.getBlockRef(__filename);
 
 var CONSTRUCTORS = {};
 chores.loadServiceByNames(CONSTRUCTORS, path.join(__dirname, 'backbone'), [
@@ -14,7 +15,6 @@ chores.loadServiceByNames(CONSTRUCTORS, path.join(__dirname, 'backbone'), [
 ]);
 
 function Kernel(params) {
-  var blockRef = chores.getBlockRef(__filename);
   var loggingWrapper = new LoggingWrapper(blockRef);
   var LX = loggingWrapper.getLogger();
   var LT = loggingWrapper.getTracer();
@@ -55,11 +55,11 @@ function Kernel(params) {
   // validate bridge's configures
   var bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
   var bridgeConfig = lodash.get(params, ['sandbox', 'mixture', 'bridges'], {});
-  validateBridgeConfig({LX, LT, bridgeLoader, schemaValidator}, bridgeConfig, result);
+  validateBridgeConfig({LX, LT, schemaValidator, bridgeLoader}, bridgeConfig, result);
 
   // validate plugin's configures
-  var schemaMap = {};
   var pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
+  var schemaMap = {};
   pluginLoader.loadSchemas(schemaMap);
 
   LX.has('silly') && LX.log('silly', LT.add({
@@ -96,48 +96,10 @@ function Kernel(params) {
     text: ' - Synchronize the structure of configuration data and schemas'
   }));
 
-  var sandboxObject = configObject.sandbox || {};
-  var sandboxSchema = configSchema.sandbox || {};
+  var pluginSchema = configSchema.sandbox || {};
+  var pluginConfig = configObject.sandbox || {};
 
-  var customizeResult = function(result, crateConfig, crateSchema, crateName) {
-    var output = {};
-    output.stage = 'config/schema';
-    output.name = crateSchema.crateScope;
-    output.type = chores.isSpecialPlugin(crateName) ? crateName : 'plugin';
-    output.hasError = result.ok !== true;
-    if (!result.ok && result.errors) {
-      output.stack = JSON.stringify(result.errors, null, 2);
-    }
-    return output;
-  }
-
-  var validatePluginConfig = function(result, crateConfig, crateSchema, crateName) {
-    if (crateSchema && crateSchema.schema) {
-      var r = schemaValidator.validate(crateConfig, crateSchema.schema);
-      result.push(customizeResult(r, crateConfig, crateSchema, crateName));
-    } else {
-      LX.has('silly') && LX.log('silly', LT.add({
-        name: crateName,
-        config: crateConfig,
-        schema: crateSchema
-      }).toMessage({
-        tags: [ blockRef, 'sandbox-config-validation-skipped' ],
-        text: ' - Validate sandboxConfig[${name}] is skipped'
-      }));
-    }
-  }
-
-  if (sandboxObject.application) {
-    validatePluginConfig(result, sandboxObject.application, sandboxSchema.application, 'application');
-  }
-
-  if (sandboxObject.plugins) {
-    lodash.forOwn(sandboxObject.plugins, function(pluginConfig, pluginName) {
-      if (lodash.isObject(sandboxSchema.plugins)) {
-        validatePluginConfig(result, pluginConfig, sandboxSchema.plugins[pluginName], pluginName);
-      }
-    });
-  }
+  validatePluginConfig({LX, LT, schemaValidator}, pluginConfig, pluginSchema, result);
 
   // summarize validating result
   LX.has('silly') && LX.log('silly', LT.add({
@@ -164,7 +126,7 @@ function Kernel(params) {
 module.exports = Kernel;
 
 let validateBridgeConfig = function(ctx, bridgeConfig, result) {
-  let { LX, LT, bridgeLoader, schemaValidator } = ctx;
+  let { LX, LT, schemaValidator, bridgeLoader } = ctx;
   bridgeConfig = bridgeConfig || {};
   result = result || [];
 
@@ -185,9 +147,10 @@ let validateBridgeConfig = function(ctx, bridgeConfig, result) {
 
   var validateDialects = function(metadata, mapping) {
     LX.has('silly') && LX.log('silly', LT.add({
-      metadata: metadata,
-      mapping: mapping
+      bridgeConfig: mapping,
+      bridgeSchema: metadata
     }).toMessage({
+      tags: [ blockRef, 'validate-bridge-by-schema' ],
       text: ' - bridge metadata:\n${metadata}\n${mapping}'
     }));
     for(var bridgeCode in mapping) {
@@ -207,4 +170,48 @@ let validateBridgeConfig = function(ctx, bridgeConfig, result) {
   }
 
   return validateDialects(bridgeMetadata, bridgeConfig);
+}
+
+let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
+  let { LX, LT, schemaValidator } = ctx;
+
+  var customizeResult = function(result, crateConfig, crateSchema, crateName) {
+    var output = {};
+    output.stage = 'config/schema';
+    output.name = crateSchema.crateScope;
+    output.type = chores.isSpecialPlugin(crateName) ? crateName : 'plugin';
+    output.hasError = result.ok !== true;
+    if (!result.ok && result.errors) {
+      output.stack = JSON.stringify(result.errors, null, 2);
+    }
+    return output;
+  }
+
+  var validatePlugin = function(result, crateConfig, crateSchema, crateName) {
+    if (crateSchema && crateSchema.schema) {
+      var r = schemaValidator.validate(crateConfig, crateSchema.schema);
+      result.push(customizeResult(r, crateConfig, crateSchema, crateName));
+    } else {
+      LX.has('silly') && LX.log('silly', LT.add({
+        name: crateName,
+        config: crateConfig,
+        schema: crateSchema
+      }).toMessage({
+        tags: [ blockRef, 'sandbox-config-validation-skipped' ],
+        text: ' - Validate sandboxConfig[${name}] is skipped'
+      }));
+    }
+  }
+
+  if (pluginConfig.application) {
+    validatePlugin(result, pluginConfig.application, pluginSchema.application, 'application');
+  }
+
+  if (pluginConfig.plugins) {
+    lodash.forOwn(pluginConfig.plugins, function(pluginObject, pluginName) {
+      if (lodash.isObject(pluginSchema.plugins)) {
+        validatePlugin(result, pluginObject, pluginSchema.plugins[pluginName], pluginName);
+      }
+    });
+  }
 }

@@ -216,14 +216,17 @@ describe('tdd:devebot:base:kernel', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
+          allTags: [ 'devebot/kernel', 'validate-bridge-by-schema' ],
+          storeTo: 'bridgeValidation'
+        }, {
           allTags: [ 'devebot/kernel', 'config-schema-loading' ],
           storeTo: 'schemaValidation'
         }, {
           allTags: [ 'devebot/kernel', 'config-schema-synchronizing' ],
-          storeTo: 'schemaValidation'
+          storeTo: 'pluginValidation'
         }, {
           allTags: [ 'devebot/kernel', 'config-schema-validating' ],
-          storeTo: 'schemaValidation'
+          storeTo: 'outputValidation'
         }, {
           allTags: [ 'devebot/errorHandler', 'examine' ],
           matchingField: 'invoker',
@@ -242,17 +245,15 @@ describe('tdd:devebot:base:kernel', function() {
 
       var kernel = lab.createKernel('fullapp');
 
-      var configMap = lodash.get(loggingStore, 'schemaValidation.0.configMap', {});
       var schemaMap = lodash.get(loggingStore, 'schemaValidation.0.schemaMap', {});
-      false && console.log('Config: %s', JSON.stringify(configMap, null, 2));
       false && console.log('Schema: %s', JSON.stringify(schemaMap, null, 2));
 
-      var configObject = lodash.get(loggingStore, 'schemaValidation.1.configObject', {});
-      var configSchema = lodash.get(loggingStore, 'schemaValidation.1.configSchema', {});
+      var configObject = lodash.get(loggingStore, 'pluginValidation.0.configObject', {});
+      var configSchema = lodash.get(loggingStore, 'pluginValidation.0.configSchema', {});
       false && console.log('configObject: %s', JSON.stringify(configObject, null, 2));
       false && console.log('configSchema: %s', JSON.stringify(configSchema, null, 2));
 
-      var result = lodash.get(loggingStore, 'schemaValidation.2.validatingResult', []);
+      var result = lodash.get(loggingStore, 'outputValidation.0.validatingResult', []);
       false && lodash.forEach(result, function(item) {
         console.log('- validation result: %s', JSON.stringify(lodash.omit(item, ['stack'])));
         if (item.hasError) {
