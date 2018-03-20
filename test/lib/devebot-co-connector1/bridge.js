@@ -2,7 +2,7 @@
 
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var dgx = Devebot.require('pinbug')('devebot:test:lab:devebot-co-connector2');
+var dgx = Devebot.require('pinbug')('devebot:test:lab:devebot-co-connector1');
 
 var Service = function(params) {
   dgx.enabled && dgx(' + constructor start ...');
@@ -19,3 +19,5 @@ var Service = function(params) {
 };
 
 module.exports = Service;
+
+Service.devebotMetadata = require('./metadata');
