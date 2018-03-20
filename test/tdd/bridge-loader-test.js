@@ -29,10 +29,86 @@ describe('tdd:devebot:core:bridge-loader', function() {
     LogConfig.reset();
   });
 
-  describe('loadSchemas()', function() {
-    it('load schemas from empty application');
-    it('load schemas from simplest application');
-    it('load all of valid schemas from complete application');
+  describe('loadMetadata()', function() {
+    it("load bridge's metadata from empty application", function() {
+      var bridgeLoader = lab.createBridgeLoader();
+      var metadataMap = {};
+      bridgeLoader.loadMetadata(metadataMap);
+      false && console.log('metadataMap: %s', JSON.stringify(metadataMap, null, 2));
+      assert.deepEqual(metadataMap, {});
+    });
+    it("load bridge's metadata from simplest application", function() {
+      var bridgeLoader = lab.createBridgeLoader('simple');
+      var metadataMap = {};
+      bridgeLoader.loadMetadata(metadataMap);
+      false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
+      assert.deepEqual(metadataMap, {});
+    });
+    it("load all of valid bridge's metadata from complete application", function() {
+      var bridgeLoader = lab.createBridgeLoader('fullapp');
+      var metadataMap = {};
+      bridgeLoader.loadMetadata(metadataMap);
+      errorHandler.barrier({exitOnError: true});
+      false && console.log('metadataMap: %s', JSON.stringify(metadataMap, null, 2));
+      assert.deepInclude(metadataMap, {
+        "bridge1": {
+          "name": "bridge1",
+          "metadata": null
+        },
+        "bridge2": {
+          "name": "bridge2",
+          "metadata": null
+        },
+        "bridge3": {
+          "name": "bridge3",
+          "metadata": null
+        },
+        "bridge4": {
+          "name": "bridge4",
+          "metadata": null
+        },
+        "connector1": {
+          "name": "devebot-co-connector1",
+          "metadata": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                },
+                "verbose": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "host",
+                "port"
+              ]
+            }
+          }
+        },
+        "connector2": {
+          "name": "devebot-co-connector2",
+          "metadata": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "params": {
+                  "type": "object"
+                },
+                "handler": {}
+              },
+              "required": [
+                "params"
+              ]
+            }
+          }
+        }
+      });
+    });
   });
 
   describe('loadDialects()', function() {
