@@ -353,28 +353,28 @@ describe('tdd:devebot:core:plugin-loader', function() {
     });
   });
 
-  describe('loadSchemas()', function() {
+  describe('loadMetadata()', function() {
     it('load schemas from empty application', function() {
       var pluginLoader = lab.createPluginLoader();
-      var schemaMap = {};
-      pluginLoader.loadSchemas(schemaMap);
-      false && console.log('schemaMap: ', JSON.stringify(schemaMap, null, 2));
-      assert.deepEqual(schemaMap, {});
+      var metadataMap = {};
+      pluginLoader.loadMetadata(metadataMap);
+      false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
+      assert.deepEqual(metadataMap, {});
     });
     it('load schemas from simplest application', function() {
       var pluginLoader = lab.createPluginLoader('simple');
-      var schemaMap = {};
-      pluginLoader.loadSchemas(schemaMap);
-      false && console.log('schemaMap: ', JSON.stringify(schemaMap, null, 2));
-      assert.deepEqual(schemaMap, {});
+      var metadataMap = {};
+      pluginLoader.loadMetadata(metadataMap);
+      false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
+      assert.deepEqual(metadataMap, {});
     });
     it('load all of valid schemas from complete application', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
-      var schemaMap = {};
-      pluginLoader.loadSchemas(schemaMap);
+      var metadataMap = {};
+      pluginLoader.loadMetadata(metadataMap);
       errorHandler.barrier({exitOnError: true});
-      false && console.log('schemaMap: ', JSON.stringify(schemaMap, null, 2));
-      assert.deepInclude(schemaMap, {
+      false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
+      assert.deepInclude(metadataMap, {
         "fullapp/sandbox": {
           "default": {
             "crateScope": "application",

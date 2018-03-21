@@ -66,7 +66,7 @@ function Kernel(params) {
   // validate plugin's configures
   var pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
   var pluginMetadata = {};
-  pluginLoader.loadSchemas(pluginMetadata);
+  pluginLoader.loadMetadata(pluginMetadata);
 
   LX.has('silly') && LX.log('silly', LT.add({
     metadata: pluginMetadata
