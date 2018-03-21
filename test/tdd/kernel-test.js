@@ -547,7 +547,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     it("loading an invalid plugin's configure make program exit", function() {
       var unhook = lab.preventExit();
-      var kernel = lab.createKernel('invalid-schema');
+      var kernel = lab.createKernel('invalid-plugin-config');
 
       // errorSummary.0 <= kernel
       false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
