@@ -68,7 +68,10 @@ function ErrorHandler(params) {
               case 'application':
               case 'plugin':
               case 'devebot':
-              console.error('--> [%s:%s] sandbox config is invalid, reasons:\n%s', fsv.type, fsv.name, fsv.stack);
+              console.error('--> [%s:%s] plugin configure is invalid, reasons:\n%s', fsv.type, fsv.name, fsv.stack);
+              break;
+              case 'bridge':
+              console.error('--> [%s:%s] bridge configure is invalid, reasons:\n%s', fsv.type, fsv.name, fsv.stack);
               break;
             }
             return;

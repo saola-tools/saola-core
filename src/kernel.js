@@ -47,11 +47,6 @@ function Kernel(params) {
   var schemaValidator = injektor.lookup('schemaValidator', chores.injektorContext);
   var result = [];
 
-  var configObject = {
-    profile: lodash.get(params, ['profile', 'mixture'], {}),
-    sandbox: lodash.get(params, ['sandbox', 'mixture'], {})
-  }
-
   // validate bridge's configures
   var bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
   let bridgeMetadata = {};
@@ -90,6 +85,11 @@ function Kernel(params) {
   }
   var configSchema = extractPluginSchema(schemaMap);
 
+  var configObject = {
+    profile: lodash.get(params, ['profile', 'mixture'], {}),
+    sandbox: lodash.get(params, ['sandbox', 'mixture'], {})
+  }
+
   LX.has('silly') && LX.log('silly', LT.add({
     configObject: configObject,
     configSchema: configSchema
@@ -98,10 +98,7 @@ function Kernel(params) {
     text: ' - Synchronize the structure of configuration data and schemas'
   }));
 
-  var pluginSchema = configSchema.sandbox || {};
-  var pluginConfig = configObject.sandbox || {};
-
-  validatePluginConfig({LX, LT, schemaValidator}, pluginConfig, pluginSchema, result);
+  validatePluginConfig({LX, LT, schemaValidator}, configObject, configSchema, result);
 
   // summarize validating result
   LX.has('silly') && LX.log('silly', LT.add({
@@ -142,7 +139,7 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
 
   var customizeResult = function(result, bridgeCode, pluginName, dialectName) {
     var output = {};
-    output.stage = 'bridge/schema';
+    output.stage = 'config/schema';
     output.name = pluginName + '/' + bridgeCode + '#' + dialectName;
     output.type = 'bridge';
     output.hasError = result.ok !== true;
@@ -172,6 +169,9 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
 let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
   let { LX, LT, schemaValidator } = ctx;
 
+  var sandboxConfig = pluginConfig.sandbox || {};
+  var sandboxSchema = pluginSchema.sandbox || {};
+
   var customizeResult = function(result, crateScope, crateName) {
     var output = {};
     output.stage = 'config/schema';
@@ -184,7 +184,7 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     return output;
   }
 
-  var validatePlugin = function(result, crateConfig, crateSchema, crateName) {
+  var validateSandbox = function(result, crateConfig, crateSchema, crateName) {
     if (crateSchema && crateSchema.schema) {
       var r = schemaValidator.validate(crateConfig, crateSchema.schema);
       result.push(customizeResult(r, crateSchema.crateScope, crateName));
@@ -200,14 +200,14 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     }
   }
 
-  if (pluginConfig.application) {
-    validatePlugin(result, pluginConfig.application, pluginSchema.application, 'application');
+  if (sandboxConfig.application) {
+    validateSandbox(result, sandboxConfig.application, sandboxSchema.application, 'application');
   }
 
-  if (pluginConfig.plugins) {
-    lodash.forOwn(pluginConfig.plugins, function(pluginObject, pluginName) {
-      if (lodash.isObject(pluginSchema.plugins)) {
-        validatePlugin(result, pluginObject, pluginSchema.plugins[pluginName], pluginName);
+  if (sandboxConfig.plugins) {
+    lodash.forOwn(sandboxConfig.plugins, function(pluginObject, pluginName) {
+      if (lodash.isObject(sandboxSchema.plugins)) {
+        validateSandbox(result, pluginObject, sandboxSchema.plugins[pluginName], pluginName);
       }
     });
   }

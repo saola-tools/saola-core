@@ -192,13 +192,13 @@ describe('tdd:devebot:base:kernel', function() {
       false && console.log('validation result: %s', JSON.stringify(result, null, 2));
       assert.sameDeepMembers(result, [
         {
-          "stage": "bridge/schema",
+          "stage": "config/schema",
           "name": "application/connector1#wrapper",
           "type": "bridge",
           "hasError": false
         },
         {
-          "stage": "bridge/schema",
+          "stage": "config/schema",
           "name": "application/connector2#wrapper",
           "type": "bridge",
           "hasError": false
