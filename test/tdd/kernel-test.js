@@ -190,6 +190,7 @@ describe('tdd:devebot:base:kernel', function() {
         }
       }, result);
       false && console.log('validation result: %s', JSON.stringify(result, null, 2));
+      if (chores.isOldFeatures()) return;
       assert.sameDeepMembers(result, [
         {
           "stage": "config/schema",

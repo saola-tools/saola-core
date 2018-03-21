@@ -27,6 +27,37 @@ describe('tdd:devebot:base:bootstrap', function() {
     LogConfig.reset();
   });
 
+  describe('Prerequisite', function() {
+    it('launchApplication() load configure only (not server/runner)', function() {
+      var loggingStore = {};
+      LogTracer.reset().setupDefaultInterceptors([{
+        accumulator: loggingStore,
+        mappings: [{
+          allTags: [ 'constructor-begin', 'appLoader' ],
+          countTo: 'appLoader'
+        }, {
+          allTags: [ 'devebot/kernel', 'constructor-begin' ],
+          countTo: 'loadingKernel'
+        }, {
+          allTags: [ 'devebot/server', 'constructor-begin' ],
+          countTo: 'loadingServer'
+        }, {
+          allTags: [ 'devebot/runner', 'constructor-begin' ],
+          countTo: 'loadingRunner'
+        }]
+      }]);
+
+      var app = bootstrap.launchApplication({
+        appRootPath: lab.getAppHome('default')
+      });
+
+      false && console.log(loggingStore);
+      assert.deepEqual(loggingStore, { appLoader: 1 });
+
+      LogTracer.clearStringifyInterceptors();
+    });
+  })
+
   describe('replaceObjectFields()', function() {
     it('should do nothing with empty object', function() {
       assert.deepEqual(replaceObjectFields({}, DEFAULT_CONTEXT), {});
