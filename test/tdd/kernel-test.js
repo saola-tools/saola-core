@@ -239,6 +239,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
+      errorHandler.reset();
     });
 
     it('kernel constructor is ok if no error has occurred in validating', function() {
@@ -528,11 +529,27 @@ describe('tdd:devebot:base:kernel', function() {
       assert.equal(totalOfExit, 0);
     });
 
-    it("loading an invalid plugin's configuration make program exit", function() {
+    it("loading an invalid bridge's configure make program exit", function() {
+      var unhook = lab.preventExit();
+      var kernel = lab.createKernel('invalid-bridge-config');
+
+      // errorSummary.0 <= kernel
+      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        'totalOfErrors', 'errors'
+      ]);
+      assert.equal(errorSummary.totalOfErrors, 1);
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 1);
+    });
+
+    it("loading an invalid plugin's configure make program exit", function() {
       var unhook = lab.preventExit();
       var kernel = lab.createKernel('invalid-schema');
 
-      // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
+      // errorSummary.0 <= kernel
       false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
       assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
       var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
@@ -546,11 +563,11 @@ describe('tdd:devebot:base:kernel', function() {
 
     after(function() {
       LogTracer.clearStringifyInterceptors();
+      errorHandler.reset();
     });
   });
 
   after(function() {
     envtool.reset();
-    errorHandler.reset();
   });
 });
