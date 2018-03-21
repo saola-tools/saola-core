@@ -51,26 +51,34 @@ function Kernel(params) {
   var bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
   let bridgeMetadata = {};
   bridgeLoader.loadMetadata(bridgeMetadata);
+
+  LX.has('silly') && LX.log('silly', LT.add({
+    metadata: bridgeMetadata
+  }).toMessage({
+    tags: [ blockRef, 'bridge-config-schema-input' ],
+    text: " - bridge's metadata: ${metadata}"
+  }));
+
   var bridgeConfig = lodash.get(params, ['sandbox', 'mixture', 'bridges'], {});
+
   validateBridgeConfig({LX, LT, schemaValidator}, bridgeConfig, bridgeMetadata, result);
 
   // validate plugin's configures
   var pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
-  var schemaMap = {};
-  pluginLoader.loadSchemas(schemaMap);
+  var pluginMetadata = {};
+  pluginLoader.loadSchemas(pluginMetadata);
 
   LX.has('silly') && LX.log('silly', LT.add({
-    configMap: params,
-    schemaMap: schemaMap
+    metadata: pluginMetadata
   }).toMessage({
-    tags: [ blockRef, 'config-schema-loading' ],
-    text: ' - Sandbox schemas: ${schemaMap}'
+    tags: [ blockRef, 'plugin-config-schema-input' ],
+    text: " - plugin's metadata: ${metadata}"
   }));
 
   var SELECTED_FIELDS = [ 'crateScope', 'schema', 'extension' ];
-  var extractPluginSchema = function(schemaMap) {
+  var extractPluginSchema = function(pluginMetadata) {
     var configSchema = { profile: {}, sandbox: {} };
-    lodash.forOwn(schemaMap, function(ref, key) {
+    lodash.forOwn(pluginMetadata, function(ref, key) {
       var def = ref && ref.default || {};
       if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
         if (chores.isSpecialPlugin(def.pluginCode)) {
@@ -83,28 +91,28 @@ function Kernel(params) {
     });
     return configSchema;
   }
-  var configSchema = extractPluginSchema(schemaMap);
+  var pluginSchema = extractPluginSchema(pluginMetadata);
 
-  var configObject = {
+  var pluginConfig = {
     profile: lodash.get(params, ['profile', 'mixture'], {}),
-    sandbox: lodash.get(params, ['sandbox', 'mixture'], {})
+    sandbox: lodash.pick(lodash.get(params, ['sandbox', 'mixture'], {}), ['application', 'plugins'])
   }
 
   LX.has('silly') && LX.log('silly', LT.add({
-    configObject: configObject,
-    configSchema: configSchema
+    pluginConfig: pluginConfig,
+    pluginSchema: pluginSchema
   }).toMessage({
-    tags: [ blockRef, 'config-schema-synchronizing' ],
+    tags: [ blockRef, 'validate-plugin-config-by-schema' ],
     text: ' - Synchronize the structure of configuration data and schemas'
   }));
 
-  validatePluginConfig({LX, LT, schemaValidator}, configObject, configSchema, result);
+  validatePluginConfig({LX, LT, schemaValidator}, pluginConfig, pluginSchema, result);
 
   // summarize validating result
   LX.has('silly') && LX.log('silly', LT.add({
     validatingResult: result
   }).toMessage({
-    tags: [ blockRef, 'config-schema-validating' ],
+    tags: [ blockRef, 'validating-config-by-schema-result' ],
     text: ' - Validating sandbox configuration using schemas'
   }));
 
@@ -126,14 +134,16 @@ module.exports = Kernel;
 
 let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
   let { LX, LT, schemaValidator } = ctx;
-  bridgeConfig = bridgeConfig || {};
   result = result || [];
+
+  bridgeConfig = bridgeConfig || {};
+  bridgeSchema = bridgeSchema || {};
 
   LX.has('silly') && LX.log('silly', LT.add({
     bridgeConfig: bridgeConfig,
     bridgeSchema: bridgeSchema
   }).toMessage({
-    tags: [ blockRef, 'validate-bridge-by-schema' ],
+    tags: [ blockRef, 'validate-bridge-config-by-schema' ],
     text: ' - bridge config/schema:\n${bridgeSchema}\n${bridgeConfig}'
   }));
 
@@ -168,6 +178,7 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
 
 let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
   let { LX, LT, schemaValidator } = ctx;
+  result = result || [];
 
   var sandboxConfig = pluginConfig.sandbox || {};
   var sandboxSchema = pluginSchema.sandbox || {};
@@ -194,7 +205,7 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
         config: crateConfig,
         schema: crateSchema
       }).toMessage({
-        tags: [ blockRef, 'sandbox-config-validation-skipped' ],
+        tags: [ blockRef, 'validate-plugin-config-by-schema-skipped' ],
         text: ' - Validate sandboxConfig[${name}] is skipped'
       }));
     }

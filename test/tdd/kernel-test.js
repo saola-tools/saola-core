@@ -214,16 +214,19 @@ describe('tdd:devebot:base:kernel', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/kernel', 'validate-bridge-by-schema' ],
-          storeTo: 'bridgeValidation'
+          allTags: [ 'devebot/kernel', 'bridge-config-schema-input' ],
+          storeTo: 'bridgeInput'
         }, {
-          allTags: [ 'devebot/kernel', 'config-schema-loading' ],
-          storeTo: 'schemaValidation'
+          allTags: [ 'devebot/kernel', 'plugin-config-schema-input' ],
+          storeTo: 'pluginInput'
         }, {
-          allTags: [ 'devebot/kernel', 'config-schema-synchronizing' ],
-          storeTo: 'pluginValidation'
+          allTags: [ 'devebot/kernel', 'validate-bridge-config-by-schema' ],
+          storeTo: 'bridgeData'
         }, {
-          allTags: [ 'devebot/kernel', 'config-schema-validating' ],
+          allTags: [ 'devebot/kernel', 'validate-plugin-config-by-schema' ],
+          storeTo: 'pluginData'
+        }, {
+          allTags: [ 'devebot/kernel', 'validating-config-by-schema-result' ],
           storeTo: 'outputValidation'
         }, {
           allTags: [ 'devebot/errorHandler', 'examine' ],
@@ -243,13 +246,18 @@ describe('tdd:devebot:base:kernel', function() {
 
       var kernel = lab.createKernel('fullapp');
 
-      var schemaMap = lodash.get(loggingStore, 'schemaValidation.0.schemaMap', {});
-      false && console.log('Schema: %s', JSON.stringify(schemaMap, null, 2));
+      var pluginMetadata = lodash.get(loggingStore, 'pluginInput.0.metadata', {});
+      false && console.log('pluginMetadata: %s', JSON.stringify(pluginMetadata, null, 2));
 
-      var configObject = lodash.get(loggingStore, 'pluginValidation.0.configObject', {});
-      var configSchema = lodash.get(loggingStore, 'pluginValidation.0.configSchema', {});
-      false && console.log('configObject: %s', JSON.stringify(configObject, null, 2));
-      false && console.log('configSchema: %s', JSON.stringify(configSchema, null, 2));
+      var bridgeConfig = lodash.get(loggingStore, 'bridgeData.0.bridgeConfig', {});
+      var bridgeSchema = lodash.get(loggingStore, 'bridgeData.0.bridgeSchema', {});
+      false && console.log('bridgeConfig: %s', JSON.stringify(bridgeConfig, null, 2));
+      false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
+
+      var pluginConfig = lodash.get(loggingStore, 'pluginData.0.pluginConfig', {});
+      var pluginSchema = lodash.get(loggingStore, 'pluginData.0.pluginSchema', {});
+      false && console.log('pluginConfig: %s', JSON.stringify(pluginConfig, null, 2));
+      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
 
       var result = lodash.get(loggingStore, 'outputValidation.0.validatingResult', []);
       false && lodash.forEach(result, function(item) {
@@ -389,13 +397,14 @@ describe('tdd:devebot:base:kernel', function() {
         };
       }
 
-      assert.deepInclude(configObject.sandbox, {
+      assert.deepInclude(bridgeConfig, expectedBridges);
+
+      assert.deepInclude(pluginConfig.sandbox, {
         "application": {
           "host": "0.0.0.0",
           "port": 17700,
           "verbose": false
         },
-        "bridges": expectedBridges,
         "plugins": {
           "plugin1": {
             "host": "0.0.0.0",
@@ -453,7 +462,7 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       });
-      assert.deepEqual(configSchema.sandbox, {
+      assert.deepInclude(pluginSchema.sandbox, {
         "application": {
           "crateScope": "application",
           "schema": {
