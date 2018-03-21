@@ -38,12 +38,10 @@ function BridgeLoader(params) {
     metadataMap = metadataMap || {};
     var bridgeDescriptors = loadBridgeConstructors(params.bridgeRefs);
     lodash.defaultsDeep(metadataMap, lodash.mapValues(bridgeDescriptors, function(entrypoint) {
-      var bridgeMetadata = lodash.get(entrypoint, "construktor.devebotMetadata", null)
-          || lodash.get(entrypoint, "construktor.metadata", null)
-          || lodash.get(entrypoint, "construktor.metainf", null);
+      var construktor = lodash.get(entrypoint, "construktor", {});
       return {
         name: entrypoint.name,
-        metadata: bridgeMetadata
+        metadata: construktor.devebotMetadata || construktor.metainf || construktor.metadata || null
       }
     }));
     return metadataMap;
