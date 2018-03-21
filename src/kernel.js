@@ -147,8 +147,8 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
     text: ' - bridge config/schema:\n${bridgeSchema}\n${bridgeConfig}'
   }));
 
-  var customizeResult = function(result, bridgeCode, pluginName, dialectName) {
-    var output = {};
+  let customizeResult = function(result, bridgeCode, pluginName, dialectName) {
+    let output = {};
     output.stage = 'config/schema';
     output.name = pluginName + '/' + bridgeCode + '#' + dialectName;
     output.type = 'bridge';
@@ -159,15 +159,15 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
     return output;
   }
 
-  for(var bridgeCode in bridgeConfig) {
-    var bridgeMap = bridgeConfig[bridgeCode] || {};
-    var dialectSchema = lodash.get(bridgeSchema, [bridgeCode, 'metadata', 'schema'], null);
+  for(let bridgeCode in bridgeConfig) {
+    let bridgeMap = bridgeConfig[bridgeCode] || {};
+    let dialectSchema = lodash.get(bridgeSchema, [bridgeCode, 'metadata', 'schema'], null);
     if (lodash.isNull(dialectSchema)) continue;
-    for(var pluginName in bridgeMap) {
-      var pluginMap = bridgeMap[pluginName] || {};
-      for(var dialectName in pluginMap) {
-        var dialectConfig = pluginMap[dialectName] || {};
-        var r = schemaValidator.validate(dialectConfig, dialectSchema);
+    for(let pluginName in bridgeMap) {
+      let pluginMap = bridgeMap[pluginName] || {};
+      for(let dialectName in pluginMap) {
+        let dialectConfig = pluginMap[dialectName] || {};
+        let r = schemaValidator.validate(dialectConfig, dialectSchema);
         result.push(customizeResult(r, bridgeCode, pluginName, dialectName));
       }
     }
@@ -180,11 +180,11 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
   let { LX, LT, schemaValidator } = ctx;
   result = result || [];
 
-  var sandboxConfig = pluginConfig.sandbox || {};
-  var sandboxSchema = pluginSchema.sandbox || {};
+  let sandboxConfig = pluginConfig.sandbox || {};
+  let sandboxSchema = pluginSchema.sandbox || {};
 
-  var customizeResult = function(result, crateScope, crateName) {
-    var output = {};
+  let customizeResult = function(result, crateScope, crateName) {
+    let output = {};
     output.stage = 'config/schema';
     output.name = crateScope;
     output.type = chores.isSpecialPlugin(crateName) ? crateName : 'plugin';
@@ -195,9 +195,9 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     return output;
   }
 
-  var validateSandbox = function(result, crateConfig, crateSchema, crateName) {
+  let validateSandbox = function(result, crateConfig, crateSchema, crateName) {
     if (crateSchema && crateSchema.schema) {
-      var r = schemaValidator.validate(crateConfig, crateSchema.schema);
+      let r = schemaValidator.validate(crateConfig, crateSchema.schema);
       result.push(customizeResult(r, crateSchema.crateScope, crateName));
     } else {
       LX.has('silly') && LX.log('silly', LT.add({
