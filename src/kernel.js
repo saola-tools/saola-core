@@ -132,6 +132,14 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
   bridgeConfig = bridgeConfig || {};
   result = result || [];
 
+  LX.has('silly') && LX.log('silly', LT.add({
+    bridgeConfig: bridgeConfig,
+    bridgeSchema: bridgeSchema
+  }).toMessage({
+    tags: [ blockRef, 'validate-bridge-by-schema' ],
+    text: ' - bridge config/schema:\n${bridgeSchema}\n${bridgeConfig}'
+  }));
+
   var customizeResult = function(result, bridgeCode, pluginName, dialectName) {
     var output = {};
     output.stage = 'bridge/schema';
@@ -144,40 +152,30 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
     return output;
   }
 
-  var validateDialects = function(metadata, mapping) {
-    LX.has('silly') && LX.log('silly', LT.add({
-      bridgeConfig: mapping,
-      bridgeSchema: metadata
-    }).toMessage({
-      tags: [ blockRef, 'validate-bridge-by-schema' ],
-      text: ' - bridge metadata:\n${metadata}\n${mapping}'
-    }));
-    for(var bridgeCode in mapping) {
-      var bridgeMap = mapping[bridgeCode] || {};
-      var _schema = lodash.get(metadata, [bridgeCode, 'metadata', 'schema'], null);
-      if (lodash.isNull(_schema)) continue;
-      for(var pluginName in bridgeMap) {
-        var pluginMap = bridgeMap[pluginName] || {};
-        for(var dialectName in pluginMap) {
-          var dialectConfig = pluginMap[dialectName] || {};
-          var r = schemaValidator.validate(dialectConfig, _schema);
-          result.push(customizeResult(r, bridgeCode, pluginName, dialectName));
-        }
+  for(var bridgeCode in bridgeConfig) {
+    var bridgeMap = bridgeConfig[bridgeCode] || {};
+    var dialectSchema = lodash.get(bridgeSchema, [bridgeCode, 'metadata', 'schema'], null);
+    if (lodash.isNull(dialectSchema)) continue;
+    for(var pluginName in bridgeMap) {
+      var pluginMap = bridgeMap[pluginName] || {};
+      for(var dialectName in pluginMap) {
+        var dialectConfig = pluginMap[dialectName] || {};
+        var r = schemaValidator.validate(dialectConfig, dialectSchema);
+        result.push(customizeResult(r, bridgeCode, pluginName, dialectName));
       }
     }
-    return result;
   }
 
-  return validateDialects(bridgeSchema, bridgeConfig);
+  return result;
 }
 
 let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
   let { LX, LT, schemaValidator } = ctx;
 
-  var customizeResult = function(result, crateConfig, crateSchema, crateName) {
+  var customizeResult = function(result, crateScope, crateName) {
     var output = {};
     output.stage = 'config/schema';
-    output.name = crateSchema.crateScope;
+    output.name = crateScope;
     output.type = chores.isSpecialPlugin(crateName) ? crateName : 'plugin';
     output.hasError = result.ok !== true;
     if (!result.ok && result.errors) {
@@ -189,7 +187,7 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
   var validatePlugin = function(result, crateConfig, crateSchema, crateName) {
     if (crateSchema && crateSchema.schema) {
       var r = schemaValidator.validate(crateConfig, crateSchema.schema);
-      result.push(customizeResult(r, crateConfig, crateSchema, crateName));
+      result.push(customizeResult(r, crateSchema.crateScope, crateName));
     } else {
       LX.has('silly') && LX.log('silly', LT.add({
         name: crateName,
