@@ -54,8 +54,10 @@ function Kernel(params) {
 
   // validate bridge's configures
   var bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
+  let bridgeMetadata = {};
+  bridgeLoader.loadMetadata(bridgeMetadata);
   var bridgeConfig = lodash.get(params, ['sandbox', 'mixture', 'bridges'], {});
-  validateBridgeConfig({LX, LT, schemaValidator, bridgeLoader}, bridgeConfig, result);
+  validateBridgeConfig({LX, LT, schemaValidator}, bridgeConfig, bridgeMetadata, result);
 
   // validate plugin's configures
   var pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
@@ -125,13 +127,10 @@ function Kernel(params) {
 
 module.exports = Kernel;
 
-let validateBridgeConfig = function(ctx, bridgeConfig, result) {
-  let { LX, LT, schemaValidator, bridgeLoader } = ctx;
+let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
+  let { LX, LT, schemaValidator } = ctx;
   bridgeConfig = bridgeConfig || {};
   result = result || [];
-
-  let bridgeMetadata = {};
-  bridgeLoader.loadMetadata(bridgeMetadata);
 
   var customizeResult = function(result, bridgeCode, pluginName, dialectName) {
     var output = {};
@@ -169,7 +168,7 @@ let validateBridgeConfig = function(ctx, bridgeConfig, result) {
     return result;
   }
 
-  return validateDialects(bridgeMetadata, bridgeConfig);
+  return validateDialects(bridgeSchema, bridgeConfig);
 }
 
 let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {

@@ -38,73 +38,14 @@ describe('tdd:devebot:base:kernel', function() {
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var LX = loggingFactory.getLogger();
     var LT = loggingFactory.getTracer();
-    var bridgeLoader = {
-      loadMetadata: function() {}
-    };
-    sinon.stub(bridgeLoader, 'loadMetadata').callsFake(function(bridgeMetadata) {
-      lodash.assign(bridgeMetadata, {
-        "bridge1": {
-          "name": "bridge1",
-          "metadata": null
-        },
-        "bridge2": {
-          "name": "bridge2",
-          "metadata": null
-        },
-        "bridge3": {
-          "name": "bridge3",
-          "metadata": null
-        },
-        "bridge4": {
-          "name": "bridge4",
-          "metadata": null
-        },
-        "connector1": {
-          "name": "devebot-co-connector1",
-          "metadata": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "host": {
-                  "type": "string"
-                },
-                "port": {
-                  "type": "number"
-                },
-                "verbose": {
-                  "type": "boolean"
-                }
-              },
-              "required": [
-                "host",
-                "port"
-              ]
-            }
-          }
-        },
-        "connector2": {
-          "name": "devebot-co-connector2",
-          "metadata": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "params": {
-                  "type": "object"
-                },
-                "handler": {}
-              },
-              "required": [
-                "params"
-              ]
-            }
-          }
-        }
-      });
-    });
+    // var bridgeLoader = { loadMetadata: function() {} };
+    // sinon.stub(bridgeLoader, 'loadMetadata').callsFake(function(bridgeMetadata) {
+    //   lodash.assign(bridgeMetadata, {});
+    // });
 
     it("result should be ok if bridge config is valid with bridge schema", function() {
       var result = [];
-      validateBridgeConfig({LX, LT, bridgeLoader, schemaValidator}, {
+      validateBridgeConfig({LX, LT, schemaValidator}, {
         "bridge1": {
           "application": {
             "anyname1z": {
@@ -187,6 +128,63 @@ describe('tdd:devebot:base:kernel', function() {
                 "username": "admin",
                 "password": "88888888"
               }
+            }
+          }
+        }
+      }, {
+        "bridge1": {
+          "name": "bridge1",
+          "metadata": null
+        },
+        "bridge2": {
+          "name": "bridge2",
+          "metadata": null
+        },
+        "bridge3": {
+          "name": "bridge3",
+          "metadata": null
+        },
+        "bridge4": {
+          "name": "bridge4",
+          "metadata": null
+        },
+        "connector1": {
+          "name": "devebot-co-connector1",
+          "metadata": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                },
+                "verbose": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "host",
+                "port"
+              ]
+            }
+          }
+        },
+        "connector2": {
+          "name": "devebot-co-connector2",
+          "metadata": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "params": {
+                  "type": "object"
+                },
+                "handler": {}
+              },
+              "required": [
+                "params"
+              ]
             }
           }
         }
