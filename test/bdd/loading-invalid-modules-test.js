@@ -4,7 +4,7 @@ var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('bdd:devebot:loading-invalid-crates');
+var debugx = Devebot.require('pinbug')('bdd:devebot:loading-invalid-modules');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var util = require('util');
@@ -15,7 +15,7 @@ var envtool = require('logolite/envtool');
 var errorHandlerPath = path.join(lab.getDevebotHome(), 'lib/backbone/error-handler');
 var errorHandler = require(errorHandlerPath).instance;
 
-describe('bdd:devebot:loading-invalid-crates', function() {
+describe('bdd:devebot:loading-invalid-modules', function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
@@ -29,7 +29,7 @@ describe('bdd:devebot:loading-invalid-crates', function() {
     errorHandler.reset();
   });
 
-  describe('invalid-bridge-crates', function() {
+  describe('invalid-bridge-modules', function() {
     var loggingStore = {};
 
     before(function() {
@@ -47,6 +47,24 @@ describe('bdd:devebot:loading-invalid-crates', function() {
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
       errorHandler.reset();
+    });
+
+    it('loading invalid-bridge-booter will be failed', function() {
+      var unhook = lab.preventExit();
+      var app = lab.getApp('invalid-bridge-booter');
+      app.server;
+
+      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        'totalOfErrors', 'errors'
+      ]);
+
+      // BridgeLoader.loadMetadata() & BridgeLoader.loadDialects()
+      assert.equal(errorSummary.totalOfErrors, 2);
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 2);
     });
 
     it('loading invalid-bridge-dialect will be failed', function() {
@@ -70,7 +88,7 @@ describe('bdd:devebot:loading-invalid-crates', function() {
     });
   });
 
-  describe('invalid-plugin-crates', function() {
+  describe('invalid-plugin-modules', function() {
     var loggingStore = {};
 
     before(function() {
