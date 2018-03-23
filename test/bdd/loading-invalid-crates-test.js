@@ -29,6 +29,47 @@ describe('bdd:devebot:loading-invalid-crates', function() {
     errorHandler.reset();
   });
 
+  describe('invalid-bridge-crates', function() {
+    var loggingStore = {};
+
+    before(function() {
+      LogTracer.setupDefaultInterceptors([{
+        accumulator: loggingStore,
+        mappings: [{
+          allTags: [ 'devebot/errorHandler', 'examine' ],
+          matchingField: 'invoker',
+          matchingRule: 'devebot/sandboxManager',
+          storeTo: 'errorSummary'
+        }]
+      }]);
+    });
+
+    beforeEach(function() {
+      LogTracer.reset().empty(loggingStore);
+      errorHandler.reset();
+    });
+
+    it('loading invalid-bridge-dialect will be failed', function() {
+      var unhook = lab.preventExit();
+      var app = lab.getApp('invalid-bridge-dialect');
+      app.server;
+
+      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        'totalOfErrors', 'errors'
+      ]);
+      assert.equal(errorSummary.totalOfErrors, 1);
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 1);
+    });
+
+    after(function() {
+      LogTracer.clearStringifyInterceptors();
+    });
+  });
+
   describe('invalid-plugin-crates', function() {
     var loggingStore = {};
 
