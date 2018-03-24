@@ -108,6 +108,22 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       errorHandler.reset();
     });
 
+    it('loading invalid-plugin-booter will be failed', function() {
+      var unhook = lab.preventExit();
+      var app = lab.getApp('invalid-plugin-booter');
+      app.server;
+
+      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        'totalOfErrors', 'errors'
+      ]);
+      assert.equal(errorSummary.totalOfErrors, 2);
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 1);
+    });
+
     it('loading invalid-plugin-service will be failed', function() {
       var unhook = lab.preventExit();
       var app = lab.getApp('invalid-plugin-service');

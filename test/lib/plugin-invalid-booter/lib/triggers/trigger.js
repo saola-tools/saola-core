@@ -5,10 +5,12 @@ var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var http = require('http');
 
+const MODULE_NAME = 'plugin-invalid-booter/trigger';
+
 var Service = function(params) {
   var self = this;
   params = params || {};
-  params.packageName = params.packageName || 'plugin-invalid-service';
+  params.packageName = params.packageName || 'plugin-invalid-booter';
 
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
@@ -71,5 +73,7 @@ var Service = function(params) {
     text: ' - constructor end!'
   }));
 };
+
+MODULE_NAME = 'UNKNOWN';
 
 module.exports = Service;
