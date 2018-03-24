@@ -7,7 +7,7 @@ var commandConfig;
 
 var commandObject = {
   info: {
-  	description: 'Main Application Command2',
+    description: 'Main Application Command2',
     options: []
   },
   handler: function(opts, payload, ctx) {

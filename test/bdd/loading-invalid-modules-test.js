@@ -118,7 +118,14 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
         'totalOfErrors', 'errors'
       ]);
-      assert.equal(errorSummary.totalOfErrors, 4);
+
+      // invalid-plugin-booter/main-cmd2,
+      // invalid-plugin-booter/main-service,
+      // invalid-plugin-booter/main-trigger,
+      // plugin-invalid-booter/routine1,
+      // plugin-invalid-booter/service,
+      // plugin-invalid-booter/trigger
+      assert.equal(errorSummary.totalOfErrors, 6);
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 1);

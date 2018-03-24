@@ -7,7 +7,7 @@ var runhookSetting;
 
 var runhookDialect = {
   info: {
-  	description: 'Plugin1 - Routine1',
+    description: 'Plugin1 - Routine1',
     options: []
   },
   mode: 'direct',
