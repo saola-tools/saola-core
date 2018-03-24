@@ -6,6 +6,8 @@ var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
 
+const MODULE_NAME = 'invalid-plugin-booter/mainTrigger';
+
 var Service = function(params) {
   debugx.enabled && debugx(' + constructor begin ...');
 
@@ -55,5 +57,7 @@ var Service = function(params) {
 
   debugx.enabled && debugx(' - constructor end!');
 };
+
+MODULE_NAME = 'unknown';
 
 module.exports = Service;

@@ -118,7 +118,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
         'totalOfErrors', 'errors'
       ]);
-      assert.equal(errorSummary.totalOfErrors, 2);
+      assert.equal(errorSummary.totalOfErrors, 4);
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
