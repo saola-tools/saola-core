@@ -116,14 +116,16 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       var app = lab.getApp('invalid-bridge-booter');
       app.server;
 
-      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
-        'totalOfErrors', 'errors'
-      ]);
-
-      // BridgeLoader.loadMetadata() & BridgeLoader.loadDialects()
-      assert.equal(errorSummary.totalOfErrors, 2);
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        // BridgeLoader.loadMetadata() & BridgeLoader.loadDialects()
+        assert.equal(errorSummary.totalOfErrors, 2);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 2);
@@ -134,12 +136,15 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       var app = lab.getApp('invalid-bridge-dialect');
       app.server;
 
-      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
-        'totalOfErrors', 'errors'
-      ]);
-      assert.equal(errorSummary.totalOfErrors, 1);
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        assert.equal(errorSummary.totalOfErrors, 1);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
@@ -175,20 +180,22 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       var app = lab.getApp('invalid-plugin-booter');
       app.server;
 
-      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
-        'totalOfErrors', 'errors'
-      ]);
-
-      // -- examining in sandboxManager --
-      // invalid-plugin-booter/main-cmd2,
-      // invalid-plugin-booter/main-service,
-      // invalid-plugin-booter/main-trigger,
-      // plugin-invalid-booter/routine1,
-      // plugin-invalid-booter/service,
-      // plugin-invalid-booter/trigger
-      assert.equal(errorSummary.totalOfErrors, 6);
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        // -- examining in sandboxManager --
+        // invalid-plugin-booter/main-cmd2,
+        // invalid-plugin-booter/main-service,
+        // invalid-plugin-booter/main-trigger,
+        // plugin-invalid-booter/routine1,
+        // plugin-invalid-booter/service,
+        // plugin-invalid-booter/trigger
+        assert.equal(errorSummary.totalOfErrors, 6);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
@@ -199,12 +206,15 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       var app = lab.getApp('invalid-plugin-service');
       app.server;
 
-      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
-        'totalOfErrors', 'errors'
-      ]);
-      assert.equal(errorSummary.totalOfErrors, 1);
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        assert.equal(errorSummary.totalOfErrors, 1);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
@@ -215,12 +225,15 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       var app = lab.getApp('invalid-plugin-trigger');
       app.server;
 
-      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
-        'totalOfErrors', 'errors'
-      ]);
-      assert.equal(errorSummary.totalOfErrors, 1);
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        assert.equal(errorSummary.totalOfErrors, 1);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
