@@ -1,23 +1,32 @@
 'use strict';
 
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:sub-plugin1:sublibService');
 
 var Service = function(params) {
-  var self = this;
   params = params || {};
 
-  debugx.enabled && debugx(' + constructor begin ...');
+  var packageName = params.packageName || 'sub-plugin1';
+  var blockRef = chores.getBlockRef(__filename, packageName);
+  var LX = params.loggingFactory.getLogger();
+  var LT = params.loggingFactory.getTracer();
+
+  LX.has('silly') && LX.log('silly', LT.toMessage({
+    tags: [blockRef, 'constructor-begin'],
+    text: ' + constructor begin ...'
+  }));
 
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
-  debugx.enabled && debugx('configuration: %s', JSON.stringify(pluginCfg));
 
   this.getConfig = function() {
     return pluginCfg;
   }
 
-  debugx.enabled && debugx(' - constructor end!');
+  LX.has('silly') && LX.log('silly', LT.toMessage({
+    tags: [blockRef, 'constructor-end'],
+    text: ' + constructor end!'
+  }));
 };
 
 Service.argumentSchema = {
