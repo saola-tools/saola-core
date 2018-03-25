@@ -291,13 +291,23 @@ lab.simplifyRoutines = function(routines) {
   return lodash.mapValues(routines, transformRoutine);
 }
 
-lab.preventExit = function(block) {
+lab.ProcessExitError = chores.buildError('ProcessExitError');
+
+lab.preventExit = function(options, block) {
+  options = options || {};
+
   var counter = 0;
   var refExit = process.exit;
 
   process.exit = function(code) {
     counter += 1;
     debugx.enabled && debugx(' - process.exit(%s) is invoked', code);
+    if (options.throwException) {
+      throw new lab.ProcessExitError('process.exit() is invoked', {
+        code: code,
+        count: counter
+      });
+    }
   }
 
   var unhook = function() {

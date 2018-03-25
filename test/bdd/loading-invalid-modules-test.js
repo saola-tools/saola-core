@@ -29,6 +29,68 @@ describe('bdd:devebot:loading-invalid-modules', function() {
     errorHandler.reset();
   });
 
+  describe('not-found-packages', function() {
+    var loggingStore = {};
+
+    before(function() {
+      LogTracer.setupDefaultInterceptors([{
+        accumulator: loggingStore,
+        mappings: [{
+          allTags: [ 'devebot/errorHandler', 'examine' ],
+          matchingField: 'invoker',
+          matchingRule: 'devebot/bootstrap',
+          storeTo: 'errorSummary'
+        }]
+      }]);
+    });
+
+    beforeEach(function() {
+      LogTracer.reset().empty(loggingStore);
+      errorHandler.reset();
+    });
+
+    it('loading application with not found packages will be failed', function() {
+      var unhook = lab.preventExit({ throwException: true });
+
+      assert.throws(function() {
+        var app = lab.getApp('not-found-packages');
+      }, lab.ProcessExitError);
+
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        assert.equal(errorSummary.totalOfErrors, 2);
+        var errs = lodash.map(errorSummary.errors, function(err) {
+          return lodash.pick(err, ['stage', 'type', 'name']);
+        });
+        false && console.log(JSON.stringify(errs, null, 2));
+        assert.sameDeepMembers(errs, [
+          {
+            "stage": "bootstrap",
+            "type": "bridge",
+            "name": "not-found-bridge"
+          },
+          {
+            "stage": "bootstrap",
+            "type": "plugin",
+            "name": "not-found-plugin"
+          }
+        ]);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 1);
+    });
+
+    after(function() {
+      LogTracer.clearStringifyInterceptors();
+    });
+  });
+
   describe('invalid-bridge-modules', function() {
     var loggingStore = {};
 
@@ -119,6 +181,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
         'totalOfErrors', 'errors'
       ]);
 
+      // -- examining in sandboxManager --
       // invalid-plugin-booter/main-cmd2,
       // invalid-plugin-booter/main-service,
       // invalid-plugin-booter/main-trigger,
