@@ -190,7 +190,7 @@ describe('tdd:devebot:base:kernel', function() {
         }
       }, result);
       false && console.log('validation result: %s', JSON.stringify(result, null, 2));
-      if (chores.isOldFeatures()) return;
+      if (!chores.isFeatureSupported('bridge-full-ref')) return;
       assert.sameDeepMembers(result, [
         {
           "stage": "config/schema",
@@ -352,7 +352,7 @@ describe('tdd:devebot:base:kernel', function() {
         }
       };
       
-      if (chores.isOldFeatures()) {
+      if (!chores.isFeatureSupported('bridge-full-ref')) {
         expectedBridges = {
           "anyname1a": {
             "bridge1": {

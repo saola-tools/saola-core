@@ -17,7 +17,7 @@ module.exports = {
   }
 }
 
-if (chores.isOldFeatures()) {
+if (!chores.isFeatureSupported('bridge-full-ref')) {
   module.exports.bridges = {
     "invalidInstance": {
       "bridgeInvalidConfig": {

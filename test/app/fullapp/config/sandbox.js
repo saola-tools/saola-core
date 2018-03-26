@@ -105,7 +105,7 @@ module.exports = {
   }
 }
 
-if (chores.isOldFeatures()) {
+if (!chores.isFeatureSupported('bridge-full-ref')) {
   module.exports.bridges = {
     "anyname1a": {
       "bridge1": {

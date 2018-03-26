@@ -102,7 +102,7 @@ describe('devebot:application', function() {
 			"plugin1/bridge2#anyname2c"
 		];
 
-		if (chores.isOldFeatures()) {
+		if (!chores.isFeatureSupported('bridge-full-ref')) {
 			bridge1Scopes = [
 				"bridge1/anyname1a",
 				"bridge1/anyname1b",

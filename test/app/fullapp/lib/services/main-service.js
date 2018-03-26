@@ -20,7 +20,7 @@ var Service = function(params) {
   debugx.enabled && debugx(' - constructor end!');
 };
 
-if (!chores.isOldFeatures()) {
+if (chores.isFeatureSupported('bridge-full-ref')) {
   Service.referenceList = [
     'application/bridge1#anyname1z',
     'plugin1/bridge1#anyname1a',

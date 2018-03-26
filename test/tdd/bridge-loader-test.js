@@ -213,7 +213,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         }
       };
 
-      if (chores.isOldFeatures())
+      if (!chores.isFeatureSupported('bridge-full-ref'))
       bridgeConfig = {
         "anyname1a": {
           "bridge1": {
@@ -466,7 +466,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         }
       };
 
-      if (chores.isOldFeatures()) {
+      if (!chores.isFeatureSupported('bridge-full-ref')) {
         expectedMap = {
           "bridge1/anyname1a": {
             "construktor": {

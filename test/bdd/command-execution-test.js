@@ -72,7 +72,7 @@ describe('devebot:command:execution', function() {
 			"plugin2/bridge2#anyname2b",
 			"plugin1/bridge2#anyname2c"
 		];
-		if (chores.isOldFeatures()) {
+		if (!chores.isFeatureSupported('bridge-full-ref')) {
 			injectedServiceNames = [
 				"application/mainService",
 				"plugin1/plugin1Service",

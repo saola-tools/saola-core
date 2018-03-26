@@ -6,4 +6,4 @@ var chores = Devebot.require('chores');
 
 module.exports = {}
 
-if (chores.isOldFeatures()) {}
+if (!chores.isFeatureSupported('bridge-full-ref')) {}

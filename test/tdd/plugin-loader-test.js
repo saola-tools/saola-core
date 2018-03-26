@@ -665,7 +665,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           "name": "plugin3Service"
         }
       };
-      if (chores.isOldFeatures()) {
+      if (!chores.isFeatureSupported('bridge-full-ref')) {
         delete expectedMap['fullapp/mainService']['construktor']['argumentProperties'];
         delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["application/bridge1#anyname1z"];
         delete expectedMap['fullapp/mainService']['construktor']['argumentSchema']["properties"]["plugin1/bridge1#anyname1a"];
@@ -898,7 +898,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           "name": "plugin3Trigger"
         }
       };
-      if (chores.isOldFeatures()) {
+      if (!chores.isFeatureSupported('bridge-full-ref')) {
         delete expectedMap['fullapp/mainTrigger']['construktor']['argumentProperties'];
         delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["connector1#wrapper"];
         delete expectedMap['fullapp/mainTrigger']['construktor']['argumentSchema']["properties"]["connector2#wrapper"];
