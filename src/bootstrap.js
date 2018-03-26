@@ -60,6 +60,9 @@ function appLoader(params) {
     name: appName,
     path: path.join(appRootPath, 'index.js')
   };
+  if (lodash.isObject(params.presets)) {
+    appRef.presets = lodash.cloneDeep(params.presets);
+  }
 
   var devebotRef = {
     type: 'framework',
@@ -120,8 +123,8 @@ function registerLayerware(presets, pluginNames, bridgeNames) {
       context.libRootPaths.push(presets.layerRootPath);
     }
     if (chores.isFeatureSupported('presets')) {
-      if (context.layerRootPath) {
-        lodash.set(context, ['pluginRefs', context.layerRootPath, 'presets'], presets);
+      if (context.libRootPath) {
+        lodash.set(context, ['pluginRefs', context.libRootPath, 'presets'], presets);
       }
     }
     return expandExtensions(context, pluginNames, bridgeNames);
@@ -134,8 +137,8 @@ function launchApplication(context, pluginNames, bridgeNames) {
   if (lodash.isString(context)) {
     context = { appRootPath: context };
   }
-  return appLoader(lodash.assign(context, transformContext(expandExtensions(
-      lodash.omit(context, ATTRS), pluginNames, bridgeNames))));
+  return appLoader(lodash.assign(context, expandExtensions(
+      lodash.omit(context, ATTRS), pluginNames, bridgeNames)));
 }
 
 var expandExtensions = function (context, pluginNames, bridgeNames) {
@@ -209,21 +212,12 @@ var expandExtensions = function (context, pluginNames, bridgeNames) {
 
   return pluginInitializers.reduce(function(params, pluginInitializer) {
     if (chores.isFeatureSupported('presets')) {
-      params.layerRootPath = pluginInitializer.path;
+      params.libRootPath = pluginInitializer.path;
       return pluginInitializer.initializer(params);
     }
     return pluginInitializer(params);
   }, context);
 };
-
-var transformContext = function(context) {
-  context = context || {};
-  context.pluginRefs = context.pluginRefs || {};
-  context.pluginRefs = lodash.mapKeys(context.pluginRefs, function(value, key) {
-    return value.name;
-  });
-  return context;
-}
 
 appLoader.registerLayerware = registerLayerware;
 appLoader.launchApplication = launchApplication;
