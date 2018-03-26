@@ -33,7 +33,7 @@ var Service = function(params) {
 
   server.on('request', function(req, res) {
     res.writeHead(200);
-    res.end('sub-plugin1 webserver');
+    res.end(util.format('%s webserver', packageName));
   });
 
   this.getServer = function() {
