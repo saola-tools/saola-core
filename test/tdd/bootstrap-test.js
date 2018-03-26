@@ -3,6 +3,7 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:base:bootstrap');
@@ -144,17 +145,43 @@ describe('tdd:devebot:base:bootstrap', function() {
       ], null);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
-      assert.deepEqual(output, {
-        libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
-        pluginRefs: {
-          'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-          'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' }
-        },
-        bridgeRefs: {
-          'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-          'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
-        }
-      });
+      if (chores.isFeatureSupported('presets')) {
+        assert.deepEqual(output, {
+          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
+          pluginRefs: {
+            '/test/lib/plugin1/index.js': {
+              name: 'plugin1',
+              path: '/test/lib/plugin1/index.js',
+              presets: {
+                layerRootPath: '/test/lib/plugin1'
+              }
+            },
+            '/test/lib/plugin2/index.js': {
+              name: 'plugin2',
+              path: '/test/lib/plugin2/index.js',
+              presets: {
+                layerRootPath: '/test/lib/plugin2'
+              }
+            }
+          },
+          bridgeRefs: {
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+          }
+        });
+      } else {
+        assert.deepEqual(output, {
+          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
+          pluginRefs: {
+            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' }
+          },
+          bridgeRefs: {
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+          }
+        });
+      }
     });
 
     it('expand empty context with a list of bridges', function() {
@@ -205,18 +232,51 @@ describe('tdd:devebot:base:bootstrap', function() {
         }
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
-      assert.deepEqual(output, {
-        libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
-        pluginRefs: {
-          'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-          'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-          'plugin3': { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
-        },
-        bridgeRefs: {
-          'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-          'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
-        }
-      });
+      if (chores.isFeatureSupported('presets')) {
+        assert.deepEqual(output, {
+          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
+          pluginRefs: {
+            '/test/lib/plugin1/index.js': {
+              name: 'plugin1',
+              path: '/test/lib/plugin1/index.js',
+              presets: {
+                layerRootPath: '/test/lib/plugin1'
+              }
+            },
+            '/test/lib/plugin2/index.js': {
+              name: 'plugin2',
+              path: '/test/lib/plugin2/index.js',
+              presets: {
+                layerRootPath: '/test/lib/plugin2'
+              }
+            },
+            '/test/lib/plugin3/index.js': {
+              name: 'plugin3',
+              path: '/test/lib/plugin3/index.js',
+              presets: {
+                layerRootPath: '/test/lib/plugin3'
+              }
+            }
+          },
+          bridgeRefs: {
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+          }
+        });
+      } else {
+        assert.deepEqual(output, {
+          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
+          pluginRefs: {
+            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
+            'plugin3': { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+          },
+          bridgeRefs: {
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+          }
+        });
+      }
     });
 
     it('expand empty context with nested and overlap plugins', function() {
@@ -232,30 +292,87 @@ describe('tdd:devebot:base:bootstrap', function() {
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
-      assert.deepEqual(output, {
-        libRootPaths:
-          [
-            '/test/lib/sub-plugin1',
-            '/test/lib/plugin1',
-            '/test/lib/plugin2',
-            '/test/lib/sub-plugin2',
-            '/test/lib/plugin3'
-          ],
-        pluginRefs:
-          {
-            'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
-            'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
-            plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-            plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-            plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
-          },
-        bridgeRefs:
-          {
-            bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
-            bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
-          }
-      });
+      if (chores.isFeatureSupported('presets')) {
+        assert.deepEqual(output, {
+          libRootPaths:
+            [
+              '/test/lib/sub-plugin1',
+              '/test/lib/plugin1',
+              '/test/lib/plugin2',
+              '/test/lib/sub-plugin2',
+              '/test/lib/plugin3'
+            ],
+          pluginRefs:
+            {
+              '/test/lib/sub-plugin1/index.js': {
+                name: 'sub-plugin1',
+                path: '/test/lib/sub-plugin1/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/sub-plugin1'
+                }
+              },
+              '/test/lib/sub-plugin2/index.js': {
+                name: 'sub-plugin2',
+                path: '/test/lib/sub-plugin2/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/sub-plugin2'
+                }
+              },
+              '/test/lib/plugin1/index.js': {
+                name: 'plugin1',
+                path: '/test/lib/plugin1/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin1'
+                }
+              },
+              '/test/lib/plugin2/index.js': {
+                name: 'plugin2',
+                path: '/test/lib/plugin2/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin2'
+                }
+              },
+              '/test/lib/plugin3/index.js': {
+                name: 'plugin3',
+                path: '/test/lib/plugin3/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin3'
+                }
+              }
+            },
+          bridgeRefs:
+            {
+              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
+              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
+            }
+        });
+      } else {
+        assert.deepEqual(output, {
+          libRootPaths:
+            [
+              '/test/lib/sub-plugin1',
+              '/test/lib/plugin1',
+              '/test/lib/plugin2',
+              '/test/lib/sub-plugin2',
+              '/test/lib/plugin3'
+            ],
+          pluginRefs:
+            {
+              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
+              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
+              plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+              plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
+              plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+            },
+          bridgeRefs:
+            {
+              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
+              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
+            }
+        });
+      }
     });
 
     it('expand empty context with complete plugins (nested and overlap plugins)', function() {
@@ -304,33 +421,99 @@ describe('tdd:devebot:base:bootstrap', function() {
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
-      assert.deepEqual(output, {
-        libRootPaths:
-          [
-            '/test/lib/sub-plugin1',
-            '/test/lib/plugin1',
-            '/test/lib/plugin2',
-            '/test/lib/sub-plugin2',
-            '/test/lib/plugin3',
-            '/test/lib/plugin4'
-          ],
-        pluginRefs:
-          {
-            'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
-            plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-            plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-            'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
-            plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' },
-            plugin4: { name: 'plugin4', path: '/test/lib/plugin4/index.js' }
-          },
-        bridgeRefs:
-          {
-            bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
-            bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' },
-            bridge4: { name: 'bridge4', path: '/test/lib/bridge4/index.js' }
-          }
-      });
+      if (chores.isFeatureSupported('presets')) {
+        assert.deepEqual(output, {
+          libRootPaths:
+            [
+              '/test/lib/sub-plugin1',
+              '/test/lib/plugin1',
+              '/test/lib/plugin2',
+              '/test/lib/sub-plugin2',
+              '/test/lib/plugin3',
+              '/test/lib/plugin4'
+            ],
+          pluginRefs:
+            {
+              '/test/lib/sub-plugin1/index.js': {
+                name: 'sub-plugin1',
+                path: '/test/lib/sub-plugin1/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/sub-plugin1'
+                }
+              },
+              '/test/lib/sub-plugin2/index.js': {
+                name: 'sub-plugin2',
+                path: '/test/lib/sub-plugin2/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/sub-plugin2'
+                }
+              },
+              '/test/lib/plugin1/index.js': {
+                name: 'plugin1',
+                path: '/test/lib/plugin1/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin1'
+                }
+              },
+              '/test/lib/plugin2/index.js': {
+                name: 'plugin2',
+                path: '/test/lib/plugin2/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin2'
+                }
+              },
+              '/test/lib/plugin3/index.js': {
+                name: 'plugin3',
+                path: '/test/lib/plugin3/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin3'
+                }
+              },
+              '/test/lib/plugin4/index.js': {
+                name: 'plugin4',
+                path: '/test/lib/plugin4/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin4'
+                }
+              }
+            },
+          bridgeRefs:
+            {
+              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
+              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' },
+              bridge4: { name: 'bridge4', path: '/test/lib/bridge4/index.js' }
+            }
+        });
+      } else {
+        assert.deepEqual(output, {
+          libRootPaths:
+            [
+              '/test/lib/sub-plugin1',
+              '/test/lib/plugin1',
+              '/test/lib/plugin2',
+              '/test/lib/sub-plugin2',
+              '/test/lib/plugin3',
+              '/test/lib/plugin4'
+            ],
+          pluginRefs:
+            {
+              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
+              plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+              plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
+              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
+              plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' },
+              plugin4: { name: 'plugin4', path: '/test/lib/plugin4/index.js' }
+            },
+          bridgeRefs:
+            {
+              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
+              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' },
+              bridge4: { name: 'bridge4', path: '/test/lib/bridge4/index.js' }
+            }
+        });
+      }
     });
   });
 
@@ -484,38 +667,88 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/lib/devebot-co-connector2/bridge.js"
         }
       ]);
-      assert.sameDeepMembers(cfg.pluginRefs, [
-        {
-          "type": "application",
-          "name": "fullapp",
-          "path": "/test/app/fullapp/index.js"
-        },
-        {
-          "name": "sub-plugin1",
-          "path": "/test/lib/sub-plugin1/index.js"
-        },
-        {
-          "name": "sub-plugin2",
-          "path": "/test/lib/sub-plugin2/index.js"
-        },
-        {
-          "name": "plugin1",
-          "path": "/test/lib/plugin1/index.js"
-        },
-        {
-          "name": "plugin2",
-          "path": "/test/lib/plugin2/index.js"
-        },
-        {
-          "name": "plugin3",
-          "path": "/test/lib/plugin3/index.js"
-        },
-        {
-          "type": "framework",
-          "name": "devebot",
-          "path": "/devebot/index.js"
-        }
-      ]);
+      if (chores.isFeatureSupported('presets')) {
+        assert.sameDeepMembers(cfg.pluginRefs, [
+          {
+            "type": "application",
+            "name": "fullapp",
+            "path": "/test/app/fullapp/index.js"
+          },
+          {
+            "name": "sub-plugin1",
+            "path": "/test/lib/sub-plugin1/index.js",
+            "presets": {
+              "layerRootPath": '/test/lib/sub-plugin1'
+            }
+          },
+          {
+            "name": "sub-plugin2",
+            "path": "/test/lib/sub-plugin2/index.js",
+            "presets": {
+              "layerRootPath": '/test/lib/sub-plugin2'
+            }
+          },
+          {
+            "name": "plugin1",
+            "path": "/test/lib/plugin1/index.js",
+            "presets": {
+              "layerRootPath": '/test/lib/plugin1'
+            }
+          },
+          {
+            "name": "plugin2",
+            "path": "/test/lib/plugin2/index.js",
+            "presets": {
+              "layerRootPath": '/test/lib/plugin2'
+            }
+          },
+          {
+            "name": "plugin3",
+            "path": "/test/lib/plugin3/index.js",
+            "presets": {
+              "layerRootPath": '/test/lib/plugin3'
+            }
+          },
+          {
+            "type": "framework",
+            "name": "devebot",
+            "path": "/devebot/index.js"
+          }
+        ]);
+      } else {
+        assert.sameDeepMembers(cfg.pluginRefs, [
+          {
+            "type": "application",
+            "name": "fullapp",
+            "path": "/test/app/fullapp/index.js"
+          },
+          {
+            "name": "sub-plugin1",
+            "path": "/test/lib/sub-plugin1/index.js"
+          },
+          {
+            "name": "sub-plugin2",
+            "path": "/test/lib/sub-plugin2/index.js"
+          },
+          {
+            "name": "plugin1",
+            "path": "/test/lib/plugin1/index.js"
+          },
+          {
+            "name": "plugin2",
+            "path": "/test/lib/plugin2/index.js"
+          },
+          {
+            "name": "plugin3",
+            "path": "/test/lib/plugin3/index.js"
+          },
+          {
+            "type": "framework",
+            "name": "devebot",
+            "path": "/devebot/index.js"
+          }
+        ]);
+      }
     });
   });
 
@@ -544,30 +777,87 @@ describe('tdd:devebot:base:bootstrap', function() {
       ], []);
       var output = replaceObjectFields(pluginLauncher(), DEFAULT_CONTEXT);
       false && console.log('pluginLauncher(): ', output);
-      assert.deepEqual(output, {
-        libRootPaths:
-          [
-            '/test/lib/sub-plugin1',
-            '/test/lib/plugin1',
-            '/test/lib/plugin2',
-            '/test/lib/sub-plugin2',
-            '/test/lib/plugin3'
-          ],
-        pluginRefs:
-          {
-            'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
-            'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
-            plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-            plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-            plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
-          },
-        bridgeRefs:
-          {
-            bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
-            bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
-          }
-      });
+      if (chores.isFeatureSupported('presets')) {
+        assert.deepEqual(output, {
+          libRootPaths:
+            [
+              '/test/lib/sub-plugin1',
+              '/test/lib/plugin1',
+              '/test/lib/plugin2',
+              '/test/lib/sub-plugin2',
+              '/test/lib/plugin3'
+            ],
+          pluginRefs:
+            {
+              '/test/lib/sub-plugin1/index.js': {
+                name: 'sub-plugin1',
+                path: '/test/lib/sub-plugin1/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/sub-plugin1'
+                }
+              },
+              '/test/lib/sub-plugin2/index.js': {
+                name: 'sub-plugin2',
+                path: '/test/lib/sub-plugin2/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/sub-plugin2'
+                }
+              },
+              '/test/lib/plugin1/index.js': {
+                name: 'plugin1',
+                path: '/test/lib/plugin1/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin1'
+                }
+              },
+              '/test/lib/plugin2/index.js': {
+                name: 'plugin2',
+                path: '/test/lib/plugin2/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin2'
+                }
+              },
+              '/test/lib/plugin3/index.js': {
+                name: 'plugin3',
+                path: '/test/lib/plugin3/index.js',
+                presets: {
+                  layerRootPath: '/test/lib/plugin3'
+                }
+              }
+            },
+          bridgeRefs:
+            {
+              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
+              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
+            }
+        });
+      } else {
+        assert.deepEqual(output, {
+          libRootPaths:
+            [
+              '/test/lib/sub-plugin1',
+              '/test/lib/plugin1',
+              '/test/lib/plugin2',
+              '/test/lib/sub-plugin2',
+              '/test/lib/plugin3'
+            ],
+          pluginRefs:
+            {
+              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
+              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
+              plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
+              plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
+              plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+            },
+          bridgeRefs:
+            {
+              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
+              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
+            }
+        });
+      }
     });
   });
 
@@ -618,6 +908,13 @@ var replaceObjectFields = function(obj, context) {
     }
   }
   obj = lodash.cloneDeep(obj);
+  if (chores.isFeatureSupported('presets')) {
+    if (obj && obj.pluginRefs && !lodash.isArray(obj.pluginRefs)) {
+      obj.pluginRefs = lodash.mapKeys(obj.pluginRefs, function(value, key) {
+        return replaceLibPath(key, context);
+      });
+    }
+  }
   replaceFields([obj]);
   return obj;
 }
