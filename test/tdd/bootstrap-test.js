@@ -165,8 +165,8 @@ describe('tdd:devebot:base:bootstrap', function() {
             }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+            '/test/lib/bridge1/index.js': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+            '/test/lib/bridge2/index.js': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
           }
         });
       } else {
@@ -197,14 +197,31 @@ describe('tdd:devebot:base:bootstrap', function() {
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
-      assert.deepEqual(output, {
-        libRootPaths: [],
-        pluginRefs: {},
-        bridgeRefs: {
-          'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-          'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
-        }
-      });
+      if (chores.isFeatureSupported('presets')) {
+        assert.deepEqual(output, {
+          libRootPaths: [],
+          pluginRefs: {},
+          bridgeRefs: {
+            '/test/lib/bridge1/index.js': {
+              name: 'bridge1',
+              path: '/test/lib/bridge1/index.js'
+            },
+            '/test/lib/bridge2/index.js': {
+              name: 'bridge2',
+              path: '/test/lib/bridge2/index.js'
+            }
+          }
+        });
+      } else {
+        assert.deepEqual(output, {
+          libRootPaths: [],
+          pluginRefs: {},
+          bridgeRefs: {
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+          }
+        });
+      }
     });
 
     it('expand empty context with a list of plugins and a list of bridges', function() {
@@ -259,8 +276,14 @@ describe('tdd:devebot:base:bootstrap', function() {
             }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+            '/test/lib/bridge1/index.js': {
+              name: 'bridge1',
+              path: '/test/lib/bridge1/index.js'
+            },
+            '/test/lib/bridge2/index.js': {
+              name: 'bridge2',
+              path: '/test/lib/bridge2/index.js'
+            }
           }
         });
       } else {
@@ -341,11 +364,20 @@ describe('tdd:devebot:base:bootstrap', function() {
               }
             },
           bridgeRefs:
-            {
-              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
-              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
+          {
+            '/test/lib/bridge1/index.js': {
+              name: 'bridge1',
+              path: '/test/lib/bridge1/index.js'
+            },
+            '/test/lib/bridge2/index.js': {
+              name: 'bridge2',
+              path: '/test/lib/bridge2/index.js'
+            },
+            '/test/lib/bridge3/index.js': {
+              name: 'bridge3',
+              path: '/test/lib/bridge3/index.js'
             }
+          }
         });
       } else {
         assert.deepEqual(output, {
@@ -479,10 +511,22 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
-              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' },
-              bridge4: { name: 'bridge4', path: '/test/lib/bridge4/index.js' }
+              '/test/lib/bridge1/index.js': {
+                name: 'bridge1',
+                path: '/test/lib/bridge1/index.js'
+              },
+              '/test/lib/bridge2/index.js': {
+                name: 'bridge2',
+                path: '/test/lib/bridge2/index.js'
+              },
+              '/test/lib/bridge3/index.js': {
+                name: 'bridge3',
+                path: '/test/lib/bridge3/index.js'
+              },
+              '/test/lib/bridge4/index.js': {
+                name: 'bridge4',
+                path: '/test/lib/bridge4/index.js'
+              }
             }
         });
       } else {
@@ -827,9 +871,18 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
-              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
+              '/test/lib/bridge1/index.js': {
+                name: 'bridge1',
+                path: '/test/lib/bridge1/index.js'
+              },
+              '/test/lib/bridge2/index.js': {
+                name: 'bridge2',
+                path: '/test/lib/bridge2/index.js'
+              },
+              '/test/lib/bridge3/index.js': {
+                name: 'bridge3',
+                path: '/test/lib/bridge3/index.js'
+              }
             }
         });
       } else {
@@ -909,6 +962,11 @@ var replaceObjectFields = function(obj, context) {
   }
   obj = lodash.cloneDeep(obj);
   if (chores.isFeatureSupported('presets')) {
+    if (obj && obj.bridgeRefs && !lodash.isArray(obj.bridgeRefs)) {
+      obj.bridgeRefs = lodash.mapKeys(obj.bridgeRefs, function(value, key) {
+        return replaceLibPath(key, context);
+      });
+    }
     if (obj && obj.pluginRefs && !lodash.isArray(obj.pluginRefs)) {
       obj.pluginRefs = lodash.mapKeys(obj.pluginRefs, function(value, key) {
         return replaceLibPath(key, context);
