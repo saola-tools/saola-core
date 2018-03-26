@@ -25,15 +25,17 @@ function appLoader(params) {
 
   let { logger: LX, tracer: LT } = runLoggingWrapper();
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'constructor-begin', 'appLoader' ],
+  LX.has('silly') && LX.log('silly', LT.add({
+    context: lodash.cloneDeep(params)
+  }).toMessage({
+    tags: [ blockRef, 'constructor-begin', 'appLoader' ],
     text: ' + application loading start ...'
   }));
 
   LX.has('conlog') && LX.log('conlog', LT.add({
-    appParams: params
+    context: params
   }).toMessage({
-    text: ' * application parameters: ${appParams}'
+    text: ' * application parameters: ${context}'
   }));
 
   var appRootPath = params.appRootPath;
@@ -94,8 +96,8 @@ function appLoader(params) {
     set: function(value) {}
   });
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'constructor-end', 'appLoader' ],
+  LX.has('silly') && LX.log('silly', LT.toMessage({
+    tags: [ blockRef, 'constructor-end', 'appLoader' ],
     text: ' - Application loading has done'
   }));
 

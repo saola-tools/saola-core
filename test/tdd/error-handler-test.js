@@ -22,7 +22,8 @@ describe('tdd:devebot:core:error-handler', function() {
     envtool.setup({
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all'
+      LOGOLITE_ALWAYS_MUTED: 'all',
+      DEVEBOT_FORCING_SILENT: 'error-handler'
     });
     LogConfig.reset();
     errorHandler.reset();
@@ -71,7 +72,48 @@ describe('tdd:devebot:core:error-handler', function() {
       assert.equal(totalOfExit, 0);
     });
 
-    it('exit if there are some errors occurred');
+    it('exit if there are some errors occurred', function() {
+      var unhook = lab.preventExit({ throwException: true });
+
+      function doSomething() {
+        errorHandler.collect();
+
+        errorHandler.collect({
+          hasError: false,
+          stage: 'bootstrap',
+          type: 'plugin'
+        });
+
+        errorHandler.collect([{
+          hasError: false,
+          stage: 'naming',
+          type: 'bridge'
+        }, {
+          hasError: false,
+          stage: 'naming',
+          type: 'plugin'
+        }]);
+
+        errorHandler.collect({
+          hasError: true,
+          stage: 'config/schema',
+          type: 'bridge',
+          name: 'bridge#example',
+          stack: 'Error: {}'
+        });
+
+        errorHandler.barrier({exitOnError: true});
+      }
+
+      assert.throws(doSomething, lab.ProcessExitError);
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 1);
+    });
+
+    afterEach(function() {
+      errorHandler.reset();
+    })
 
     after(function() {
       LogTracer.clearStringifyInterceptors();
@@ -80,6 +122,5 @@ describe('tdd:devebot:core:error-handler', function() {
 
   after(function() {
     envtool.reset();
-    errorHandler.reset();
   });
 });
