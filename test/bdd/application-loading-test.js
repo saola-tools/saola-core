@@ -12,7 +12,7 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 
-describe.only('devebot:application', function() {
+describe('devebot:application', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	before(function() {
@@ -155,6 +155,94 @@ describe.only('devebot:application', function() {
 
 		afterEach(function() {
 			app = null;
+		});
+
+		after(function() {
+			LogTracer.clearStringifyInterceptors();
+		});
+	});
+
+	describe('application[naming-convention]', function() {
+		var app;
+		var moduleStats = {};
+
+		before(function() {
+			LogTracer.setupDefaultInterceptors([
+				{
+					accumulator: moduleStats,
+					mappings: [
+						{
+							allTags: [ 'devebot/sandboxManager', 'instantiateObject' ],
+							storeTo: 'metadata'
+						},
+						{
+							anyTags: [ 'constructor-begin' ],
+							countTo: 'constructorBeginTotal'
+						},
+						{
+							anyTags: [ 'constructor-end' ],
+							countTo: 'constructorEndTotal'
+						}
+					]
+				}
+			]);
+		});
+
+		beforeEach(function() {
+			LogTracer.reset().empty(moduleStats);
+		});
+
+		it('special plugins & bridges should be loaded properly', function() {
+			if (!chores.isFeatureSupported('presets')) {
+				this.skip();
+				return;
+			}
+
+			app = lab.getApp('naming-convention');
+			app.server;
+
+			false && console.log(JSON.stringify(moduleStats, null, 2));
+			assert.isAbove(moduleStats.constructorBeginTotal, 0);
+			assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
+
+			var metadata = lodash.map(moduleStats.metadata, function(item) {
+				return lodash.pick(item, ['handlerName', 'handlerType']);
+			});
+			false && console.log(JSON.stringify(metadata, null, 2));
+			assert.sameDeepMembers(metadata, [
+				{
+					"handlerName": "application/mainService",
+					"handlerType": "SERVICE"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper1/sublibService",
+					"handlerType": "SERVICE"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper2/sublibService",
+					"handlerType": "SERVICE"
+				},
+				{
+					"handlerName": "application/mainTrigger",
+					"handlerType": "TRIGGER"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper1/sublibTrigger",
+					"handlerType": "TRIGGER"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper2/sublibTrigger",
+					"handlerType": "TRIGGER"
+				},
+				{
+					"handlerName": "application/connector1#wrapper",
+					"handlerType": "DIALECT"
+				},
+				{
+					"handlerName": "application/connector2#wrapper",
+					"handlerType": "DIALECT"
+				}
+			]);
 		});
 
 		after(function() {
