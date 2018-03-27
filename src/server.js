@@ -92,18 +92,20 @@ function Server(params) {
       });
     }).then(function() {
       LX.has('silly') && LX.log('silly', LT.toMessage({
-        tags: [ blockRef, 'start()' ],
+        tags: [ blockRef, 'start()', 'webserver-started' ],
         text: 'webserver has started'
       }));
       return sandboxManager.startTriggers();
     }).then(function(info) {
       LX.has('silly') && LX.log('silly', LT.toMessage({
-        tags: [ blockRef, 'start()' ],
+        tags: [ blockRef, 'start()', 'triggers-started' ],
         text: 'triggers have started'
       }));
       return info;
     });
   };
+
+  this.open = this.start; // alias
 
   var serverCloseEvent;
   this.teardown = function() {
@@ -147,6 +149,8 @@ function Server(params) {
       return Promise.resolve();
     });
   }
+
+  this.close = this.teardown; // alias
 
   var wss = new WebSocketServer({
     server: server,
