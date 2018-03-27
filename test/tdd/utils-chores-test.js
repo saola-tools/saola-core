@@ -12,6 +12,8 @@ var path = require('path');
 var util = require('util');
 var chores = require('../../lib/utils/chores');
 var envtool = require('logolite/envtool');
+var LogAdapter = require('logolite').LogAdapter;
+var LogTracer = require('logolite').LogTracer;
 
 describe('tdd:devebot:utils:chores', function() {
   describe('loadServiceByNames()', function() {
@@ -64,6 +66,26 @@ describe('tdd:devebot:utils:chores', function() {
       assert.equal(chores.getBlockRef(file, 'mymodule'), 'mymodule/plugin1Service');
       assert.equal(chores.getBlockRef(file, [ 'mymodule' ]), 'mymodule/plugin1Service');
       assert.equal(chores.getBlockRef(file, [ 'part1', 'part2' ]), 'part1/part2/plugin1Service');
+    });
+  });
+
+  describe('extractCodeByPattern()', function() {
+    const CTX = {
+      LX: LogAdapter.getLogger(),
+      LT: LogTracer.ROOT
+    }
+    it('should extract code by pattern from name correctly', function() {
+      const BRIDGE_NAME_PATTERNS = [
+        /^devebot-co-([a-z][a-z0-9\-]*)$/g,
+        /^([a-z][a-z0-9\-]*)$/g
+      ];
+      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'hello-world'), 'helloWorld');
+      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co'), 'devebotCo');
+      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-'), '');
+      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-hello-world'), 'helloWorld');
+      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-hello_world'), 'hello_world');
+      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-top-s3cr3t'), 'topS3cr3t');
+      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-your-5ecret'), 'your_5ecret');
     });
   });
 });

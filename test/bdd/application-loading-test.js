@@ -173,7 +173,7 @@ describe('devebot:application', function() {
 					mappings: [
 						{
 							allTags: [ 'devebot/sandboxManager', 'instantiateObject' ],
-							storeTo: 'metadata'
+							storeTo: 'dependencyInfo'
 						},
 						{
 							anyTags: [ 'constructor-begin' ],
@@ -205,11 +205,11 @@ describe('devebot:application', function() {
 			assert.isAbove(moduleStats.constructorBeginTotal, 0);
 			assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
-			var metadata = lodash.map(moduleStats.metadata, function(item) {
+			var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
 				return lodash.pick(item, ['handlerName', 'handlerType']);
 			});
-			false && console.log(JSON.stringify(metadata, null, 2));
-			assert.sameDeepMembers(metadata, [
+			false && console.log(JSON.stringify(dependencyInfo, null, 2));
+			assert.sameDeepMembers(dependencyInfo, [
 				{
 					"handlerName": "application/mainService",
 					"handlerType": "SERVICE"
