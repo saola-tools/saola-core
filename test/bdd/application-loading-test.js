@@ -162,7 +162,7 @@ describe('devebot:application', function() {
 		});
 	});
 
-	describe('application[naming-convention]', function() {
+	describe('other applications', function() {
 		var app;
 		var moduleStats = {};
 
@@ -192,7 +192,7 @@ describe('devebot:application', function() {
 			LogTracer.reset().empty(moduleStats);
 		});
 
-		it('special plugins & bridges should be loaded properly', function() {
+		it('[naming-convention] special plugins & bridges should be loaded properly', function() {
 			if (!chores.isFeatureSupported('presets')) {
 				this.skip();
 				return;
@@ -241,6 +241,43 @@ describe('devebot:application', function() {
 				{
 					"handlerName": "application/connector2#wrapper",
 					"handlerType": "DIALECT"
+				}
+			]);
+		});
+
+		it('[rename-comp-dir] special plugins & bridges should be loaded properly', function() {
+			if (!chores.isFeatureSupported('presets')) {
+				this.skip();
+				return;
+			}
+
+			app = lab.getApp('rename-comp-dir');
+			app.server;
+
+			false && console.log(JSON.stringify(moduleStats, null, 2));
+			assert.isAbove(moduleStats.constructorBeginTotal, 0);
+			assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
+
+			var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
+				return lodash.pick(item, ['handlerName', 'handlerType']);
+			});
+			false && console.log(JSON.stringify(dependencyInfo, null, 2));
+			assert.sameDeepMembers(dependencyInfo, [
+				{
+					"handlerName": "application/mainService",
+					"handlerType": "SERVICE"
+				},
+				{
+					"handlerName": "plugin-rename-comp-dir/sublibService",
+					"handlerType": "SERVICE"
+				},
+				{
+					"handlerName": "application/mainTrigger",
+					"handlerType": "TRIGGER"
+				},
+				{
+					"handlerName": "plugin-rename-comp-dir/sublibTrigger",
+					"handlerType": "TRIGGER"
 				}
 			]);
 		});

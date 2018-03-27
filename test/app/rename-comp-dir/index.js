@@ -8,8 +8,8 @@ var app = Devebot.launchApplication({
   presets: {
     componentDir: {
       ROUTINE: '/lib/routines',
-      SERVICE: '/lib/services',
-      TRIGGER: '/lib/servlets'
+      SERVICE: 'lib/services',
+      TRIGGER: './lib/servlets'
     }
   }
 }, [
