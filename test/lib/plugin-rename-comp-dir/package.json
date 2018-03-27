@@ -1,0 +1,11 @@
+{
+  "name": "plugin-rename-comp-dir",
+  "version": "0.1.1",
+  "description": "plugin-rename-comp-dir plugin example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "devebot",
+  "license": "ISC"
+}
