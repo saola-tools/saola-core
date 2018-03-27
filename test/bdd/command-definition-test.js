@@ -66,6 +66,6 @@ describe('devebot:command:definition', function() {
 	});
 
 	afterEach(function(done) {
-		app.server.teardown().asCallback(done);
+		app.server.stop().asCallback(done);
 	});
 });

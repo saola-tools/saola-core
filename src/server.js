@@ -108,7 +108,7 @@ function Server(params) {
   this.open = this.start; // alias
 
   var serverCloseEvent;
-  this.teardown = function() {
+  this.stop = function() {
     LX.has('silly') && LX.log('silly', LT.toMessage({
       tags: [ blockRef, 'close()' ],
       text: 'close() is invoked'
@@ -150,7 +150,7 @@ function Server(params) {
     });
   }
 
-  this.close = this.teardown; // alias
+  this.close = this.stop; // alias
 
   var wss = new WebSocketServer({
     server: server,

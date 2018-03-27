@@ -144,7 +144,7 @@ describe('devebot:application', function() {
 				})
 				.delay(100)
 				.then(function(info) {
-					return app.server.teardown();
+					return app.server.stop();
 				})
 				.then(function() {
 					assert.equal(serverStats.stoppingCount, 3);

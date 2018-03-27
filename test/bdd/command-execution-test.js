@@ -158,7 +158,7 @@ describe('devebot:command:execution', function() {
 	});
 
 	afterEach(function(done) {
-		app.server.teardown().asCallback(done);
+		app.server.stop().asCallback(done);
 	});
 
 	after(function() {

@@ -97,6 +97,6 @@ describe('bdd:devebot:command:system-info', function() {
 	});
 
 	afterEach(function(done) {
-		app.server.teardown().asCallback(done);
+		app.server.stop().asCallback(done);
 	});
 });

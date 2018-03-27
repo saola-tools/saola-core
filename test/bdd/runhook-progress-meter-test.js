@@ -148,7 +148,7 @@ describe('devebot:runhook:progress:meter', function() {
 
 	afterEach(function(done) {
 		api = null;
-		app.server.teardown().asCallback(done);
+		app.server.stop().asCallback(done);
 	});
 });
 
