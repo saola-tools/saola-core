@@ -7,6 +7,6 @@ module.exports = devebot.registerLayerware({
   componentDir: {
     ROUTINE: '/lib/comp1',
     SERVICE: '/lib/comp2',
-    TRIGGER: '/lib/comp3'
+    TRIGGER: '/lib/comp_triggers'
   }
 }, [], []);

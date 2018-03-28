@@ -15,7 +15,12 @@ var app = Devebot.launchApplication({
 }, [
   {
     name: 'plugin-rename-comp-dir',
-    path: lab.getLibHome('plugin-rename-comp-dir')
+    path: lab.getLibHome('plugin-rename-comp-dir'),
+    presets: {
+      componentDir: {
+        TRIGGER: '/lib/comp3'
+      }
+    }
   }
 ], []);
 
