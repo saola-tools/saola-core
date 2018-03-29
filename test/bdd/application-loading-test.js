@@ -245,6 +245,43 @@ describe('devebot:application', function() {
 			]);
 		});
 
+		it('[reference-alias] special plugins & bridges should be loaded properly', function() {
+			if (!chores.isFeatureSupported('presets')) {
+				this.skip();
+				return;
+			}
+
+			app = lab.getApp('reference-alias');
+			app.server;
+
+			false && console.log(JSON.stringify(moduleStats, null, 2));
+			assert.isAbove(moduleStats.constructorBeginTotal, 0);
+			assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
+
+			var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
+				return lodash.pick(item, ['handlerName', 'handlerType']);
+			});
+			false && console.log(JSON.stringify(dependencyInfo, null, 2));
+			assert.sameDeepMembers(dependencyInfo, [
+				{
+					"handlerName": "application/mainService",
+					"handlerType": "SERVICE"
+				},
+				{
+					"handlerName": "plugin-reference-alias/sublibService",
+					"handlerType": "SERVICE"
+				},
+				{
+					"handlerName": "application/mainTrigger",
+					"handlerType": "TRIGGER"
+				},
+				{
+					"handlerName": "plugin-reference-alias/sublibTrigger",
+					"handlerType": "TRIGGER"
+				}
+			]);
+		});
+
 		it('[rename-comp-dir] special plugins & bridges should be loaded properly', function() {
 			if (!chores.isFeatureSupported('presets')) {
 				this.skip();
