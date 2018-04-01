@@ -92,7 +92,7 @@ var Service = function(params) {
 
   sandboxInjektor.registerObject('sandboxRegistry', new SandboxRegistry({
     injektor: sandboxInjektor,
-    excludedInternalServices: EXCLUDED_INTERNAL_SERVICES
+    excludedServices: EXCLUDED_INTERNAL_SERVICES
   }), chores.injektorContext);
   EXCLUDED_INTERNAL_SERVICES.push(getComponentLabel('sandboxRegistry'));
 
@@ -113,6 +113,13 @@ var Service = function(params) {
   });
   EXCLUDED_INTERNAL_SERVICES.push.apply(EXCLUDED_INTERNAL_SERVICES,
       lodash.map(lodash.keys(miscObjects), getComponentLabel));
+
+  LX.has('silly') && LX.log('silly', LT.add({
+    excludedServices: EXCLUDED_INTERNAL_SERVICES
+  }).toMessage({
+    tags: [ blockRef, 'excluded-internal-services' ],
+    text: ' - EXCLUDED_INTERNAL_SERVICES: ${excludedServices}'
+  }));
 
   var instantiateObject = function(_injektor, handlerRecord, handlerType, injectedHandlers) {
     var exceptions = [];
@@ -157,20 +164,19 @@ var Service = function(params) {
     });
   }
 
-  var _injectedHandlers = sandboxInjektor.lookup('injectedHandlers', chores.injektorContext);
-
   lodash.forOwn(dialectMap, function(dialectRecord, dialectName) {
-    instantiateObject(sandboxInjektor, dialectRecord, 'DIALECT', _injectedHandlers);
+    instantiateObject(sandboxInjektor, dialectRecord, 'DIALECT', injectedHandlers);
   });
 
   lodash.forOwn(serviceMap, function(serviceRecord, serviceName) {
-    instantiateObject(sandboxInjektor, serviceRecord, 'SERVICE', _injectedHandlers);
+    instantiateObject(sandboxInjektor, serviceRecord, 'SERVICE', injectedHandlers);
   });
 
   lodash.forOwn(triggerMap, function(triggerRecord, triggerName) {
     instantiateObject(sandboxInjektor, triggerRecord, 'TRIGGER');
   });
 
+  sandboxInjektor.lookup('injectedHandlers', chores.injektorContext);
   sandboxInjektor.lookup('runhookManager', chores.injektorContext);
 
   var devebotCfg = lodash.get(params, ['profileConfig', 'devebot'], {});
@@ -408,7 +414,9 @@ var SandboxRegistry = function(params) {
       exceptions: exceptions
     });
     if (fullname == null) return null;
-    if (params.excludedInternalServices.indexOf(fullname) >= 0) return null;
+    if (lodash.isFunction(params.isExcluded) && params.isExcluded(fullname)) return null;
+    if (lodash.isArray(params.excludedServices) && 
+        params.excludedServices.indexOf(fullname) >= 0) return null;
     return params.injektor.lookup(serviceName, context);
   }
 };

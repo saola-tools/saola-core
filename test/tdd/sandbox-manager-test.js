@@ -71,21 +71,49 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     assert.deepEqual(sublibService2.getConfig(), { host: 'localhost', port: 17722 });
   });
 
-  describe('definition', function() {
+  describe('logging-interception', function() {
     var loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/sandboxManager', 'definition' ],
-          storeTo: 'definition'
+          allTags: [ 'devebot/sandboxManager', 'excluded-internal-services' ],
+          storeTo: 'list'
         }]
       }]);
     });
 
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
+    });
+
+    it('EXCLUDED_INTERNAL_SERVICES should be defined properly', function() {
+      var sandboxManager = lab.createSandboxManager('fullapp');
+      var excluded = lodash.get(loggingStore, 'list.0.excludedServices', {});
+      if (true) {
+        assert.deepEqual(excluded, [
+          "devebot/appName",
+          "devebot/appInfo",
+          "devebot/sandboxNames",
+          "devebot/sandboxConfig",
+          "devebot/profileNames",
+          "devebot/profileConfig",
+          "devebot/pluginLoader",
+          "devebot/schemaValidator",
+          "devebot/loggingFactory",
+          "devebot/sandboxRegistry",
+          "devebot/runhookManager",
+          "devebot/injectedHandlers",
+          "devebot/bridgeDialectNames",
+          "devebot/pluginServiceNames",
+          "devebot/pluginTriggerNames",
+          "devebot/sandboxName",
+          "devebot/profileName"
+        ]);
+      } else {
+        console.log(JSON.stringify(excluded, null, 2));
+      }
     });
 
     after(function() {
