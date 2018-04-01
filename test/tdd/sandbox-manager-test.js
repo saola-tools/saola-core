@@ -3,6 +3,7 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var Injektor = Devebot.require('injektor');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:sandbox-manager');
@@ -53,7 +54,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
 
     assert.throws(function() {
       var sublibService = sandboxManager.getSandboxService('sublibService');
-    }, 'name [sublibService] is duplicated');
+    }, Injektor.errors.DuplicatedRelativeNameError, 'name [sublibService] is duplicated');
 
     var sublibService1 = sandboxManager.getSandboxService('sublibService', {
       scope: 'sub-plugin1'
