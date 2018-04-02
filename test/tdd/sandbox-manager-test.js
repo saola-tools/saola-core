@@ -93,9 +93,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       var excluded = lodash.get(loggingStore, 'list.0.excludedServices', {});
       if (true) {
         assert.deepEqual(excluded, [
-          "devebot/pluginLoader",
-          "devebot/sandboxRegistry",
-          "devebot/runhookManager"
+          "devebot/sandboxRegistry"
         ]);
       } else {
         console.log(JSON.stringify(excluded, null, 2));
