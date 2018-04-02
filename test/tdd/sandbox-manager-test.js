@@ -88,7 +88,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       LogTracer.reset().empty(loggingStore);
     });
 
-    it('EXCLUDED_INTERNAL_SERVICES should be defined properly', function() {
+    it('excludedServices should be defined properly', function() {
       var sandboxManager = lab.createSandboxManager('fullapp');
       var excluded = lodash.get(loggingStore, 'list.0.excludedServices', {});
       if (true) {
