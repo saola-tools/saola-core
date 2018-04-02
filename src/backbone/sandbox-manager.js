@@ -64,7 +64,7 @@ var Service = function(params) {
   COPIED_DEPENDENCIES.forEach(function(refName) {
     sandboxInjektor.registerObject(refName, params[refName], chores.injektorContext);
   });
-  var EXCLUDED_INTERNAL_SERVICES = lodash.map(COPIED_DEPENDENCIES, getComponentLabel);
+  var REGISTRY_EXCLUDED_SERVICES = lodash.map([ 'pluginLoader' ], getComponentLabel);
 
   lodash.forOwn(managerMap, function(managerConstructor, managerName) {
     sandboxInjektor.defineService(managerName, managerConstructor, chores.injektorContext);
@@ -92,12 +92,12 @@ var Service = function(params) {
 
   sandboxInjektor.registerObject('sandboxRegistry', new SandboxRegistry({
     injektor: sandboxInjektor,
-    excludedServices: EXCLUDED_INTERNAL_SERVICES
+    excludedServices: REGISTRY_EXCLUDED_SERVICES
   }), chores.injektorContext);
-  EXCLUDED_INTERNAL_SERVICES.push(getComponentLabel('sandboxRegistry'));
+  REGISTRY_EXCLUDED_SERVICES.push(getComponentLabel('sandboxRegistry'));
 
   sandboxInjektor.defineService('runhookManager', RunhookManager, chores.injektorContext);
-  EXCLUDED_INTERNAL_SERVICES.push(getComponentLabel('runhookManager'));
+  REGISTRY_EXCLUDED_SERVICES.push(getComponentLabel('runhookManager'));
 
   var injectedHandlers = {};
   var miscObjects = {
@@ -111,14 +111,12 @@ var Service = function(params) {
   lodash.forOwn(miscObjects, function(obj, name) {
     sandboxInjektor.registerObject(name, obj, chores.injektorContext);
   });
-  EXCLUDED_INTERNAL_SERVICES.push.apply(EXCLUDED_INTERNAL_SERVICES,
-      lodash.map(lodash.keys(miscObjects), getComponentLabel));
 
   LX.has('silly') && LX.log('silly', LT.add({
-    excludedServices: EXCLUDED_INTERNAL_SERVICES
+    excludedServices: REGISTRY_EXCLUDED_SERVICES
   }).toMessage({
     tags: [ blockRef, 'excluded-internal-services' ],
-    text: ' - EXCLUDED_INTERNAL_SERVICES: ${excludedServices}'
+    text: ' - REGISTRY_EXCLUDED_SERVICES: ${excludedServices}'
   }));
 
   var instantiateObject = function(_injektor, handlerRecord, handlerType, injectedHandlers) {

@@ -93,23 +93,9 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       var excluded = lodash.get(loggingStore, 'list.0.excludedServices', {});
       if (true) {
         assert.deepEqual(excluded, [
-          "devebot/appName",
-          "devebot/appInfo",
-          "devebot/sandboxNames",
-          "devebot/sandboxConfig",
-          "devebot/profileNames",
-          "devebot/profileConfig",
           "devebot/pluginLoader",
-          "devebot/schemaValidator",
-          "devebot/loggingFactory",
           "devebot/sandboxRegistry",
-          "devebot/runhookManager",
-          "devebot/injectedHandlers",
-          "devebot/bridgeDialectNames",
-          "devebot/pluginServiceNames",
-          "devebot/pluginTriggerNames",
-          "devebot/sandboxName",
-          "devebot/profileName"
+          "devebot/runhookManager"
         ]);
       } else {
         console.log(JSON.stringify(excluded, null, 2));
