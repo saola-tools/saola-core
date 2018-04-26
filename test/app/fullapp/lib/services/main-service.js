@@ -1,5 +1,6 @@
 'use strict';
 
+var assert = require('assert');
 var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
@@ -9,19 +10,26 @@ var Service = function(params) {
   debugx.enabled && debugx(' + constructor begin ...');
 
   params = params || {};
-
   var self = this;
 
-  var logger = params.loggingFactory.getLogger();
+  var LX = params.loggingFactory.getLogger();
+  var TR = params.loggingFactory.getTracer();
 
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
   debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));
+
+  var anyname1z_a = params['application/bridge1#anyname1z'];
+  var anyname1z_b = params['bridge1#anyname1z'];
+
+  assert.equal(anyname1z_a, anyname1z_b);
+  assert.deepEqual(anyname1z_a.getConfig(), anyname1z_b.getConfig());
 
   debugx.enabled && debugx(' - constructor end!');
 };
 
 if (chores.isFeatureSupported('bridge-full-ref')) {
   Service.referenceList = [
+    'bridge1#anyname1z',
     'application/bridge1#anyname1z',
     'plugin1/bridge1#anyname1a',
     'plugin1/bridge2#anyname2a'

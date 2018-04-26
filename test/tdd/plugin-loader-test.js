@@ -477,6 +477,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               "profileName",
               "profileConfig",
               "loggingFactory",
+              "bridge1#anyname1z",
               "application/bridge1#anyname1z",
               "plugin1/bridge1#anyname1a",
               "plugin1/bridge2#anyname2a"
@@ -498,6 +499,9 @@ describe('tdd:devebot:core:plugin-loader', function() {
                   "type": "object"
                 },
                 "loggingFactory": {
+                  "type": "object"
+                },
+                "bridge1#anyname1z": {
                   "type": "object"
                 },
                 "application/bridge1#anyname1z": {
