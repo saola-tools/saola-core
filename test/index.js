@@ -3,7 +3,6 @@
 var chores = require('../lib/utils/chores');
 var constx = require('../lib/utils/constx');
 var debugx = require('../lib/utils/pinbug')('devebot:test:lab');
-var fs = require('fs');
 var lodash = require('lodash');
 var path = require('path');
 var Injektor = require('injektor');
