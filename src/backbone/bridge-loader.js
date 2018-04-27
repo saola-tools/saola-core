@@ -1,21 +1,21 @@
 'use strict';
 
-var lodash = require('lodash');
-var LogTracer = require('logolite').LogTracer;
-var loader = require('../utils/loader');
-var chores = require('../utils/chores');
-var errorHandler = require('./error-handler').instance;
+const lodash = require('lodash');
+const LogTracer = require('logolite').LogTracer;
+const loader = require('../utils/loader');
+const chores = require('../utils/chores');
+const errorHandler = require('./error-handler').instance;
 
 function BridgeLoader(params) {
   params = params || {};
 
-  var blockRef = chores.getBlockRef(__filename);
-  var loggingFactory = params.loggingFactory.branch(blockRef);
-  var LX = loggingFactory.getLogger();
-  var LT = loggingFactory.getTracer();
-  var CTX = {LX, LT};
+  let blockRef = chores.getBlockRef(__filename);
+  let loggingFactory = params.loggingFactory.branch(blockRef);
+  let LX = loggingFactory.getLogger();
+  let LT = loggingFactory.getTracer();
+  let CTX = {blockRef, LX, LT};
 
-  var store = {};
+  let store = {};
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
@@ -30,16 +30,15 @@ function BridgeLoader(params) {
 
   this.loadDialects = function(dialectMap, dialectOptions, optType) {
     dialectMap = dialectMap || {};
-    var loaderCtx = {};
-    lodash.defaultsDeep(dialectMap, buildBridgeDialects.call(loaderCtx, params.bridgeRefs, dialectOptions, optType));
+    lodash.defaultsDeep(dialectMap, buildBridgeDialects(CTX, params.bridgeRefs, dialectOptions, optType));
     return dialectMap;
   };
 
   this.loadMetadata = function(metadataMap, dialectOptions) {
     metadataMap = metadataMap || {};
-    var bridgeDescriptors = loadBridgeConstructors(params.bridgeRefs);
+    let bridgeDescriptors = loadBridgeConstructors(CTX, params.bridgeRefs);
     lodash.defaultsDeep(metadataMap, lodash.mapValues(bridgeDescriptors, function(entrypoint) {
-      var construktor = lodash.get(entrypoint, "construktor", {});
+      let construktor = lodash.get(entrypoint, "construktor", {});
       return {
         name: entrypoint.name,
         metadata: construktor.devebotMetadata || construktor.metainf || construktor.metadata || null
@@ -55,8 +54,8 @@ function BridgeLoader(params) {
     /^([a-z][a-z0-9\-]*)$/g
   ];
 
-  let extractBridgeCode = function(CTX, bridgeRef) {
-    let info = chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, bridgeRef.name);
+  let extractBridgeCode = function(ctx, bridgeRef) {
+    let info = chores.extractCodeByPattern(ctx, BRIDGE_NAME_PATTERNS, bridgeRef.name);
     if (info.i < 0) {
       errorHandler.collect(lodash.assign({
         stage: 'naming',
@@ -68,13 +67,13 @@ function BridgeLoader(params) {
     return info.code;
   }
 
-  var loadBridgeContructor = function(bridgeRef) {
-    var self = this;
+  let loadBridgeContructor = function(ctx, bridgeRef) {
+    let {blockRef, LX, LT} = ctx;
 
     bridgeRef = bridgeRef || {};
 
-    var bridgeName = bridgeRef.name;
-    var bridgePath = bridgeRef.path;
+    let bridgeName = bridgeRef.name;
+    let bridgePath = bridgeRef.path;
 
     LX.has('conlog') && LX.log('conlog', LT.add({
       bridgeName: bridgeName
@@ -82,15 +81,15 @@ function BridgeLoader(params) {
       text: ' - bridge constructor (${bridgeName}) loading is started'
     }));
 
-    var result = {};
+    let result = {};
 
-    var bridgeCode = extractBridgeCode(CTX, bridgeRef);
+    let bridgeCode = extractBridgeCode(ctx, bridgeRef);
     if (typeof(bridgeCode) !== 'string') return result;
 
-    var opStatus = lodash.assign({ type: 'DIALECT', code: bridgeCode }, bridgeRef);
+    let opStatus = lodash.assign({ type: 'DIALECT', code: bridgeCode }, bridgeRef);
 
     try {
-      var bridgeConstructor = loader(bridgePath, { stopWhenError: true });
+      let bridgeConstructor = loader(bridgePath, { stopWhenError: true });
       LX.has('conlog') && LX.log('conlog', LT.add({
         bridgeName: bridgeName
       }).toMessage({
@@ -125,8 +124,8 @@ function BridgeLoader(params) {
     return result;
   };
 
-  var loadBridgeConstructors = function(bridgeRefs) {
-    var self = this;
+  let loadBridgeConstructors = function(ctx, bridgeRefs) {
+    let {blockRef, LX, LT} = ctx;
 
     bridgeRefs = lodash.isArray(bridgeRefs) ? bridgeRefs : [];
 
@@ -140,9 +139,9 @@ function BridgeLoader(params) {
       text: ' - load a list of bridge constructors: ${bridgeRefs}'
     }));
 
-    var bridgeConstructors = {};
+    let bridgeConstructors = {};
     bridgeRefs.forEach(function(bridgeRef) {
-      lodash.assign(bridgeConstructors, loadBridgeContructor.call(self, bridgeRef));
+      lodash.assign(bridgeConstructors, loadBridgeContructor(ctx, bridgeRef));
     });
 
     LX.has('conlog') && LX.log('conlog', LT.add({
@@ -154,10 +153,10 @@ function BridgeLoader(params) {
     return bridgeConstructors;
   };
 
-  var buildBridgeDialect = function(dialectOpts) {
-    var self = this;
-    var {pluginName, bridgeCode, bridgeRecord, dialectName, optType} = dialectOpts;
-    var result = {};
+  let buildBridgeDialect = function(ctx, dialectOpts) {
+    let {blockRef, LX, LT} = ctx;
+    let {pluginName, bridgeCode, bridgeRecord, dialectName, optType} = dialectOpts;
+    let result = {};
 
     if (!lodash.isString(bridgeCode)) {
       LX.has('conlog') && LX.log('conlog', LT.toMessage({
@@ -179,10 +178,10 @@ function BridgeLoader(params) {
       text: ' - building bridgeDialect (${dialectName}) is started'
     }));
 
-    var crateScope = pluginName;
-    var crateName = [bridgeCode, dialectName].join('#');
-    var sectorRef = [crateScope, crateName].join(chores.getSeparator());
-    var uniqueName = [pluginName, bridgeRecord.name, dialectName].join(chores.getSeparator());
+    let crateScope = pluginName;
+    let crateName = [bridgeCode, dialectName].join('#');
+    let sectorRef = [crateScope, crateName].join(chores.getSeparator());
+    let uniqueName = [pluginName, bridgeRecord.name, dialectName].join(chores.getSeparator());
     if (!chores.isFeatureSupported('bridge-full-ref')) {
       crateScope = bridgeRecord.name;
       crateName = dialectName;
@@ -190,7 +189,7 @@ function BridgeLoader(params) {
       uniqueName = [bridgeRecord.name, dialectName].join(chores.getSeparator());
     }
 
-    var bridgeConstructor = bridgeRecord.construktor;
+    let bridgeConstructor = bridgeRecord.construktor;
     if (!lodash.isFunction(bridgeConstructor)) {
       LX.has('conlog') && LX.log('conlog', LT.toMessage({
         text: ' - bridgeConstructor is invalid (not a function)'
@@ -198,7 +197,7 @@ function BridgeLoader(params) {
       return result;
     }
 
-    var configPath;
+    let configPath;
     if (!chores.isFeatureSupported('bridge-full-ref')) {
       switch(optType) {
         case 0:
@@ -217,20 +216,20 @@ function BridgeLoader(params) {
     function dialectConstructor(kwargs) {
       kwargs = kwargs || {};
 
-      var isWrapped = false;
-      var getWrappedParams = function() {
+      let isWrapped = false;
+      let getWrappedParams = function() {
         if (isWrapped) return kwargs;
         isWrapped = true;
         return kwargs = lodash.clone(kwargs);
       }
 
-      var newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', dialectName], null);
+      let newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', dialectName], null);
       if (newFeatures === null) {
         newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', bridgeCode], {});
       }
 
       if (newFeatures.logoliteEnabled) {
-        var loggingFactory = kwargs.loggingFactory.branch(sectorRef);
+        let loggingFactory = kwargs.loggingFactory.branch(sectorRef);
         this.logger = loggingFactory.getLogger();
         this.tracer = loggingFactory.getTracer();
       } else {
@@ -245,7 +244,7 @@ function BridgeLoader(params) {
         text: ' - newFeatures[${dialectName}]: ${newFeatures}'
       }));
 
-      var opStatus = { stage: 'instantiating', type: 'DIALECT', name: dialectName, code: bridgeCode };
+      let opStatus = { stage: 'instantiating', type: 'DIALECT', name: dialectName, code: bridgeCode };
       try {
         if (newFeatures.logoliteEnabled) {
           LX.has('silly') && LX.log('silly', LT.toMessage({
@@ -316,8 +315,8 @@ function BridgeLoader(params) {
     return result;
   };
 
-  var buildBridgeDialects = function(bridgeRefs, dialectOptions, optType) {
-    var self = this;
+  let buildBridgeDialects = function(ctx, bridgeRefs, dialectOptions, optType) {
+    let {blockRef, LX, LT} = ctx;
 
     optType = (lodash.isNumber(optType)) ? optType : 0;
 
@@ -327,7 +326,7 @@ function BridgeLoader(params) {
       text: ' - bridgeDialects will be built: ${bridgeRefs}'
     }));
 
-    var bridgeConstructors = loadBridgeConstructors.call(self, bridgeRefs);
+    let bridgeConstructors = loadBridgeConstructors(ctx, bridgeRefs);
 
     if (lodash.isEmpty(dialectOptions)) {
       LX.has('silly') && LX.log('silly', LT.add({
@@ -343,16 +342,16 @@ function BridgeLoader(params) {
       }));
     }
 
-    var bridgeDialects = {};
+    let bridgeDialects = {};
     if (!chores.isFeatureSupported('bridge-full-ref')) {
       switch(optType) {
         case 0:
           lodash.forOwn(dialectOptions, function(dialectConfig, dialectName) {
-            var bridgeCode = lodash.findKey(dialectConfig, function(o, k) {
+            let bridgeCode = lodash.findKey(dialectConfig, function(o, k) {
               return lodash.isObject(o) && bridgeConstructors[k];
             });
             if (bridgeCode) {
-              lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
+              lodash.assign(bridgeDialects, buildBridgeDialect(ctx, {
                 bridgeCode,
                 bridgeRecord: bridgeConstructors[bridgeCode],
                 dialectName,
@@ -364,7 +363,7 @@ function BridgeLoader(params) {
         case 1:
           lodash.forOwn(dialectOptions, function(dialectMap, bridgeCode) {
             lodash.forOwn(dialectMap, function(dialectConfig, dialectName) {
-              lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
+              lodash.assign(bridgeDialects, buildBridgeDialect(ctx, {
                 bridgeCode,
                 bridgeRecord: bridgeConstructors[bridgeCode],
                 dialectName,
@@ -374,7 +373,7 @@ function BridgeLoader(params) {
           break;
         default:
           lodash.forOwn(dialectOptions, function(bridgeConfig, bridgeCode) {
-            lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
+            lodash.assign(bridgeDialects, buildBridgeDialect(ctx, {
               bridgeCode,
               bridgeRecord: bridgeConstructors[bridgeCode],
               dialectName: bridgeCode + 'Wrapper',
@@ -387,7 +386,7 @@ function BridgeLoader(params) {
         if (!bridgeCode || !bridgeConstructors[bridgeCode]) return;
         lodash.forOwn(bridgeMap, function(pluginMap, pluginName) {
           lodash.forOwn(pluginMap, function(dialectConfig, dialectName) {
-            lodash.assign(bridgeDialects, buildBridgeDialect.call(self, {
+            lodash.assign(bridgeDialects, buildBridgeDialect(ctx, {
               pluginName,
               bridgeCode,
               bridgeRecord: bridgeConstructors[bridgeCode],
@@ -441,4 +440,3 @@ BridgeLoader.argumentSchema = {
 };
 
 module.exports = BridgeLoader;
- 
