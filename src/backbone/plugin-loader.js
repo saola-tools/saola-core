@@ -61,7 +61,7 @@ function PluginLoader(params) {
   }
 
   this.loadRoutines = function(routineMap, routineContext) {
-    return loadAllScripts.call(loaderClass, routineMap, 'ROUTINE', routineContext, pluginRootDirs);
+    return loadAllScripts(CTX, routineMap, 'ROUTINE', routineContext, pluginRootDirs);
   };
 
   this.loadServices = function(serviceMap) {
@@ -91,21 +91,21 @@ function PluginLoader(params) {
   var getPluginRefByName = chores.getPluginRefBy.bind(chores, 'name');
   var getPluginRefByCode = chores.getPluginRefBy.bind(chores, 'code');
 
-  var loadAllScripts = function(scriptMap, scriptType, scriptContext, pluginRootDirs) {
-    var self = this;
+  var loadAllScripts = function(CTX, scriptMap, scriptType, scriptContext, pluginRootDirs) {
     scriptMap = scriptMap || {};
 
     if (scriptType !== 'ROUTINE') return scriptMap;
 
     pluginRootDirs.forEach(function(pluginRootDir) {
-      loadScriptEntries.call(self, scriptMap, scriptType, scriptContext, pluginRootDir);
+      loadScriptEntries(CTX, scriptMap, scriptType, scriptContext, pluginRootDir);
     });
 
     return scriptMap;
   };
 
-  var loadScriptEntries = function(scriptMap, scriptType, scriptContext, pluginRootDir) {
-    var self = this;
+  var loadScriptEntries = function(CTX, scriptMap, scriptType, scriptContext, pluginRootDir) {
+    CTX = CTX || this;
+    let {blockRef, LX, LT, schemaValidator} = CTX;
 
     var scriptSubDir = chores.getComponentDir(pluginRootDir, scriptType);
     var scriptFolder = path.join(pluginRootDir.pathDir, scriptSubDir);
@@ -118,12 +118,13 @@ function PluginLoader(params) {
 
     var scriptFiles = chores.filterFiles(scriptFolder, getFilterPattern(scriptType));
     scriptFiles.forEach(function(scriptFile) {
-      loadScriptEntry.call(self, scriptMap, scriptType, scriptSubDir, scriptFile, scriptContext, pluginRootDir);
+      loadScriptEntry(CTX, scriptMap, scriptType, scriptSubDir, scriptFile, scriptContext, pluginRootDir);
     });
   };
 
-  var loadScriptEntry = function(scriptMap, scriptType, scriptSubDir, scriptFile, scriptContext, pluginRootDir) {
-    var self = this;
+  var loadScriptEntry = function(CTX, scriptMap, scriptType, scriptSubDir, scriptFile, scriptContext, pluginRootDir) {
+    CTX = CTX || this;
+    let {blockRef, LX, LT, schemaValidator} = CTX;
     var opStatus = lodash.assign({ type: scriptType, file: scriptFile, subDir: scriptSubDir }, pluginRootDir);
     var filepath = path.join(pluginRootDir.pathDir, scriptSubDir, scriptFile);
     try {
@@ -135,7 +136,7 @@ function PluginLoader(params) {
           text: ' - script file ${filepath} is ok'
         }));
         var scriptObject = scriptInit(scriptContext);
-        var output = validateScript.call(self, scriptObject, scriptType);
+        var output = validateScript(CTX, scriptObject, scriptType);
         if (!output.valid) {
           LX.has('conlog') && LX.log('conlog', LT.add({
             validationResult: output
@@ -200,9 +201,9 @@ function PluginLoader(params) {
     return entry;
   }
 
-  var validateScript = function(scriptObject, scriptType) {
-    var self = this;
-    let {schemaValidator} = this;
+  var validateScript = function(CTX, scriptObject, scriptType) {
+    CTX = CTX || this;
+    let {schemaValidator} = CTX;
     scriptObject = scriptObject || {};
     var results = [];
 
