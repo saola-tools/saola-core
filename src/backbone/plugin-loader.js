@@ -1,12 +1,12 @@
 'use strict';
 
-var lodash = require('lodash');
-var path = require('path');
-var LogTracer = require('logolite').LogTracer;
-var chores = require('../utils/chores');
-var constx = require('../utils/constx');
-var loader = require('../utils/loader');
-var errorHandler = require('./error-handler').instance;
+const lodash = require('lodash');
+const path = require('path');
+const LogTracer = require('logolite').LogTracer;
+const chores = require('../utils/chores');
+const constx = require('../utils/constx');
+const loader = require('../utils/loader');
+const errorHandler = require('./error-handler').instance;
 
 function PluginLoader(params) {
   params = params || {};
@@ -15,7 +15,7 @@ function PluginLoader(params) {
   var loggingFactory = params.loggingFactory.branch(blockRef);
   var LX = loggingFactory.getLogger();
   var LT = loggingFactory.getTracer();
-  var CTX = {LX, LT};
+  var CTX = {blockRef, LX, LT, schemaValidator: params.schemaValidator};
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
     tags: [blockRef, 'constructor-begin'],
@@ -57,7 +57,7 @@ function PluginLoader(params) {
   };
 
   this.loadMetadata = function(metadataMap) {
-    return loadAllMetainfs.call(loaderClass, metadataMap, pluginRootDirs);
+    return loadAllMetainfs(CTX, metadataMap, pluginRootDirs);
   }
 
   this.loadRoutines = function(routineMap, routineContext) {
@@ -202,10 +202,11 @@ function PluginLoader(params) {
 
   var validateScript = function(scriptObject, scriptType) {
     var self = this;
+    let {schemaValidator} = this;
     scriptObject = scriptObject || {};
     var results = [];
 
-    results.push(self.schemaValidator.validate(scriptObject, constx[scriptType].SCHEMA_OBJECT));
+    results.push(schemaValidator.validate(scriptObject, constx[scriptType].SCHEMA_OBJECT));
 
     if (!lodash.isFunction(scriptObject.handler)) {
       results.push({
@@ -223,17 +224,17 @@ function PluginLoader(params) {
     }, { valid: true, errors: [] });
   };
 
-  var loadAllMetainfs = function(metainfMap, pluginRootDirs) {
-    var self = this;
+  var loadAllMetainfs = function(CTX, metainfMap, pluginRootDirs) {
+    CTX = CTX || this;
     metainfMap = metainfMap || {};
     pluginRootDirs.forEach(function(pluginRootDir) {
-      loadMetainfEntries.call(self, metainfMap, pluginRootDir);
+      loadMetainfEntries(CTX, metainfMap, pluginRootDir);
     });
     return metainfMap;
   }
 
-  var loadMetainfEntries = function(metainfMap, pluginRootDir) {
-    var self = this;
+  var loadMetainfEntries = function(CTX, metainfMap, pluginRootDir) {
+    CTX = CTX || this;
     var metainfType = 'METAINF';
     var metainfSubDir = chores.getComponentDir(pluginRootDir, metainfType);
     var metainfFolder = path.join(pluginRootDir.pathDir, metainfSubDir);
@@ -245,18 +246,18 @@ function PluginLoader(params) {
     }));
     var schemaFiles = chores.filterFiles(metainfFolder, getFilterPattern(metainfType));
     schemaFiles.forEach(function(schemaFile) {
-      loadMetainfEntry.call(self, metainfMap, metainfSubDir, schemaFile, pluginRootDir);
+      loadMetainfEntry(CTX, metainfMap, metainfSubDir, schemaFile, pluginRootDir);
     });
   }
 
-  var loadMetainfEntry = function(metainfMap, metainfSubDir, schemaFile, pluginRootDir) {
-    var self = this;
+  var loadMetainfEntry = function(CTX, metainfMap, metainfSubDir, schemaFile, pluginRootDir) {
+    CTX = CTX || this;
     var metainfType = 'METAINF';
     var opStatus = lodash.assign({ type: 'METAINF', file: schemaFile, subDir: metainfSubDir }, pluginRootDir);
     var filepath = path.join(pluginRootDir.pathDir, metainfSubDir, schemaFile);
     try {
       var metainfObject = loader(filepath, { stopWhenError: true });
-      var output = validateMetainf.call(self, metainfObject, metainfType);
+      var output = validateMetainf(CTX, metainfObject, metainfType);
       if (!output.valid) {
         LX.has('conlog') && LX.log('conlog', LT.add({
           validationResult: output
@@ -302,12 +303,13 @@ function PluginLoader(params) {
     errorHandler.collect(opStatus);
   }
 
-  var validateMetainf = function(metainfObject) {
-    var self = this;
+  var validateMetainf = function(CTX, metainfObject) {
+    CTX = CTX || this;
+    let {schemaValidator} = CTX;
     var metainfType = 'METAINF';
     metainfObject = metainfObject || {};
     var results = [];
-    results.push(self.schemaValidator.validate(metainfObject, constx[metainfType].SCHEMA_OBJECT));
+    results.push(schemaValidator.validate(metainfObject, constx[metainfType].SCHEMA_OBJECT));
     return results.reduce(function(output, result) {
       output.valid = output.valid && (result.valid != false);
       output.errors = output.errors.concat(result.errors);

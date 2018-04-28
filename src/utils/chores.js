@@ -304,4 +304,26 @@ chores.isFeatureSupported = function(label) {
   return (store.featureEnabled.indexOf(label) >= 0);
 }
 
+chores.lookupMethodRef = function(methodName, serviceName, proxyName, sandboxRegistry) {
+  var ref = {};
+  var commander = sandboxRegistry.lookupService(proxyName);
+  if (commander && lodash.isFunction(commander.lookupService)) {
+    ref.isDirected = false;
+    ref.isRemote = true;
+    ref.service = commander.lookupService(serviceName);
+    if (ref.service) {
+      ref.method = ref.service[methodName];
+    }
+  }
+  if (!ref.method) {
+    ref.isDirected = true;
+    ref.isRemote = false;
+    ref.service = sandboxRegistry.lookupService(serviceName);
+    if (ref.service) {
+      ref.method = ref.service[methodName];
+    }
+  }
+  return ref;
+}
+
 module.exports = chores;
