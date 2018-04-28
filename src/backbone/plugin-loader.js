@@ -65,11 +65,11 @@ function PluginLoader(params) {
   };
 
   this.loadServices = function(serviceMap) {
-    return loadAllGadgets.call(loaderClass, serviceMap, 'SERVICE', pluginRootDirs);
+    return loadAllGadgets(CTX, serviceMap, 'SERVICE', pluginRootDirs);
   };
 
   this.loadTriggers = function(triggerMap) {
-    return loadAllGadgets.call(loaderClass, triggerMap, 'TRIGGER', pluginRootDirs);
+    return loadAllGadgets(CTX, triggerMap, 'TRIGGER', pluginRootDirs);
   };
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
@@ -203,7 +203,7 @@ function PluginLoader(params) {
 
   var validateScript = function(CTX, scriptObject, scriptType) {
     CTX = CTX || this;
-    let {schemaValidator} = CTX;
+    let {blockRef, LX, LT, schemaValidator} = CTX;
     scriptObject = scriptObject || {};
     var results = [];
 
@@ -236,6 +236,7 @@ function PluginLoader(params) {
 
   var loadMetainfEntries = function(CTX, metainfMap, pluginRootDir) {
     CTX = CTX || this;
+    let {blockRef, LX, LT, schemaValidator} = CTX;
     var metainfType = 'METAINF';
     var metainfSubDir = chores.getComponentDir(pluginRootDir, metainfType);
     var metainfFolder = path.join(pluginRootDir.pathDir, metainfSubDir);
@@ -253,6 +254,7 @@ function PluginLoader(params) {
 
   var loadMetainfEntry = function(CTX, metainfMap, metainfSubDir, schemaFile, pluginRootDir) {
     CTX = CTX || this;
+    let {blockRef, LX, LT, schemaValidator} = CTX;
     var metainfType = 'METAINF';
     var opStatus = lodash.assign({ type: 'METAINF', file: schemaFile, subDir: metainfSubDir }, pluginRootDir);
     var filepath = path.join(pluginRootDir.pathDir, metainfSubDir, schemaFile);
@@ -306,7 +308,7 @@ function PluginLoader(params) {
 
   var validateMetainf = function(CTX, metainfObject) {
     CTX = CTX || this;
-    let {schemaValidator} = CTX;
+    let {blockRef, LX, LT, schemaValidator} = CTX;
     var metainfType = 'METAINF';
     metainfObject = metainfObject || {};
     var results = [];
@@ -318,21 +320,22 @@ function PluginLoader(params) {
     }, { valid: true, errors: [] });
   };
 
-  var loadAllGadgets = function(gadgetMap, gadgetType, pluginRootDirs) {
-    var self = this;
+  var loadAllGadgets = function(CTX, gadgetMap, gadgetType, pluginRootDirs) {
+    CTX = CTX || this;
     gadgetMap = gadgetMap || {};
 
     if (['SERVICE', 'TRIGGER'].indexOf(gadgetType) < 0) return gadgetMap;
 
     pluginRootDirs.forEach(function(pluginRootDir) {
-      loadGadgetEntries.call(self, gadgetMap, gadgetType, pluginRootDir);
+      loadGadgetEntries(CTX, gadgetMap, gadgetType, pluginRootDir);
     });
 
     return gadgetMap;
   };
 
-  var loadGadgetEntries = function(gadgetMap, gadgetType, pluginRootDir) {
-    var self = this;
+  var loadGadgetEntries = function(CTX, gadgetMap, gadgetType, pluginRootDir) {
+    CTX = CTX || this;
+    let {blockRef, LX, LT, schemaValidator} = CTX;
 
     var gadgetSubDir = chores.getComponentDir(pluginRootDir, gadgetType);
     var gadgetFolder = path.join(pluginRootDir.pathDir, gadgetSubDir);
@@ -345,12 +348,13 @@ function PluginLoader(params) {
 
     var gadgetFiles = chores.filterFiles(gadgetFolder, getFilterPattern(gadgetType));
     gadgetFiles.forEach(function(gadgetFile) {
-      loadGadgetEntry.call(self, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, pluginRootDir);
+      loadGadgetEntry(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, pluginRootDir);
     });
   };
 
-  var loadGadgetEntry = function(gadgetMap, gadgetType, gadgetSubDir, gadgetFile, pluginRootDir) {
-    var self = this;
+  var loadGadgetEntry = function(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, pluginRootDir) {
+    CTX = CTX || this;
+    let {blockRef, LX, LT, schemaValidator} = CTX;
     var opStatus = lodash.assign({ type: gadgetType, file: gadgetFile, subDir: gadgetSubDir }, pluginRootDir);
     var filepath = path.join(pluginRootDir.pathDir, gadgetSubDir, gadgetFile);
     try {
@@ -362,7 +366,7 @@ function PluginLoader(params) {
       }));
       if (lodash.isFunction(gadgetConstructor)) {
         var gadgetName = chores.stringCamelCase(gadgetFile.replace('.js', ''));
-        lodash.defaults(gadgetMap, buildGadgetWrapper(gadgetConstructor, gadgetName, pluginRootDir));
+        lodash.defaults(gadgetMap, buildGadgetWrapper(CTX, gadgetConstructor, gadgetName, pluginRootDir));
         opStatus.hasError = false;
       } else {
         LX.has('conlog') && LX.log('conlog', LT.add({
@@ -385,7 +389,9 @@ function PluginLoader(params) {
     errorHandler.collect(opStatus);
   };
 
-  var buildGadgetWrapper = function(gadgetConstructor, wrapperName, pluginRootDir) {
+  var buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRootDir) {
+    CTX = CTX || this;
+    let {blockRef, LX, LT, schemaValidator} = CTX;
     var result = {};
 
     if (!lodash.isFunction(gadgetConstructor)) {
