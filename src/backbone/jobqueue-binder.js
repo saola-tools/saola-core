@@ -4,12 +4,12 @@ var Promise = require('bluebird');
 var lodash = require('lodash');
 var chores = require('../utils/chores');
 var constx = require('../utils/constx');
+var blockRef = chores.getBlockRef(__filename);
 
 var Service = function(params) {
   var self = this;
   params = params || {};
 
-  var blockRef = chores.getBlockRef(__filename);
   var loggingFactory = params.loggingFactory.branch(blockRef);
   var LX = loggingFactory.getLogger();
   var LT = loggingFactory.getTracer();
