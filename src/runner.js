@@ -24,6 +24,7 @@ function Runner(params) {
 
   let injektor = this._injektor;
   delete this._injektor;
+
   let scriptExecutor = injektor.lookup('scriptExecutor', chores.injektorContext);
   let scriptRenderer = injektor.lookup('scriptRenderer', chores.injektorContext);
 

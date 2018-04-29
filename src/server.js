@@ -33,6 +33,7 @@ function Server(params) {
   // lookup service instances
   let injektor = this._injektor;
   delete this._injektor;
+
   let loggingFactory = injektor.lookup('loggingFactory', chores.injektorContext);
   let sandboxManager = injektor.lookup('sandboxManager', chores.injektorContext);
   let scriptExecutor = injektor.lookup('scriptExecutor', chores.injektorContext);

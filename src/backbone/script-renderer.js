@@ -1,27 +1,27 @@
 'use strict';
 
-var assert = require('assert');
-var Promise = require('bluebird');
-var lodash = require('lodash');
-var util = require('util');
-var chores = require('../utils/chores');
-var constx = require('../utils/constx');
+const assert = require('assert');
+const Promise = require('bluebird');
+const lodash = require('lodash');
+const util = require('util');
+const chores = require('../utils/chores');
+const constx = require('../utils/constx');
+const blockRef = chores.getBlockRef(__filename);
 
 function ScriptRenderer(params) {
-  var self = this;
+  let self = this;
   params = params || {};
 
-  var blockRef = chores.getBlockRef(__filename);
-  var loggingFactory = params.loggingFactory.branch(blockRef);
-  var LX = loggingFactory.getLogger();
-  var LT = loggingFactory.getTracer();
+  let loggingFactory = params.loggingFactory.branch(blockRef);
+  let LX = loggingFactory.getLogger();
+  let LT = loggingFactory.getTracer();
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
 
-  var defaultOpts = lodash.assign({
+  let defaultOpts = lodash.assign({
     logger: LX,
     tracer: LT
   }, lodash.pick(params, ['schemaValidator']));
@@ -36,8 +36,8 @@ function ScriptRenderer(params) {
   }));
 }
 
-var AbstractOutlet = function(params) {
-  var self = this;
+function AbstractOutlet(params) {
+  let self = this;
 
   self._send = function(message) {
     assert.fail('_send() method must be overriden');
@@ -106,12 +106,12 @@ var AbstractOutlet = function(params) {
     }
   }
 
-  var standardizeOutput = function(output, isError) {
-    var outputArray = lodash.isArray(output) ? output : [output];
+  let standardizeOutput = function(output, isError) {
+    let outputArray = lodash.isArray(output) ? output : [output];
     outputArray = lodash.filter(outputArray, function(outputObject) {
       return lodash.isObject(outputObject) && !lodash.isEmpty(outputObject);
     });
-    var result = params.schemaValidator.validate(outputArray, constx.WEBSOCKET.DETAILS.SCHEMA);
+    let result = params.schemaValidator.validate(outputArray, constx.WEBSOCKET.DETAILS.SCHEMA);
     if (!result.valid) {
       outputArray = [{
         type: 'json',
@@ -123,10 +123,10 @@ var AbstractOutlet = function(params) {
   };
 }
 
-var WebSocketOutlet = function(params) {
+function WebSocketOutlet(params) {
   AbstractOutlet.apply(this, arguments);
 
-  var self = this;
+  let self = this;
   params = params && lodash.clone(params) || {};
   assert(lodash.isObject(params.ws));
 
