@@ -129,8 +129,9 @@ function WebSocketOutlet(params) {
   let self = this;
   params = params && lodash.clone(params) || {};
   assert(lodash.isObject(params.ws));
+  let {logger: LX, tracer: LT} = params;
 
-  params.logger.has('conlog') && params.logger.log('conlog', params.tracer.toMessage({
+  LX.has('conlog') && LX.log('conlog', LT.toMessage({
     text: ' - create a new WebSocketOutlet()'
   }));
 
@@ -138,7 +139,7 @@ function WebSocketOutlet(params) {
     params.ws.send(message);
   }
 
-  params.logger.has('conlog') && params.logger.log('conlog', params.tracer.toMessage({
+  LX.has('conlog') && LX.log('conlog', LT.toMessage({
     text: ' - the new WebSocketOutlet() has been created'
   }));
 }
