@@ -245,6 +245,25 @@ describe('devebot:application', function() {
 			]);
 		});
 
+		it('[naming-convention] special plugins & bridges should be available', function(done) {
+			if (!chores.isFeatureSupported('presets')) {
+				this.skip();
+				return done();
+			}
+
+			app = lab.getApp('naming-convention');
+			app.runner.invoke(function(injektor) {
+				var sandboxManager = injektor.lookup('sandboxManager');
+				var service1 = sandboxManager.getSandboxService('sublibService', {
+					scope: 'devebot-dp-wrapper1'
+				});
+				assert(service1.getConfig(), { port: 17741, host: 'localhost' });
+				var service2 = sandboxManager.getSandboxService('devebot-dp-wrapper2/sublibService');
+				assert(service2.getConfig(), { port: 17742, host: 'localhost' });
+				return done();
+			});
+		});
+
 		it('[reference-alias] special plugins & bridges should be loaded properly', function() {
 			if (!chores.isFeatureSupported('presets')) {
 				this.skip();

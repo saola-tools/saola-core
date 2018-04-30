@@ -7,15 +7,19 @@ var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
 
 var Service = function(params) {
-  debugx.enabled && debugx(' + constructor begin ...');
-
   params = params || {};
-
   var self = this;
 
-  var logger = params.loggingFactory.getLogger();
+  var LX = params.loggingFactory.getLogger();
+  var LT = params.loggingFactory.getTracer();
+
+  debugx.enabled && debugx(' + constructor begin ...');
 
   var mainCfg = lodash.get(params, ['sandboxConfig'], {});
+
+  self.getConfig = function() {
+    return lodash.cloneDeep(mainCfg);
+  }
 
   var server = http.createServer();
 

@@ -20,6 +20,10 @@ var Service = function(params) {
 
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
+  this.getConfig = function() {
+    return pluginCfg;
+  }
+
   var server = http.createServer();
 
   server.on('error', function(err) {
