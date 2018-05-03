@@ -82,6 +82,20 @@ describe('tdd:devebot:core:script-renderer', function() {
     it('WebSocketOutlet render states exactly', function(done) {
       Promise.mapSeries([
         {
+          state: 'definition',
+          payload: {
+            value: {
+              text: 'Any Object'
+            }
+          },
+          expected: {
+            state: 'definition',
+            value: {
+              text: 'Any Object'
+            }
+          }
+        },
+        {
           state: 'error',
           payload: null,
           expected: {
@@ -90,17 +104,26 @@ describe('tdd:devebot:core:script-renderer', function() {
           }
         },
         {
-          state: 'definition',
-          payload: {
-            value: {
-              text: 'Any message'
-            }
-          },
+          state: 'started',
+          payload: null,
           expected: {
-            state: 'definition',
-            value: {
-              text: 'Any message'
-            }
+            state: constx.WEBSOCKET.STATE.STARTED,
+            message: constx.WEBSOCKET.MSG_ON.STARTED
+          }
+        },
+        {
+          state: 'cancelled',
+          payload: null,
+          expected: {
+            state: constx.WEBSOCKET.STATE.CANCELLED,
+            message: constx.WEBSOCKET.MSG_ON.CANCELLED
+          }
+        },
+        {
+          state: 'done',
+          payload: null,
+          expected: {
+            state: constx.WEBSOCKET.STATE.DONE
           }
         }
       ], function(item) {
