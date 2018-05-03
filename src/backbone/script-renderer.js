@@ -126,17 +126,19 @@ function AbstractOutlet(params) {
 function WebSocketOutlet(params) {
   AbstractOutlet.apply(this, arguments);
 
-  let self = this;
-  params = params && lodash.clone(params) || {};
-  assert(lodash.isObject(params.ws));
-  let {logger: LX, tracer: LT} = params;
+  params = params || {};
+  let {logger: LX, tracer: LT, ws} = params;
+
+  assert(lodash.isObject(LX));
+  assert(lodash.isObject(LT));
+  assert(lodash.isObject(ws));
 
   LX.has('conlog') && LX.log('conlog', LT.toMessage({
     text: ' - create a new WebSocketOutlet()'
   }));
 
-  self._send = function(message) {
-    params.ws.send(message);
+  this._send = function(message) {
+    ws.send(message);
   }
 
   LX.has('conlog') && LX.log('conlog', LT.toMessage({
