@@ -38,10 +38,6 @@ describe('tdd:devebot:base:kernel', function() {
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var LX = loggingFactory.getLogger();
     var LT = loggingFactory.getTracer();
-    // var bridgeLoader = { loadMetadata: function() {} };
-    // sinon.stub(bridgeLoader, 'loadMetadata').callsFake(function(bridgeMetadata) {
-    //   lodash.assign(bridgeMetadata, {});
-    // });
 
     it("result should be ok if bridge config is valid with bridge schema", function() {
       var result = [];

@@ -43,7 +43,7 @@ function AbstractOutlet(params) {
     assert.fail('_send() method must be overriden');
   }
 
-  self.render = function(state, payload) {
+  self.render = function(state, output) {
     switch(state) {
       case 'error':
       self._send(JSON.stringify({
@@ -55,7 +55,7 @@ function AbstractOutlet(params) {
       case 'definition':
       self._send(JSON.stringify({
         state: 'definition',
-        value: payload.value
+        value: output.value
       }));
       break;
 
@@ -70,8 +70,10 @@ function AbstractOutlet(params) {
       self._send(JSON.stringify({
         state: constx.WEBSOCKET.STATE.PROGRESS,
         message: constx.WEBSOCKET.MSG_ON.PROGRESS,
-        progress: payload.progress,
-        data: payload.data
+        percent: output.progress,
+        payload: output.data,
+        progress: output.progress, //deprecated
+        data: output.data //deprecated
       }));
       break;
 
@@ -79,7 +81,7 @@ function AbstractOutlet(params) {
       self._send(JSON.stringify({
         state: constx.WEBSOCKET.STATE.FAILED,
         message: constx.WEBSOCKET.MSG_ON.FAILED,
-        details: standardizeOutput(params.schemaValidator, payload, true)
+        details: standardizeOutput(params.schemaValidator, output, true)
       }));
       break;
 
@@ -87,7 +89,7 @@ function AbstractOutlet(params) {
       self._send(JSON.stringify({
         state: constx.WEBSOCKET.STATE.COMPLETED,
         message: constx.WEBSOCKET.MSG_ON.COMPLETED,
-        details: standardizeOutput(params.schemaValidator, payload, false)
+        details: standardizeOutput(params.schemaValidator, output, false)
       }));
       break;
 
