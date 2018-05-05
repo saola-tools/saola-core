@@ -186,6 +186,27 @@ describe('tdd:devebot:core:script-renderer', function() {
           }
         },
         {
+          state: 'progress',
+          payload: {
+            progress: 57,
+            data: {
+              msg: 'processing (57%)'
+            }
+          },
+          expected: {
+            state: constx.WEBSOCKET.STATE.PROGRESS,
+            message: constx.WEBSOCKET.MSG_ON.PROGRESS,
+            percent: 57,
+            payload: {
+              msg: 'processing (57%)'
+            },
+            progress: 57,
+            data: {
+              msg: 'processing (57%)'
+            }
+          }
+        },
+        {
           state: 'done',
           payload: null,
           expected: {
@@ -200,6 +221,10 @@ describe('tdd:devebot:core:script-renderer', function() {
     after(function() {
       LogTracer.clearStringifyInterceptors();
     });
+  });
+
+  describe('standardizeOutput()', function() {
+    
   });
 
   after(function() {
