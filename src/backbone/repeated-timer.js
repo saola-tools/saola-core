@@ -6,6 +6,9 @@ const util = require('util');
 const chores = require('../utils/chores');
 const blockRef = chores.getBlockRef(__filename);
 
+const MIN_PERIOD = 10;
+const MIN_OFFSET = 0;
+
 function RepeatedTimer(kwargs) {
   events.EventEmitter.call(this);
 
@@ -64,7 +67,7 @@ function RepeatedTimer(kwargs) {
       let taskFunction = taskWrapper;
       if (config.offset > 0) {
         taskFunction = function() {
-          setTimeout(taskWrapper, getRandomInt(0, config.offset));
+          setTimeout(taskWrapper, lodash.random(0, config.offset));
         };
       }
       taskHandler = setInterval(taskFunction, config.period);
@@ -124,12 +127,5 @@ util.inherits(RepeatedTimer, events.EventEmitter);
 function standardizeInt(min, number) {
   return (number > min) ? number : min;
 }
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-const MIN_PERIOD = 10;
-const MIN_OFFSET = 0;
 
 module.exports = RepeatedTimer;
