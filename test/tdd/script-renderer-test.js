@@ -120,6 +120,72 @@ describe('tdd:devebot:core:script-renderer', function() {
           }
         },
         {
+          state: 'failed',
+          payload: {
+            type: 'object',
+            title: 'My Error',
+            label: {
+              error: 'Error',
+              value: 'Value'
+            },
+            data: {
+              error: true,
+              value: 1024
+            }
+          },
+          expected: {
+            state: constx.WEBSOCKET.STATE.FAILED,
+            message: constx.WEBSOCKET.MSG_ON.FAILED,
+            details: [{
+              type: 'object',
+              title: 'My Error',
+              label: {
+                error: 'Error',
+                value: 'Value'
+              },
+              data: {
+                error: true,
+                value: 1024
+              }
+            }]
+          }
+        },
+        {
+          state: 'completed',
+          payload: {
+            type: 'object',
+            title: 'My Result',
+            label: {
+              f_int: 'Integer',
+              f_boolean: 'Boolean',
+              f_string: 'String'
+            },
+            data: {
+              f_int: 1024,
+              f_boolean: true,
+              f_string: 'Hello'
+            }
+          },
+          expected: {
+            state: constx.WEBSOCKET.STATE.COMPLETED,
+            message: constx.WEBSOCKET.MSG_ON.COMPLETED,
+            details: [{
+              type: 'object',
+              title: 'My Result',
+              label: {
+                f_int: 'Integer',
+                f_boolean: 'Boolean',
+                f_string: 'String'
+              },
+              data: {
+                f_int: 1024,
+                f_boolean: true,
+                f_string: 'Hello'
+              }
+            }]
+          }
+        },
+        {
           state: 'done',
           payload: null,
           expected: {

@@ -79,7 +79,7 @@ function AbstractOutlet(params) {
       self._send(JSON.stringify({
         state: constx.WEBSOCKET.STATE.FAILED,
         message: constx.WEBSOCKET.MSG_ON.FAILED,
-        details: standardizeOutput(payload, true)
+        details: standardizeOutput(params.schemaValidator, payload, true)
       }));
       break;
 
@@ -87,7 +87,7 @@ function AbstractOutlet(params) {
       self._send(JSON.stringify({
         state: constx.WEBSOCKET.STATE.COMPLETED,
         message: constx.WEBSOCKET.MSG_ON.COMPLETED,
-        details: standardizeOutput(payload, false)
+        details: standardizeOutput(params.schemaValidator, payload, false)
       }));
       break;
 
@@ -105,22 +105,6 @@ function AbstractOutlet(params) {
       break;
     }
   }
-
-  let standardizeOutput = function(output, isError) {
-    let outputArray = lodash.isArray(output) ? output : [output];
-    outputArray = lodash.filter(outputArray, function(outputObject) {
-      return lodash.isObject(outputObject) && !lodash.isEmpty(outputObject);
-    });
-    let result = params.schemaValidator.validate(outputArray, constx.WEBSOCKET.DETAILS.SCHEMA);
-    if (!result.valid) {
-      outputArray = [{
-        type: 'json',
-        title: isError ? constx.WEBSOCKET.MSG_ON.FAILED : constx.WEBSOCKET.MSG_ON.COMPLETED,
-        data: output
-      }];
-    }
-    return outputArray;
-  };
 }
 
 function WebSocketOutlet(params) {
@@ -162,3 +146,19 @@ ScriptRenderer.argumentSchema = {
 };
 
 module.exports = ScriptRenderer;
+
+let standardizeOutput = function(schemaValidator, output, isError) {
+  let outputArray = lodash.isArray(output) ? output : [output];
+  outputArray = lodash.filter(outputArray, function(outputObject) {
+    return lodash.isObject(outputObject) && !lodash.isEmpty(outputObject);
+  });
+  let result = schemaValidator.validate(outputArray, constx.WEBSOCKET.DETAILS.SCHEMA);
+  if (!result.valid) {
+    outputArray = [{
+      type: 'json',
+      title: isError ? constx.WEBSOCKET.MSG_ON.FAILED : constx.WEBSOCKET.MSG_ON.COMPLETED,
+      data: output
+    }];
+  }
+  return outputArray;
+};
