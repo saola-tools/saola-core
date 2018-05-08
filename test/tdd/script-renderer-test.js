@@ -224,7 +224,92 @@ describe('tdd:devebot:core:script-renderer', function() {
   });
 
   describe('standardizeOutput()', function() {
-    
+    var ScriptRenderer = rewire('../../lib/backbone/script-renderer');
+    var standardizeOutput = ScriptRenderer.__get__('standardizeOutput');
+
+    var jsonOutput = {
+      type: 'json',
+      title: 'JSON format example',
+      data: {
+        text: 'Any JSON object'
+      }
+    };
+    var objectOutput = {
+      type: 'object',
+      title: 'Object/Record format example',
+      data: {
+        error: true,
+        value: 1024
+      },
+      label: {
+        error: 'Error',
+        value: 'Value'
+      }
+    };
+    var tableOutput = {
+      type: 'table',
+      title: 'Table/Grid format example',
+      data: [{
+        no: 1,
+        id: 'unique#1',
+        name: 'Item 1'
+      }, {
+        no: 2,
+        id: 'unique#2',
+        name: 'Item 2'
+      }, {
+        no: 3,
+        id: 'unique#3',
+        name: 'Item 3'
+      }],
+      label: {
+        no: 'No.',
+        id: 'ID',
+        name: 'Name'
+      }
+    };
+    var invalidObjectFormat = {
+      type: 'object',
+      title: 'Object/Record format example',
+      data: {
+        error: true,
+        value: 1024
+      },
+      label: 'Should be an object'
+    };
+
+    it('standardize valid json-type output correctly', function() {
+      var expected = [jsonOutput];
+      assert.deepEqual(standardizeOutput(schemaValidator,  jsonOutput , true), expected);
+      assert.deepEqual(standardizeOutput(schemaValidator, [jsonOutput], true), expected);
+    });
+
+    it('standardize valid object-type output correctly', function() {
+      var expected = [objectOutput];
+      assert.deepEqual(standardizeOutput(schemaValidator,  objectOutput , true), expected);
+      assert.deepEqual(standardizeOutput(schemaValidator, [objectOutput], true), expected);
+    });
+
+    it('standardize valid table-type output correctly', function() {
+      var expected = [tableOutput];
+      assert.deepEqual(standardizeOutput(schemaValidator,  tableOutput , true), expected);
+      assert.deepEqual(standardizeOutput(schemaValidator, [tableOutput], true), expected);
+    });
+
+    it('standardize composed of output formats correctly', function() {
+      var mixed = [jsonOutput, tableOutput, objectOutput];
+      var expected = [jsonOutput, tableOutput, objectOutput];
+      assert.deepEqual(standardizeOutput(schemaValidator,  mixed , true), expected);
+    });
+
+    it('standardizing invalid formats will return JSON output', function() {
+      var expected = [{
+        type: 'json',
+        title: constx.WEBSOCKET.MSG_ON.FAILED,
+        data: invalidObjectFormat
+      }];
+      assert.deepEqual(standardizeOutput(schemaValidator,  invalidObjectFormat , true), expected);
+    });
   });
 
   after(function() {
