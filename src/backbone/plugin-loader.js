@@ -494,7 +494,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
   wrapperConstructor.prototype = Object.create(gadgetConstructor.prototype);
 
   let wrappedArgumentSchema = {
-    "$id": wrapperName,
+    "$id": uniqueName,
     "type": "object",
     "properties": {}
   }

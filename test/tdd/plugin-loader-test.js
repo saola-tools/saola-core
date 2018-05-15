@@ -483,7 +483,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               "plugin1/bridge2#anyname2a"
             ],
             "argumentSchema": {
-              "$id": "mainService",
+              "$id": "fullapp/mainService",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -560,7 +560,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               "sublibTrigger"
             ],
             "argumentSchema": {
-              "$id": "sublibService",
+              "$id": "sub-plugin2/sublibService",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -724,7 +724,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
               "plugin2/bridge2#anyname2b"
             ],
             "argumentSchema": {
-              "$id": "mainTrigger",
+              "$id": "fullapp/mainTrigger",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -769,7 +769,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "sub-plugin1/sublibTrigger": {
           "construktor": {
             "argumentSchema": {
-              "$id": "sublibTrigger",
+              "$id": "sub-plugin1/sublibTrigger",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -796,7 +796,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "sub-plugin2/sublibTrigger": {
           "construktor": {
             "argumentSchema": {
-              "$id": "sublibTrigger",
+              "$id": "sub-plugin2/sublibTrigger",
               "type": "object",
               "properties": {
                 "sandboxName": {
