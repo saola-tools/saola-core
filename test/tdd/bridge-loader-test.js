@@ -251,7 +251,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         "application/bridge1/anyname1z": {
           "construktor": {
             "argumentSchema": {
-              "$id": "anyname1z",
+              "$id": "application/bridge1/anyname1z",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -278,7 +278,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         "plugin1/bridge1/anyname1a": {
           "construktor": {
             "argumentSchema": {
-              "$id": "anyname1a",
+              "$id": "plugin1/bridge1/anyname1a",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -305,7 +305,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         "plugin2/bridge1/anyname1b": {
           "construktor": {
             "argumentSchema": {
-              "$id": "anyname1b",
+              "$id": "plugin2/bridge1/anyname1b",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -332,7 +332,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         "plugin1/bridge2/anyname2a": {
           "construktor": {
             "argumentSchema": {
-              "$id": "anyname2a",
+              "$id": "plugin1/bridge2/anyname2a",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -359,7 +359,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         "plugin1/bridge2/anyname2c": {
           "construktor": {
             "argumentSchema": {
-              "$id": "anyname2c",
+              "$id": "plugin1/bridge2/anyname2c",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -386,7 +386,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         "plugin1/bridge3/anyname3a": {
           "construktor": {
             "argumentSchema": {
-              "$id": "anyname3a",
+              "$id": "plugin1/bridge3/anyname3a",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -413,7 +413,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         "application/devebot-co-connector1/wrapper": {
           "construktor": {
             "argumentSchema": {
-              "$id": "wrapper",
+              "$id": "application/devebot-co-connector1/wrapper",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -440,7 +440,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         "application/devebot-co-connector2/wrapper": {
           "construktor": {
             "argumentSchema": {
-              "$id": "wrapper",
+              "$id": "application/devebot-co-connector2/wrapper",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -471,7 +471,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
           "bridge1/anyname1a": {
             "construktor": {
               "argumentSchema": {
-                "$id": "anyname1a",
+                "$id": "bridge1/anyname1a",
                 "type": "object",
                 "properties": {
                   "sandboxName": {
@@ -498,7 +498,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
           "bridge1/anyname1b": {
             "construktor": {
               "argumentSchema": {
-                "$id": "anyname1b",
+                "$id": "bridge1/anyname1b",
                 "type": "object",
                 "properties": {
                   "sandboxName": {
@@ -525,7 +525,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
           "bridge2/anyname2a": {
             "construktor": {
               "argumentSchema": {
-                "$id": "anyname2a",
+                "$id": "bridge2/anyname2a",
                 "type": "object",
                 "properties": {
                   "sandboxName": {
@@ -552,7 +552,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
           "bridge3/anyname3a": {
             "construktor": {
               "argumentSchema": {
-                "$id": "anyname3a",
+                "$id": "bridge3/anyname3a",
                 "type": "object",
                 "properties": {
                   "sandboxName": {
