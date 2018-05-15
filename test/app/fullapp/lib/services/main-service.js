@@ -18,11 +18,13 @@ var Service = function(params) {
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
   debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));
 
-  var anyname1z_a = params['application/bridge1#anyname1z'];
-  var anyname1z_b = params['bridge1#anyname1z'];
+  if (chores.isFeatureSupported('bridge-full-ref')) {
+    var anyname1z_a = params['application/bridge1#anyname1z'];
+    var anyname1z_b = params['bridge1#anyname1z'];
 
-  assert.equal(anyname1z_a, anyname1z_b);
-  assert.deepEqual(anyname1z_a.getConfig(), anyname1z_b.getConfig());
+    assert.equal(anyname1z_a, anyname1z_b);
+    assert.deepEqual(anyname1z_a.getConfig(), anyname1z_b.getConfig());
+  }
 
   debugx.enabled && debugx(' - constructor end!');
 };
