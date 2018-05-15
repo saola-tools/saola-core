@@ -522,7 +522,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "sub-plugin1/sublibService": {
           "construktor": {
             "argumentSchema": {
-              "$id": "sublibService",
+              "$id": "sub-plugin1/sublibService",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -590,7 +590,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "plugin1/plugin1Service": {
           "construktor": {
             "argumentSchema": {
-              "$id": "plugin1Service",
+              "$id": "plugin1/plugin1Service",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -617,7 +617,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "plugin2/plugin2Service": {
           "construktor": {
             "argumentSchema": {
-              "$id": "plugin2Service",
+              "$id": "plugin2/plugin2Service",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -644,7 +644,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "plugin3/plugin3Service": {
           "construktor": {
             "argumentSchema": {
-              "$id": "plugin3Service",
+              "$id": "plugin3/plugin3Service",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -823,7 +823,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "plugin1/plugin1Trigger": {
           "construktor": {
             "argumentSchema": {
-              "$id": "plugin1Trigger",
+              "$id": "plugin1/plugin1Trigger",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -850,7 +850,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "plugin2/plugin2Trigger": {
           "construktor": {
             "argumentSchema": {
-              "$id": "plugin2Trigger",
+              "$id": "plugin2/plugin2Trigger",
               "type": "object",
               "properties": {
                 "sandboxName": {
@@ -877,7 +877,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "plugin3/plugin3Trigger": {
           "construktor": {
             "argumentSchema": {
-              "$id": "plugin3Trigger",
+              "$id": "plugin3/plugin3Trigger",
               "type": "object",
               "properties": {
                 "sandboxName": {
