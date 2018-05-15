@@ -205,11 +205,7 @@ describe('devebot:application', function() {
 			assert.isAbove(moduleStats.constructorBeginTotal, 0);
 			assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
-			var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
-				return lodash.pick(item, ['handlerName', 'handlerType']);
-			});
-			false && console.log(JSON.stringify(dependencyInfo, null, 2));
-			assert.sameDeepMembers(dependencyInfo, [
+			var expectedDependencies = [
 				{
 					"handlerName": "application/mainService",
 					"handlerType": "SERVICE"
@@ -233,16 +229,24 @@ describe('devebot:application', function() {
 				{
 					"handlerName": "devebot-dp-wrapper2/sublibTrigger",
 					"handlerType": "TRIGGER"
-				},
-				{
+				}
+			];
+			if (chores.isFeatureSupported('bridge-full-ref')) {
+				expectedDependencies.push({
 					"handlerName": "application/connector1#wrapper",
 					"handlerType": "DIALECT"
 				},
 				{
 					"handlerName": "application/connector2#wrapper",
 					"handlerType": "DIALECT"
-				}
-			]);
+				});
+			};
+
+			var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
+				return lodash.pick(item, ['handlerName', 'handlerType']);
+			});
+			false && console.log(JSON.stringify(dependencyInfo, null, 2));
+			assert.sameDeepMembers(dependencyInfo, expectedDependencies);
 		});
 
 		it('[naming-convention] special plugins & bridges should be available', function(done) {
