@@ -255,6 +255,22 @@ describe('devebot:application', function() {
 				{
 					"handlerName": "devebot-dp-wrapper2/connector2#bean",
 					"handlerType": "DIALECT"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper1/bridgeKebabCase1#pointer",
+					"handlerType": "DIALECT"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper2/bridgeKebabCase1#pointer",
+					"handlerType": "DIALECT"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper1/bridgeKebabCase2#pointer",
+					"handlerType": "DIALECT"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper2/bridgeKebabCase2#pointer",
+					"handlerType": "DIALECT"
 				});
 			};
 

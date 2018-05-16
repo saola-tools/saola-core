@@ -78,6 +78,8 @@ var Service = function(params) {
 };
 
 Service.referenceList = [
+  "devebot-dp-wrapper1/bridgeKebabCase1#pointer",
+  "devebot-dp-wrapper1/bridgeKebabCase2#pointer",
   "devebot-dp-wrapper1/connector1#bean",
   "devebot-dp-wrapper1/connector2#bean"
 ];

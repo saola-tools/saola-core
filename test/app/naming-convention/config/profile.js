@@ -21,6 +21,12 @@ module.exports = {
       logoliteEnabled: true,
       sandboxConfig: true
     },
+    bridgeKebabCase1: {
+      logoliteEnabled: true
+    },
+    bridgeKebabCase2: {
+      logoliteEnabled: true
+    },
     connector1: {
       logoliteEnabled: true
     },

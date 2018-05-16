@@ -12,6 +12,26 @@ module.exports = {
     }
   },
   bridges: {
+    "bridgeKebabCase1": {
+      "devebot-dp-wrapper1": {
+        "pointer": {
+          "refPath": "sandbox -> bridge-kebab-case1 -> wrapper1 -> pointer",
+          "refType": "wrapper1",
+          "refName": "devebot-dp-wrapper1",
+          "default": true
+        }
+      }
+    },
+    "bridgeKebabCase2": {
+      "devebot-dp-wrapper1": {
+        "pointer": {
+          "refPath": "sandbox -> bridge-kebab-case2 -> wrapper1 -> pointer",
+          "refType": "wrapper1",
+          "refName": "devebot-dp-wrapper1",
+          "default": true
+        }
+      }
+    },
     "connector1": {
       "devebot-dp-wrapper1": {
         "bean": {
