@@ -237,7 +237,23 @@ describe('devebot:application', function() {
 					"handlerType": "DIALECT"
 				},
 				{
+					"handlerName": "devebot-dp-wrapper1/connector1#bean",
+					"handlerType": "DIALECT"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper2/connector1#bean",
+					"handlerType": "DIALECT"
+				},
+				{
 					"handlerName": "application/connector2#wrapper",
+					"handlerType": "DIALECT"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper1/connector2#bean",
+					"handlerType": "DIALECT"
+				},
+				{
+					"handlerName": "devebot-dp-wrapper2/connector2#bean",
 					"handlerType": "DIALECT"
 				});
 			};

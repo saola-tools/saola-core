@@ -77,4 +77,13 @@ var Service = function(params) {
   }));
 };
 
+Service.referenceList = [
+  "devebot-dp-wrapper1/connector1#bean",
+  "devebot-dp-wrapper1/connector2#bean"
+];
+
+if (!chores.isFeatureSupported('bridge-full-ref')) {
+  Service.referenceList = [];
+};
+
 module.exports = Service;
