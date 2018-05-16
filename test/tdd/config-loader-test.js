@@ -389,7 +389,6 @@ describe('tdd:devebot:core:config-loader', function() {
             "plugin2": {}
           },
           "bridges": {
-            "__status__": true,
             "bridge1": {
               "plugin1": {
                 "anyname1a": {
@@ -416,7 +415,7 @@ describe('tdd:devebot:core:config-loader', function() {
         false && console.log(JSON.stringify(transformedCfg, null, 2));
         assert.deepInclude(transformedCfg, exptectedConfig);
       });
-  
+
       it('transform sandboxConfig.bridges from a plugin (without name)', function() {
         var sandboxConfig = {
           "plugins": {
@@ -470,7 +469,7 @@ describe('tdd:devebot:core:config-loader', function() {
         var transformedCfg = transformSandboxConfig({
           logger: LogAdapter.getLogger(),
           tracer: LogTracer.ROOT
-        }, sandboxConfig, 'plugin');
+        }, sandboxConfig, 'plugin', null, { configType: 'bridge[dialect-bridge]'});
         false && console.log(JSON.stringify(transformedCfg, null, 2));
         assert.deepInclude(transformedCfg, exptectedConfig);
       });
@@ -528,7 +527,7 @@ describe('tdd:devebot:core:config-loader', function() {
         var transformedCfg = transformSandboxConfig({
           logger: LogAdapter.getLogger(),
           tracer: LogTracer.ROOT
-        }, sandboxConfig, 'plugin', 'plugin1');
+        }, sandboxConfig, 'plugin', 'plugin1', { configType: 'bridge[dialect-bridge]'});
         false && console.log(JSON.stringify(transformedCfg, null, 2));
         assert.deepInclude(transformedCfg, exptectedConfig);
       });
