@@ -2,7 +2,7 @@ var lab = require('../../index');
 
 module.exports = Devebot.registerLayerware({
   layerRootPath: __dirname,
-  configType: 'bridge[dialect-bridge]'
+  configTags: 'bridge[dialect-bridge]'
 }, [], [
   {
     name: 'bridge1',

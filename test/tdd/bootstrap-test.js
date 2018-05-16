@@ -153,7 +153,7 @@ describe('tdd:devebot:base:bootstrap', function() {
               name: 'plugin1',
               path: '/test/lib/plugin1/index.js',
               presets: {
-                "configType": "bridge[dialect-bridge]",
+                "configTags": "bridge[dialect-bridge]",
                 layerRootPath: '/test/lib/plugin1'
               }
             },
@@ -161,7 +161,7 @@ describe('tdd:devebot:base:bootstrap', function() {
               name: 'plugin2',
               path: '/test/lib/plugin2/index.js',
               presets: {
-                "configType": "bridge[dialect-bridge]",
+                "configTags": "bridge[dialect-bridge]",
                 layerRootPath: '/test/lib/plugin2'
               }
             }
@@ -259,7 +259,7 @@ describe('tdd:devebot:base:bootstrap', function() {
               name: 'plugin1',
               path: '/test/lib/plugin1/index.js',
               presets: {
-                "configType": "bridge[dialect-bridge]",
+                "configTags": "bridge[dialect-bridge]",
                 layerRootPath: '/test/lib/plugin1'
               }
             },
@@ -267,7 +267,7 @@ describe('tdd:devebot:base:bootstrap', function() {
               name: 'plugin2',
               path: '/test/lib/plugin2/index.js',
               presets: {
-                "configType": "bridge[dialect-bridge]",
+                "configTags": "bridge[dialect-bridge]",
                 layerRootPath: '/test/lib/plugin2'
               }
             },
@@ -349,7 +349,7 @@ describe('tdd:devebot:base:bootstrap', function() {
                 name: 'plugin1',
                 path: '/test/lib/plugin1/index.js',
                 presets: {
-                  "configType": "bridge[dialect-bridge]",
+                  "configTags": "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin1'
                 }
               },
@@ -357,7 +357,7 @@ describe('tdd:devebot:base:bootstrap', function() {
                 name: 'plugin2',
                 path: '/test/lib/plugin2/index.js',
                 presets: {
-                  "configType": "bridge[dialect-bridge]",
+                  "configTags": "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin2'
                 }
               },
@@ -490,7 +490,7 @@ describe('tdd:devebot:base:bootstrap', function() {
                 name: 'plugin1',
                 path: '/test/lib/plugin1/index.js',
                 presets: {
-                  "configType": "bridge[dialect-bridge]",
+                  "configTags": "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin1'
                 }
               },
@@ -498,7 +498,7 @@ describe('tdd:devebot:base:bootstrap', function() {
                 name: 'plugin2',
                 path: '/test/lib/plugin2/index.js',
                 presets: {
-                  "configType": "bridge[dialect-bridge]",
+                  "configTags": "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin2'
                 }
               },
@@ -744,7 +744,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             "name": "plugin1",
             "path": "/test/lib/plugin1/index.js",
             "presets": {
-              "configType": "bridge[dialect-bridge]",
+              "configTags": "bridge[dialect-bridge]",
               "layerRootPath": '/test/lib/plugin1'
             }
           },
@@ -752,7 +752,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             "name": "plugin2",
             "path": "/test/lib/plugin2/index.js",
             "presets": {
-              "configType": "bridge[dialect-bridge]",
+              "configTags": "bridge[dialect-bridge]",
               "layerRootPath": '/test/lib/plugin2'
             }
           },
@@ -861,7 +861,7 @@ describe('tdd:devebot:base:bootstrap', function() {
                 name: 'plugin1',
                 path: '/test/lib/plugin1/index.js',
                 presets: {
-                  configType: "bridge[dialect-bridge]",
+                  configTags: "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin1'
                 }
               },
@@ -869,7 +869,7 @@ describe('tdd:devebot:base:bootstrap', function() {
                 name: 'plugin2',
                 path: '/test/lib/plugin2/index.js',
                 presets: {
-                  configType: "bridge[dialect-bridge]",
+                  configTags: "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin2'
                 }
               },

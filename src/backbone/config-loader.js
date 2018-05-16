@@ -277,15 +277,16 @@ let transformConfig = function(ctx, configType, configData, moduleType, moduleNa
   return configData;
 }
 
-const OLD_CONFIG_TYPES = ['bridge[dialect-bridge]'];
-
 let transformSandboxConfig = function(ctx, sandboxConfig, moduleType, moduleName, modulePresets) {
   let { LX, LT } = ctx || this;
   if (lodash.isEmpty(sandboxConfig) || !lodash.isObject(sandboxConfig)) {
     return sandboxConfig;
   }
-  if (modulePresets && OLD_CONFIG_TYPES.indexOf(modulePresets.configType) >= 0) {
-    if (lodash.isObject(sandboxConfig.bridges) && !sandboxConfig.bridges.__status__) {
+  if (modulePresets && modulePresets.configTags) {
+    let tags = modulePresets.configTags;
+    tags = lodash.isArray(tags) ? tags : [tags];
+    if (lodash.isObject(sandboxConfig.bridges) && !sandboxConfig.bridges.__status__ &&
+        tags.indexOf('bridge[dialect-bridge]') >= 0) {
       let cfgBridges = sandboxConfig.bridges || {};
       let newBridges = { __status__: true };
       let traverseBackward = function(cfgBridges, newBridges) {

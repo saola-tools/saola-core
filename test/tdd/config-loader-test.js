@@ -469,7 +469,7 @@ describe('tdd:devebot:core:config-loader', function() {
         var transformedCfg = transformSandboxConfig({
           logger: LogAdapter.getLogger(),
           tracer: LogTracer.ROOT
-        }, sandboxConfig, 'plugin', null, { configType: 'bridge[dialect-bridge]'});
+        }, sandboxConfig, 'plugin', null, { configTags: ['bridge[dialect-bridge]']});
         false && console.log(JSON.stringify(transformedCfg, null, 2));
         assert.deepInclude(transformedCfg, exptectedConfig);
       });
@@ -527,7 +527,7 @@ describe('tdd:devebot:core:config-loader', function() {
         var transformedCfg = transformSandboxConfig({
           logger: LogAdapter.getLogger(),
           tracer: LogTracer.ROOT
-        }, sandboxConfig, 'plugin', 'plugin1', { configType: 'bridge[dialect-bridge]'});
+        }, sandboxConfig, 'plugin', 'plugin1', {configTags: 'bridge[dialect-bridge]'});
         false && console.log(JSON.stringify(transformedCfg, null, 2));
         assert.deepInclude(transformedCfg, exptectedConfig);
       });
