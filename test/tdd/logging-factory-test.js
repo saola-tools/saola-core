@@ -220,6 +220,7 @@ describe('tdd:devebot:core:logging-factory', function() {
 
     before(function() {
       envtool.setup({
+        LOGOLITE_DEBUGLOG_ENABLED: 'false',
         LOGOLITE_ALWAYS_MUTED: 'all'
       });
     });
@@ -250,6 +251,39 @@ describe('tdd:devebot:core:logging-factory', function() {
 
       var queue = mockLogger._reset();
 
+      debugx.enabled && debugx('Logging messages: %s', JSON.stringify(queue, null, 2));
+      /*
+      [
+        {
+          "severity": "info",
+          "payload": {
+            "instanceId": "dUr6BLK5Sjei7mk_yXlwlQ",
+            "message": "Application Information",
+            "lib_name": "devebot",
+            "lib_version": "0.2.6",
+            "os_name": "linux",
+            "os_version": "4.4.0-119-generic",
+            "os_arch": "x64",
+            "_tags_": [
+              "logolite-metadata"
+            ]
+          }
+        },
+        {
+          "severity": "info",
+          "payload": {
+            "instanceId": "dUr6BLK5Sjei7mk_yXlwlQ",
+            "blockId": "4gxTt5E2RKquSPeYXeoIjg",
+            "parentKey": "instanceId",
+            "parentValue": "dUr6BLK5Sjei7mk_yXlwlQ",
+            "blockName": "devebot",
+            "_tags_": [
+              "devebot-metadata"
+            ]
+          }
+        }
+      ]
+      */
       assert.equal(queue.length, 2);
       queue.forEach(function(item) {
         item.payload = JSON.parse(item.payload);
@@ -290,6 +324,7 @@ describe('tdd:devebot:core:logging-factory', function() {
 
       var queue = mockLogger._reset();
 
+      debugx.enabled && debugx('Logging messages: %s', JSON.stringify(queue, null, 2));
       assert.equal(queue.length, 2 + 4);
       queue.forEach(function(item) {
         item.payload = JSON.parse(item.payload);
