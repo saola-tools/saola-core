@@ -17,7 +17,7 @@ const CONFIG_SANDBOX_NAME = process.env.DEVEBOT_CONFIG_SANDBOX_NAME || 'sandbox'
 const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME];
 const CONFIG_VAR_NAMES = { ctxName: 'PROFILE', boxName: 'SANDBOX', cfgDir: 'CONFIG_DIR', cfgEnv: 'CONFIG_ENV' };
 
-function Loader(appName, appOptions, appRef, libRefs) {
+function Loader(appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs) {
   let loggingWrapper = new LoggingWrapper(blockRef);
   let LX = loggingWrapper.getLogger();
   let LT = loggingWrapper.getTracer();
@@ -29,7 +29,9 @@ function Loader(appName, appOptions, appRef, libRefs) {
     appName: appName,
     appOptions: appOptions,
     appRef: appRef,
-    libRefs: libRefs,
+    devebotRef: devebotRef,
+    pluginRefs: pluginRefs,
+    bridgeRefs: bridgeRefs,
     label: label
   }).toMessage({
     tags: [ blockRef, 'constructor-begin' ],
@@ -39,7 +41,7 @@ function Loader(appName, appOptions, appRef, libRefs) {
   appOptions = appOptions || {};
 
   let config = loadConfig
-      .bind(null, CTX, appName, appOptions, appRef, libRefs)
+      .bind(null, CTX, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs)
       .apply(null, Object.keys(CONFIG_VAR_NAMES).map(function(varName) {
         return readVariable(CTX, label, CONFIG_VAR_NAMES[varName]);
       }));
@@ -87,9 +89,14 @@ let readVariable = function(ctx, appLabel, varName) {
   return value;
 }
 
-let loadConfig = function(ctx, appName, appOptions, appRef, libRefs, profileName, sandboxName, customDir, customEnv) {
+let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, customDir, customEnv) {
   let { LX, LT } = ctx || this;
   appOptions = appOptions || {};
+
+  let libRefs = lodash.values(pluginRefs);
+  if (devebotRef) {
+    libRefs.push(devebotRef);
+  }
 
   let appRootDir = null;
   if (appRef && lodash.isString(appRef.path)) {

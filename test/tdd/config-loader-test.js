@@ -3,6 +3,7 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:config-loader');
@@ -24,17 +25,24 @@ describe('tdd:devebot:core:config-loader', function() {
     path: path.join(lab.getAppHome('tdd-cfg'), 'index.js')
   };
 
-  var libRefs = [{
-    name: 'plugin1',
-    path: path.join(lab.getLibHome('plugin1'), 'index.js')
-  },{
-    name: 'plugin2',
-    path: path.join(lab.getLibHome('plugin2'), 'index.js')
-  },{
+  var devebotRef = {
     name: 'devebot',
     type: 'framework',
     path: path.join(lab.getDevebotHome(), 'index.js')
-  }];
+  };
+
+  var pluginRefs = {
+    "plugin1": {
+      name: 'plugin1',
+      path: path.join(lab.getLibHome('plugin1'), 'index.js')
+    },
+    "plugin2": {
+      name: 'plugin2',
+      path: path.join(lab.getLibHome('plugin2'), 'index.js')
+    }
+  };
+
+  var libRefs = [].concat(lodash.values(pluginRefs), devebotRef);
 
   describe('default configuration (without profile & sandbox)', function() {
     it('load configuration of nothing (empty loader)', function() {
@@ -55,7 +63,7 @@ describe('tdd:devebot:core:config-loader', function() {
 
     it('load configuration of empty application', function() {
       // appName: empty-app, appOptions: null, appRootDir: null, libRootDirs: [...]
-      var cfgLoader = new ConfigLoader('empty-app', null, null, libRefs);
+      var cfgLoader = new ConfigLoader('empty-app', null, null, devebotRef, pluginRefs);
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
       // Profile configuration
@@ -80,7 +88,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('load application configuration (without options)', function() {
-      var cfgLoader = new ConfigLoader('app', null, appRef, libRefs);
+      var cfgLoader = new ConfigLoader('app', null, appRef, devebotRef, pluginRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -117,7 +125,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('load application configuration (without customized profile, sandbox)', function() {
-      var cfgLoader = new ConfigLoader('app', null, appRef, libRefs);
+      var cfgLoader = new ConfigLoader('app', null, appRef, devebotRef, pluginRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -165,7 +173,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('load application configuration (without private sandboxes)', function() {
-      var cfgLoader = new ConfigLoader('app', null, appRef, libRefs);
+      var cfgLoader = new ConfigLoader('app', null, appRef, devebotRef, pluginRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -210,7 +218,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('load application configuration with single private sandboxes', function() {
       var cfgLoader = new ConfigLoader('app', {
         privateSandboxes: 'bs1'
-      }, appRef, libRefs);
+      }, appRef, devebotRef, pluginRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -258,7 +266,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('load application configuration with multiple private sandboxes', function() {
       var cfgLoader = new ConfigLoader('app', {
         privateSandboxes: ['bs1', 'bs2']
-      }, appRef, libRefs);
+      }, appRef, devebotRef, pluginRefs);
 
       false && console.log(JSON.stringify(cfgLoader.config, null, 2));
 
@@ -308,7 +316,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('the order of listed sandbox labels is sensitive', function() {
       var cfgLoader = new ConfigLoader('app', {
         privateSandboxes: 'bs2, bs1'
-      }, appRef, libRefs);
+      }, appRef, devebotRef, pluginRefs);
 
       // Profile configuration
       assert.deepEqual(

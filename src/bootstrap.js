@@ -72,9 +72,7 @@ function appLoader(params) {
     path: path.join(topRootPath, 'index.js')
   };
 
-  let libRefs = [].concat(lodash.values(params.pluginRefs), devebotRef);
-
-  let configLoader = new ConfigLoader(appName, appOptions, appRef, libRefs);
+  let configLoader = new ConfigLoader(appName, appOptions, appRef, devebotRef, params.pluginRefs, params.bridgeRefs);
   let config = configLoader.config;
 
   config.appName = appName;
