@@ -93,6 +93,11 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   let { LX, LT } = ctx || this;
   appOptions = appOptions || {};
 
+  let pluginNameMap = buildNamingMap(pluginRefs);
+  let bridgeNameMap = buildNamingMap(bridgeRefs);
+
+  let transCTX = { LX, LT, pluginNameMap, bridgeNameMap };
+
   let libRefs = lodash.values(pluginRefs);
   if (devebotRef) {
     libRefs.push(devebotRef);
@@ -143,7 +148,7 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
       }).toMessage({
         text: ' + load the default config: ${defaultFile}'
       }));
-      config[configType]['default'] = transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), 'application');
+      config[configType]['default'] = transformConfig(transCTX, configType, loadConfigFile(ctx, defaultFile), 'application');
     }
 
     LX.has('conlog') && LX.log('conlog', LT.toMessage({
@@ -160,7 +165,7 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
       let libName = libRef.name;
       let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, configType + '.js');
       config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
-          transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libType, libName, libRef.presets));
+          transformConfig(transCTX, configType, loadConfigFile(ctx, defaultFile), libType, libName, libRef.presets));
     });
 
     LX.has('conlog') && LX.log('conlog', LT.add({
@@ -181,7 +186,7 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
         }).toMessage({
           text: ' - load the environment config: ${configFile}'
         }));
-        let configObj = lodash.defaultsDeep(transformConfig(ctx, configType, loadConfigFile(ctx, configFile), 'application'), accum);
+        let configObj = lodash.defaultsDeep(transformConfig(transCTX, configType, loadConfigFile(ctx, configFile), 'application'), accum);
         if (configObj.disabled) return accum;
         config[configType]['names'].push(mixtureItem[1]);
         return configObj;
@@ -272,6 +277,17 @@ let standardizeNames = function(ctx, cfgLabels) {
   cfgLabels = lodash.map(cfgLabels, lodash.trim);
   cfgLabels = lodash.filter(cfgLabels, lodash.negate(lodash.isEmpty));
   return cfgLabels;
+}
+
+let buildNamingMap = function(myRefs, namingMap) {
+  namingMap = namingMap || {};
+  lodash.forOwn(myRefs, function(myRef) {
+    namingMap[myRef.name] = myRef.name;
+    namingMap[myRef.nameInCamel] = myRef.name;
+    namingMap[myRef.code] = namingMap[myRef.code] || myRef.name;
+    namingMap[myRef.codeInCamel] = namingMap[myRef.codeInCamel] || myRef.name;
+  });
+  return namingMap;
 }
 
 let transformConfig = function(ctx, configType, configData, moduleType, moduleName, modulePresets) {
