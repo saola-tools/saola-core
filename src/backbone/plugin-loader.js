@@ -22,32 +22,30 @@ function PluginLoader(params) {
     text: ' + constructor start ...'
   }));
 
-  let pluginRootDirs = lodash.map(params.pluginRefs, function(pluginRef) {
-    pluginRef.code = pluginRef.code || extractPluginCode(CTX, pluginRef);
+  lodash.forEach(params.pluginRefs, function(pluginRef) {
+    pluginRef.code = extractPluginCode(CTX, pluginRef);
     pluginRef.pathDir = path.dirname(pluginRef.path);
     return pluginRef;
   });
 
-  LX.has('conlog') && LX.log('conlog', LT.add({
-    pluginRootDirs: pluginRootDirs
-  }).toMessage({
-    text: ' - pluginRootDirs: ${pluginRootDirs}'
+  LX.has('conlog') && LX.log('conlog', LT.add(params).toMessage({
+    text: ' - pluginRefs: ${pluginRefs}'
   }));
 
   this.loadMetadata = function(metadataMap) {
-    return loadAllMetainfs(CTX, metadataMap, pluginRootDirs);
+    return loadAllMetainfs(CTX, metadataMap, params.pluginRefs);
   }
 
   this.loadRoutines = function(routineMap, routineContext) {
-    return loadAllScripts(CTX, routineMap, 'ROUTINE', routineContext, pluginRootDirs);
+    return loadAllScripts(CTX, routineMap, 'ROUTINE', routineContext, params.pluginRefs);
   };
 
   this.loadServices = function(serviceMap) {
-    return loadAllGadgets(CTX, serviceMap, 'SERVICE', pluginRootDirs);
+    return loadAllGadgets(CTX, serviceMap, 'SERVICE', params.pluginRefs);
   };
 
   this.loadTriggers = function(triggerMap) {
-    return loadAllGadgets(CTX, triggerMap, 'TRIGGER', pluginRootDirs);
+    return loadAllGadgets(CTX, triggerMap, 'TRIGGER', params.pluginRefs);
   };
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
@@ -102,7 +100,7 @@ let extractPluginCode = function(CTX, pluginRef) {
       stack: PLUGIN_NAME_PATTERNS.toString()
     }, pluginRef));
   }
-  return info.code;
+  return info.codeInCamel;
 }
 
 let hasSeparatedDir = function(scriptType) {

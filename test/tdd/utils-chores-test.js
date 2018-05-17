@@ -76,16 +76,17 @@ describe('tdd:devebot:utils:chores', function() {
     }
     it('should extract code by pattern from name correctly', function() {
       const BRIDGE_NAME_PATTERNS = [
-        /^devebot-co-([a-z][a-z0-9\-]*)$/g,
-        /^([a-z][a-z0-9\-]*)$/g
+        /^devebot-co-([a-z][a-z0-9\-]*[a-z0-9])$/g,
+        /^([a-z][a-z0-9\-]*[a-z0-9])$/g
       ];
-      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'hello-world'), 'helloWorld');
-      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co'), 'devebotCo');
-      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-'), '');
-      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-hello-world'), 'helloWorld');
-      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-hello_world'), 'hello_world');
-      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-top-s3cr3t'), 'topS3cr3t');
-      assert(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-your-5ecret'), 'your_5ecret');
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'hello-world'), { i: 1, code: 'hello-world', codeInCamel: 'helloWorld' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'hello_world'), { i: -1, code: 'hello_world' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co'), { i: 1, code: 'devebot-co', codeInCamel: 'devebotCo' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-'), { i: -1, code: 'devebot-co-' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-hello-world'), { i: 0, code: 'hello-world', codeInCamel: 'helloWorld' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-hello_world'), { i: -1, code: 'devebot-co-hello_world' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-top-s3cr3t'), { i: 0, code: 'top-s3cr3t', codeInCamel: 'topS3cr3t' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-your-5ecret'), { i: 0, code: 'your-5ecret', codeInCamel: 'your_5ecret' });
     });
   });
 });

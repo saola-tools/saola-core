@@ -15,12 +15,15 @@ function BridgeLoader(params) {
   let LT = loggingFactory.getTracer();
   let CTX = {LX, LT};
 
-  let store = {};
-
   LX.has('silly') && LX.log('silly', LT.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
+
+  lodash.forEach(params.bridgeRefs, function(bridgeRef) {
+    bridgeRef.code = extractBridgeCode(CTX, bridgeRef);
+    return bridgeRef;
+  });
 
   LX.has('conlog') && LX.log('conlog', LT.add({
     bridgeRefs: params.bridgeRefs
@@ -96,7 +99,7 @@ let extractBridgeCode = function(ctx, bridgeRef) {
       stack: BRIDGE_NAME_PATTERNS.toString()
     }, bridgeRef));
   }
-  return info.code;
+  return info.codeInCamel;
 }
 
 let loadBridgeContructor = function(ctx, bridgeRef) {
@@ -115,7 +118,7 @@ let loadBridgeContructor = function(ctx, bridgeRef) {
 
   let result = {};
 
-  let bridgeCode = extractBridgeCode(ctx, bridgeRef);
+  let bridgeCode = bridgeRef.code;
   if (typeof(bridgeCode) !== 'string') return result;
 
   let opStatus = lodash.assign({ type: 'DIALECT', code: bridgeCode }, bridgeRef);
