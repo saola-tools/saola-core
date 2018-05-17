@@ -695,27 +695,45 @@ describe('tdd:devebot:base:bootstrap', function() {
       });
       assert.sameDeepMembers(cfg.bridgeRefs, [
         {
+          "code": "bridge3",
+          "codeInCamel": "bridge3",
           "name": "bridge3",
+          "nameInCamel": "bridge3",
           "path": "/test/lib/bridge3/index.js"
         },
         {
+          "code": "bridge4",
+          "codeInCamel": "bridge4",
           "name": "bridge4",
+          "nameInCamel": "bridge4",
           "path": "/test/lib/bridge4/index.js"
         },
         {
+          "code": "bridge1",
+          "codeInCamel": "bridge1",
           "name": "bridge1",
+          "nameInCamel": "bridge1",
           "path": "/test/lib/bridge1/index.js"
         },
         {
+          "code": "bridge2",
+          "codeInCamel": "bridge2",
           "name": "bridge2",
+          "nameInCamel": "bridge2",
           "path": "/test/lib/bridge2/index.js"
         },
         {
+          "code": "connector1",
+          "codeInCamel": "connector1",
           "name": "devebot-co-connector1",
+          "nameInCamel": "devebotCoConnector1",
           "path": "/test/lib/devebot-co-connector1/bridge.js"
         },
         {
+          "code": "connector2",
+          "codeInCamel": "connector2",
           "name": "devebot-co-connector2",
+          "nameInCamel": "devebotCoConnector2",
           "path": "/test/lib/devebot-co-connector2/bridge.js"
         }
       ]);
@@ -727,21 +745,30 @@ describe('tdd:devebot:base:bootstrap', function() {
             "path": "/test/app/fullapp/index.js"
           },
           {
+            "code": "sub-plugin1",
+            "codeInCamel": "subPlugin1",
             "name": "sub-plugin1",
+            "nameInCamel": "subPlugin1",
             "path": "/test/lib/sub-plugin1/index.js",
             "presets": {
               "layerRootPath": '/test/lib/sub-plugin1'
             }
           },
           {
+            "code": "sub-plugin2",
+            "codeInCamel": "subPlugin2",
             "name": "sub-plugin2",
+            "nameInCamel": "subPlugin2",
             "path": "/test/lib/sub-plugin2/index.js",
             "presets": {
               "layerRootPath": '/test/lib/sub-plugin2'
             }
           },
           {
+            "code": "plugin1",
+            "codeInCamel": "plugin1",
             "name": "plugin1",
+            "nameInCamel": "plugin1",
             "path": "/test/lib/plugin1/index.js",
             "presets": {
               "configTags": "bridge[dialect-bridge]",
@@ -749,7 +776,10 @@ describe('tdd:devebot:base:bootstrap', function() {
             }
           },
           {
+            "code": "plugin2",
+            "codeInCamel": "plugin2",
             "name": "plugin2",
+            "nameInCamel": "plugin2",
             "path": "/test/lib/plugin2/index.js",
             "presets": {
               "configTags": "bridge[dialect-bridge]",
@@ -757,7 +787,10 @@ describe('tdd:devebot:base:bootstrap', function() {
             }
           },
           {
+            "code": "plugin3",
+            "codeInCamel": "plugin3",
             "name": "plugin3",
+            "nameInCamel": "plugin3",
             "path": "/test/lib/plugin3/index.js",
             "presets": {
               "layerRootPath": '/test/lib/plugin3'
