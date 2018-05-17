@@ -23,7 +23,7 @@ function PluginLoader(params) {
   }));
 
   lodash.forEach(params.pluginRefs, function(pluginRef) {
-    pluginRef.code = extractPluginCode(CTX, pluginRef);
+    pluginRef.code = pluginRef.codeInCamel;
     pluginRef.pathDir = path.dirname(pluginRef.path);
     return pluginRef;
   });
@@ -84,24 +84,6 @@ PluginLoader.argumentSchema = {
 module.exports = PluginLoader;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
-
-const PLUGIN_NAME_PATTERNS = [
-  /^devebot-dp-([a-z][a-zA-Z0-9_\-]*)$/g,
-  /^([a-z][a-zA-Z0-9_\-]*)$/g
-];
-
-let extractPluginCode = function(CTX, pluginRef) {
-  let info = chores.extractCodeByPattern(CTX, PLUGIN_NAME_PATTERNS, pluginRef.name);
-  if (info.i < 0) {
-    errorHandler.collect(lodash.assign({
-      stage: 'naming',
-      type: 'plugin',
-      hasError: true,
-      stack: PLUGIN_NAME_PATTERNS.toString()
-    }, pluginRef));
-  }
-  return info.codeInCamel;
-}
 
 let hasSeparatedDir = function(scriptType) {
   return lodash.filter(constx, function(obj, key) {

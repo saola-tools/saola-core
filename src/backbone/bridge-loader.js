@@ -21,7 +21,7 @@ function BridgeLoader(params) {
   }));
 
   lodash.forEach(params.bridgeRefs, function(bridgeRef) {
-    bridgeRef.code = extractBridgeCode(CTX, bridgeRef);
+    bridgeRef.code = bridgeRef.codeInCamel;
     return bridgeRef;
   });
 
@@ -83,24 +83,6 @@ BridgeLoader.argumentSchema = {
 module.exports = BridgeLoader;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
-
-const BRIDGE_NAME_PATTERNS = [
-  /^devebot-co-([a-z][a-z0-9\-]*)$/g,
-  /^([a-z][a-z0-9\-]*)$/g
-];
-
-let extractBridgeCode = function(ctx, bridgeRef) {
-  let info = chores.extractCodeByPattern(ctx, BRIDGE_NAME_PATTERNS, bridgeRef.name);
-  if (info.i < 0) {
-    errorHandler.collect(lodash.assign({
-      stage: 'naming',
-      type: 'bridge',
-      hasError: true,
-      stack: BRIDGE_NAME_PATTERNS.toString()
-    }, bridgeRef));
-  }
-  return info.codeInCamel;
-}
 
 let loadBridgeContructor = function(ctx, bridgeRef) {
   let {LX, LT} = ctx;
