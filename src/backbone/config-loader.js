@@ -46,6 +46,10 @@ function Loader(appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs)
         return readVariable(CTX, label, CONFIG_VAR_NAMES[varName]);
       }));
 
+  if (chores.isFeatureSupported('standardizing-config')) {
+    config = doAliasMap(CTX, config, buildRelativeAliasMap(pluginRefs), buildRelativeAliasMap(bridgeRefs));
+  }
+
   Object.defineProperty(this, 'config', {
     get: function() { return config },
     set: function(value) {}
@@ -93,10 +97,10 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   let { LX, LT } = ctx || this;
   appOptions = appOptions || {};
 
-  let pluginNameMap = buildNamingMap(pluginRefs);
-  let bridgeNameMap = buildNamingMap(bridgeRefs);
+  let pluginAliasMap = buildAbsoluteAliasMap(pluginRefs);
+  let bridgeAliasMap = buildAbsoluteAliasMap(bridgeRefs);
 
-  let transCTX = { LX, LT, pluginNameMap, bridgeNameMap };
+  let transCTX = { LX, LT, pluginAliasMap, bridgeAliasMap };
 
   let libRefs = lodash.values(pluginRefs);
   if (devebotRef) {
@@ -279,23 +283,32 @@ let standardizeNames = function(ctx, cfgLabels) {
   return cfgLabels;
 }
 
-let buildNamingMap = function(myRefs, namingMap) {
-  namingMap = namingMap || {};
+let buildAbsoluteAliasMap = function(myRefs, aliasMap) {
+  aliasMap = aliasMap || {};
   lodash.forOwn(myRefs, function(myRef) {
-    namingMap[myRef.name] = myRef.name;
-    namingMap[myRef.nameInCamel] = myRef.name;
-    namingMap[myRef.code] = namingMap[myRef.code] || myRef.name;
-    namingMap[myRef.codeInCamel] = namingMap[myRef.codeInCamel] || myRef.name;
+    aliasMap[myRef.name] = myRef.name;
+    aliasMap[myRef.nameInCamel] = myRef.name;
+    aliasMap[myRef.code] = aliasMap[myRef.code] || myRef.name;
+    aliasMap[myRef.codeInCamel] = aliasMap[myRef.codeInCamel] || myRef.name;
   });
-  return namingMap;
+  return aliasMap;
+}
+
+let buildRelativeAliasMap = function(myRefs, aliasMap) {
+  aliasMap = aliasMap || {};
+  lodash.forOwn(myRefs, function(myRef) {
+    aliasMap[myRef.name] = myRef.codeInCamel;
+  });
+  return aliasMap;
 }
 
 let transformConfig = function(ctx, configType, configData, moduleType, moduleName, modulePresets) {
-  if (!chores.isFeatureSupported('bridge-full-ref')) {
-    return configData;
-  }
-  if (configType === CONFIG_SANDBOX_NAME) {
-    return transformSandboxConfig(ctx, configData, moduleType, moduleName, modulePresets);
+  let { LX, LT, pluginAliasMap, bridgeAliasMap } = ctx || this;
+  if (chores.isFeatureSupported('bridge-full-ref')) {
+    if (configType === CONFIG_SANDBOX_NAME) {
+      configData = transformSandboxConfig(ctx, configData, moduleType, moduleName, modulePresets);
+      configData = doAliasMap(ctx, configData, pluginAliasMap, bridgeAliasMap);
+    }
   }
   return configData;
 }
@@ -335,6 +348,32 @@ let transformSandboxConfig = function(ctx, sandboxConfig, moduleType, moduleName
         });
       }
       traverseBackward(cfgBridges, newBridges);
+      sandboxConfig.bridges = newBridges;
+    }
+  }
+  return sandboxConfig;
+}
+
+let doAliasMap = function(ctx, sandboxConfig, pluginAliasMap, bridgeAliasMap) {
+  let { LX, LT } = ctx || this;
+  if (chores.isFeatureSupported('standardizing-config')) {
+    if (sandboxConfig && lodash.isObject(sandboxConfig.bridges)) {
+      let oldBridges = sandboxConfig.bridges;
+      let newBridges = {};
+      lodash.forOwn(oldBridges, function(oldBridge, oldBridgeName) {
+        let newBridgeName = bridgeAliasMap[oldBridgeName] || oldBridgeName;
+        if (newBridgeName) {
+          if (lodash.isObject(oldBridge)) {
+            newBridges[newBridgeName] = {};
+            lodash.forOwn(oldBridge, function(oldPlugin, oldPluginName) {
+              let newPluginName = pluginAliasMap[oldPluginName] || oldPluginName;
+              newBridges[newBridgeName][newPluginName] = oldPlugin;
+            });
+          } else {
+            newBridges[newBridgeName] = oldBridge;
+          }
+        }
+      });
       sandboxConfig.bridges = newBridges;
     }
   }

@@ -19,6 +19,11 @@ var rewire = require('rewire');
 
 describe('tdd:devebot:core:config-loader', function() {
 
+  var CTX = {
+    LX: LogAdapter.getLogger(),
+    LT: LogTracer.ROOT
+  };
+
   var appRef = {
     name: 'tdd-cfg',
     type: 'application',
@@ -120,7 +125,9 @@ describe('tdd:devebot:core:config-loader', function() {
     var Bootstrap = rewire('../../lib/bootstrap');
     var extractAliasNames = Bootstrap.__get__('extractAliasNames');
     var ConfigLoader = rewire('../../lib/backbone/config-loader');
-    var buildNamingMap = ConfigLoader.__get__('buildNamingMap');
+    var buildAbsoluteAliasMap = ConfigLoader.__get__('buildAbsoluteAliasMap');
+    var buildRelativeAliasMap = ConfigLoader.__get__('buildRelativeAliasMap');
+    var doAliasMap = ConfigLoader.__get__('doAliasMap');
     var transformConfig = ConfigLoader.__get__('transformConfig');
 
     it('should build the map of plugin-names transformation correctly', function() {
@@ -198,10 +205,7 @@ describe('tdd:devebot:core:config-loader', function() {
         }
       };
 
-      assert.deepEqual(extractAliasNames({
-        LX: LogAdapter.getLogger(),
-        LT: LogTracer.ROOT
-      }, 'plugin', pluginDefs), pluginRefs);
+      assert.deepEqual(extractAliasNames(CTX, 'plugin', pluginDefs), pluginRefs);
 
       var expectedMap = {
         "devebot-dp-wrapper1": "devebot-dp-wrapper1",
@@ -224,10 +228,220 @@ describe('tdd:devebot:core:config-loader', function() {
         "subWrapper2": "sub-wrapper2"
       };
 
-      var pluginNameMap = buildNamingMap(pluginRefs);
+      var pluginAliasMap = buildAbsoluteAliasMap(pluginRefs);
 
-      false && console.log(JSON.stringify(pluginNameMap, null, 2));
-      assert.deepEqual(pluginNameMap, expectedMap);
+      false && console.log(JSON.stringify(pluginAliasMap, null, 2));
+      assert.deepEqual(pluginAliasMap, expectedMap);
+    });
+
+    it('should transform relative names into default full names', function() {
+      if (!chores.isFeatureSupported('standardizing-config')) {
+        this.skip();
+        return;
+      }
+
+      var originalCfg = {
+        bridges: {
+          "bridgeKebabCase1": {
+            "wrapper1": {
+              "pointer": {
+                "refPath": "sandbox -> bridge-kebab-case1 -> wrapper1 -> pointer"
+              }
+            }
+          },
+          "bridgeKebabCase2": {
+            "devebot-dp-wrapper1": {
+              "pointer": {
+                "refPath": "sandbox -> bridge-kebab-case2 -> wrapper1 -> pointer"
+              }
+            }
+          },
+          "connector1": {
+            "wrapper1": {
+              "bean": {
+                "refPath": "sandbox -> connector1 -> wrapper1 -> bean"
+              }
+            }
+          },
+          "connector2": {
+            "devebot-dp-wrapper1": {
+              "bean": {
+                "refPath": "sandbox -> connector2 -> wrapper1 -> bean"
+              }
+            }
+          }
+        }
+      };
+
+      var expectedCfg = {
+        bridges: {
+          "bridge-kebab-case1": {
+            "devebot-dp-wrapper1": {
+              "pointer": {
+                "refPath": "sandbox -> bridge-kebab-case1 -> wrapper1 -> pointer"
+              }
+            }
+          },
+          "bridge-kebab-case2": {
+            "devebot-dp-wrapper1": {
+              "pointer": {
+                "refPath": "sandbox -> bridge-kebab-case2 -> wrapper1 -> pointer"
+              }
+            }
+          },
+          "devebot-co-connector1": {
+            "devebot-dp-wrapper1": {
+              "bean": {
+                "refPath": "sandbox -> connector1 -> wrapper1 -> bean"
+              }
+            }
+          },
+          "devebot-co-connector2": {
+            "devebot-dp-wrapper1": {
+              "bean": {
+                "refPath": "sandbox -> connector2 -> wrapper1 -> bean"
+              }
+            }
+          }
+        }
+      };
+
+      var transformedCfg = transformConfig(lodash.assign({
+        pluginAliasMap: buildAbsoluteAliasMap(extractAliasNames(CTX, 'plugin', {
+          "path/to/devebot-dp-wrapper1": {
+            name: "devebot-dp-wrapper1"
+          },
+          "path/to/devebot-dp-wrapper2": {
+            name: "devebot-dp-wrapper2"
+          }
+        })),
+        bridgeAliasMap: buildAbsoluteAliasMap(extractAliasNames(CTX, 'bridge', {
+          "path/to/bridge-kebab-case1": {
+            name: "bridge-kebab-case1"
+          },
+          "path/to/bridge-kebab-case2": {
+            name: "bridge-kebab-case2"
+          },
+          "path/to/devebot-co-connector1": {
+            name: "devebot-co-connector1"
+          },
+          "path/to/devebot-co-connector2": {
+            name: "devebot-co-connector2"
+          }
+        }))
+      }, CTX), 'sandbox', originalCfg, 'plugin', 'cfg-example', {});
+
+      false && console.log(JSON.stringify(transformedCfg, null, 2));
+      assert.deepInclude(transformedCfg, expectedCfg);
+    });
+
+    it('should transform absolute names into relative names', function() {
+      if (!chores.isFeatureSupported('standardizing-config')) {
+        this.skip();
+        return;
+      }
+
+      var originalCfg = {
+        bridges: {
+          "bridgeKebabCase1": {
+            "wrapper1": {
+              "pointer": {
+                "refPath": "sandbox -> bridge-kebab-case1 -> wrapper1 -> pointer"
+              }
+            }
+          },
+          "bridge-kebab-case2": {
+            "devebot-dp-wrapper1": {
+              "pointer": {
+                "refPath": "sandbox -> bridge-kebab-case2 -> wrapper1 -> pointer"
+              }
+            }
+          },
+          "connector1": {
+            "wrapper1": {
+              "bean": {
+                "refPath": "sandbox -> connector1 -> wrapper1 -> bean"
+              }
+            }
+          },
+          "connector2": {
+            "devebot-dp-wrapper1": {
+              "bean": {
+                "refPath": "sandbox -> connector2 -> wrapper1 -> bean"
+              }
+            }
+          }
+        }
+      };
+
+      var expectedCfg = {
+        bridges: {
+          "bridgeKebabCase1": {
+            "wrapper1": {
+              "pointer": {
+                "refPath": "sandbox -> bridge-kebab-case1 -> wrapper1 -> pointer"
+              }
+            }
+          },
+          "bridgeKebabCase2": {
+            "wrapper1": {
+              "pointer": {
+                "refPath": "sandbox -> bridge-kebab-case2 -> wrapper1 -> pointer"
+              }
+            }
+          },
+          "connector1": {
+            "wrapper1": {
+              "bean": {
+                "refPath": "sandbox -> connector1 -> wrapper1 -> bean"
+              }
+            }
+          },
+          "connector2": {
+            "wrapper1": {
+              "bean": {
+                "refPath": "sandbox -> connector2 -> wrapper1 -> bean"
+              }
+            }
+          }
+        }
+      };
+
+      var pluginRefs = extractAliasNames(CTX, 'plugin', {
+        "path/to/devebot-dp-wrapper1": {
+          name: "devebot-dp-wrapper1"
+        },
+        "path/to/devebot-dp-wrapper2": {
+          name: "devebot-dp-wrapper2"
+        }
+      });
+
+      var bridgeRefs = extractAliasNames(CTX, 'bridge', {
+        "path/to/bridge-kebab-case1": {
+          name: "bridge-kebab-case1"
+        },
+        "path/to/bridge-kebab-case2": {
+          name: "bridge-kebab-case2"
+        },
+        "path/to/devebot-co-connector1": {
+          name: "devebot-co-connector1"
+        },
+        "path/to/devebot-co-connector2": {
+          name: "devebot-co-connector2"
+        }
+      });
+
+      var absoluteCfg = transformConfig(lodash.assign({
+        pluginAliasMap: buildAbsoluteAliasMap(pluginRefs),
+        bridgeAliasMap: buildAbsoluteAliasMap(bridgeRefs)
+      }, CTX), 'sandbox', originalCfg, 'plugin', 'cfg-example', {});
+
+      var relativeCfg = doAliasMap(CTX, absoluteCfg,
+          buildRelativeAliasMap(pluginRefs),
+          buildRelativeAliasMap(bridgeRefs));
+
+      false && console.log(JSON.stringify(relativeCfg, null, 2));
+      assert.deepInclude(relativeCfg, expectedCfg);
     });
   });
 
@@ -531,10 +745,7 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           }
         };
-        var transformedCfg = transformSandboxConfig({
-          logger: LogAdapter.getLogger(),
-          tracer: LogTracer.ROOT
-        }, sandboxConfig, 'application');
+        var transformedCfg = transformSandboxConfig(CTX, sandboxConfig, 'application');
         false && console.log(JSON.stringify(transformedCfg, null, 2));
         assert.deepInclude(transformedCfg, exptectedConfig);
       });
@@ -589,10 +800,9 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           }
         };
-        var transformedCfg = transformSandboxConfig({
-          logger: LogAdapter.getLogger(),
-          tracer: LogTracer.ROOT
-        }, sandboxConfig, 'plugin', null, { configTags: ['bridge[dialect-bridge]']});
+        var transformedCfg = transformSandboxConfig(CTX, sandboxConfig, 'plugin', null, {
+          configTags: ['bridge[dialect-bridge]']
+        });
         false && console.log(JSON.stringify(transformedCfg, null, 2));
         assert.deepInclude(transformedCfg, exptectedConfig);
       });
@@ -647,10 +857,9 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           }
         };
-        var transformedCfg = transformSandboxConfig({
-          logger: LogAdapter.getLogger(),
-          tracer: LogTracer.ROOT
-        }, sandboxConfig, 'plugin', 'plugin1', {configTags: 'bridge[dialect-bridge]'});
+        var transformedCfg = transformSandboxConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
+          configTags: 'bridge[dialect-bridge]'
+        });
         false && console.log(JSON.stringify(transformedCfg, null, 2));
         assert.deepInclude(transformedCfg, exptectedConfig);
       });
