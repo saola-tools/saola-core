@@ -95,7 +95,7 @@ lab.createKernel = function(appName) {
   }
 
   var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
-  return new Kernel(_config);
+  return new Kernel({configObject: _config});
 }
 
 lab.createBasicServices = function(appName, injectedObjects) {

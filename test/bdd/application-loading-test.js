@@ -71,6 +71,7 @@ describe('devebot:application', function() {
 			var devebotScopes = [
 				"devebot/bootstrap",
 				"devebot/appinfoLoader",
+				"devebot/nameResolver",
 				"devebot/configLoader",
 				"devebot/kernel",
 				"devebot/server",
