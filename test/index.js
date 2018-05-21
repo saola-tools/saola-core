@@ -3,6 +3,7 @@
 var chores = require('../lib/utils/chores');
 var constx = require('../lib/utils/constx');
 var debugx = require('../lib/utils/pinbug')('devebot:test:lab');
+var NameResolver = require('../lib/backbone/name-resolver');
 var lodash = require('lodash');
 var path = require('path');
 var Injektor = require('injektor');
@@ -94,8 +95,12 @@ lab.createKernel = function(appName) {
     console.log('==/ createKernel() ========');
   }
 
+  let nameResolver = new NameResolver(lodash.pick(_config, [
+    'pluginRefs', 'bridgeRefs'
+  ]));
+
   var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
-  return new Kernel({configObject: _config});
+  return new Kernel({configObject: _config, nameResolver});
 }
 
 lab.createBasicServices = function(appName, injectedObjects) {
@@ -162,7 +167,8 @@ lab.createBridgeLoader = function(appName, injectedObjects) {
 lab.createPluginLoader = function(appName, injectedObjects) {
   injectedObjects = injectedObjects || {
     profileConfig: {},
-    pluginRefs: []
+    pluginRefs: [],
+    bridgeRefs: []
   };
   if (appName) {
     var app = lab.getApp(appName);
@@ -180,11 +186,12 @@ lab.createPluginLoader = function(appName, injectedObjects) {
       }
     }
     injectedObjects.pluginRefs = app.config.pluginRefs || [];
+    injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
   }
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'plugin-loader', 'schema-validator', 'logging-factory'
+    'plugin-loader', 'name-resolver', 'schema-validator', 'logging-factory'
   ]);
   return injektor.lookup('pluginLoader');
 }
@@ -204,12 +211,13 @@ lab.createRunhookManager = function(appName, injectedObjects) {
     injectedObjects.sandboxName = app.config.sandbox.names.join(',');
     injectedObjects.sandboxConfig = app.config.sandbox.mixture;
     injectedObjects.pluginRefs = app.config.pluginRefs;
+    injectedObjects.bridgeRefs = app.config.bridgeRefs;
     injectedObjects.injectedHandlers = {};
   }
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'runhook-manager', 'plugin-loader', 'schema-validator', 'logging-factory', 'jobqueue-binder'
+    'runhook-manager', 'plugin-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'jobqueue-binder'
   ]);
   return injektor.lookup('runhookManager');
 }
