@@ -130,7 +130,8 @@ lab.createBasicServices = function(appName, injectedObjects) {
 lab.createBridgeLoader = function(appName, injectedObjects) {
   injectedObjects = injectedObjects || {
     profileConfig: {},
-    bridgeRefs: []
+    bridgeRefs: [],
+    pluginRefs: []
   };
   if (appName) {
     var app = lab.getApp(appName);
@@ -148,11 +149,12 @@ lab.createBridgeLoader = function(appName, injectedObjects) {
       }
     }
     injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
+    injectedObjects.pluginRefs = app.config.pluginRefs || [];
   }
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'bridge-loader', 'schema-validator', 'logging-factory'
+    'bridge-loader', 'schema-validator', 'logging-factory', 'name-resolver'
   ]);
   return injektor.lookup('bridgeLoader');
 }
@@ -238,7 +240,7 @@ lab.createSandboxManager = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'sandbox-manager', 'bridge-loader', 'plugin-loader', 'schema-validator', 'logging-factory'
+    'sandbox-manager', 'bridge-loader', 'plugin-loader', 'schema-validator', 'logging-factory', 'name-resolver'
   ]);
   return injektor.lookup('sandboxManager');
 }
