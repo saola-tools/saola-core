@@ -79,14 +79,14 @@ describe('tdd:devebot:utils:chores', function() {
         /^devebot-co-([a-z][a-z0-9\-]*[a-z0-9])$/g,
         /^([a-z][a-z0-9\-]*[a-z0-9])$/g
       ];
-      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'hello-world'), { i: 1, code: 'hello-world', codeInCamel: 'helloWorld' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'hello-world'), { i: 1, code: 'hello-world' });
       assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'hello_world'), { i: -1, code: 'hello_world' });
-      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co'), { i: 1, code: 'devebot-co', codeInCamel: 'devebotCo' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co'), { i: 1, code: 'devebot-co' });
       assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-'), { i: -1, code: 'devebot-co-' });
-      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-hello-world'), { i: 0, code: 'hello-world', codeInCamel: 'helloWorld' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-hello-world'), { i: 0, code: 'hello-world' });
       assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-hello_world'), { i: -1, code: 'devebot-co-hello_world' });
-      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-top-s3cr3t'), { i: 0, code: 'top-s3cr3t', codeInCamel: 'topS3cr3t' });
-      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-your-5ecret'), { i: 0, code: 'your-5ecret', codeInCamel: 'your_5ecret' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-top-s3cr3t'), { i: 0, code: 'top-s3cr3t' });
+      assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-your-5ecret'), { i: 0, code: 'your-5ecret' });
     });
   });
 });
