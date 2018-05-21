@@ -130,9 +130,8 @@ describe('tdd:devebot:core:config-loader', function() {
   });
 
   describe('standardizing loaded configuration data', function() {
-    var Bootstrap = rewire('../../lib/bootstrap');
-    var extractAliasNames = Bootstrap.__get__('extractAliasNames');
     var NameResolver = rewire('../../lib/backbone/name-resolver');
+    var extractAliasNames = NameResolver.__get__('extractAliasNames');
     var buildAbsoluteAliasMap = NameResolver.__get__('buildAbsoluteAliasMap');
     var buildRelativeAliasMap = NameResolver.__get__('buildRelativeAliasMap');
     var ConfigLoader = rewire('../../lib/backbone/config-loader');
