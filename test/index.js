@@ -200,6 +200,8 @@ lab.createRunhookManager = function(appName, injectedObjects) {
   injectedObjects = lodash.assign({
     appName: appName || 'unknown',
     appInfo: {},
+    pluginRefs: [],
+    bridgeRefs: [],
     injectedHandlers: {}
   }, injectedObjects);
   if (appName) {
