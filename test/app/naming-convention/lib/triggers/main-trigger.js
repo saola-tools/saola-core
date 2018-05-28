@@ -29,7 +29,7 @@ var Service = function(params) {
 
   server.on('request', function(req, res) {
     res.writeHead(200);
-    res.end('fullapp webserver');
+    res.end('naming-convention webserver');
   });
 
   self.getServer = function() {
@@ -44,7 +44,7 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        chores.isVerboseForced('demo-app', mainCfg) &&
+        chores.isVerboseForced('naming-convention', mainCfg) &&
         console.log('%s is listening at http://%s:%s', Service.argumentSchema.$id, host, port);
         resolved(serverInstance);
       });
@@ -54,7 +54,7 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        chores.isVerboseForced('demo-app', mainCfg) &&
+        chores.isVerboseForced('naming-convention', mainCfg) &&
         console.log('%s has been closed', Service.argumentSchema.$id);
         resolved();
       });
