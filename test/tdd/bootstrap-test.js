@@ -647,6 +647,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       assert.hasAllKeys(cfg, [
         'profile', 'sandbox', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
       ]);
+      // verify appInfo
       assert.equal(cfg.appName, 'fullapp');
       assert.deepEqual(cfg.appInfo, {
         "version": "0.1.0",
@@ -693,6 +694,7 @@ describe('tdd:devebot:base:bootstrap', function() {
         ],
         "framework": lab.getFrameworkInfo()
       });
+      // verify bridgeRefs
       assert.sameDeepMembers(cfg.bridgeRefs, [
         {
           "code": "bridge3",
@@ -737,105 +739,77 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/lib/devebot-co-connector2/bridge.js"
         }
       ]);
-      if (chores.isFeatureSupported('presets')) {
-        assert.sameDeepMembers(cfg.pluginRefs, [
-          {
-            "type": "application",
-            "name": "fullapp",
-            "path": "/test/app/fullapp/index.js"
-          },
-          {
-            "code": "sub-plugin1",
-            "codeInCamel": "subPlugin1",
-            "name": "sub-plugin1",
-            "nameInCamel": "subPlugin1",
-            "path": "/test/lib/sub-plugin1/index.js",
-            "presets": {
-              "layerRootPath": '/test/lib/sub-plugin1'
-            }
-          },
-          {
-            "code": "sub-plugin2",
-            "codeInCamel": "subPlugin2",
-            "name": "sub-plugin2",
-            "nameInCamel": "subPlugin2",
-            "path": "/test/lib/sub-plugin2/index.js",
-            "presets": {
-              "layerRootPath": '/test/lib/sub-plugin2'
-            }
-          },
-          {
-            "code": "plugin1",
-            "codeInCamel": "plugin1",
-            "name": "plugin1",
-            "nameInCamel": "plugin1",
-            "path": "/test/lib/plugin1/index.js",
-            "presets": {
-              "configTags": "bridge[dialect-bridge]",
-              "layerRootPath": '/test/lib/plugin1'
-            }
-          },
-          {
-            "code": "plugin2",
-            "codeInCamel": "plugin2",
-            "name": "plugin2",
-            "nameInCamel": "plugin2",
-            "path": "/test/lib/plugin2/index.js",
-            "presets": {
-              "configTags": "bridge[dialect-bridge]",
-              "layerRootPath": '/test/lib/plugin2'
-            }
-          },
-          {
-            "code": "plugin3",
-            "codeInCamel": "plugin3",
-            "name": "plugin3",
-            "nameInCamel": "plugin3",
-            "path": "/test/lib/plugin3/index.js",
-            "presets": {
-              "layerRootPath": '/test/lib/plugin3'
-            }
-          },
-          {
-            "type": "framework",
-            "name": "devebot",
-            "path": "/devebot/index.js"
+      // verify pluginRefs
+      var expectedPluginRefs = [
+        {
+          "type": "application",
+          "name": "fullapp",
+          "path": "/test/app/fullapp/index.js"
+        },
+        {
+          "code": "sub-plugin1",
+          "codeInCamel": "subPlugin1",
+          "name": "sub-plugin1",
+          "nameInCamel": "subPlugin1",
+          "path": "/test/lib/sub-plugin1/index.js",
+          "presets": {
+            "layerRootPath": '/test/lib/sub-plugin1'
           }
-        ]);
-      } else {
-        assert.sameDeepMembers(cfg.pluginRefs, [
-          {
-            "type": "application",
-            "name": "fullapp",
-            "path": "/test/app/fullapp/index.js"
-          },
-          {
-            "name": "sub-plugin1",
-            "path": "/test/lib/sub-plugin1/index.js"
-          },
-          {
-            "name": "sub-plugin2",
-            "path": "/test/lib/sub-plugin2/index.js"
-          },
-          {
-            "name": "plugin1",
-            "path": "/test/lib/plugin1/index.js"
-          },
-          {
-            "name": "plugin2",
-            "path": "/test/lib/plugin2/index.js"
-          },
-          {
-            "name": "plugin3",
-            "path": "/test/lib/plugin3/index.js"
-          },
-          {
-            "type": "framework",
-            "name": "devebot",
-            "path": "/devebot/index.js"
+        },
+        {
+          "code": "sub-plugin2",
+          "codeInCamel": "subPlugin2",
+          "name": "sub-plugin2",
+          "nameInCamel": "subPlugin2",
+          "path": "/test/lib/sub-plugin2/index.js",
+          "presets": {
+            "layerRootPath": '/test/lib/sub-plugin2'
           }
-        ]);
+        },
+        {
+          "code": "plugin1",
+          "codeInCamel": "plugin1",
+          "name": "plugin1",
+          "nameInCamel": "plugin1",
+          "path": "/test/lib/plugin1/index.js",
+          "presets": {
+            "configTags": "bridge[dialect-bridge]",
+            "layerRootPath": '/test/lib/plugin1'
+          }
+        },
+        {
+          "code": "plugin2",
+          "codeInCamel": "plugin2",
+          "name": "plugin2",
+          "nameInCamel": "plugin2",
+          "path": "/test/lib/plugin2/index.js",
+          "presets": {
+            "configTags": "bridge[dialect-bridge]",
+            "layerRootPath": '/test/lib/plugin2'
+          }
+        },
+        {
+          "code": "plugin3",
+          "codeInCamel": "plugin3",
+          "name": "plugin3",
+          "nameInCamel": "plugin3",
+          "path": "/test/lib/plugin3/index.js",
+          "presets": {
+            "layerRootPath": '/test/lib/plugin3'
+          }
+        },
+        {
+          "type": "framework",
+          "name": "devebot",
+          "path": "/devebot/index.js"
+        }
+      ];
+      if (!chores.isFeatureSupported('presets')) {
+        expectedPluginRefs = lodash.map(expectedPluginRefs, function(item) {
+          return lodash.omit(item, ["presets"]);
+        });
       }
+      assert.sameDeepMembers(cfg.pluginRefs, expectedPluginRefs);
     });
   });
 
