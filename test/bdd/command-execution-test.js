@@ -64,26 +64,30 @@ describe('devebot:command:execution', function() {
 		injectedServiceNames = [
 			"application/mainService",
 			"plugin1/plugin1Service",
-			"plugin2/plugin2Service",
-			"plugin1/bridge1#anyname1a",
-			"plugin2/bridge1#anyname1b",
-			"plugin2/bridge1#anyname1c",
-			"plugin1/bridge2#anyname2a",
-			"plugin2/bridge2#anyname2b",
-			"plugin1/bridge2#anyname2c"
+			"plugin2/plugin2Service"
 		];
+		// run in bridge-full-ref mode, and apply presets config
+		// don't care for standardizing-config feature
+		if (chores.isFeatureSupported('bridge-full-ref')
+				&& chores.isFeatureSupported('presets')) {
+			injectedServiceNames.push.apply(injectedServiceNames, [
+				"plugin1/bridge1#anyname1a",
+				"plugin2/bridge1#anyname1b",
+				"plugin2/bridge1#anyname1c",
+				"plugin1/bridge2#anyname2a",
+				"plugin2/bridge2#anyname2b",
+				"plugin1/bridge2#anyname2c"
+			]);
+		}
 		if (!chores.isFeatureSupported('bridge-full-ref')) {
-			injectedServiceNames = [
-				"application/mainService",
-				"plugin1/plugin1Service",
-				"plugin2/plugin2Service",
+			injectedServiceNames.push.apply(injectedServiceNames, [
 				"bridge1/anyname1a",
 				"bridge1/anyname1b",
 				"bridge1/anyname1c",
 				"bridge2/anyname2a",
 				"bridge2/anyname2b",
 				"bridge2/anyname2c"
-			];
+			]);
 		}
 		api = new DevebotApi(lab.getApiConfig());
 	});
