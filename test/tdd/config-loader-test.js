@@ -678,12 +678,9 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           }
         };
-        var exptectedConfig = {
-          "plugins": {
-            "plugin1": {},
-            "plugin2": {}
-          },
-          "bridges": {
+        var exptectedConfig = lodash.cloneDeep(sandboxConfig);
+        if (chores.isFeatureSupported('bridge-full-ref')) {
+          exptectedConfig.bridges = {
             "__status__": true,
             "bridge1": {
               "*": {
@@ -702,8 +699,8 @@ describe('tdd:devebot:core:config-loader', function() {
                 }
               }
             }
-          }
-        };
+          };
+        }
         var transformedCfg = transformSandboxConfig(CTX, sandboxConfig, 'plugin', null, {
           configTags: ['bridge[dialect-bridge]']
         });
@@ -735,12 +732,9 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           }
         };
-        var exptectedConfig = {
-          "plugins": {
-            "plugin1": {},
-            "plugin2": {}
-          },
-          "bridges": {
+        var exptectedConfig = lodash.cloneDeep(sandboxConfig);
+        if (chores.isFeatureSupported('bridge-full-ref')) {
+          exptectedConfig.bridges = {
             "__status__": true,
             "bridge1": {
               "plugin1": {
@@ -759,8 +753,8 @@ describe('tdd:devebot:core:config-loader', function() {
                 }
               }
             }
-          }
-        };
+          };
+        }
         var transformedCfg = transformSandboxConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
           configTags: 'bridge[dialect-bridge]'
         });
