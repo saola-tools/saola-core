@@ -139,7 +139,7 @@ describe('tdd:devebot:core:config-loader', function() {
     var transformConfig = ConfigLoader.__get__('transformConfig');
 
     it('should transform relative names into default full names', function() {
-      if (!chores.isFeatureSupported('standardizing-config')) {
+      if (!chores.isFeatureSupported('bridge-full-ref') || !chores.isFeatureSupported('standardizing-config')) {
         this.skip();
         return;
       }
@@ -240,7 +240,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('should transform absolute names into relative names', function() {
-      if (!chores.isFeatureSupported('standardizing-config')) {
+      if (!chores.isFeatureSupported('bridge-full-ref') || !chores.isFeatureSupported('standardizing-config')) {
         this.skip();
         return;
       }

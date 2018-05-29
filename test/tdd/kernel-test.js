@@ -266,7 +266,6 @@ describe('tdd:devebot:base:kernel', function() {
       });
 
       var expectedBridges = {
-        "__status__": true,
         "bridge1": {
           "application": {
             "anyname1z": {
