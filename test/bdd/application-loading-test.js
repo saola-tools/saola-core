@@ -99,7 +99,7 @@ describe('devebot:application', function() {
 			var bridge1Scopes = [];
 			var bridge2Scopes = [];
 
-			if (chores.isFeatureSupported('bridge-full-ref') && chores.isFeatureSupported('presets')) {
+			if (chores.isFeatureSupported(['bridge-full-ref','presets'])) {
 				bridge1Scopes = [
 					"plugin1/bridge1#anyname1a",
 					"plugin2/bridge1#anyname1b",
@@ -112,7 +112,7 @@ describe('devebot:application', function() {
 				];
 			}
 
-			if (!chores.isFeatureSupported('bridge-full-ref')) {
+			if (!chores.isFeatureSupported(['bridge-full-ref'])) {
 				bridge1Scopes = [
 					"bridge1/anyname1a",
 					"bridge1/anyname1b",

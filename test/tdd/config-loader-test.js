@@ -210,7 +210,7 @@ describe('tdd:devebot:core:config-loader', function() {
         }
       };
 
-      var transformedCfg = transformConfig(lodash.assign({
+      var convertedCfg = transformConfig(lodash.assign({
         pluginAliasMap: buildAbsoluteAliasMap(extractAliasNames(CTX, 'plugin', {
           "path/to/devebot-dp-wrapper1": {
             name: "devebot-dp-wrapper1"
@@ -235,8 +235,8 @@ describe('tdd:devebot:core:config-loader', function() {
         }))
       }, CTX), 'sandbox', originalCfg, 'plugin', 'cfg-example', {});
 
-      false && console.log(JSON.stringify(transformedCfg, null, 2));
-      assert.deepInclude(transformedCfg, expectedCfg);
+      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      assert.deepInclude(convertedCfg, expectedCfg);
     });
 
     it('should transform absolute names into relative names', function() {
@@ -596,7 +596,7 @@ describe('tdd:devebot:core:config-loader', function() {
 
     describe('bridge configure transformation', function() {
       var ConfigLoader = rewire('../../lib/backbone/config-loader');
-      var transformSandboxConfig = ConfigLoader.__get__('transformSandboxConfig');
+      var convertSandboxConfig = ConfigLoader.__get__('convertSandboxConfig');
   
       it('transform sandboxConfig.bridges from application', function() {
         var sandboxConfig = {
@@ -649,9 +649,9 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           }
         };
-        var transformedCfg = transformSandboxConfig(CTX, sandboxConfig, 'application');
-        false && console.log(JSON.stringify(transformedCfg, null, 2));
-        assert.deepInclude(transformedCfg, exptectedConfig);
+        var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'application');
+        false && console.log(JSON.stringify(convertedCfg, null, 2));
+        assert.deepInclude(convertedCfg, exptectedConfig);
       });
 
       it('transform sandboxConfig.bridges from a plugin (without name)', function() {
@@ -701,11 +701,11 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           };
         }
-        var transformedCfg = transformSandboxConfig(CTX, sandboxConfig, 'plugin', null, {
+        var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', null, {
           configTags: ['bridge[dialect-bridge]']
         });
-        false && console.log(JSON.stringify(transformedCfg, null, 2));
-        assert.deepInclude(transformedCfg, exptectedConfig);
+        false && console.log(JSON.stringify(convertedCfg, null, 2));
+        assert.deepInclude(convertedCfg, exptectedConfig);
       });
 
       it('transform sandboxConfig.bridges from a named plugin', function() {
@@ -755,11 +755,11 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           };
         }
-        var transformedCfg = transformSandboxConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
+        var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
           configTags: 'bridge[dialect-bridge]'
         });
-        false && console.log(JSON.stringify(transformedCfg, null, 2));
-        assert.deepInclude(transformedCfg, exptectedConfig);
+        false && console.log(JSON.stringify(convertedCfg, null, 2));
+        assert.deepInclude(convertedCfg, exptectedConfig);
       });
     });
 
