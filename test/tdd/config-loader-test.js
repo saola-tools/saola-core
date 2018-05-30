@@ -680,7 +680,7 @@ describe('tdd:devebot:core:config-loader', function() {
           }
         };
         var exptectedConfig = lodash.cloneDeep(sandboxConfig);
-        if (chores.isFeatureSupported('bridge-full-ref')) {
+        if (chores.isFeatureSupported(['bridge-full-ref','presets'])) {
           exptectedConfig.bridges = {
             "bridge1": {
               "*": {
@@ -736,7 +736,7 @@ describe('tdd:devebot:core:config-loader', function() {
           }
         };
         var exptectedConfig = lodash.cloneDeep(sandboxConfig);
-        if (chores.isFeatureSupported('bridge-full-ref')) {
+        if (chores.isFeatureSupported(['bridge-full-ref','presets'])) {
           exptectedConfig.bridges = {
             "bridge1": {
               "plugin1": {
