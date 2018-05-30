@@ -100,7 +100,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
         mappings: [{
           allTags: [ 'devebot/errorHandler', 'examine' ],
           matchingField: 'invoker',
-          matchingRule: 'devebot/sandboxManager',
+          matchingRule: 'devebot/kernel',
           storeTo: 'errorSummary'
         }]
       }]);
@@ -117,8 +117,8 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       app.server;
 
       if (true) {
-        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.1', {}), [
           'totalOfErrors', 'errors'
         ]);
         // BridgeLoader.loadMetadata() & BridgeLoader.loadDialects()
@@ -137,8 +137,8 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       app.server;
 
       if (true) {
-        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.1', {}), [
           'totalOfErrors', 'errors'
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
@@ -164,7 +164,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
         mappings: [{
           allTags: [ 'devebot/errorHandler', 'examine' ],
           matchingField: 'invoker',
-          matchingRule: 'devebot/sandboxManager',
+          matchingRule: 'devebot/kernel',
           storeTo: 'errorSummary'
         }]
       }]);
@@ -181,8 +181,8 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       app.server;
 
       if (true) {
-        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.1', {}), [
           'totalOfErrors', 'errors'
         ]);
         // -- examining in sandboxManager --
@@ -207,8 +207,8 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       app.server;
 
       if (true) {
-        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.1', {}), [
           'totalOfErrors', 'errors'
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
@@ -226,8 +226,8 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       app.server;
 
       if (true) {
-        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.1', {}), [
           'totalOfErrors', 'errors'
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);

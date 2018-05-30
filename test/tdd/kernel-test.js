@@ -515,8 +515,8 @@ describe('tdd:devebot:base:kernel', function() {
 
       // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
       false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
+      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.1', {}), [
         'totalOfErrors', 'errors'
       ]);
       assert.deepEqual(errorSummary, { totalOfErrors: 0, errors: [] });
@@ -531,14 +531,14 @@ describe('tdd:devebot:base:kernel', function() {
 
       // errorSummary.0 <= kernel
       false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
       var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
         'totalOfErrors', 'errors'
       ]);
       assert.equal(errorSummary.totalOfErrors, 1);
 
       var totalOfExit = unhook();
-      assert.equal(totalOfExit, 1);
+      assert.equal(totalOfExit, 2);
     });
 
     it("loading an invalid plugin's configure make program exit", function() {
@@ -547,14 +547,14 @@ describe('tdd:devebot:base:kernel', function() {
 
       // errorSummary.0 <= kernel
       false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
       var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
         'totalOfErrors', 'errors'
       ]);
       assert.equal(errorSummary.totalOfErrors, 2);
 
       var totalOfExit = unhook();
-      assert.equal(totalOfExit, 1);
+      assert.equal(totalOfExit, 2);
     });
 
     after(function() {
