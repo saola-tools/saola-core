@@ -597,6 +597,7 @@ describe('tdd:devebot:core:config-loader', function() {
     describe('bridge configure transformation', function() {
       var ConfigLoader = rewire('../../lib/backbone/config-loader');
       var convertSandboxConfig = ConfigLoader.__get__('convertSandboxConfig');
+      var RELOADING_FORCED = ConfigLoader.__get__('RELOADING_FORCED');
   
       it('transform sandboxConfig.bridges from application', function() {
         var sandboxConfig = {
@@ -681,7 +682,6 @@ describe('tdd:devebot:core:config-loader', function() {
         var exptectedConfig = lodash.cloneDeep(sandboxConfig);
         if (chores.isFeatureSupported('bridge-full-ref')) {
           exptectedConfig.bridges = {
-            "__status__": true,
             "bridge1": {
               "*": {
                 "anyname1a": {
@@ -700,6 +700,9 @@ describe('tdd:devebot:core:config-loader', function() {
               }
             }
           };
+          if (!RELOADING_FORCED) {
+            exptectedConfig.bridges.__status__ = true;
+          }
         }
         var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', null, {
           configTags: ['bridge[dialect-bridge]']
@@ -735,7 +738,6 @@ describe('tdd:devebot:core:config-loader', function() {
         var exptectedConfig = lodash.cloneDeep(sandboxConfig);
         if (chores.isFeatureSupported('bridge-full-ref')) {
           exptectedConfig.bridges = {
-            "__status__": true,
             "bridge1": {
               "plugin1": {
                 "anyname1a": {
@@ -754,6 +756,9 @@ describe('tdd:devebot:core:config-loader', function() {
               }
             }
           };
+          if (!RELOADING_FORCED) {
+            exptectedConfig.bridges.__status__ = true;
+          }
         }
         var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
           configTags: 'bridge[dialect-bridge]'
