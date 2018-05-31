@@ -4,6 +4,7 @@ var chores = require('../lib/utils/chores');
 var constx = require('../lib/utils/constx');
 var debugx = require('../lib/utils/pinbug')('devebot:test:lab');
 var NameResolver = require('../lib/backbone/name-resolver');
+var errorCollector = require('../lib/backbone/error-handler').instance;
 var lodash = require('lodash');
 var path = require('path');
 var Injektor = require('injektor');
@@ -95,12 +96,11 @@ lab.createKernel = function(appName) {
     console.log('==/ createKernel() ========');
   }
 
-  let nameResolver = new NameResolver(lodash.pick(_config, [
-    'pluginRefs', 'bridgeRefs'
-  ]));
+  let nameResolver = new NameResolver({errorCollector, 
+    pluginRefs: _config.pluginRefs, bridgeRefs: _config.bridgeRefs});
 
   var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
-  return new Kernel({configObject: _config, nameResolver});
+  return new Kernel({configObject: _config, errorCollector, nameResolver});
 }
 
 lab.createBasicServices = function(appName, injectedObjects) {
@@ -156,6 +156,7 @@ lab.createBridgeLoader = function(appName, injectedObjects) {
     injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
     injectedObjects.pluginRefs = app.config.pluginRefs || [];
   }
+  injectedObjects.errorCollector = errorCollector;
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
@@ -188,6 +189,7 @@ lab.createPluginLoader = function(appName, injectedObjects) {
     injectedObjects.pluginRefs = app.config.pluginRefs || [];
     injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
   }
+  injectedObjects.errorCollector = errorCollector;
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
@@ -216,6 +218,7 @@ lab.createRunhookManager = function(appName, injectedObjects) {
     injectedObjects.bridgeRefs = app.config.bridgeRefs;
     injectedObjects.injectedHandlers = {};
   }
+  injectedObjects.errorCollector = errorCollector;
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
@@ -247,6 +250,7 @@ lab.createSandboxManager = function(appName, injectedObjects) {
     injectedObjects.bridgeRefs = app.config.bridgeRefs;
     injectedObjects.pluginRefs = app.config.pluginRefs;
   }
+  injectedObjects.errorCollector = errorCollector;
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
