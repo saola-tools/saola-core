@@ -16,8 +16,7 @@ var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
 var sinon = require('sinon');
-var errorHandlerPath = path.join(lab.getDevebotHome(), 'lib/backbone/error-handler');
-var errorHandler = require(errorHandlerPath).instance;
+var errorHandler = require('../../lib/backbone/error-handler').instance;
 
 describe('tdd:devebot:base:kernel', function() {
   this.timeout(lab.getDefaultTimeout());

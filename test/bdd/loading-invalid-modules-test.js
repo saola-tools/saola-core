@@ -12,8 +12,7 @@ var path = require('path');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorHandlerPath = path.join(lab.getDevebotHome(), 'lib/backbone/error-handler');
-var errorHandler = require(errorHandlerPath).instance;
+var errorHandler = require('../../lib/backbone/error-handler').instance;
 
 describe('bdd:devebot:loading-invalid-modules', function() {
   this.timeout(lab.getDefaultTimeout());

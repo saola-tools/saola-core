@@ -14,8 +14,7 @@ var LogAdapter = require('logolite').LogAdapter;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorHandlerPath = path.join(lab.getDevebotHome(), 'lib/backbone/error-handler');
-var errorHandler = require(errorHandlerPath).instance;
+var errorHandler = require('../../lib/backbone/error-handler').instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
 
