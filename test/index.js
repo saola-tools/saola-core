@@ -5,6 +5,7 @@ var constx = require('../lib/utils/constx');
 var debugx = require('../lib/utils/pinbug')('devebot:test:lab');
 var NameResolver = require('../lib/backbone/name-resolver');
 var errorCollector = require('../lib/backbone/error-handler').instance;
+var stateInspector = require('../lib/backbone/state-inspector').instance;
 var lodash = require('lodash');
 var path = require('path');
 var Injektor = require('injektor');
@@ -100,7 +101,7 @@ lab.createKernel = function(appName) {
     pluginRefs: _config.pluginRefs, bridgeRefs: _config.bridgeRefs});
 
   var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
-  return new Kernel({configObject: _config, errorCollector, nameResolver});
+  return new Kernel({configObject: _config, errorCollector, stateInspector, nameResolver});
 }
 
 lab.createBasicServices = function(appName, injectedObjects) {
