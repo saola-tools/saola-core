@@ -16,7 +16,7 @@ var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
 var sinon = require('sinon');
-var errorHandler = require('../../lib/backbone/error-handler').instance;
+var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe.skip('tdd:devebot:base:runner', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -26,10 +26,10 @@ describe.skip('tdd:devebot:base:runner', function() {
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
-      DEVEBOT_FORCING_SILENT: 'error-handler'
+      DEVEBOT_FORCING_SILENT: 'error-collector'
     });
     LogConfig.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 
   describe('validateBridgeConfig()', function() {
@@ -39,7 +39,7 @@ describe.skip('tdd:devebot:base:runner', function() {
 
     after(function() {
       LogTracer.clearStringifyInterceptors();
-      errorHandler.reset();
+      errorCollector.reset();
     });
   });
 

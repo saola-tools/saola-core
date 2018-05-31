@@ -15,7 +15,7 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
-var errorHandler = require('../../lib/backbone/error-handler').instance;
+var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe('tdd:devebot:core:plugin-loader', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -371,7 +371,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
       var metadataMap = {};
       pluginLoader.loadMetadata(metadataMap);
-      errorHandler.barrier({exitOnError: true});
+      errorCollector.barrier({exitOnError: true});
       false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
       assert.deepInclude(metadataMap, {
         "fullapp/sandbox": {
@@ -458,7 +458,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
       var originMap = {};
       pluginLoader.loadServices(originMap);
-      errorHandler.barrier({exitOnError: true});
+      errorCollector.barrier({exitOnError: true});
       false && console.log('serviceMap: ', util.inspect(originMap, { depth: 5 }));
       var serviceMap = lodash.mapValues(originMap, function(service) {
         return lodash.assign(lodash.pick(service, [
@@ -698,7 +698,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
       var originMap = {};
       pluginLoader.loadTriggers(originMap);
-      errorHandler.barrier({exitOnError: true});
+      errorCollector.barrier({exitOnError: true});
       false && console.log('triggerMap: ', util.inspect(originMap, { depth: 5 }));
       var triggerMap = lodash.mapValues(originMap, function(trigger) {
         return lodash.assign(lodash.pick(trigger, [

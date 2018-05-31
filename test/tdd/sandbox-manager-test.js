@@ -13,7 +13,7 @@ var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorHandler = require('../../lib/backbone/error-handler').instance;
+var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe('tdd:devebot:core:sandbox-manager', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -25,7 +25,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 
   it('retrieve the unique named service with/without suggested scope', function() {
@@ -106,6 +106,6 @@ describe('tdd:devebot:core:sandbox-manager', function() {
 
   after(function() {
     envtool.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 });

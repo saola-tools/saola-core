@@ -15,7 +15,7 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
-var errorHandler = require('../../lib/backbone/error-handler').instance;
+var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe('tdd:devebot:core:bridge-loader', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -47,7 +47,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
       var bridgeLoader = lab.createBridgeLoader('fullapp');
       var metadataMap = {};
       bridgeLoader.loadMetadata(metadataMap);
-      errorHandler.barrier({exitOnError: true});
+      errorCollector.barrier({exitOnError: true});
       false && console.log('metadataMap: %s', JSON.stringify(metadataMap, null, 2));
       assert.deepInclude(metadataMap, {
         "bridge1": {
@@ -131,7 +131,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
       var bridgeLoader = lab.createBridgeLoader('fullapp');
       var originMap = {};
       bridgeLoader.loadDialects(originMap); // dialectOptions is omitted
-      errorHandler.barrier({exitOnError: true});
+      errorCollector.barrier({exitOnError: true});
       false && console.log('dialectMap: ', util.inspect(originMap, { depth: 5 }));
       var dialectMap = lodash.mapValues(originMap, function(dialect) {
         return lodash.assign(lodash.pick(dialect, [
@@ -237,7 +237,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
       };
       var originMap = {};
       bridgeLoader.loadDialects(originMap, bridgeConfig);
-      errorHandler.barrier({exitOnError: true});
+      errorCollector.barrier({exitOnError: true});
       false && console.log('dialectMap: ', util.inspect(originMap, { depth: 5 }));
       var dialectMap = lodash.mapValues(originMap, function(dialect) {
         return lodash.assign(lodash.pick(dialect, [

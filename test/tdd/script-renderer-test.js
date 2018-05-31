@@ -14,7 +14,7 @@ var LogAdapter = require('logolite').LogAdapter;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorHandler = require('../../lib/backbone/error-handler').instance;
+var errorCollector = require('../../lib/backbone/error-collector').instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
 
@@ -30,7 +30,7 @@ describe('tdd:devebot:core:script-renderer', function() {
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 
   describe('WebSocketOutlet', function() {
@@ -313,6 +313,6 @@ describe('tdd:devebot:core:script-renderer', function() {
 
   after(function() {
     envtool.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 });

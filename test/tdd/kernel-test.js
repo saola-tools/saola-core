@@ -16,7 +16,7 @@ var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
 var sinon = require('sinon');
-var errorHandler = require('../../lib/backbone/error-handler').instance;
+var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe('tdd:devebot:base:kernel', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -26,10 +26,10 @@ describe('tdd:devebot:base:kernel', function() {
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
-      DEVEBOT_FORCING_SILENT: 'error-handler'
+      DEVEBOT_FORCING_SILENT: 'error-collector'
     });
     LogConfig.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 
   describe('validateBridgeConfig()', function() {
@@ -225,7 +225,7 @@ describe('tdd:devebot:base:kernel', function() {
           allTags: [ 'devebot/kernel', 'validating-config-by-schema-result' ],
           storeTo: 'outputValidation'
         }, {
-          allTags: [ 'devebot/errorHandler', 'examine', 'metadata-validating' ],
+          allTags: [ 'devebot/errorCollector', 'examine', 'metadata-validating' ],
           matchingField: 'invoker',
           matchingRule: 'devebot/kernel',
           storeTo: 'errorSummary'
@@ -235,7 +235,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
-      errorHandler.reset();
+      errorCollector.reset();
     });
 
     it('kernel constructor is ok if no error has occurred in validating', function() {
@@ -567,7 +567,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     after(function() {
       LogTracer.clearStringifyInterceptors();
-      errorHandler.reset();
+      errorCollector.reset();
     });
   });
 

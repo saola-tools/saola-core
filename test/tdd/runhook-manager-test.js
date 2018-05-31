@@ -12,7 +12,7 @@ var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorHandler = require('../../lib/backbone/error-handler').instance;
+var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe('tdd:devebot:core:runhook-manager', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -24,7 +24,7 @@ describe('tdd:devebot:core:runhook-manager', function() {
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 
   describe('definition', function() {
@@ -293,6 +293,6 @@ describe('tdd:devebot:core:runhook-manager', function() {
 
   after(function() {
     envtool.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 });

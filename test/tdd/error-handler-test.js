@@ -5,16 +5,16 @@ var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
-var debugx = Devebot.require('pinbug')('tdd:devebot:core:error-handler');
+var debugx = Devebot.require('pinbug')('tdd:devebot:core:error-collector');
 var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorHandler = require('../../lib/backbone/error-handler').instance;
+var errorCollector = require('../../lib/backbone/error-collector').instance;
 
-describe('tdd:devebot:core:error-handler', function() {
+describe('tdd:devebot:core:error-collector', function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
@@ -22,10 +22,10 @@ describe('tdd:devebot:core:error-handler', function() {
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
-      DEVEBOT_FORCING_SILENT: 'error-handler'
+      DEVEBOT_FORCING_SILENT: 'error-collector'
     });
     LogConfig.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 
   describe('barrier()', function() {
@@ -35,7 +35,7 @@ describe('tdd:devebot:core:error-handler', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/errorHandler', 'examine' ],
+          allTags: [ 'devebot/errorCollector', 'examine' ],
           storeTo: 'errorSummary'
         }]
       }]);
@@ -47,13 +47,13 @@ describe('tdd:devebot:core:error-handler', function() {
 
     it('pass if no error has occurred', function() {
       var unhook = lab.preventExit();
-      errorHandler.collect();
-      errorHandler.collect({
+      errorCollector.collect();
+      errorCollector.collect({
         hasError: false,
         stage: 'instantiating',
         type: 'ROUTINE'
       });
-      errorHandler.collect([{
+      errorCollector.collect([{
         hasError: false,
         stage: 'instantiating',
         type: 'ROUTINE'
@@ -66,7 +66,7 @@ describe('tdd:devebot:core:error-handler', function() {
         stage: 'instantiating',
         type: 'TRIGGER'
       }]);
-      errorHandler.barrier({exitOnError: true});
+      errorCollector.barrier({exitOnError: true});
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 0);
     });
@@ -75,15 +75,15 @@ describe('tdd:devebot:core:error-handler', function() {
       var unhook = lab.preventExit({ throwException: true });
 
       function doSomething() {
-        errorHandler.collect();
+        errorCollector.collect();
 
-        errorHandler.collect({
+        errorCollector.collect({
           hasError: false,
           stage: 'bootstrap',
           type: 'plugin'
         });
 
-        errorHandler.collect([{
+        errorCollector.collect([{
           hasError: false,
           stage: 'naming',
           type: 'bridge'
@@ -93,7 +93,7 @@ describe('tdd:devebot:core:error-handler', function() {
           type: 'plugin'
         }]);
 
-        errorHandler.collect({
+        errorCollector.collect({
           hasError: true,
           stage: 'config/schema',
           type: 'bridge',
@@ -101,7 +101,7 @@ describe('tdd:devebot:core:error-handler', function() {
           stack: 'Error: {}'
         });
 
-        errorHandler.barrier({exitOnError: true});
+        errorCollector.barrier({exitOnError: true});
       }
 
       assert.throws(doSomething, lab.ProcessExitError);
@@ -111,7 +111,7 @@ describe('tdd:devebot:core:error-handler', function() {
     });
 
     afterEach(function() {
-      errorHandler.reset();
+      errorCollector.reset();
     })
 
     after(function() {

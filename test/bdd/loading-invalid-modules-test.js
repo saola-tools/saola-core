@@ -12,7 +12,7 @@ var path = require('path');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorHandler = require('../../lib/backbone/error-handler').instance;
+var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe('bdd:devebot:loading-invalid-modules', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -22,10 +22,10 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
-      DEVEBOT_FORCING_SILENT: 'error-handler'
+      DEVEBOT_FORCING_SILENT: 'error-collector'
     });
     LogConfig.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 
   describe('not-found-packages', function() {
@@ -35,7 +35,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/errorHandler', 'examine' ],
+          allTags: [ 'devebot/errorCollector', 'examine' ],
           matchingField: 'invoker',
           matchingRule: 'devebot/bootstrap',
           storeTo: 'errorSummary'
@@ -45,7 +45,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
 
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
-      errorHandler.reset();
+      errorCollector.reset();
     });
 
     it('loading application with not found packages will be failed', function() {
@@ -97,7 +97,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/errorHandler', 'examine', 'sandbox-loading' ],
+          allTags: [ 'devebot/errorCollector', 'examine', 'sandbox-loading' ],
           matchingField: 'invoker',
           matchingRule: 'devebot/kernel',
           storeTo: 'errorSummary'
@@ -107,7 +107,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
 
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
-      errorHandler.reset();
+      errorCollector.reset();
     });
 
     it('loading invalid-bridge-booter will be failed', function() {
@@ -161,7 +161,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/errorHandler', 'examine', 'sandbox-loading' ],
+          allTags: [ 'devebot/errorCollector', 'examine', 'sandbox-loading' ],
           matchingField: 'invoker',
           matchingRule: 'devebot/kernel',
           storeTo: 'errorSummary'
@@ -171,7 +171,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
 
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
-      errorHandler.reset();
+      errorCollector.reset();
     });
 
     it('loading invalid-plugin-booter will be failed', function() {
@@ -245,6 +245,6 @@ describe('bdd:devebot:loading-invalid-modules', function() {
 
   after(function() {
     envtool.reset();
-    errorHandler.reset();
+    errorCollector.reset();
   });
 });
