@@ -226,7 +226,7 @@ describe('tdd:devebot:base:kernel', function() {
           allTags: [ 'devebot/kernel', 'validating-config-by-schema-result' ],
           storeTo: 'outputValidation'
         }, {
-          allTags: [ 'devebot/errorHandler', 'examine' ],
+          allTags: [ 'devebot/errorHandler', 'examine', 'metadata-validating' ],
           matchingField: 'invoker',
           matchingRule: 'devebot/kernel',
           storeTo: 'errorSummary'
@@ -514,12 +514,15 @@ describe('tdd:devebot:base:kernel', function() {
       });
 
       // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
-      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.1', {}), [
-        'totalOfErrors', 'errors'
-      ]);
-      assert.deepEqual(errorSummary, { totalOfErrors: 0, errors: [] });
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        assert.deepEqual(errorSummary, { totalOfErrors: 0, errors: [] });
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 0);
@@ -530,12 +533,15 @@ describe('tdd:devebot:base:kernel', function() {
       var kernel = lab.createKernel('invalid-bridge-config');
 
       // errorSummary.0 <= kernel
-      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
-        'totalOfErrors', 'errors'
-      ]);
-      assert.equal(errorSummary.totalOfErrors, 1);
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        assert.equal(errorSummary.totalOfErrors, 1);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 2);
@@ -546,12 +552,15 @@ describe('tdd:devebot:base:kernel', function() {
       var kernel = lab.createKernel('invalid-plugin-config');
 
       // errorSummary.0 <= kernel
-      false && console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
-      assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 2);
-      var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
-        'totalOfErrors', 'errors'
-      ]);
-      assert.equal(errorSummary.totalOfErrors, 2);
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        assert.equal(errorSummary.totalOfErrors, 2);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 2);
