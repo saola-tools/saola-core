@@ -10,13 +10,14 @@ const MODULE_NAME = 'plugin-invalid-booter/trigger';
 var Service = function(params) {
   var self = this;
   params = params || {};
-  params.packageName = params.packageName || 'plugin-invalid-booter';
 
+  var packageName = params.packageName || 'plugin-invalid-booter';
+  var blockRef = chores.getBlockRef(__filename, packageName);
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
 
   LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'plugin-invalid-service', 'constructor-begin' ],
+    tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor begin'
   }));
 
@@ -28,7 +29,7 @@ var Service = function(params) {
     LX.has('error') && LX.log('error', LT.add({
       error: err
     }).toMessage({
-      tags: [ 'plugin-invalid-service', 'server-error' ],
+      tags: [ blockRef, 'server-error' ],
       text: ' - Server Error: {error}',
       reset: true
     }));
@@ -51,8 +52,8 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        chores.isVerboseForced(params.packageName, pluginCfg) &&
-        console.log('%s#webserver is listening at http://%s:%s', params.packageName, host, port);
+        chores.isVerboseForced(packageName, pluginCfg) &&
+        console.log('%s#webserver is listening at http://%s:%s', packageName, host, port);
         resolved(serverInstance);
       });
     });
@@ -61,15 +62,15 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        chores.isVerboseForced(params.packageName, pluginCfg) &&
-        console.log('%s#webserver has been closed', params.packageName);
+        chores.isVerboseForced(packageName, pluginCfg) &&
+        console.log('%s#webserver has been closed', packageName);
         resolved();
       });
     });
   };
 
   LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'plugin-invalid-service', 'constructor-end' ],
+    tags: [ blockRef, 'constructor-end' ],
     text: ' - constructor end!'
   }));
 };

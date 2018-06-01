@@ -1,6 +1,6 @@
 module.exports = {
   plugins: {
-    pluginInvalidTrigger: {
+    pluginInvalidTriggerMethods: {
       host: "localhost",
       port: 17703
     }

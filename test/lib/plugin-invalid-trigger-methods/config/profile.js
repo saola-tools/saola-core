@@ -1,6 +1,6 @@
 module.exports = {
   newFeatures: {
-    pluginInvalidTrigger: {
+    pluginInvalidTriggerMethods: {
       logoliteEnabled: true,
       sandboxConfig: true
     }

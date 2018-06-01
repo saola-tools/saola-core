@@ -1,17 +1,20 @@
 'use strict';
 
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 
 var Service = function(params) {
   var self = this;
   params = params || {};
 
+  var packageName = params.packageName || 'plugin-invalid-trigger';
+  var blockRef = chores.getBlockRef(__filename, packageName);
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
 
   LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'plugin-invalid-trigger', 'constructor-begin' ],
+    tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor begin'
   }));
 
@@ -19,12 +22,12 @@ var Service = function(params) {
   LX.has('conlog') && LX.log('conlog', LT.add({
     pluginCfg: pluginCfg
   }).toMessage({
-    tags: [ 'plugin-invalid-trigger' ],
+    tags: [ blockRef ],
     text: ' - configuration: {pluginCfg}'
   }));
 
   LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'plugin-invalid-trigger', 'constructor-end' ],
+    tags: [ blockRef, 'constructor-end' ],
     text: ' - constructor end!'
   }));
 };

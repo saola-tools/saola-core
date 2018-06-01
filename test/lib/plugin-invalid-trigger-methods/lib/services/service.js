@@ -4,13 +4,11 @@ var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 
-const MODULE_NAME = 'plugin-invalid-booter/trigger';
-
 var Service = function(params) {
   var self = this;
   params = params || {};
 
-  var packageName = params.packageName || 'plugin-invalid-booter';
+  var packageName = params.packageName || 'plugin-invalid-trigger-methods';
   var blockRef = chores.getBlockRef(__filename, packageName);
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
@@ -33,7 +31,5 @@ var Service = function(params) {
     text: ' - constructor end!'
   }));
 };
-
-MODULE_NAME = 'UNKNOWN';
 
 module.exports = Service;

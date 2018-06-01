@@ -239,6 +239,30 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       assert.equal(totalOfExit, 1);
     });
 
+    it('loading invalid-plugin-trigger-methods will be failed', function() {
+      var unhook = lab.preventExit();
+      var app = lab.getApp('invalid-plugin-trigger-methods');
+      app.server;
+
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        assert.equal(errorSummary.totalOfErrors, 3);
+        assert.deepEqual(lodash.map(errorSummary.errors, 'name'), [
+          'plugin-invalid-trigger-methods/trigger1',
+          'plugin-invalid-trigger-methods/trigger2',
+          'plugin-invalid-trigger-methods/trigger3'
+        ]);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 1);
+    });
+
     after(function() {
       LogTracer.clearStringifyInterceptors();
     });

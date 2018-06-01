@@ -9,7 +9,7 @@ var Service = function(params) {
   var self = this;
   params = params || {};
 
-  var packageName = params.packageName || 'plugin-invalid-trigger';
+  var packageName = params.packageName || 'plugin-invalid-trigger-methods';
   var blockRef = chores.getBlockRef(__filename, packageName);
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
@@ -56,18 +56,6 @@ var Service = function(params) {
       });
     });
   };
-
-  self.stop = function() {
-    return new Promise(function(resolved, rejected) {
-      server.close(function () {
-        chores.isVerboseForced(params.packageName, pluginCfg) &&
-        console.log('%s#webserver has been closed', params.packageName);
-        resolved();
-      });
-    });
-  };
-
-  unknownVar2 = 'will be failed';
 
   LX.has('conlog') && LX.log('conlog', LT.toMessage({
     tags: [ blockRef, 'constructor-end' ],
