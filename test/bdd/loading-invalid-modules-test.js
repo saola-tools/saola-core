@@ -12,10 +12,11 @@ var path = require('path');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe('bdd:devebot:loading-invalid-modules', function() {
   this.timeout(lab.getDefaultTimeout());
+
+  var errorCollector = lab.getErrorCollector();
 
   before(function() {
     envtool.setup({

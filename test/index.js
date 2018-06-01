@@ -68,6 +68,12 @@ var lab = module.exports = {
   },
   getFrameworkInfo: function() {
     return chores.loadPackageInfo(this.getDevebotHome());
+  },
+  getErrorCollector: function() {
+    return errorCollector;
+  },
+  getStateInspector: function() {
+    return stateInspector;
   }
 }
 

@@ -13,14 +13,15 @@ var path = require('path');
 var util = require('util');
 var ConfigLoader = require('../../lib/backbone/config-loader');
 var NameResolver = require('../../lib/backbone/name-resolver');
-var errorCollector = require('../../lib/backbone/error-collector').instance;
-var stateInspector = require('../../lib/backbone/state-inspector').instance;
 var LogAdapter = require('logolite').LogAdapter;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
 
 describe('tdd:devebot:core:config-loader', function() {
+
+  var errorCollector = lab.getErrorCollector();
+  var stateInspector = lab.getStateInspector();
 
   var CTX = {
     LX: LogAdapter.getLogger(),

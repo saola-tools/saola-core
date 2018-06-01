@@ -14,13 +14,13 @@ var LogAdapter = require('logolite').LogAdapter;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorCollector = require('../../lib/backbone/error-collector').instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:script-renderer', function() {
   this.timeout(lab.getDefaultTimeout());
 
+  var errorCollector = lab.getErrorCollector();
   var {loggingFactory, schemaValidator} = lab.createBasicServices();
 
   before(function() {

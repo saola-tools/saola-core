@@ -16,10 +16,11 @@ var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
 var sinon = require('sinon');
-var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe.skip('tdd:devebot:base:runner', function() {
   this.timeout(lab.getDefaultTimeout());
+
+  var errorCollector = lab.getErrorCollector();
 
   before(function() {
     envtool.setup({

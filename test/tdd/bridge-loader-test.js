@@ -15,11 +15,12 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
-var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe('tdd:devebot:core:bridge-loader', function() {
   this.timeout(lab.getDefaultTimeout());
-  
+
+  var errorCollector = lab.getErrorCollector();
+
   before(function() {
     envtool.setup({
       LOGOLITE_ALWAYS_ENABLED: 'all',

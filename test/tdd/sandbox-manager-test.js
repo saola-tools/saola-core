@@ -13,10 +13,11 @@ var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var errorCollector = require('../../lib/backbone/error-collector').instance;
 
 describe('tdd:devebot:core:sandbox-manager', function() {
   this.timeout(lab.getDefaultTimeout());
+
+  var errorCollector = lab.getErrorCollector();
 
   before(function() {
     envtool.setup({
