@@ -50,9 +50,7 @@ function appLoader(params) {
     privateSandbox: params.privateSandbox || params.privateSandboxes
   };
 
-  LX.has('conlog') && LX.log('conlog', LT.add({
-    appName: appName
-  }).toMessage({
+  LX.has('conlog') && LX.log('conlog', LT.add({ appName }).toMessage({
     text: ' - application name (appName): ${appName}'
   }));
 

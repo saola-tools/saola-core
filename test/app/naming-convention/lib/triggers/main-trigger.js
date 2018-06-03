@@ -10,6 +10,8 @@ var Service = function(params) {
   params = params || {};
   var self = this;
 
+  var packageName = params.packageName || 'naming-convention';
+  var blockRef = chores.getBlockRef(__filename, packageName);
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
 
@@ -44,8 +46,8 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        chores.isVerboseForced('naming-convention', mainCfg) &&
-        console.log('%s is listening at http://%s:%s', Service.argumentSchema.$id, host, port);
+        chores.isVerboseForced(packageName, mainCfg) &&
+        console.log('%s is listening at http://%s:%s', packageName, host, port);
         resolved(serverInstance);
       });
     });
@@ -54,8 +56,8 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        chores.isVerboseForced('naming-convention', mainCfg) &&
-        console.log('%s has been closed', Service.argumentSchema.$id);
+        chores.isVerboseForced(packageName, mainCfg) &&
+        console.log('%s has been closed', packageName);
         resolved();
       });
     });
