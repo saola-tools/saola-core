@@ -23,9 +23,7 @@ var Service = function(params) {
   var server = http.createServer();
 
   server.on('error', function(err) {
-    LX.has('silly') && LX.log('silly', LT.add({
-      error: err
-    }).toMessage({
+    LX.has('silly') && LX.log('silly', LT.add({ error: err }).toMessage({
       tags: [blockRef, 'webserver-error'],
       text: 'Server Error: ${error}'
     }));
