@@ -77,6 +77,34 @@ var lab = module.exports = {
   }
 }
 
+var _initInjectedObjects = function(appName, injectedObjects) {
+  injectedObjects = injectedObjects || {
+    profileConfig: {},
+    bridgeRefs: [],
+    pluginRefs: []
+  };
+  if (appName) {
+    var app = lab.getApp(appName);
+    injectedObjects.profileConfig = app.config.profile || {
+      logger: {
+        transports: {
+          console: {
+            type: 'console',
+            level: 'debug',
+            json: false,
+            timestamp: true,
+            colorize: true
+          }
+        }
+      }
+    }
+    injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
+    injectedObjects.pluginRefs = app.config.pluginRefs || [];
+  }
+  injectedObjects.errorCollector = errorCollector;
+  return injectedObjects;
+}
+
 var _attachInjectedObjects = function(injektor, injectedObjects) {
   lodash.forOwn(injectedObjects, function(injectedObject, name) {
     injektor.registerObject(name, injectedObject, chores.injektorContext);
@@ -111,25 +139,7 @@ lab.createKernel = function(appName) {
 }
 
 lab.createBasicServices = function(appName, injectedObjects) {
-  injectedObjects = injectedObjects || {
-    profileConfig: {}
-  };
-  if (appName) {
-    var app = lab.getApp(appName);
-    injectedObjects.profileConfig = app.config.profile || {
-      logger: {
-        transports: {
-          console: {
-            type: 'console',
-            level: 'debug',
-            json: false,
-            timestamp: true,
-            colorize: true
-          }
-        }
-      }
-    }
-  }
+  injectedObjects = _initInjectedObjects(appName, injectedObjects);
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [ 'schema-validator', 'logging-factory' ]);
@@ -140,30 +150,7 @@ lab.createBasicServices = function(appName, injectedObjects) {
 }
 
 lab.createBridgeLoader = function(appName, injectedObjects) {
-  injectedObjects = injectedObjects || {
-    profileConfig: {},
-    bridgeRefs: [],
-    pluginRefs: []
-  };
-  if (appName) {
-    var app = lab.getApp(appName);
-    injectedObjects.profileConfig = app.config.profile || {
-      logger: {
-        transports: {
-          console: {
-            type: 'console',
-            level: 'debug',
-            json: false,
-            timestamp: true,
-            colorize: true
-          }
-        }
-      }
-    }
-    injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
-    injectedObjects.pluginRefs = app.config.pluginRefs || [];
-  }
-  injectedObjects.errorCollector = errorCollector;
+  injectedObjects = _initInjectedObjects(appName, injectedObjects);
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
@@ -173,30 +160,7 @@ lab.createBridgeLoader = function(appName, injectedObjects) {
 }
 
 lab.createPluginLoader = function(appName, injectedObjects) {
-  injectedObjects = injectedObjects || {
-    profileConfig: {},
-    pluginRefs: [],
-    bridgeRefs: []
-  };
-  if (appName) {
-    var app = lab.getApp(appName);
-    injectedObjects.profileConfig = app.config.profile || {
-      logger: {
-        transports: {
-          console: {
-            type: 'console',
-            level: 'debug',
-            json: false,
-            timestamp: true,
-            colorize: true
-          }
-        }
-      }
-    }
-    injectedObjects.pluginRefs = app.config.pluginRefs || [];
-    injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
-  }
-  injectedObjects.errorCollector = errorCollector;
+  injectedObjects = _initInjectedObjects(appName, injectedObjects);
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
