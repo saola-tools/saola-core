@@ -244,7 +244,7 @@ appLoader.registerLayerware = registerLayerware;
 appLoader.launchApplication = launchApplication;
 
 appLoader.parseArguments = function(active) {
-  if (active) {
+  if (active !== false) {
     let argv = minimist(process.argv.slice(2));
     let tasks = argv.task || argv.tasks || argv.mode;
     if (lodash.isEmpty(tasks)) {
