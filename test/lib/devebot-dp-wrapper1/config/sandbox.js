@@ -33,7 +33,7 @@ module.exports = {
       }
     },
     "connector1": {
-      "devebot-dp-wrapper1": {
+      "devebotDpWrapper1": {
         "bean": {
           "refPath": "sandbox -> connector1 -> wrapper1 -> bean",
           "refType": "wrapper1",

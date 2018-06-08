@@ -18,6 +18,16 @@ module.exports = {
           "refType": "application",
           "refName": "fullapp"
         }
+      },
+      "wrapper1": {
+        "bean": {
+          "default": false
+        }
+      },
+      "wrapper2": {
+        "bean": {
+          "default": false
+        }
       }
     },
     "connector2": {
@@ -26,6 +36,16 @@ module.exports = {
           "refPath": "sandbox -> connector2 -> application -> wrapper",
           "refType": "application",
           "refName": "fullapp"
+        }
+      },
+      "wrapper1": {
+        "bean": {
+          "default": false
+        }
+      },
+      "wrapper2": {
+        "bean": {
+          "default": false
         }
       }
     }

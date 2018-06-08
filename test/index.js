@@ -9,6 +9,7 @@ var stateInspector = require('../lib/backbone/state-inspector').instance;
 var lodash = require('lodash');
 var path = require('path');
 var Injektor = require('injektor');
+var freshy = require('freshy');
 
 var lab = module.exports = {
   getApiConfig: function(ext) {
@@ -74,6 +75,11 @@ var lab = module.exports = {
   },
   getStateInspector: function() {
     return stateInspector;
+  },
+  unloadApp: function(appName) {
+    appName = appName || 'default';
+    freshy.unload(require.resolve(this.getAppHome(appName)));
+    return appName;
   }
 }
 

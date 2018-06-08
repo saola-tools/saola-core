@@ -18,6 +18,22 @@ var Service = function(params) {
     text: ' + constructor begin ...'
   }));
 
+  var connector1 = params["connector1#bean"];
+  LX.has('silly') && LX.log('silly', LT.add({
+    config: connector1.getConfig()
+  }).toMessage({
+    tags: [blockRef, 'connector1#bean', 'bridge-config'],
+    text: ' - connector1#bean.config: ${config}'
+  }));
+
+  var connector2 = params["connector2#bean"];
+  LX.has('silly') && LX.log('silly', LT.add({
+    config: connector2.getConfig()
+  }).toMessage({
+    tags: [blockRef, 'connector2#bean', 'bridge-config'],
+    text: ' - connector2#bean.config: ${config}'
+  }));
+
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
   this.getConfig = function() {
@@ -78,10 +94,10 @@ var Service = function(params) {
 };
 
 Service.referenceList = [
-  "devebot-dp-wrapper1/bridgeKebabCase1#pointer",
-  "devebot-dp-wrapper1/bridgeKebabCase2#pointer",
-  "devebot-dp-wrapper1/connector1#bean",
-  "devebot-dp-wrapper1/connector2#bean"
+  "bridgeKebabCase1#pointer",
+  "bridgeKebabCase2#pointer",
+  "connector1#bean",
+  "connector2#bean"
 ];
 
 if (!chores.isFeatureSupported('bridge-full-ref')) {

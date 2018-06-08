@@ -11,6 +11,7 @@ var expect = require('chai').expect;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
+var util = require('util');
 
 describe('devebot:application', function() {
 	this.timeout(lab.getDefaultTimeout());
@@ -183,6 +184,14 @@ describe('devebot:application', function() {
 							storeTo: 'dependencyInfo'
 						},
 						{
+							allTags: [ 'devebot-dp-wrapper1/sublibTrigger', 'bridge-config' ],
+							storeTo: 'bridgeConfigOfWrapper1'
+						},
+						{
+							allTags: [ 'devebot-dp-wrapper2/sublibTrigger', 'bridge-config' ],
+							storeTo: 'bridgeConfigOfWrapper2'
+						},
+						{
 							anyTags: [ 'constructor-begin' ],
 							countTo: 'constructorBeginTotal'
 						},
@@ -305,6 +314,37 @@ describe('devebot:application', function() {
 				assert(service2.getConfig(), { port: 17742, host: 'localhost' });
 				return done();
 			});
+		});
+
+		it('[naming-convention] bridge configuration should be loaded properly', function() {
+			if (!chores.isFeatureSupported('presets')) {
+				this.skip();
+				return done();
+			}
+
+			app = lab.getApp(lab.unloadApp('naming-convention'));
+			app.server;
+
+			for(var k=1; k<=2; k++) {
+				var config = lodash.map(moduleStats['bridgeConfigOfWrapper' + k], function(item) {
+					return lodash.get(item, 'config');
+				});
+				false && console.log(JSON.stringify(config, null, 2));
+				assert.sameDeepMembers(config, [
+					{
+						"default": false,
+						"refPath": util.format("sandbox -> connector1 -> wrapper%s -> bean", k),
+						"refType": util.format("wrapper%s", k),
+						"refName": util.format("devebot-dp-wrapper%s", k)
+					},
+					{
+						"default": false,
+						"refPath": util.format("sandbox -> connector2 -> wrapper%s -> bean", k),
+						"refType": util.format("wrapper%s", k),
+						"refName": util.format("devebot-dp-wrapper%s", k)
+					}
+				]);
+			}
 		});
 
 		it('[reference-alias] special plugins & bridges should be loaded properly', function() {
