@@ -4,6 +4,7 @@ var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
 var http = require('http');
+var util = require('util');
 
 var Service = function(params) {
   var self = this;
@@ -12,11 +13,7 @@ var Service = function(params) {
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'test-plugin2', 'constructor-begin' ],
-    text: ' + constructor begin'
-  }));
-
+  var packageName = params.packageName || 'plugin2';
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
   var server = http.createServer();
@@ -25,7 +22,7 @@ var Service = function(params) {
     LX.has('error') && LX.log('error', LT.add({
       error: err
     }).toMessage({
-      tags: [ 'test-plugin2', 'server-error' ],
+      tags: [ 'plugin2', 'server-error' ],
       text: ' - Server Error: {error}',
       reset: true
     }));
@@ -33,7 +30,7 @@ var Service = function(params) {
 
   server.on('request', function(req, res) {
     res.writeHead(200);
-    res.end('plugin2 webserver');
+    res.end(util.format('%s webserver', packageName));
   });
 
   self.getServer = function() {
@@ -48,8 +45,8 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        chores.isVerboseForced('plugin2', pluginCfg) &&
-            console.log('plugin2 webserver is listening at http://%s:%s', host, port);
+        chores.isVerboseForced(packageName, pluginCfg) &&
+            console.log('%s webserver is listening at http://%s:%s', packageName, host, port);
         resolved(serverInstance);
       });
     });
@@ -58,17 +55,12 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        chores.isVerboseForced('plugin2', pluginCfg) &&
-            console.log('plugin2 webserver has been closed');
+        chores.isVerboseForced(packageName, pluginCfg) &&
+            console.log('%s webserver has been closed', packageName);
         resolved();
       });
     });
   };
-
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'test-plugin2', 'constructor-end' ],
-    text: ' - constructor end!'
-  }));
 };
 
 Service.argumentSchema = {

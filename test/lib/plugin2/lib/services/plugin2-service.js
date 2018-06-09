@@ -10,22 +10,12 @@ var Service = function(params) {
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'test-plugin2', 'constructor-begin' ],
-    text: ' + constructor begin'
-  }));
-
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
   LX.has('conlog') && LX.log('conlog', LT.add({
     pluginCfg: pluginCfg
   }).toMessage({
-    tags: [ 'test-plugin2' ],
+    tags: [ 'plugin2', 'configuration' ],
     text: ' - configuration: {pluginCfg}'
-  }));
-
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'test-plugin2', 'constructor-end' ],
-    text: ' - constructor end!'
   }));
 };
 

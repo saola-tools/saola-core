@@ -4,6 +4,7 @@ var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var http = require('http');
+var util = require('util');
 
 var Service = function(params) {
   params = params || {};

@@ -7,26 +7,16 @@ var lodash = Devebot.require('lodash');
 var Service = function(params) {
   params = params || {};
 
-  var packageName = params.packageName || 'sub-plugin1';
-  var blockRef = chores.getBlockRef(__filename, packageName);
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
-    tags: [blockRef, 'constructor-begin'],
-    text: ' + constructor begin ...'
-  }));
-
+  var packageName = params.packageName || 'sub-plugin1';
+  var blockRef = chores.getBlockRef(__filename, packageName);
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
   this.getConfig = function() {
     return pluginCfg;
   }
-
-  LX.has('silly') && LX.log('silly', LT.toMessage({
-    tags: [blockRef, 'constructor-end'],
-    text: ' + constructor end!'
-  }));
 };
 
 Service.argumentSchema = {
