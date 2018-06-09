@@ -4,17 +4,20 @@ var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 
 var Service = function(params) {
-  var self = this;
   params = params || {};
 
+  var self = this;
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
 
-  var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
+  var packageName = params.packageName || 'plugin2';
+  var blockRef = params.componentId;
+  var pluginCfg = params.sandboxConfig || {};
+
   LX.has('conlog') && LX.log('conlog', LT.add({
     pluginCfg: pluginCfg
   }).toMessage({
-    tags: [ 'plugin2', 'configuration' ],
+    tags: [ blockRef, 'configuration' ],
     text: ' - configuration: {pluginCfg}'
   }));
 };

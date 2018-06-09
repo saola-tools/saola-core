@@ -11,6 +11,7 @@ var Service = function(params) {
 
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
+  var packageName = params.packageName || 'plugin3';
 
   LX.has('conlog') && LX.log('conlog', LT.toMessage({
     tags: [ 'test-plugin3', 'constructor-begin' ],
@@ -49,7 +50,7 @@ var Service = function(params) {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
         (pluginCfg && pluginCfg.verbose !== false || debugx.enabled) &&
-        console.log('plugin3 webserver is listening at http://%s:%s', host, port);
+        console.log('%s webserver is listening at http://%s:%s', packageName, host, port);
         resolved(serverInstance);
       });
     });
@@ -59,7 +60,7 @@ var Service = function(params) {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
         (pluginCfg && pluginCfg.verbose !== false || debugx.enabled) &&
-        console.log('plugin3 webserver has been closed');
+        console.log('%s webserver has been closed', packageName);
         resolved();
       });
     });

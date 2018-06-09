@@ -14,17 +14,15 @@ var Service = function(params) {
   var LT = params.loggingFactory.getTracer();
 
   var packageName = params.packageName || 'plugin2';
-  var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
+  var blockRef = params.componentId;
+  var pluginCfg = params.sandboxConfig || {};
 
   var server = http.createServer();
 
-  server.on('error', function(err) {
-    LX.has('error') && LX.log('error', LT.add({
-      error: err
-    }).toMessage({
-      tags: [ 'plugin2', 'server-error' ],
-      text: ' - Server Error: {error}',
-      reset: true
+  server.on('error', function(error) {
+    LX.has('error') && LX.log('error', LT.add({ error: error }).toMessage({
+      tags: [ blockRef, 'server-error' ],
+      text: ' - Server Error: {error}'
     }));
   });
 
