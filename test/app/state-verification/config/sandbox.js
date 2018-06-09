@@ -32,10 +32,16 @@ module.exports = {
   },
   plugins: {
     "wrapper1": {
-      "port": 17741
+      "port": 17741,
+      transformRequest: function(req) {
+        return req && req.body || {};
+      }
     },
     "wrapper2": {
-      "port": 17742
+      "port": 17742,
+      transformRequest: function(req) {
+        return req && req.body || {};
+      }
     }
   }
 }

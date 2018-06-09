@@ -3,25 +3,27 @@
 var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainService');
 
 var Service = function(params) {
   params = params || {};
-  var self = this;
 
+  var self = this;
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
-
-  debugx.enabled && debugx(' + constructor begin ...');
+  var blockRef = params.componentId;
 
   var mainCfg = lodash.get(params, ['sandboxConfig'], {});
-  debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));
+
+  LX.has('conlog') && LX.log('conlog', LT.add({
+    pluginCfg: mainCfg
+  }).toMessage({
+    tags: [ blockRef, 'configuration' ],
+    text: ' - configuration: {pluginCfg}'
+  }));
 
   self.getConfig = function() {
     return lodash.cloneDeep(mainCfg);
   }
-
-  debugx.enabled && debugx(' - constructor end!');
 };
 
 if (chores.isFeatureSupported('bridge-full-ref')) {

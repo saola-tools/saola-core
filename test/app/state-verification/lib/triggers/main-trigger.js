@@ -1,10 +1,10 @@
 'use strict';
 
-var http = require('http');
 var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
+var http = require('http');
+var util = require('util');
 
 var Service = function(params) {
   params = params || {};
@@ -12,9 +12,8 @@ var Service = function(params) {
 
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();
-
-  debugx.enabled && debugx(' + constructor begin ...');
-
+  var packageName = params.packageName || 'state-verification';
+  var blockRef = params.componentId;
   var mainCfg = lodash.get(params, ['sandboxConfig'], {});
 
   self.getConfig = function() {
@@ -23,13 +22,16 @@ var Service = function(params) {
 
   var server = http.createServer();
 
-  server.on('error', function(err) {
-    debugx.enabled && debugx('Server Error: %s', JSON.stringify(err));
+  server.on('error', function(error) {
+    LX.has('silly') && LX.log('silly', LT.add({ error: error }).toMessage({
+      tags: [blockRef, 'webserver-error'],
+      text: 'Server Error: ${error}'
+    }));
   });
 
   server.on('request', function(req, res) {
     res.writeHead(200);
-    res.end('state-verification webserver');
+    res.end(util.format('%s webserver', packageName));
   });
 
   self.getServer = function() {
@@ -44,8 +46,8 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        chores.isVerboseForced('state-verification', mainCfg) &&
-        console.log('%s is listening at http://%s:%s', Service.argumentSchema.$id, host, port);
+        chores.isVerboseForced(packageName, mainCfg) &&
+        console.log('%s is listening at http://%s:%s', packageName, host, port);
         resolved(serverInstance);
       });
     });
@@ -54,14 +56,12 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        chores.isVerboseForced('state-verification', mainCfg) &&
-        console.log('%s has been closed', Service.argumentSchema.$id);
+        chores.isVerboseForced(packageName, mainCfg) &&
+        console.log('%s has been closed', packageName);
         resolved();
       });
     });
   };
-
-  debugx.enabled && debugx(' - constructor end!');
 };
 
 if (chores.isFeatureSupported('bridge-full-ref')) {

@@ -18,8 +18,8 @@ var Service = function(params) {
 
   var server = http.createServer();
 
-  server.on('error', function(err) {
-    LX.has('silly') && LX.log('silly', LT.add({ error: err }).toMessage({
+  server.on('error', function(error) {
+    LX.has('silly') && LX.log('silly', LT.add({ error: error }).toMessage({
       tags: [blockRef, 'webserver-error'],
       text: 'Server Error: ${error}'
     }));
