@@ -209,11 +209,6 @@ describe('devebot:application', function() {
 		});
 
 		it('[naming-convention] special plugins & bridges should be loaded properly', function() {
-			if (!chores.isFeatureSupported('presets')) {
-				this.skip();
-				return;
-			}
-
 			app = lab.getApp('naming-convention');
 			app.server;
 
@@ -298,11 +293,6 @@ describe('devebot:application', function() {
 		});
 
 		it('[naming-convention] special plugins & bridges should be available', function(done) {
-			if (!chores.isFeatureSupported('presets')) {
-				this.skip();
-				return done();
-			}
-
 			app = lab.getApp('naming-convention');
 			app.runner.invoke(function(injektor) {
 				var sandboxManager = injektor.lookup('sandboxManager');
@@ -317,7 +307,7 @@ describe('devebot:application', function() {
 		});
 
 		it('[naming-convention] bridge configuration should be loaded properly', function() {
-			if (!chores.isFeatureSupported('presets')) {
+			if (!chores.isFeatureSupported('bridge-full-ref')) {
 				this.skip();
 				return done();
 			}
