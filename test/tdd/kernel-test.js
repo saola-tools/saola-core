@@ -257,7 +257,7 @@ describe('tdd:devebot:base:kernel', function() {
       false && console.log('pluginConfig: %s', JSON.stringify(pluginConfig, null, 2));
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
 
-      var result = lodash.get(loggingStore, 'outputValidation.0.validatingResult', []);
+      var result = lodash.get(loggingStore, 'outputValidation.0.result', []);
       false && lodash.forEach(result, function(item) {
         console.log('- validation result: %s', JSON.stringify(lodash.omit(item, ['stack'])));
         if (item.hasError) {
