@@ -9,13 +9,6 @@ var Service = function(params) {
 
   params = params || {};
 
-  var LX = this.logger, LT = this.tracer;
-
-  LX.has('debug') && LX.log('debug', LT.add({ data: params }).toMessage({
-    tags: [ 'bridge2', 'configuration' ],
-    message: 'Configuration: ${data}'
-  }));
-
   dgx.enabled && dgx(' - params: %s', JSON.stringify(params, null, 2));
 
   this.getConfig = function() {

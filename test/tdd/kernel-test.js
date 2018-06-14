@@ -539,6 +539,7 @@ describe('tdd:devebot:base:kernel', function() {
           'totalOfErrors', 'errors'
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
+        assert.lengthOf(errorSummary.errors, 1);
       } else {
         console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
       }
@@ -558,6 +559,7 @@ describe('tdd:devebot:base:kernel', function() {
           'totalOfErrors', 'errors'
         ]);
         assert.equal(errorSummary.totalOfErrors, 0);
+        assert.lengthOf(errorSummary.errors, 0);
       } else {
         console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
       }
@@ -577,12 +579,33 @@ describe('tdd:devebot:base:kernel', function() {
           'totalOfErrors', 'errors'
         ]);
         assert.equal(errorSummary.totalOfErrors, 2);
+        assert.lengthOf(errorSummary.errors, 2);
       } else {
         console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 2);
+    });
+
+    it("loading an invalid plugin's configure but skipping validation", function() {
+      var unhook = lab.preventExit();
+      var kernel = lab.createKernel('invalid-plugin-config-but-skip');
+
+      // errorSummary.0 <= kernel
+      if (true) {
+        assert.lengthOf(lodash.get(loggingStore, 'errorSummary', []), 1);
+        var errorSummary = lodash.pick(lodash.get(loggingStore, 'errorSummary.0', {}), [
+          'totalOfErrors', 'errors'
+        ]);
+        assert.equal(errorSummary.totalOfErrors, 0);
+        assert.lengthOf(errorSummary.errors, 0);
+      } else {
+        console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
+      }
+
+      var totalOfExit = unhook();
+      assert.equal(totalOfExit, 0);
     });
 
     after(function() {

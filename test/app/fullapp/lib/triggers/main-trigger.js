@@ -12,9 +12,7 @@ var Service = function(params) {
   params = params || {};
 
   var self = this;
-
-  var logger = params.loggingFactory.getLogger();
-
+  var packageName = params.packageName || 'fullapp';
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
 
   var server = http.createServer();
@@ -40,8 +38,8 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        chores.isVerboseForced('demo-app', mainCfg) &&
-        console.log('%s is listening at http://%s:%s', Service.argumentSchema.$id, host, port);
+        chores.isVerboseForced(packageName, mainCfg) &&
+        console.log('%s is listening at http://%s:%s', packageName, host, port);
         resolved(serverInstance);
       });
     });
@@ -50,8 +48,8 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        chores.isVerboseForced('demo-app', mainCfg) &&
-        console.log('%s has been closed', Service.argumentSchema.$id);
+        chores.isVerboseForced(packageName, mainCfg) &&
+        console.log('%s has been closed', packageName);
         resolved();
       });
     });

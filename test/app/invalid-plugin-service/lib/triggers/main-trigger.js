@@ -12,10 +12,7 @@ var Service = function(params) {
   params = params || {};
 
   var self = this;
-
-  var logger = params.loggingFactory.getLogger();
-
-  var pluginName = 'invalid-plugin-service'; //Service.argumentSchema.$id;
+  var packageName = params.packageName || 'invalid-plugin-service';
   var mainCfg = lodash.get(params, ['sandboxConfig'], {});
 
   var server = http.createServer();
@@ -36,8 +33,8 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        chores.isVerboseForced(pluginName, mainCfg) &&
-        console.log('%s#webserver is listening at http://%s:%s', pluginName, host, port);
+        chores.isVerboseForced(packageName, mainCfg) &&
+        console.log('%s#webserver is listening at http://%s:%s', packageName, host, port);
         resolved(serverInstance);
       });
     });
@@ -46,8 +43,8 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        chores.isVerboseForced('invalid-plugin-service', mainCfg) &&
-        console.log('%s#webserver has been closed', pluginName);
+        chores.isVerboseForced(packageName, mainCfg) &&
+        console.log('%s#webserver has been closed', packageName);
         resolved();
       });
     });
