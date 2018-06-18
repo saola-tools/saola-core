@@ -144,7 +144,7 @@ describe('tdd:devebot:core:config-loader', function() {
     var transformConfig = ConfigLoader.__get__('transformConfig');
 
     it('should transform relative names into default full names', function() {
-      if (!chores.isFeatureSupported('bridge-full-ref') || !chores.isFeatureSupported('standardizing-config')) {
+      if (!chores.isFeatureSupported(['bridge-full-ref', 'standardizing-config'])) {
         this.skip();
         return;
       }
@@ -245,7 +245,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('should transform absolute names into relative names', function() {
-      if (!chores.isFeatureSupported('bridge-full-ref') || !chores.isFeatureSupported('standardizing-config')) {
+      if (!chores.isFeatureSupported(['bridge-full-ref', 'standardizing-config'])) {
         this.skip();
         return;
       }
@@ -357,6 +357,7 @@ describe('tdd:devebot:core:config-loader', function() {
   describe('customize configDir and mixture', function() {
     before(function() {
       envtool.setup({
+        NODE_ENV: 'test',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
         DEVEBOT_CONFIG_ENV: 'dev'
       });
@@ -404,6 +405,7 @@ describe('tdd:devebot:core:config-loader', function() {
   describe('private sandbox configurations', function() {
     before(function() {
       envtool.setup({
+        NODE_ENV: 'test',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
         DEVEBOT_CONFIG_ENV: 'dev',
         DEVEBOT_SANDBOX: 'ev1,ev2'
