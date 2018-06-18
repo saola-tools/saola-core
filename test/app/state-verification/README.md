@@ -3,6 +3,6 @@
 ## Usage
 
 ```
-export DEVEBOT_VERIFICATION_MODE=print-config,check-config
+export DEVEBOT_TASKS=print-config,check-config
 DEBUG=none node test/app/state-verification/
 ```
