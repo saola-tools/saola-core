@@ -73,6 +73,8 @@ describe('tdd:devebot:base:envbox', function() {
       assert.sameMembers(envbox.getEnv("ENV_EMPTY_ARRAY1"), []);
       assert.sameMembers(envbox.getEnv("ENV_EMPTY_ARRAY2"), []);
       assert.sameMembers(envbox.getEnv("ENV_NORMAL_ARRAY"), ["value 1", "value 2", "value 3"]);
+      // display
+      false && envbox.printEnvList();
     });
   });
 });
