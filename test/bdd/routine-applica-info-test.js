@@ -28,9 +28,9 @@ describe('bdd:devebot:command:applica-info', function() {
 
 		it('definition should contain [applica-info] command', function(done) {
 			new Promise(function(resolved, rejected) {
-				api.loadDefinition(function(err, defs) {
+				api.loadDefinition(function(err, obj) {
 					if (err) return rejected(err);
-					resolved(defs);
+					resolved(obj.payload);
 				});
 			}).then(function(defs) {
 				var cmd = lodash.keyBy(defs.commands, 'name')['applica-info'];
@@ -67,7 +67,7 @@ describe('bdd:devebot:command:applica-info', function() {
 					"name": "applica-info",
 					"options": {}
 				});
-				assert.deepEqual(result.details, [
+				assert.deepEqual(result.payload, [
 					{
 						"type": "json",
 						"title": "Application Information",
@@ -116,9 +116,9 @@ describe('bdd:devebot:command:applica-info', function() {
 
 		it('definition should contain [applica-info] command', function(done) {
 			new Promise(function(resolved, rejected) {
-				api.loadDefinition(function(err, defs) {
+				api.loadDefinition(function(err, obj) {
 					if (err) return rejected(err);
-					resolved(defs);
+					resolved(obj.payload);
 				});
 			}).then(function(defs) {
 				var cmd = lodash.keyBy(defs.commands, 'name')['applica-info'];
@@ -154,7 +154,7 @@ describe('bdd:devebot:command:applica-info', function() {
 					"name": "applica-info",
 					"options": {}
 				});
-				assert.deepEqual(result.details, [
+				assert.deepEqual(result.payload, [
 					{
 						"type": "json",
 						"title": "Application Information",

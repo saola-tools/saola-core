@@ -26,9 +26,9 @@ describe('bdd:devebot:command:system-info', function() {
 
 	it('definition should contain [system-info] command', function(done) {
 		new Promise(function(resolved, rejected) {
-			api.loadDefinition(function(err, defs) {
+			api.loadDefinition(function(err, obj) {
 				if (err) return rejected(err);
-				resolved(defs);
+				resolved(obj.payload);
 			});
 		}).then(function(defs) {
 			var cmd = lodash.keyBy(defs.commands, 'name')['system-info'];
@@ -65,8 +65,8 @@ describe('bdd:devebot:command:system-info', function() {
 				"name": "system-info",
 				"options": {}
 			});
-			assert.lengthOf(result.details, 1);
-			var info = result.details[0];
+			assert.lengthOf(result.payload, 1);
+			var info = result.payload[0];
 			assert.deepInclude(lodash.pick(info, ['type', 'title', 'label']), {
 				"type": "record",
 				"title": "OS information",

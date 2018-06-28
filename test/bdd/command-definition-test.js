@@ -26,9 +26,9 @@ describe('devebot:command:definition', function() {
 
 	it('definition should contain default commands', function(done) {
 		new Promise(function(resolved, rejected) {
-			api.loadDefinition(function(err, defs) {
+			api.loadDefinition(function(err, obj) {
 				if (err) return rejected(err);
-				resolved(defs);
+				resolved(obj.payload);
 			});
 		}).then(function(defs) {
 			var cmdNames = lodash.map(defs.commands, function(cmd) {

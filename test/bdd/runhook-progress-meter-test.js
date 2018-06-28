@@ -53,7 +53,7 @@ describe('devebot:runhook:progress:meter', function() {
 			debugx.enabled && debugx('Returned progress: %s', JSON.stringify(returnedPrgr));
 			assert.sameOrderedMembers(expectedPrgr, returnedPrgr);
 			debugx.enabled && debugx(JSON.stringify(result, null, 2));
-			assert.equal(result.details[0].data.fibonacci, expectedValue);
+			assert.equal(result.payload[0].data.fibonacci, expectedValue);
 			done();
 		}).catch(function(error) {
 			debugx.enabled && debugx(JSON.stringify(error, null, 2));
@@ -89,7 +89,7 @@ describe('devebot:runhook:progress:meter', function() {
 			debugx.enabled && debugx('Returned progress: %s', JSON.stringify(returnedPrgr));
 			assert.sameOrderedMembers(expectedPrgr, returnedPrgr);
 			debugx.enabled && debugx(JSON.stringify(result, null, 2));
-			assert.equal(result.details[0].data.fibonacci, expectedValue);
+			assert.equal(result.payload[0].data.fibonacci, expectedValue);
 			done();
 		}).catch(function(error) {
 			debugx.enabled && debugx(JSON.stringify(error, null, 2));
@@ -116,8 +116,8 @@ describe('devebot:runhook:progress:meter', function() {
 			done();
 		}).catch(function(error) {
 			debugx.enabled && debugx(JSON.stringify(error, null, 2));
-			assert.isObject(error.details[0].data.schema);
-			assert.isString(error.details[0].data.message);
+			assert.isObject(error.payload[0].data.schema);
+			assert.isString(error.payload[0].data.message);
 			done();
 		});
 	});
@@ -141,7 +141,7 @@ describe('devebot:runhook:progress:meter', function() {
 			done();
 		}).catch(function(error) {
 			debugx.enabled && debugx(JSON.stringify(error, null, 2));
-			assert.isString(error.details[0].data.message);
+			assert.isString(error.payload[0].data.message);
 			done();
 		});
 	});

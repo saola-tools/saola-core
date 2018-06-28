@@ -43,7 +43,7 @@ describe('tdd:devebot:core:script-renderer', function() {
         tracer: loggingFactory.getTracer(),
         schemaValidator: schemaValidator
       });
-    var testSend = function(state, payload, expected) {
+    var testSend = function(state, supposed, expected) {
       var wsStub = null;
       var output = new Promise(function(onResolved, onRejected) {
         wsStub = sinon.stub(ws, 'send').callsFake(function(message) {
@@ -54,7 +54,7 @@ describe('tdd:devebot:core:script-renderer', function() {
             onRejected(message);
           }
         });
-        outlet.render(state, payload);
+        outlet.render(state, supposed);
       });
       output.finally(function() {
         wsStub && wsStub.restore();
@@ -83,13 +83,11 @@ describe('tdd:devebot:core:script-renderer', function() {
         {
           state: 'definition',
           supposed: {
-            value: {
-              text: 'Any Object'
-            }
+            text: 'Any Object'
           },
           expected: {
             state: 'definition',
-            value: {
+            payload: {
               text: 'Any Object'
             }
           }
@@ -135,7 +133,7 @@ describe('tdd:devebot:core:script-renderer', function() {
           expected: {
             state: constx.WEBSOCKET.STATE.FAILED,
             message: constx.WEBSOCKET.MSG_ON.FAILED,
-            details: [{
+            payload: [{
               type: 'object',
               title: 'My Error',
               label: {
@@ -168,7 +166,7 @@ describe('tdd:devebot:core:script-renderer', function() {
           expected: {
             state: constx.WEBSOCKET.STATE.COMPLETED,
             message: constx.WEBSOCKET.MSG_ON.COMPLETED,
-            details: [{
+            payload: [{
               type: 'object',
               title: 'My Result',
               label: {

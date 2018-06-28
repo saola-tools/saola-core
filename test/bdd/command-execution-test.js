@@ -98,9 +98,9 @@ describe('devebot:command:execution', function() {
 
 	it('definition should contain runhook-call command', function(done) {
 		new Promise(function(resolved, rejected) {
-			api.loadDefinition(function(err, defs) {
+			api.loadDefinition(function(err, obj) {
 				if (err) return rejected(err);
-				resolved(defs);
+				resolved(obj.payload);
 			});
 		}).then(function(defs) {
 			var cmd = lodash.keyBy(defs.commands, 'name')['plugin1-routine1'];
