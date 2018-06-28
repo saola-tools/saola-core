@@ -82,7 +82,7 @@ describe('tdd:devebot:core:script-renderer', function() {
       Promise.mapSeries([
         {
           state: 'definition',
-          payload: {
+          supposed: {
             value: {
               text: 'Any Object'
             }
@@ -96,7 +96,7 @@ describe('tdd:devebot:core:script-renderer', function() {
         },
         {
           state: 'error',
-          payload: null,
+          supposed: null,
           expected: {
             state: constx.WEBSOCKET.STATE.ERROR,
             message: constx.WEBSOCKET.MSG_ON.ERROR
@@ -104,7 +104,7 @@ describe('tdd:devebot:core:script-renderer', function() {
         },
         {
           state: 'started',
-          payload: null,
+          supposed: null,
           expected: {
             state: constx.WEBSOCKET.STATE.STARTED,
             message: constx.WEBSOCKET.MSG_ON.STARTED
@@ -112,7 +112,7 @@ describe('tdd:devebot:core:script-renderer', function() {
         },
         {
           state: 'cancelled',
-          payload: null,
+          supposed: null,
           expected: {
             state: constx.WEBSOCKET.STATE.CANCELLED,
             message: constx.WEBSOCKET.MSG_ON.CANCELLED
@@ -120,7 +120,7 @@ describe('tdd:devebot:core:script-renderer', function() {
         },
         {
           state: 'failed',
-          payload: {
+          supposed: {
             type: 'object',
             title: 'My Error',
             label: {
@@ -151,7 +151,7 @@ describe('tdd:devebot:core:script-renderer', function() {
         },
         {
           state: 'completed',
-          payload: {
+          supposed: {
             type: 'object',
             title: 'My Result',
             label: {
@@ -186,7 +186,7 @@ describe('tdd:devebot:core:script-renderer', function() {
         },
         {
           state: 'progress',
-          payload: {
+          supposed: {
             progress: 57,
             data: {
               msg: 'processing (57%)'
@@ -207,13 +207,13 @@ describe('tdd:devebot:core:script-renderer', function() {
         },
         {
           state: 'done',
-          payload: null,
+          supposed: null,
           expected: {
             state: constx.WEBSOCKET.STATE.DONE
           }
         }
       ], function(item) {
-        return testSend(item.state, item.payload, item.expected);
+        return testSend(item.state, item.supposed, item.expected);
       }).asCallback(done);
     });
 
