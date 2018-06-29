@@ -1,6 +1,7 @@
 module.exports = {
   devebot: {
     verbose: true,
+    coupling: 'loose',
     jobqueue: {
       enabled: true
     }
