@@ -25,6 +25,7 @@ var runhookDialect = {
     var LT = this.loggingFactory.getTracer();
 
     LX.has('conlog') && LX.log('conlog', LT.add({
+      tags: ['sub-plugin2', 'routine0', 'begin'],
       checkpoint: 'sub-plugin2-routine0-begin'
     }).toMessage({
       text: ' - runhook start'
@@ -42,6 +43,7 @@ var runhookDialect = {
     LX.has('conlog') && LX.log('conlog', LT.add({
       checkpoint: 'sub-plugin2-routine0-end'
     }).toMessage({
+      tags: ['sub-plugin2', 'routine0', 'end'],
       text: ' - runhook end'
     }));
 

@@ -123,7 +123,7 @@ function SandboxManager(params) {
     }
     if (handler && injectedServices && handlerRecord.crateScope) {
       injectedServices[handlerRecord.crateScope] = injectedServices[handlerRecord.crateScope] || {};
-      injectedServices[handlerRecord.crateScope][handlerRecord.name] = handler;
+      injectedServices[handlerRecord.crateScope][handlerName] = handler;
     }
     if (handler && handlerType === 'TRIGGER') {
       let methods = {

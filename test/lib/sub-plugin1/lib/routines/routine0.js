@@ -27,7 +27,8 @@ var runhookDialect = {
     LX.has('conlog') && LX.log('conlog', LT.add({
       checkpoint: 'sub-plugin1-routine0-begin'
     }).toMessage({
-      text: ' - runhook start'
+      tags: ['sub-plugin1', 'routine0', 'begin'],
+      text: ' - runhook begin'
     }));
 
     var number = payload.number;
@@ -42,6 +43,7 @@ var runhookDialect = {
     LX.has('conlog') && LX.log('conlog', LT.add({
       checkpoint: 'sub-plugin1-routine0-end'
     }).toMessage({
+      tags: ['sub-plugin1', 'routine0', 'end'],
       text: ' - runhook end'
     }));
 

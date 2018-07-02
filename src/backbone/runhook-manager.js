@@ -40,10 +40,21 @@ function RunhookManager(params) {
     injectedServices: params.injectedHandlers
   };
 
-  let buildRunhookInstance = function(runhookName, runhookId) {
-    return lodash.defaults({
-      loggingFactory: params.loggingFactory.branch(runhookName, runhookId)
-    }, runhookInstance);
+  /**
+   * @param {Object} command
+   * @param {string} command.name - The name of the command/routine.
+   * @param {string} command.package - The package on which this command/routine belongs to.
+   * @param {string} command.requestId - The requestId.
+   */
+  let buildRunhookInstance = function(command, runhookId) {
+    runhookId = runhookId || command.requestId;
+    let customized = {
+      loggingFactory: params.loggingFactory.branch(command.name, runhookId)
+    }
+    if (command.package && params.injectedServices) {
+      customized.injectedServices = params.injectedServices[command.package];
+    }
+    return lodash.defaults(customized, runhookInstance);
   };
 
   let predefinedContext = lodash.get(params, [
@@ -177,9 +188,7 @@ function RunhookManager(params) {
       return Promise.reject(validationError);
     }
 
-    LX.has('trace') && LX.log('trace', reqTr.add({
-      commandName: command.name
-    }).toMessage({
+    LX.has('trace') && LX.log('trace', reqTr.add({ commandName: command.name }).toMessage({
       tags: [ blockRef, 'execute', 'enqueue' ],
       text: '{commandName}#{requestId} - enqueue'
     }));
@@ -243,10 +252,7 @@ function RunhookManager(params) {
     command.requestId = command.requestId || LT.getLogID();
     let reqTr = LT.branch({ key: 'requestId', value: command.requestId });
 
-    LX.has('trace') && LX.log('trace', reqTr.add({
-      commandName: command.name,
-      command: command
-    }).toMessage({
+    LX.has('trace') && LX.log('trace', reqTr.add({ commandName: command.name, command }).toMessage({
       tags: [ blockRef, 'process', 'begin' ],
       text: '{commandName}#{requestId} - process: {command}'
     }));
@@ -267,7 +273,7 @@ function RunhookManager(params) {
       if (predefinedContext) {
         return Promise.resolve().then(handler.bind(null, options, payload, context));
       } else {
-        return Promise.resolve().then(handler.bind(buildRunhookInstance(command.name), options, payload, context));
+        return Promise.resolve().then(handler.bind(buildRunhookInstance(command), options, payload, context));
       }
     } else {
       return Promise.reject(lodash.assign({ reason: 'invalid_command_handler' }, command));
