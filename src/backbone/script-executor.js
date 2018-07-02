@@ -57,7 +57,6 @@ function ScriptExecutor(params) {
         outlet.render('definition', {
           appName: params.appName,
           appInfo: params.appInfo,
-          appinfo: params.appInfo, // deprecated
           commands: runhookManager.getDefinitions()
         });
       });

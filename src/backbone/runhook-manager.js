@@ -51,8 +51,10 @@ function RunhookManager(params) {
     let customized = {
       loggingFactory: params.loggingFactory.branch(command.name, runhookId)
     }
-    if (command.package && params.injectedServices) {
-      customized.injectedServices = params.injectedServices[command.package];
+    if (command.package && !chores.isSpecialPlugin(command.package)) {
+      if (params.injectedServices && params.injectedServices[command.package]) {
+        customized.injectedServices = params.injectedServices[command.package];
+      }
     }
     return lodash.defaults(customized, runhookInstance);
   };
