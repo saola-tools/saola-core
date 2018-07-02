@@ -48,10 +48,7 @@ function SandboxManager(params) {
     text: ' - load the sandbox${sandboxNames} with configuration: ${sandboxConfig}'
   }));
 
-  LX.has('silly') && LX.log('silly', LT.add({
-    sandboxNames: sandboxNames,
-    sandboxConfig: sandboxConfig
-  }).toMessage({
+  LX.has('silly') && LX.log('silly', LT.add({ sandboxNames, sandboxConfig }).toMessage({
     tags: [ blockRef, 'sandbox-info' ],
     text: ' - create sandbox${sandboxNames}.injektor object'
   }));

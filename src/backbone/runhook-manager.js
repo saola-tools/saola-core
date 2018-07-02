@@ -25,9 +25,7 @@ function RunhookManager(params) {
   let LX = loggingFactory.getLogger();
   let LT = loggingFactory.getTracer();
 
-  LX.has('silly') && LX.log('silly', LT.add({
-    sandboxName: params.sandboxName
-  }).toMessage({
+  LX.has('silly') && LX.log('silly', LT.add({ sandboxName: params.sandboxName }).toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start in sandbox <{sandboxName}>'
   }));
@@ -38,7 +36,7 @@ function RunhookManager(params) {
     sandboxName: params.sandboxName,
     sandboxConfig: params.sandboxConfig,
     loggingFactory: params.loggingFactory,
-    service: params.injectedHandlers,
+    service: params.injectedHandlers, //@Deprecated, injectedServices
     injectedServices: params.injectedHandlers
   };
 
@@ -115,10 +113,7 @@ function RunhookManager(params) {
     command = command || {};
     command.requestId = command.requestId || LT.getLogID();
     let reqTr = LT.branch({ key: 'requestId', value: command.requestId });
-    LX.has('trace') && LX.log('trace', reqTr.add({
-      commandName: command.name,
-      command: command
-    }).toMessage({
+    LX.has('trace') && LX.log('trace', reqTr.add({ commandName: command.name, command }).toMessage({
       tags: [ blockRef, 'execute', 'begin' ],
       text: '{commandName}#{requestId} - validate: {command}'
     }));
@@ -152,11 +147,7 @@ function RunhookManager(params) {
     let payload = command.data;
     let schema = routine && routine.info && routine.info.schema;
     if (schema && lodash.isObject(schema)) {
-      LX.has('silly') && LX.log('silly', reqTr.add({
-        commandName: command.name,
-        payload: payload,
-        schema: schema
-      }).toMessage({
+      LX.has('silly') && LX.log('silly', reqTr.add({ commandName: command.name, payload, schema }).toMessage({
         tags: [ blockRef, 'execute', 'validate-by-schema' ],
         text: '{commandName}#{requestId} - validate payload: {payload} by schema: {schema}'
       }));
@@ -170,10 +161,7 @@ function RunhookManager(params) {
     }
     let validate = routine && routine.info && routine.info.validate;
     if (validate && lodash.isFunction(validate)) {
-      LX.has('silly') && LX.log('silly', reqTr.add({
-        commandName: command.name,
-        payload: payload
-      }).toMessage({
+      LX.has('silly') && LX.log('silly', reqTr.add({ commandName: command.name, payload }).toMessage({
         tags: [ blockRef, 'execute', 'validate-by-method' ],
         text: '{commandName}#{requestId} - validate payload: {payload} using validate()'
       }));
