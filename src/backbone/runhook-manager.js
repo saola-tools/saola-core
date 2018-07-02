@@ -48,7 +48,7 @@ function RunhookManager(params) {
 
   let predefinedContext = lodash.get(params, [
       'profileConfig', constx.ROUTINE.ROOT_KEY, 'predefinedContext'
-  ]) == true;
+  ]) == true; // default: undefined ~ false
 
   let routineMap = {};
   let routineStore = new Injektor(chores.injektorOptions);
@@ -144,7 +144,7 @@ function RunhookManager(params) {
       return Promise.reject(validationError);
     }
 
-    let payload = command.data;
+    let payload = command.payload || command.data;
     let schema = routine && routine.info && routine.info.schema;
     if (schema && lodash.isObject(schema)) {
       LX.has('silly') && LX.log('silly', reqTr.add({ commandName: command.name, payload, schema }).toMessage({
@@ -254,7 +254,7 @@ function RunhookManager(params) {
     let routine = getRunhook(command);
     let handler = routine && routine.handler;
     let options = command.options;
-    let payload = command.data || command.payload;
+    let payload = command.payload || command.data;
     if (lodash.isFunction(handler)) {
       LX.has('trace') && LX.log('trace', reqTr.add({
         commandName: command.name,

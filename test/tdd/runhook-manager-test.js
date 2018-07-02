@@ -273,6 +273,7 @@ describe('tdd:devebot:core:runhook-manager', function() {
       assert.equal(runhook2_2, runhook2);
 
       assert.notEqual(runhook1, runhook2);
+      assert.notEqual(runhook1.handler, runhook2.handler);
     });
 
     it('retrieve the same named routines from different packages', function() {
@@ -285,6 +286,7 @@ describe('tdd:devebot:core:runhook-manager', function() {
       assert.isFunction(runhook0_2.handler);
 
       assert.notEqual(runhook0_1, runhook0_2);
+      assert.notEqual(runhook0_1.handler, runhook0_2.handler);
     });
 
     after(function() {
