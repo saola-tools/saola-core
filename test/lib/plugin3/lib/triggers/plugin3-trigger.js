@@ -13,20 +13,13 @@ var Service = function(params) {
   var LT = params.loggingFactory.getTracer();
   var packageName = params.packageName || 'plugin3';
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'test-plugin3', 'constructor-begin' ],
-    text: ' + constructor begin'
-  }));
-
   var pluginCfg = lodash.get(params, ['sandboxConfig', 'plugins', 'plugin3'], {});
 
   var server = http.createServer();
 
-  server.on('error', function(err) {
-    LX.has('error') && LX.log('error', LT.add({
-      error: err
-    }).toMessage({
-      tags: [ 'test-plugin3', 'server-error' ],
+  server.on('error', function(error) {
+    LX.has('error') && LX.log('error', LT.add({ error }).toMessage({
+      tags: [ packageName, 'server-error' ],
       text: ' - Server Error: {error}',
       reset: true
     }));
@@ -65,11 +58,6 @@ var Service = function(params) {
       });
     });
   };
-
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
-    tags: [ 'test-plugin3', 'constructor-end' ],
-    text: ' - constructor end!'
-  }));
 };
 
 Service.argumentSchema = {

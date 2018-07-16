@@ -9,8 +9,6 @@ var Service = function(params) {
   var self = this;
   params = params || {};
 
-  debugx.enabled && debugx(' + constructor begin ...');
-
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
   var server = http.createServer();
@@ -52,8 +50,6 @@ var Service = function(params) {
       });
     });
   };
-
-  debugx.enabled && debugx(' - constructor end!');
 };
 
 module.exports = Service;
