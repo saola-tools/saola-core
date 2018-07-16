@@ -10,11 +10,13 @@ var debugx = Devebot.require('pinbug')('tdd:devebot:base:runner');
 var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
-var runner = require('../../lib/runner');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
+var Runner = rewire('../../lib/runner');
+var WsServerMock = Runner.__get__("WsServerMock");
+var WsClientMock = Runner.__get__("WsClientMock");
 var sinon = require('sinon');
 
 describe.skip('tdd:devebot:base:runner', function() {
@@ -33,7 +35,7 @@ describe.skip('tdd:devebot:base:runner', function() {
     errorCollector.reset();
   });
 
-  describe('validateBridgeConfig()', function() {
+  describe('MockWsServer', function() {
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var LX = loggingFactory.getLogger();
     var LT = loggingFactory.getTracer();

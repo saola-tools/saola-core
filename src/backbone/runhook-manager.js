@@ -128,7 +128,7 @@ function RunhookManager(params) {
     let reqTr = LT.branch({ key: 'requestId', value: command.requestId });
     LX.has('trace') && LX.log('trace', reqTr.add({ commandName: command.name, command }).toMessage({
       tags: [ blockRef, 'execute', 'begin' ],
-      text: '{commandName}#{requestId} - validate: {command}'
+      text: '${commandName}#${requestId} - validate: {command}'
     }));
 
     let routine = getRunhook(command);
@@ -162,7 +162,7 @@ function RunhookManager(params) {
     if (schema && lodash.isObject(schema)) {
       LX.has('silly') && LX.log('silly', reqTr.add({ commandName: command.name, payload, schema }).toMessage({
         tags: [ blockRef, 'execute', 'validate-by-schema' ],
-        text: '{commandName}#{requestId} - validate payload: {payload} by schema: {schema}'
+        text: '${commandName}#${requestId} - validate payload: {payload} by schema: {schema}'
       }));
       let result = params.schemaValidator.validate(payload, schema);
       if (result.valid === false) {
@@ -176,7 +176,7 @@ function RunhookManager(params) {
     if (validate && lodash.isFunction(validate)) {
       LX.has('silly') && LX.log('silly', reqTr.add({ commandName: command.name, payload }).toMessage({
         tags: [ blockRef, 'execute', 'validate-by-method' ],
-        text: '{commandName}#{requestId} - validate payload: {payload} using validate()'
+        text: '${commandName}#${requestId} - validate payload: {payload} using validate()'
       }));
       if (!validate(payload)) {
         validationError = {
@@ -186,13 +186,17 @@ function RunhookManager(params) {
     }
 
     if (validationError) {
+      LX.has('error') && LX.log('error', reqTr.add({ commandName: command.name, validationError }).toMessage({
+        tags: [ blockRef, 'execute', 'validation-error' ],
+        text: '${commandName}#${requestId} - validation error: {validationError}'
+      }));
       context.outlet && context.outlet.render('failed', validationError);
       return Promise.reject(validationError);
     }
 
     LX.has('trace') && LX.log('trace', reqTr.add({ commandName: command.name }).toMessage({
       tags: [ blockRef, 'execute', 'enqueue' ],
-      text: '{commandName}#{requestId} - enqueue'
+      text: '${commandName}#${requestId} - processing'
     }));
 
     let promize = null;
@@ -256,7 +260,7 @@ function RunhookManager(params) {
 
     LX.has('trace') && LX.log('trace', reqTr.add({ commandName: command.name, command }).toMessage({
       tags: [ blockRef, 'process', 'begin' ],
-      text: '{commandName}#{requestId} - process: {command}'
+      text: '${commandName}#${requestId} - process: {command}'
     }));
 
     let routine = getRunhook(command);
@@ -270,7 +274,7 @@ function RunhookManager(params) {
         predefinedContext: predefinedContext
       }).toMessage({
         tags: [ blockRef, 'process', 'handler-invoked' ],
-        text: '{commandName}#{requestId} - handler is invoked'
+        text: '${commandName}#${requestId} - handler is invoked'
       }));
       if (predefinedContext) {
         return Promise.resolve().then(handler.bind(null, options, payload, context));
