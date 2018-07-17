@@ -148,6 +148,9 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
           transformConfig(transCTX, configType, loadConfigFile(ctx, defaultFile), libType, libName, libRef.presets));
     });
 
+    config[configType]['names'] = ['default'];
+    config[configType]['mixture'] = {};
+
     if (configDir) {
       let defaultFile = path.join(configDir, configType + '.js');
       LX.has('conlog') && LX.log('conlog', LT.add({ defaultFile }).toMessage({
@@ -155,14 +158,10 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
       }));
       config[configType]['expanse'] = transformConfig(transCTX, configType, loadConfigFile(ctx, defaultFile), 'application');
       config[configType]['default'] = lodash.defaultsDeep({}, config[configType]['expanse'], config[configType]['default']);
-    }
 
-    LX.has('conlog') && LX.log('conlog', LT.add({ configType }).toMessage({
-      text: ' + load the custom config of ${configType}'
-    }));
-    config[configType]['names'] = ['default'];
-    config[configType]['mixture'] = {};
-    if (configDir) {
+      LX.has('conlog') && LX.log('conlog', LT.add({ configType }).toMessage({
+        text: ' + load the custom config of ${configType}'
+      }));
       let expanseNames = filterConfigBy(ctx, configInfos, includedNames, configType);
       config[configType]['expanse'] = lodash.reduce(expanseNames, function(accum, expanseItem) {
         let configFile = path.join(configDir, expanseItem.join('_') + '.js');
