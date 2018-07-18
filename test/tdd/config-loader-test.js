@@ -390,6 +390,19 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.deepEqual(
         lodash.get(cfgLoader,"config.sandbox.default"),
         lodash.defaultsDeep(
+          {
+            application: {
+              "step0": "base"
+            },
+            plugins: {
+              "plugin1": {
+                "dir": "config"
+              },
+              "plugin2": {
+                "dir": "config"
+              }
+            }
+          },
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
           loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
           loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
@@ -408,9 +421,25 @@ describe('tdd:devebot:core:config-loader', function() {
         NODE_ENV: 'test',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
         DEVEBOT_CONFIG_ENV: 'dev',
-        DEVEBOT_SANDBOX: 'ev1,ev2'
+        DEVEBOT_SANDBOX: 'private1,private2,ev1,ev2'
       });
     });
+
+    let expandedDefaultConfig = {
+      "application": {
+        "step0": "base",
+        "step1": "private1",
+        "step2": "private2"
+      },
+      "plugins": {
+        "plugin1": {
+          "dir": "config"
+        },
+        "plugin2": {
+          "dir": "config"
+        }
+      }
+    };
 
     it('load application configuration (without private sandboxes)', function() {
       var cfgLoader = new ConfigLoader({appName: 'app', appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
@@ -433,7 +462,7 @@ describe('tdd:devebot:core:config-loader', function() {
       // Sandbox configuration
       assert.deepInclude(
         lodash.get(cfgLoader,"config.sandbox.mixture"),
-        lodash.assign(lodash.get(cfgLoader,"config.sandbox.default"), {
+        lodash.defaultsDeep({}, expandedDefaultConfig, lodash.get(cfgLoader,"config.sandbox.default"), {
           "common": {
             "ev": 2,
             "ev1": [ "environment variable", 1 ],
@@ -446,6 +475,7 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.deepInclude(
         lodash.get(cfgLoader,"config.sandbox.mixture"),
         lodash.defaultsDeep(
+          {}, expandedDefaultConfig,
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
@@ -478,7 +508,7 @@ describe('tdd:devebot:core:config-loader', function() {
       // Sandbox configuration
       assert.deepInclude(
         lodash.get(cfgLoader,"config.sandbox.mixture"),
-        lodash.assign(lodash.get(cfgLoader,"config.sandbox.default"), {
+        lodash.defaultsDeep({}, expandedDefaultConfig, lodash.get(cfgLoader,"config.sandbox.default"), {
           "common": {
             "bs": 1,
             "bs1": [ "bootstrap", 1 ],
@@ -493,6 +523,7 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.deepInclude(
         lodash.get(cfgLoader,"config.sandbox.mixture"),
         lodash.defaultsDeep(
+          {}, expandedDefaultConfig,
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs1.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
@@ -526,7 +557,7 @@ describe('tdd:devebot:core:config-loader', function() {
       // Sandbox configuration
       assert.deepInclude(
         lodash.get(cfgLoader,"config.sandbox.mixture"),
-        lodash.assign(lodash.get(cfgLoader,"config.sandbox.default"), {
+        lodash.defaultsDeep({}, expandedDefaultConfig, lodash.get(cfgLoader,"config.sandbox.default"), {
           "common": {
             "bs": 2,
             "bs1": [ "bootstrap", 1 ],
@@ -542,6 +573,7 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.deepInclude(
         lodash.get(cfgLoader,"config.sandbox.mixture"),
         lodash.defaultsDeep(
+          {}, expandedDefaultConfig,
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs2.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs1.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
@@ -574,7 +606,7 @@ describe('tdd:devebot:core:config-loader', function() {
       // Sandbox configuration
       assert.deepInclude(
         lodash.get(cfgLoader,"config.sandbox.mixture"),
-        lodash.assign(lodash.get(cfgLoader,"config.sandbox.default"), {
+        lodash.defaultsDeep({}, expandedDefaultConfig, lodash.get(cfgLoader,"config.sandbox.default"), {
           "common": {
             "bs": 1,
             "bs1": [ "bootstrap", 1 ],
@@ -590,6 +622,7 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.deepInclude(
         lodash.get(cfgLoader,"config.sandbox.mixture"),
         lodash.defaultsDeep(
+          {}, expandedDefaultConfig,
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs1.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs2.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),

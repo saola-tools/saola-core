@@ -1,5 +1,6 @@
 module.exports = {
   application: {
+    "step0": "base",
     "host": "0.0.0.0",
     "port": 17700,
     "verbose": true
@@ -25,12 +26,14 @@ module.exports = {
   },
   plugins: {
     "plugin1": {
+      "dir": "config",
       "host": "0.0.0.0",
-      "port": 17701
+      "port": 17101
     },
     "plugin2": {
+      "dir": "config",
       "host": "0.0.0.0",
-      "port": 17702
+      "port": 17102
     }
   }
 }
