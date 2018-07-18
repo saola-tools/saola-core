@@ -17,10 +17,6 @@ module.exports = {
     }
   },
   newFeatures: {
-    application: {
-      logoliteEnabled: true,
-      sandboxConfig: true
-    },
     bridgeKebabCase1: {
       logoliteEnabled: true
     },

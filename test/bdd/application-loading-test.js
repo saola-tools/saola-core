@@ -96,6 +96,10 @@ describe('devebot:application', function() {
 				"plugin2/plugin2Service",
 				"plugin2/plugin2Trigger"
 			];
+			var mainScopes = [
+				"demo-app/mainService",
+				"demo-app/mainTrigger"
+			];
 
 			var bridge1Scopes = [];
 			var bridge2Scopes = [];
@@ -145,6 +149,7 @@ describe('devebot:application', function() {
 					assert.includeMembers(metadata, plugin2Scopes);
 					assert.includeMembers(metadata, bridge1Scopes);
 					assert.includeMembers(metadata, bridge2Scopes);
+					false && assert.includeMembers(metadata, mainScopes);
 					assert.equal(metadata.length, devebotScopes.length +
 							plugin1Scopes.length + plugin2Scopes.length +
 							bridge1Scopes.length + bridge2Scopes.length);

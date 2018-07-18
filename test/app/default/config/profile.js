@@ -17,11 +17,15 @@ module.exports = {
     }
   },
   newFeatures: {
+    application: {
+      logoliteEnabled: false,
+      sandboxConfig: false
+    },
     bridge1: {
-      logoliteEnabled: true
+      sandboxConfig: false
     },
     bridge2: {
-      logoliteEnabled: true
+      sandboxConfig: false
     }
   }
 }
