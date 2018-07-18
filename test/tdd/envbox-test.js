@@ -33,46 +33,46 @@ describe('tdd:devebot:base:envbox', function() {
         namespace: 'ENV',
         definition: [
           {
-            name: "ENV_UNDEFINED_STRING",
+            name: "UNDEFINED_STRING",
             type: "string",
             description: "undefined string example"
           },
           {
-            name: "ENV_DEFAULT_STRING",
+            name: "DEFAULT_STRING",
             type: "string",
             description: "default string example",
             defaultValue: "default"
           },
           {
-            name: "ENV_PRESETS_STRING",
+            name: "PRESETS_STRING",
             type: "string",
             description: "string example",
             defaultValue: "empty"
           },
           {
-            name: "ENV_EMPTY_ARRAY1",
+            name: "EMPTY_ARRAY1",
             type: "array",
             description: "empty array example 1"
           },
           {
-            name: "ENV_EMPTY_ARRAY2",
+            name: "EMPTY_ARRAY2",
             type: "array",
             description: "empty array example 2"
           },
           {
-            name: "ENV_NORMAL_ARRAY",
+            name: "NORMAL_ARRAY",
             type: "array",
             description: "normal array example"
           }
         ]
       });
       // asserting the results
-      assert.isUndefined(envbox.getEnv("ENV_UNDEFINED_STRING"));
-      assert.equal(envbox.getEnv("ENV_DEFAULT_STRING"), "default");
-      assert.equal(envbox.getEnv("ENV_PRESETS_STRING"), "hello world");
-      assert.sameMembers(envbox.getEnv("ENV_EMPTY_ARRAY1"), []);
-      assert.sameMembers(envbox.getEnv("ENV_EMPTY_ARRAY2"), []);
-      assert.sameMembers(envbox.getEnv("ENV_NORMAL_ARRAY"), ["value 1", "value 2", "value 3"]);
+      assert.isUndefined(envbox.getEnv("UNDEFINED_STRING"));
+      assert.equal(envbox.getEnv("DEFAULT_STRING"), "default");
+      assert.equal(envbox.getEnv("PRESETS_STRING"), "hello world");
+      assert.sameMembers(envbox.getEnv("EMPTY_ARRAY1"), []);
+      assert.sameMembers(envbox.getEnv("EMPTY_ARRAY2"), []);
+      assert.sameMembers(envbox.getEnv("NORMAL_ARRAY"), ["value 1", "value 2", "value 3"]);
       // display
       false && envbox.printEnvList();
     });
