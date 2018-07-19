@@ -62,21 +62,16 @@ describe('tdd:devebot:base:envbox', function() {
     before(function() {
       envtool.setup({
         ENV_PRESETS_STRING: "hello world",
+        DEVEBOT_PRESETS_STRING: "hello devebot",
         ENV_EMPTY_ARRAY1: "",
         ENV_EMPTY_ARRAY2: ", ,",
-        ENV_NORMAL_ARRAY: "value 1, value 2, value 3",
+        DEVEBOT_NORMAL_ARRAY: "value 1, value 2, value 3",
         ENV_TRUE: "true",
         ENV_FALSE: "false"
       });
     });
 
     it("get environment variable's value correctly", function() {
-      process.env.ENV_PRESETS_STRING = "hello world";
-      process.env.ENV_EMPTY_ARRAY1 = "";
-      process.env.ENV_EMPTY_ARRAY2 = ", ,";
-      process.env.ENV_NORMAL_ARRAY = "value 1, value 2, value 3";
-      process.env.ENV_TRUE = "true";
-      process.env.ENV_FALSE = "false";
       // defining the envbox object
       var envbox = new EnvBox(ENV_DESCRIPTOR);
       // asserting the results
@@ -86,8 +81,6 @@ describe('tdd:devebot:base:envbox', function() {
       assert.sameMembers(envbox.getEnv("EMPTY_ARRAY1"), []);
       assert.sameMembers(envbox.getEnv("EMPTY_ARRAY2"), []);
       assert.sameMembers(envbox.getEnv("NORMAL_ARRAY"), ["value 1", "value 2", "value 3"]);
-      // display
-      false && envbox.printEnvList();
     });
 
     after(function() {
