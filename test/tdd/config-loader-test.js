@@ -26,7 +26,9 @@ describe('tdd:devebot:core:config-loader', function() {
   var CTX = {
     LX: LogAdapter.getLogger(),
     LT: LogTracer.ROOT,
-    errorCollector
+    errorCollector,
+    CONFIG_PROFILE_NAME: 'profile',
+    CONFIG_SANDBOX_NAME: 'sandbox'
   };
 
   var appRef = {
