@@ -82,6 +82,7 @@ describe('devebot:application', function() {
 				"devebot/pluginLoader",
 				"devebot/sandboxManager",
 				"devebot/jobqueueBinder",
+				"devebot/processManager",
 				"devebot/runhookManager",
 				"devebot/scriptExecutor",
 				"devebot/scriptRenderer",
