@@ -175,6 +175,23 @@ lab.createPluginLoader = function(appName, injectedObjects) {
   return injektor.lookup('pluginLoader');
 }
 
+lab.createProcessManager = function(appName, injectedObjects) {
+  injectedObjects = lodash.assign({
+    profileConfig: {}
+  }, injectedObjects);
+  if (appName) {
+    var app = lab.getApp(appName);
+    injectedObjects.profileConfig = app.config.profile.mixture;
+  }
+  injectedObjects.errorCollector = errorCollector;
+  var injektor = new Injektor({ separator: chores.getSeparator() });
+  _attachInjectedObjects(injektor, injectedObjects);
+  _loadBackboneServices(injektor, [
+    'logging-factory', 'process-manager'
+  ]);
+  return injektor.lookup('processManager');
+}
+
 lab.createRunhookManager = function(appName, injectedObjects) {
   injectedObjects = lodash.assign({
     appName: appName || 'unknown',

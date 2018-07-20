@@ -245,23 +245,30 @@ bootstrap.registerLayerware = registerLayerware;
 bootstrap.launchApplication = launchApplication;
 
 bootstrap.parseArguments = function(active) {
-  if (active !== false) {
-    let argv = minimist(process.argv.slice(2));
-    let tasks = argv.task || argv.tasks || argv.mode;
-    if (lodash.isEmpty(tasks)) {
-      if (!lodash.isEmpty(argv._)) {
-        console.log('Incorrect task(s). Should be: (--tasks=print-config,check-config)');
-        process.exit(0);
-      }
-    } else {
-      let jobs = stateInspector.init({ tasks });
-      if (lodash.isEmpty(jobs)) {
-        console.log('Unknown task(s): (%s)!', tasks);
-        process.exit(0);
+  return this.initialize('cmd-args', { enabled: active });
+}
+
+bootstrap.initialize = function(feature, options) {
+  options = options || {};
+  if (['cmd-args', 'cmd-line'].indexOf(feature) >= 0) {
+    if (options.enabled !== false) {
+      let argv = minimist(process.argv.slice(2));
+      let tasks = argv.task || argv.tasks || argv.mode;
+      if (lodash.isEmpty(tasks)) {
+        if (!lodash.isEmpty(argv._)) {
+          console.log('Incorrect task(s). Should be: (--tasks=print-config,check-config)');
+          process.exit(0);
+        }
+      } else {
+        let jobs = stateInspector.init({ tasks });
+        if (lodash.isEmpty(jobs)) {
+          console.log('Unknown task(s): (%s)!', tasks);
+          process.exit(0);
+        }
       }
     }
   }
-  return bootstrap;
+  return this;
 }
 
 const builtinPackages = ['bluebird', 'lodash', 'injektor', 'logolite', 'schemato'];
