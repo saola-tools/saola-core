@@ -244,18 +244,19 @@ let bootstrap = {};
 bootstrap.registerLayerware = registerLayerware;
 bootstrap.launchApplication = launchApplication;
 
+// @Deprecated
 bootstrap.parseArguments = function(active) {
-  return this.initialize('cmd-args', { enabled: active });
+  return this.initialize('actions', { enabled: active, forced: true });
 }
 
 bootstrap.initialize = function(feature, options) {
   options = options || {};
-  if (['cmd-args', 'cmd-line'].indexOf(feature) >= 0) {
+  if (['actions', 'tasks'].indexOf(feature) >= 0) {
     if (options.enabled !== false) {
       let argv = minimist(process.argv.slice(2));
-      let tasks = argv.task || argv.tasks || argv.mode;
+      let tasks = argv.tasks || argv.actions;
       if (lodash.isEmpty(tasks)) {
-        if (!lodash.isEmpty(argv._)) {
+        if (options.forced && !lodash.isEmpty(argv._)) {
           console.log('Incorrect task(s). Should be: (--tasks=print-config,check-config)');
           process.exit(0);
         }
