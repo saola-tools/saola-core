@@ -6,7 +6,7 @@ var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
-var debugx = Devebot.require('pinbug')('tdd:devebot:base:envbox');
+var debugx = Devebot.require('pinbug')('tdd:devebot:utils:envbox');
 var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
@@ -17,7 +17,7 @@ var rewire = require('rewire');
 var sinon = require('sinon');
 var EnvBox = require('../../lib/utils/envbox');
 
-describe('tdd:devebot:base:envbox', function() {
+describe('tdd:devebot:utils:envbox', function() {
   this.timeout(lab.getDefaultTimeout());
 
   var ENV_DESCRIPTOR = {
