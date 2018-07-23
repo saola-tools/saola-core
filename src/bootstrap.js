@@ -10,6 +10,7 @@ const ConfigLoader = require('./backbone/config-loader');
 const LoggingWrapper = require('./backbone/logging-wrapper');
 const NameResolver = require('./backbone/name-resolver');
 const chores = require('./utils/chores');
+const constx = require('./utils/constx');
 const envbox = require('./utils/envbox').instance;
 const Runner = require('./runner');
 const Server = require('./server');
@@ -249,9 +250,9 @@ bootstrap.parseArguments = function(active) {
   return this.initialize('actions', { enabled: active, forced: true });
 }
 
-bootstrap.initialize = function(feature, options) {
+bootstrap.initialize = function(action, options) {
   options = options || {};
-  if (['actions', 'tasks'].indexOf(feature) >= 0) {
+  if (['actions', 'tasks'].indexOf(action) >= 0) {
     if (options.enabled !== false) {
       let argv = minimist(process.argv.slice(2));
       let tasks = argv.tasks || argv.actions;
@@ -269,11 +270,18 @@ bootstrap.initialize = function(feature, options) {
       }
     }
   }
+  if (['features'].indexOf(action) >= 0) {
+    if (lodash.isArray(options.defaultFeatures)) {
+      let newFeatures = lodash.union(constx.FEATURE_ENABLED, options.defaultFeatures);
+      Array.prototype.splice.call(constx.FEATURE_ENABLED, 0);
+      Array.prototype.push.apply(constx.FEATURE_ENABLED, newFeatures);
+    }
+  }
   return this;
 }
 
 const builtinPackages = ['bluebird', 'lodash', 'injektor', 'logolite', 'schemato'];
-const internalModules = ['chores', 'loader', 'pinbug'];
+const internalModules = ['chores', 'loader', 'pinbug', 'errors'];
 
 bootstrap.require = function(packageName) {
   if (builtinPackages.indexOf(packageName) >= 0) return require(packageName);

@@ -2,6 +2,7 @@
 
 var chores = require('../lib/utils/chores');
 var constx = require('../lib/utils/constx');
+var errors = require('../lib/utils/errors');
 var debugx = require('../lib/utils/pinbug')('devebot:test:lab');
 var NameResolver = require('../lib/backbone/name-resolver');
 var errorCollector = require('../lib/backbone/error-collector').instance;
@@ -300,7 +301,7 @@ lab.simplifyRoutines = function(routines) {
   return lodash.mapValues(routines, transformRoutine);
 }
 
-lab.ProcessExitError = chores.buildError('ProcessExitError');
+lab.ProcessExitError = errors.createConstructor('ProcessExitError');
 
 lab.preventExit = function(options, block) {
   options = options || {};
