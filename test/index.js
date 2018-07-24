@@ -254,6 +254,10 @@ lab.createSandboxManager = function(appName, injectedObjects) {
   return injektor.lookup('sandboxManager');
 }
 
+lab.isFeatureSupported = function(features) {
+  return chores.isFeatureSupported(features);
+}
+
 lab.simplifyCommands = function(commands) {
   var transformCommand = function(command) {
     command = lodash.cloneDeep(command);

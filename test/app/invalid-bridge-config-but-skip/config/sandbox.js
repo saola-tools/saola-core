@@ -1,8 +1,6 @@
 'use strict';
 
 var lab = require('../../../index');
-var Devebot = lab.getDevebot();
-var chores = Devebot.require('chores');
 
 module.exports = {
   bridges: {
@@ -17,7 +15,7 @@ module.exports = {
   }
 }
 
-if (!chores.isFeatureSupported('bridge-full-ref')) {
+if (!lab.isFeatureSupported('bridge-full-ref')) {
   module.exports.bridges = {
     "invalidInstance": {
       "bridgeInvalidConfig": {
