@@ -105,7 +105,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       loader: '../../lib/utils/loader.js',
       pinbug: '../../lib/utils/pinbug.js'
     }
-    lodash.forEach([ 'injektor', 'logolite', 'schemato' ], function(pkgName) {
+    lodash.forEach([ 'injektor', 'logolite', 'schemato', 'semver' ], function(pkgName) {
       pkgs[pkgName] = pkgName;
     });
     it('require() returns correct exported packages', function() {
