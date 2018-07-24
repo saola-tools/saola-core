@@ -64,7 +64,7 @@ var Service = function(params) {
   };
 };
 
-if (chores.isFeatureSupported('bridge-full-ref')) {
+if (chores.isUpgradeSupported('bridge-full-ref')) {
   Service.referenceList = [
     'application/connector1#wrapper',
     'application/connector2#wrapper',

@@ -254,8 +254,8 @@ lab.createSandboxManager = function(appName, injectedObjects) {
   return injektor.lookup('sandboxManager');
 }
 
-lab.isFeatureSupported = function(features) {
-  return chores.isFeatureSupported(features);
+lab.isUpgradeSupported = function(features) {
+  return chores.isUpgradeSupported(features);
 }
 
 lab.simplifyCommands = function(commands) {

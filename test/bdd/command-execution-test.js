@@ -68,7 +68,7 @@ describe('devebot:command:execution', function() {
 		];
 		// run in bridge-full-ref mode, and apply presets config
 		// don't care for standardizing-config feature
-		if (chores.isFeatureSupported(['bridge-full-ref','presets'])) {
+		if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
 			injectedServiceNames.push.apply(injectedServiceNames, [
 				"plugin1/bridge1#anyname1a",
 				"plugin2/bridge1#anyname1b",
@@ -78,7 +78,7 @@ describe('devebot:command:execution', function() {
 				"plugin1/bridge2#anyname2c"
 			]);
 		}
-		if (!chores.isFeatureSupported(['bridge-full-ref'])) {
+		if (!chores.isUpgradeSupported(['bridge-full-ref'])) {
 			injectedServiceNames.push.apply(injectedServiceNames, [
 				"bridge1/anyname1a",
 				"bridge1/anyname1b",

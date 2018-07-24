@@ -146,7 +146,7 @@ describe('tdd:devebot:core:config-loader', function() {
     var transformConfig = ConfigLoader.__get__('transformConfig');
 
     it('should transform relative names into default full names', function() {
-      if (!chores.isFeatureSupported(['bridge-full-ref', 'standardizing-config'])) {
+      if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) {
         this.skip();
         return;
       }
@@ -247,7 +247,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('should transform absolute names into relative names', function() {
-      if (!chores.isFeatureSupported(['bridge-full-ref', 'standardizing-config'])) {
+      if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) {
         this.skip();
         return;
       }
@@ -722,7 +722,7 @@ describe('tdd:devebot:core:config-loader', function() {
           }
         };
         var exptectedConfig = lodash.cloneDeep(sandboxConfig);
-        if (chores.isFeatureSupported(['bridge-full-ref','presets'])) {
+        if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
           exptectedConfig.bridges = {
             "bridge1": {
               "*": {
@@ -778,7 +778,7 @@ describe('tdd:devebot:core:config-loader', function() {
           }
         };
         var exptectedConfig = lodash.cloneDeep(sandboxConfig);
-        if (chores.isFeatureSupported(['bridge-full-ref','presets'])) {
+        if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
           exptectedConfig.bridges = {
             "bridge1": {
               "plugin1": {

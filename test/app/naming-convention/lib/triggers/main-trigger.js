@@ -66,7 +66,7 @@ var Service = function(params) {
   debugx.enabled && debugx(' - constructor end!');
 };
 
-if (chores.isFeatureSupported('bridge-full-ref')) {
+if (chores.isUpgradeSupported('bridge-full-ref')) {
   Service.referenceList = [
     'application/connector1#wrapper',
     'application/connector2#wrapper',

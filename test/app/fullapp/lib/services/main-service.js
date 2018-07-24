@@ -18,7 +18,7 @@ var Service = function(params) {
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
   debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));
 
-  if (chores.isFeatureSupported('bridge-full-ref')) {
+  if (chores.isUpgradeSupported('bridge-full-ref')) {
     var anyname1z_a = params['application/bridge1#anyname1z'];
     var anyname1z_b = params['bridge1#anyname1z'];
 
@@ -29,7 +29,7 @@ var Service = function(params) {
   debugx.enabled && debugx(' - constructor end!');
 };
 
-if (chores.isFeatureSupported('bridge-full-ref')) {
+if (chores.isUpgradeSupported('bridge-full-ref')) {
   Service.referenceList = [
     'bridge1#anyname1z',
     'application/bridge1#anyname1z',

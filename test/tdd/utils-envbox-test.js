@@ -124,7 +124,7 @@ describe('tdd:devebot:utils:envbox', function() {
       ]
       var output = envbox.printEnvList({ muted: true });
       false && console.log(JSON.stringify(output, null, 2));
-      assert.sameMembers(expected, output);
+      assert.sameMembers(output, expected);
     });
 
     after(function() {

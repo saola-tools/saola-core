@@ -26,7 +26,7 @@ var Service = function(params) {
   }
 };
 
-if (chores.isFeatureSupported('bridge-full-ref')) {
+if (chores.isUpgradeSupported('bridge-full-ref')) {
   Service.referenceList = [
     'devebot-dp-wrapper1/sublibService',
     'devebot-dp-wrapper2/sublibService'

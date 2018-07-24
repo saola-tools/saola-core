@@ -24,7 +24,7 @@ var Service = function(params) {
   debugx.enabled && debugx(' - constructor end!');
 };
 
-if (chores.isFeatureSupported('bridge-full-ref')) {
+if (chores.isUpgradeSupported('bridge-full-ref')) {
   Service.referenceList = [
     'devebot-dp-wrapper1/sublibService',
     'devebot-dp-wrapper2/sublibService'

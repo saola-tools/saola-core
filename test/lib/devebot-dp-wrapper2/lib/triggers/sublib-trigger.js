@@ -18,7 +18,7 @@ var Service = function(params) {
     text: ' + constructor begin ...'
   }));
 
-  if (chores.isFeatureSupported('bridge-full-ref')) {
+  if (chores.isUpgradeSupported('bridge-full-ref')) {
     var connector1 = params["connector1#bean"];
     LX.has('silly') && LX.log('silly', LT.add({
       config: connector1.getConfig()
@@ -100,7 +100,7 @@ Service.referenceList = [
   "connector2#bean"
 ];
 
-if (!chores.isFeatureSupported('bridge-full-ref')) {
+if (!chores.isUpgradeSupported('bridge-full-ref')) {
   Service.referenceList = [];
 };
 

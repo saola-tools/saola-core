@@ -58,6 +58,6 @@ module.exports = {
   }
 }
 
-if (!lab.isFeatureSupported('bridge-full-ref')) {
+if (!lab.isUpgradeSupported('bridge-full-ref')) {
   module.exports.bridges = {}
 };

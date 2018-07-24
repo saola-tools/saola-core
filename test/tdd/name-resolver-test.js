@@ -30,7 +30,7 @@ describe('tdd:devebot:core:name-resolver', function() {
     var buildRelativeAliasMap = NameResolver.__get__('buildRelativeAliasMap');
 
     it('should build the map of plugin-names transformation correctly', function() {
-      if (!chores.isFeatureSupported('standardizing-config')) {
+      if (!chores.isUpgradeSupported('standardizing-config')) {
         this.skip();
         return;
       }

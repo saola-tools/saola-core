@@ -106,7 +106,7 @@ describe('devebot:application', function() {
 			var bridge1Scopes = [];
 			var bridge2Scopes = [];
 
-			if (chores.isFeatureSupported(['bridge-full-ref','presets'])) {
+			if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
 				bridge1Scopes = [
 					"plugin1/bridge1#anyname1a",
 					"plugin2/bridge1#anyname1b",
@@ -119,7 +119,7 @@ describe('devebot:application', function() {
 				];
 			}
 
-			if (!chores.isFeatureSupported(['bridge-full-ref'])) {
+			if (!chores.isUpgradeSupported(['bridge-full-ref'])) {
 				bridge1Scopes = [
 					"bridge1/anyname1a",
 					"bridge1/anyname1b",
@@ -249,7 +249,7 @@ describe('devebot:application', function() {
 					"handlerType": "TRIGGER"
 				}
 			];
-			if (chores.isFeatureSupported('bridge-full-ref')) {
+			if (chores.isUpgradeSupported('bridge-full-ref')) {
 				expectedDependencies.push({
 					"handlerName": "application/connector1#wrapper",
 					"handlerType": "DIALECT"
@@ -314,7 +314,7 @@ describe('devebot:application', function() {
 		});
 
 		it('[naming-convention] bridge configuration should be loaded properly', function() {
-			if (!chores.isFeatureSupported('bridge-full-ref')) {
+			if (!chores.isUpgradeSupported('bridge-full-ref')) {
 				this.skip();
 				return done();
 			}
@@ -345,7 +345,7 @@ describe('devebot:application', function() {
 		});
 
 		it('[reference-alias] special plugins & bridges should be loaded properly', function() {
-			if (!chores.isFeatureSupported('presets')) {
+			if (!chores.isUpgradeSupported('presets')) {
 				this.skip();
 				return;
 			}
@@ -382,7 +382,7 @@ describe('devebot:application', function() {
 		});
 
 		it('[rename-comp-dir] special plugins & bridges should be loaded properly', function() {
-			if (!chores.isFeatureSupported('presets')) {
+			if (!chores.isUpgradeSupported('presets')) {
 				this.skip();
 				return;
 			}

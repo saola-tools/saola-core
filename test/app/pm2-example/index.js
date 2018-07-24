@@ -13,7 +13,7 @@ app.server;
 
 console.log('PM2_id: %s / Total: %s', process.env.pm_id, process.env.instances);
 
-console.log('isFeatureSupport: [%s]', lab.isFeatureSupported('abcd'));
+console.log('isFeatureSupport: [%s]', lab.isUpgradeSupported('abcd'));
 
 if (require.main === module) app.server.start();
 

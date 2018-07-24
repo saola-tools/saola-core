@@ -143,7 +143,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       ], null);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
-      if (chores.isFeatureSupported('presets')) {
+      if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
           libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
           pluginRefs: {
@@ -197,7 +197,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
-      if (chores.isFeatureSupported('presets')) {
+      if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
           libRootPaths: [],
           pluginRefs: {},
@@ -249,7 +249,7 @@ describe('tdd:devebot:base:bootstrap', function() {
         }
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
-      if (chores.isFeatureSupported('presets')) {
+      if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
           libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
           pluginRefs: {
@@ -317,7 +317,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
-      if (chores.isFeatureSupported('presets')) {
+      if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
           libRootPaths:
             [
@@ -457,7 +457,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
       false && console.log('expandExtensions(): ', output);
-      if (chores.isFeatureSupported('presets')) {
+      if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
           libRootPaths:
             [
@@ -802,7 +802,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/devebot/index.js"
         }
       ];
-      if (!chores.isFeatureSupported('presets')) {
+      if (!chores.isUpgradeSupported('presets')) {
         expectedPluginRefs = lodash.map(expectedPluginRefs, function(item) {
           return lodash.omit(item, ["presets"]);
         });
@@ -836,7 +836,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       ], []);
       var output = replaceObjectFields(pluginLauncher(), DEFAULT_CONTEXT);
       false && console.log('pluginLauncher(): ', output);
-      if (chores.isFeatureSupported('presets')) {
+      if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
           libRootPaths:
             [
@@ -978,7 +978,7 @@ var replaceObjectFields = function(obj, context) {
     }
   }
   obj = lodash.cloneDeep(obj);
-  if (chores.isFeatureSupported('presets')) {
+  if (chores.isUpgradeSupported('presets')) {
     if (obj && obj.bridgeRefs && !lodash.isArray(obj.bridgeRefs)) {
       obj.bridgeRefs = lodash.mapKeys(obj.bridgeRefs, function(value, key) {
         return replaceLibPath(key, context);
