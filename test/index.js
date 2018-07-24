@@ -125,6 +125,11 @@ var _loadBackboneServices = function(injektor, names) {
   });
 }
 
+lab.getContextManager = function(appName) {
+  var app = lab.getApp(appName);
+  return app.runner.getSandboxService('devebot/contextManager');
+}
+
 lab.createKernel = function(appName) {
   var _config = null;
   if (appName) {
