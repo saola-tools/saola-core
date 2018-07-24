@@ -4,7 +4,10 @@ var lab = require('../../index');
 var Devebot = lab.getDevebot().parseArguments(require.main === module);
 
 var app = Devebot.launchApplication({
-  appRootPath: __dirname
+  appRootPath: __dirname,
+  presets: {
+    defaultFeatures: ['def']
+  }
 }, [
   {
     name: 'devebot-dp-wrapper1',
