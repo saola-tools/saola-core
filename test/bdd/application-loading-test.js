@@ -74,6 +74,7 @@ describe('devebot:application', function() {
 				"devebot/appinfoLoader",
 				"devebot/nameResolver",
 				"devebot/configLoader",
+				"devebot/contextManager",
 				"devebot/kernel",
 				"devebot/server",
 				"devebot",
