@@ -34,8 +34,22 @@ describe('tdd:devebot:core:context-manager', function() {
       STATE_VERIFICATION_FEATURE_ENABLED: '123, abc'
     });
     var contextManager = lab.getContextManager('state-verification');
+    assert.isFalse(contextManager.isFeatureSupported('unknown'));
     assert.isTrue(contextManager.isFeatureSupported('abc'));
     assert.isTrue(contextManager.isFeatureSupported(['123', 'abc']));
+    assert.isTrue(contextManager.isFeatureSupported(['def']));
+    assert.isTrue(contextManager.isFeatureSupported(['def', 'abc']));
+    localEnv.reset();
+  });
+
+  it("FEATURE_DISABLED has a higher priority than FEATURE_ENABLED", function() {
+    var localEnv = envtool.new({
+      STATE_VERIFICATION_FEATURE_DISABLED: 'abc, def',
+      STATE_VERIFICATION_FEATURE_ENABLED: '123, abc'
+    });
+    var contextManager = lab.getContextManager('state-verification');
+    assert.isFalse(contextManager.isFeatureSupported('abc'));
+    assert.isFalse(contextManager.isFeatureSupported(['123', 'def']));
     localEnv.reset();
   });
 

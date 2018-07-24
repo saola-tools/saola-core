@@ -6,7 +6,7 @@ var Devebot = lab.getDevebot().parseArguments(require.main === module);
 var app = Devebot.launchApplication({
   appRootPath: __dirname,
   presets: {
-    defaultFeatures: ['def']
+    defaultFeatures: ['def', 'xyz']
   }
 }, [
   {
