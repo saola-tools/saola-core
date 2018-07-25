@@ -15,7 +15,7 @@ var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
 var sinon = require('sinon');
-var EnvBox = require('../../lib/utils/envbox');
+var envbox = require('../../lib/utils/envbox');
 
 describe('tdd:devebot:utils:envbox', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -73,14 +73,14 @@ describe('tdd:devebot:utils:envbox', function() {
 
     it("get environment variable's value correctly", function() {
       // defining the envbox object
-      var envbox = new EnvBox(ENV_DESCRIPTOR);
+      var privateEnvbox = envbox.new(ENV_DESCRIPTOR);
       // asserting the results
-      assert.isUndefined(envbox.getEnv("UNDEFINED_STRING"));
-      assert.equal(envbox.getEnv("DEFAULT_STRING"), "default");
-      assert.equal(envbox.getEnv("PRESETS_STRING"), "hello world");
-      assert.sameMembers(envbox.getEnv("EMPTY_ARRAY1"), []);
-      assert.sameMembers(envbox.getEnv("EMPTY_ARRAY2"), []);
-      assert.sameMembers(envbox.getEnv("NORMAL_ARRAY"), ["value 1", "value 2", "value 3"]);
+      assert.isUndefined(privateEnvbox.getEnv("UNDEFINED_STRING"));
+      assert.equal(privateEnvbox.getEnv("DEFAULT_STRING"), "default");
+      assert.equal(privateEnvbox.getEnv("PRESETS_STRING"), "hello world");
+      assert.sameMembers(privateEnvbox.getEnv("EMPTY_ARRAY1"), []);
+      assert.sameMembers(privateEnvbox.getEnv("EMPTY_ARRAY2"), []);
+      assert.sameMembers(privateEnvbox.getEnv("NORMAL_ARRAY"), ["value 1", "value 2", "value 3"]);
     });
 
     after(function() {
@@ -102,7 +102,7 @@ describe('tdd:devebot:utils:envbox', function() {
 
     it("print environment variables correctly", function() {
       // defining the envbox object
-      var envbox = new EnvBox(ENV_DESCRIPTOR);
+      var privateEnvbox = envbox.new(ENV_DESCRIPTOR);
       // display
       var expected = [
         '[+] Display environment variables:',
@@ -122,7 +122,7 @@ describe('tdd:devebot:utils:envbox', function() {
         '    - format: (comma-separated-string)',
         '    - current value: ["value 1","value 2","value 3"]'
       ]
-      var output = envbox.printEnvList({ muted: true });
+      var output = privateEnvbox.printEnvList({ muted: true });
       false && console.log(JSON.stringify(output, null, 2));
       assert.sameMembers(output, expected);
     });
