@@ -105,7 +105,7 @@ describe('tdd:devebot:utils:envbox', function() {
       var privateEnvbox = envbox.new(ENV_DESCRIPTOR);
       // display
       var expected = [
-        '[+] Display environment variables:',
+        '[+] Environment variables:',
         ' |> ENV_UNDEFINED_STRING: undefined string example',
         '    - current value: undefined',
         ' |> ENV_DEFAULT_STRING: default string example (default: "default")',
