@@ -11,7 +11,7 @@ var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-
+var envbox = require('../../lib/utils/envbox');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:context-manager');
 
 describe('tdd:devebot:core:context-manager', function() {
@@ -29,11 +29,15 @@ describe('tdd:devebot:core:context-manager', function() {
     LogConfig.reset();
   });
 
+  beforeEach(function() {
+    envbox.clearCache();
+  });
+
   it("isFeatureSupported() return true with provided features", function() {
     var localEnv = envtool.new({
       STATE_VERIFICATION_FEATURE_ENABLED: '123, abc'
     });
-    var contextManager = lab.getContextManager('state-verification');
+    var contextManager = lab.getContextManager('state-verification').clearCache();
     assert.isFalse(contextManager.isFeatureSupported('unknown'));
     assert.isTrue(contextManager.isFeatureSupported('abc'));
     assert.isTrue(contextManager.isFeatureSupported(['123', 'abc']));
@@ -47,7 +51,7 @@ describe('tdd:devebot:core:context-manager', function() {
       STATE_VERIFICATION_FEATURE_DISABLED: 'abc, def',
       STATE_VERIFICATION_FEATURE_ENABLED: '123, abc'
     });
-    var contextManager = lab.getContextManager('state-verification');
+    var contextManager = lab.getContextManager('state-verification').clearCache();
     assert.isFalse(contextManager.isFeatureSupported('abc'));
     assert.isFalse(contextManager.isFeatureSupported(['123', 'def']));
     localEnv.reset();
