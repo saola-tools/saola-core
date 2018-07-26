@@ -12,6 +12,7 @@ var path = require('path');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
+var envbox = require(lab.getDevebotModule('utils/envbox'));
 
 describe('bdd:devebot:loading-invalid-modules', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -47,6 +48,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
       errorCollector.reset();
+      envbox.clearCache();
     });
 
     it('loading application with not found packages will be failed', function() {
@@ -271,5 +273,6 @@ describe('bdd:devebot:loading-invalid-modules', function() {
   after(function() {
     envtool.reset();
     errorCollector.reset();
+    envbox.clearCache();
   });
 });

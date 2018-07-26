@@ -1,7 +1,7 @@
 'use strict';
 
 var lab = require('../index');
-var constx = require('../../lib/utils/constx');
+var constx = require(lab.getDevebotModule('utils/constx'));
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
@@ -34,7 +34,7 @@ describe('tdd:devebot:core:script-renderer', function() {
   });
 
   describe('WebSocketOutlet', function() {
-    var ScriptRenderer = rewire('../../lib/backbone/script-renderer');
+    var ScriptRenderer = rewire(lab.getDevebotModule('backbone/script-renderer'));
     var WebSocketOutlet = ScriptRenderer.__get__('WebSocketOutlet');
     var ws = { send: function() {} };
     var outlet = new WebSocketOutlet({
@@ -221,7 +221,7 @@ describe('tdd:devebot:core:script-renderer', function() {
   });
 
   describe('standardizeOutput()', function() {
-    var ScriptRenderer = rewire('../../lib/backbone/script-renderer');
+    var ScriptRenderer = rewire(lab.getDevebotModule('backbone/script-renderer'));
     var standardizeOutput = ScriptRenderer.__get__('standardizeOutput');
 
     var jsonOutput = {

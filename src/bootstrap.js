@@ -64,7 +64,7 @@ function appLoader(params) {
   }
 
   envbox.setNamespace(chores.stringLabelCase(appName), {
-    occupyValues: false,
+    occupyValues: appRef && appRef.presets && appRef.presets.occupySystemVariables,
     ownershipLabel: util.format('<owned-by-%s>', appName)
   });
 

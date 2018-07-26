@@ -11,7 +11,7 @@ var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
-var envbox = require('../../lib/utils/envbox');
+var envbox = require(lab.getDevebotModule('utils/envbox'));
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:context-manager');
 
 describe('tdd:devebot:core:context-manager', function() {

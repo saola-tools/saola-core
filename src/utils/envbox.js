@@ -180,9 +180,6 @@ function EnvironmentCollection(params) {
     if (!(label in definition)) {
       return process.env[label] || defaultValue;
     }
-    if (process.env.NODE_ENV === 'test') {
-      delete store.env[label];
-    }
     if (!(label in store.env)) {
       let def = definition[label] || {};
       store.env[label] = getValue(label, def.scope);

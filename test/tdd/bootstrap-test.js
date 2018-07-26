@@ -11,7 +11,7 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var path = require('path');
 var util = require('util');
-var bootstrap = require('../../lib/bootstrap');
+var bootstrap = require(lab.getDevebotModule('bootstrap'));
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
@@ -101,9 +101,9 @@ describe('tdd:devebot:base:bootstrap', function() {
 
   describe('require()', function() {
     var pkgs = {
-      chores: '../../lib/utils/chores.js',
-      loader: '../../lib/utils/loader.js',
-      pinbug: '../../lib/utils/pinbug.js'
+      chores: path.join(lab.getDevebotHome(), 'lib/utils/chores.js'),
+      loader: path.join(lab.getDevebotHome(), 'lib/utils/loader.js'),
+      pinbug: path.join(lab.getDevebotHome(), 'lib/utils/pinbug.js')
     }
     lodash.forEach([ 'injektor', 'logolite', 'schemato', 'semver' ], function(pkgName) {
       pkgs[pkgName] = pkgName;
@@ -116,7 +116,7 @@ describe('tdd:devebot:base:bootstrap', function() {
   });
 
   describe('expandExtensions()', function() {
-    var bootstrap = rewire('../../lib/bootstrap');
+    var bootstrap = rewire(path.join(lab.getDevebotHome(), 'lib/bootstrap'));
     var expandExtensions = bootstrap.__get__('expandExtensions');
     assert.isNotNull(expandExtensions);
 

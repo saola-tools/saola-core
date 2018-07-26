@@ -10,7 +10,7 @@ var debugx = Devebot.require('pinbug')('tdd:devebot:base:kernel');
 var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
-var kernel = require('../../lib/kernel');
+var kernel = require(lab.getDevebotModule('kernel'));
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
@@ -34,7 +34,7 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('validateBridgeConfig()', function() {
-    var validateBridgeConfig = rewire('../../lib/kernel').__get__('validateBridgeConfig');
+    var validateBridgeConfig = rewire(lab.getDevebotModule('kernel')).__get__('validateBridgeConfig');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var LX = loggingFactory.getLogger();
     var LT = loggingFactory.getTracer();

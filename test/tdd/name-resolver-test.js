@@ -24,7 +24,7 @@ describe('tdd:devebot:core:name-resolver', function() {
   };
 
   describe('standardizing loaded configuration data', function() {
-    var NameResolver = rewire('../../lib/backbone/name-resolver');
+    var NameResolver = rewire(lab.getDevebotModule('backbone/name-resolver'));
     var extractAliasNames = NameResolver.__get__('extractAliasNames');
     var buildAbsoluteAliasMap = NameResolver.__get__('buildAbsoluteAliasMap');
     var buildRelativeAliasMap = NameResolver.__get__('buildRelativeAliasMap');

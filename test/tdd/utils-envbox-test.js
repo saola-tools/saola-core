@@ -15,7 +15,7 @@ var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var rewire = require('rewire');
 var sinon = require('sinon');
-var envbox = require('../../lib/utils/envbox');
+var envbox = require(lab.getDevebotModule('utils/envbox'));
 
 describe('tdd:devebot:utils:envbox', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -84,6 +84,66 @@ describe('tdd:devebot:utils:envbox', function() {
     });
 
     after(function() {
+      envtool.reset();
+    });
+  });
+
+  describe('setNamespace() & occupySystemVariables', function() {
+    beforeEach(function() {
+      envtool.setup({
+        ENV_PRESETS_STRING: "hello world",
+        DEVEBOT_PRESETS_STRING: "hello devebot",
+        ENV_EMPTY_ARRAY1: "",
+        ENV_EMPTY_ARRAY2: ", ,",
+        DEVEBOT_NORMAL_ARRAY: "value 1, value 2, value 3",
+        ENV_TRUE: "true",
+        ENV_FALSE: "false"
+      });
+    });
+
+    it("set namespace and occupy system variables with specified ownershipLabel", function() {
+      var myOwnershipLabel = '<ownership-here>';
+      var privateEnvbox = envbox.new(lodash.pick(ENV_DESCRIPTOR, ['definition']));
+      privateEnvbox.setNamespace('ENV', {
+        occupyValues: true,
+        ownershipLabel: myOwnershipLabel
+      });
+      assert.isUndefined(privateEnvbox.getEnv("UNDEFINED_STRING"));
+      assert.equal(privateEnvbox.getEnv("DEFAULT_STRING"), "default");
+      assert.equal(privateEnvbox.getEnv("PRESETS_STRING"), "hello world");
+      assert.sameMembers(privateEnvbox.getEnv("EMPTY_ARRAY1"), []);
+      assert.sameMembers(privateEnvbox.getEnv("EMPTY_ARRAY2"), []);
+      assert.sameMembers(privateEnvbox.getEnv("NORMAL_ARRAY"), ["value 1", "value 2", "value 3"]);
+      assert.equal(process.env.ENV_PRESETS_STRING, myOwnershipLabel);
+      assert.equal(process.env.DEVEBOT_PRESETS_STRING, "hello devebot");
+      assert.equal(process.env.ENV_EMPTY_ARRAY1, myOwnershipLabel);
+      assert.equal(process.env.ENV_EMPTY_ARRAY2, myOwnershipLabel);
+      assert.equal(process.env.DEVEBOT_NORMAL_ARRAY, "value 1, value 2, value 3");
+      assert.equal(process.env.ENV_TRUE, "true");
+      assert.equal(process.env.ENV_FALSE, "false");
+    });
+
+    it("set namespace and occupy system variables without ownershipLabel", function() {
+      var privateEnvbox = envbox.new(lodash.pick(ENV_DESCRIPTOR, ['definition']));
+      privateEnvbox.setNamespace('ENV', {
+        occupyValues: true
+      });
+      assert.isUndefined(privateEnvbox.getEnv("UNDEFINED_STRING"));
+      assert.equal(privateEnvbox.getEnv("DEFAULT_STRING"), "default");
+      assert.equal(privateEnvbox.getEnv("PRESETS_STRING"), "hello world");
+      assert.sameMembers(privateEnvbox.getEnv("EMPTY_ARRAY1"), []);
+      assert.sameMembers(privateEnvbox.getEnv("EMPTY_ARRAY2"), []);
+      assert.sameMembers(privateEnvbox.getEnv("NORMAL_ARRAY"), ["value 1", "value 2", "value 3"]);
+      assert.isUndefined(process.env.ENV_PRESETS_STRING);
+      assert.equal(process.env.DEVEBOT_PRESETS_STRING, "hello devebot");
+      assert.isUndefined(process.env.ENV_EMPTY_ARRAY1);
+      assert.isUndefined(process.env.ENV_EMPTY_ARRAY2);
+      assert.equal(process.env.DEVEBOT_NORMAL_ARRAY, "value 1, value 2, value 3");
+      assert.equal(process.env.ENV_TRUE, "true");
+      assert.equal(process.env.ENV_FALSE, "false");
+    });
+
+    afterEach(function() {
       envtool.reset();
     });
   });

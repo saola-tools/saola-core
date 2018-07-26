@@ -11,8 +11,8 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var path = require('path');
 var util = require('util');
-var ConfigLoader = require('../../lib/backbone/config-loader');
-var NameResolver = require('../../lib/backbone/name-resolver');
+var ConfigLoader = require(lab.getDevebotModule('backbone/config-loader'));
+var NameResolver = require(lab.getDevebotModule('backbone/name-resolver'));
 var LogAdapter = require('logolite').LogAdapter;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
@@ -137,11 +137,11 @@ describe('tdd:devebot:core:config-loader', function() {
   });
 
   describe('standardizing loaded configuration data', function() {
-    var NameResolver = rewire('../../lib/backbone/name-resolver');
+    var NameResolver = rewire(lab.getDevebotModule('backbone/name-resolver'));
     var extractAliasNames = NameResolver.__get__('extractAliasNames');
     var buildAbsoluteAliasMap = NameResolver.__get__('buildAbsoluteAliasMap');
     var buildRelativeAliasMap = NameResolver.__get__('buildRelativeAliasMap');
-    var ConfigLoader = rewire('../../lib/backbone/config-loader');
+    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
     var doAliasMap = ConfigLoader.__get__('doAliasMap');
     var transformConfig = ConfigLoader.__get__('transformConfig');
 
@@ -637,7 +637,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     describe('bridge configure transformation', function() {
-      var ConfigLoader = rewire('../../lib/backbone/config-loader');
+      var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
       var convertSandboxConfig = ConfigLoader.__get__('convertSandboxConfig');
       var RELOADING_FORCED = ConfigLoader.__get__('RELOADING_FORCED');
   

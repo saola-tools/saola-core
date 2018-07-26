@@ -12,6 +12,8 @@ var path = require('path');
 var Injektor = require('injektor');
 var freshy = require('freshy');
 
+// require('events').defaultMaxListeners = 500;;
+
 var lab = module.exports = {
   getApiConfig: function(ext) {
     ext = ext || {};
@@ -64,6 +66,9 @@ var lab = module.exports = {
   },
   getDevebotCfgDir: function() {
     return path.join(this.getDevebotHome(), 'config');
+  },
+  getDevebotModule: function(moduleFile) {
+    return path.join(this.getDevebotHome(), 'lib/', moduleFile);
   },
   getDefaultTimeout: function() {
     return 60000;
