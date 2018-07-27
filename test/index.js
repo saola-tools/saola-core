@@ -12,7 +12,14 @@ var path = require('path');
 var Injektor = require('injektor');
 var freshy = require('freshy');
 
-// require('events').defaultMaxListeners = 500;;
+// EventEmitter memory leak detecting
+var max = 12;
+var EventEmitter = require('events').EventEmitter;
+EventEmitter.defaultMaxListeners = max;
+process.on('warning', function(e) {
+  console.warn('Exception thrown with MaxListeners: %s. StackTrace:', max);
+  console.warn(e.stack);
+});
 
 var lab = module.exports = {
   getApiConfig: function(ext) {
