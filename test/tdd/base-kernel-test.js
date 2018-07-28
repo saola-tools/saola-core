@@ -14,6 +14,7 @@ var kernel = require(lab.getDevebotModule('kernel'));
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
+var envbox = require(lab.getDevebotModule('utils/envbox'));
 var rewire = require('rewire');
 var sinon = require('sinon');
 
@@ -31,6 +32,7 @@ describe('tdd:devebot:base:kernel', function() {
     });
     LogConfig.reset();
     errorCollector.reset();
+    envbox.clearCache();
   });
 
   describe('validateBridgeConfig()', function() {
