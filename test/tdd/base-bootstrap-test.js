@@ -651,6 +651,7 @@ describe('tdd:devebot:base:bootstrap', function() {
         "version": "0.1.0",
         "name": "fullapp",
         "description": "Devebot Demo Application",
+        "main": "index.js",
         "author": "devebot",
         "license": "ISC",
         "layerware": [
@@ -658,6 +659,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             "version": "0.1.1",
             "name": "sub-plugin1",
             "description": "",
+            "main": "index.js",
             "author": "devebot",
             "license": "ISC"
           },
@@ -665,6 +667,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             "version": "0.1.2",
             "name": "sub-plugin2",
             "description": "",
+            "main": "index.js",
             "author": "devebot",
             "license": "ISC"
           },
@@ -672,6 +675,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             "version": "0.1.1",
             "name": "plugin1",
             "description": "",
+            "main": "index.js",
             "author": "devebot",
             "license": "ISC"
           },
@@ -679,6 +683,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             "version": "0.1.2",
             "name": "plugin2",
             "description": "",
+            "main": "index.js",
             "author": "devebot",
             "license": "ISC"
           },
@@ -686,6 +691,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             "version": "0.1.3",
             "name": "plugin3",
             "description": "",
+            "main": "index.js",
             "author": "devebot",
             "license": "ISC"
           }

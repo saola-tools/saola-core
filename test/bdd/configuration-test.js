@@ -25,6 +25,7 @@ describe('devebot:configuration', function() {
 					"version": "0.1.0",
 					"name": "demo-app",
 					"description": "Devebot Demo Application",
+					"main": "index.js",
 					"author": "devebot",
 					"license": "ISC",
 					"framework": lab.getFrameworkInfo()
@@ -36,6 +37,7 @@ describe('devebot:configuration', function() {
 							"version": "0.1.1",
 							"name": "plugin1",
 							"description": "",
+							"main": "index.js",
 							"author": "devebot",
 							"license": "ISC"
 						},
@@ -43,6 +45,7 @@ describe('devebot:configuration', function() {
 							"version": "0.1.2",
 							"name": "plugin2",
 							"description": "",
+							"main": "index.js",
 							"author": "devebot",
 							"license": "ISC"
 						}
