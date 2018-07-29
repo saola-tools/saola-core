@@ -4,9 +4,7 @@ var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 
-var Service = function(params) {
-  params = params || {};
-
+var Service = function(params={}) {
   var self = this;
   var LX = params.loggingFactory.getLogger();
   var LT = params.loggingFactory.getTracer();

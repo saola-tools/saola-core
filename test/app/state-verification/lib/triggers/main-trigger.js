@@ -6,8 +6,7 @@ var lodash = Devebot.require('lodash');
 var http = require('http');
 var util = require('util');
 
-var Service = function(params) {
-  params = params || {};
+var Service = function(params={}) {
   var self = this;
 
   var LX = params.loggingFactory.getLogger();

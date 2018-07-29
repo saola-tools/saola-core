@@ -6,10 +6,7 @@ var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainService');
 
-var Service = function(params) {
-  debugx.enabled && debugx(' + constructor begin ...');
-
-  params = params || {};
+var Service = function(params={}) {
   var self = this;
 
   var LX = params.loggingFactory.getLogger();
@@ -25,8 +22,6 @@ var Service = function(params) {
     assert.equal(anyname1z_a, anyname1z_b);
     assert.deepEqual(anyname1z_a.getConfig(), anyname1z_b.getConfig());
   }
-
-  debugx.enabled && debugx(' - constructor end!');
 };
 
 if (chores.isUpgradeSupported('bridge-full-ref')) {

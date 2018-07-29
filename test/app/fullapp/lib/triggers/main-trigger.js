@@ -6,11 +6,7 @@ var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
 
-var Service = function(params) {
-  debugx.enabled && debugx(' + constructor begin ...');
-
-  params = params || {};
-
+var Service = function(params={}) {
   var self = this;
   var packageName = params.packageName || 'fullapp';
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
@@ -54,8 +50,6 @@ var Service = function(params) {
       });
     });
   };
-
-  debugx.enabled && debugx(' - constructor end!');
 };
 
 if (chores.isUpgradeSupported('bridge-full-ref')) {

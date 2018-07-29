@@ -6,11 +6,7 @@ var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
 
-var Service = function(params) {
-  debugx.enabled && debugx(' + constructor begin ...');
-
-  params = params || {};
-
+var Service = function(params={}) {
   var self = this;
   var packageName = params.packageName || 'demo-app';
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
@@ -49,27 +45,6 @@ var Service = function(params) {
       });
     });
   };
-
-  debugx.enabled && debugx(' - constructor end!');
-};
-
-Service.argumentSchema = {
-  "$id": "mainTrigger",
-  "type": "object",
-  "properties": {
-    "sandboxName": {
-      "type": "string"
-    },
-    "sandboxConfig": {
-      "type": "object"
-    },
-    "profileConfig": {
-      "type": "object"
-    },
-    "loggingFactory": {
-      "type": "object"
-    }
-  }
 };
 
 module.exports = Service;
