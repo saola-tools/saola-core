@@ -36,13 +36,6 @@ function ConfigLoader(params={}) {
         .apply(null, CONFIG_VAR_NAMES.map(readVariable.bind(null, CTX, label)));
   }
 
-  let config = this.load();
-
-  Object.defineProperty(this, 'config', {
-    get: function() { return config },
-    set: function(value) {}
-  });
-
   LX.has('silly') && LX.log('silly', LT.toMessage({
     tags: [ blockRef, 'constructor-end' ],
     text: ' - constructor has finished'
