@@ -115,10 +115,25 @@ describe('tdd:devebot:base:bootstrap', function() {
     });
   });
 
+  describe('locatePackage()', function() {
+    var bootstrap = rewire(path.join(lab.getDevebotHome(), 'lib/bootstrap'));
+    var locatePackage = bootstrap.__get__('locatePackage');
+    assert.isFunction(locatePackage);
+
+    it('locate a valid package successfully', function() {
+      var providedPkg = path.join(__dirname, '../app/locating-package-json');
+      var detectedPkg = locatePackage({}, {
+        name: 'locating-package-json',
+        path: providedPkg
+      }, 'plugin');
+      assert.equal(detectedPkg, providedPkg);
+    });
+  });
+
   describe('expandExtensions()', function() {
     var bootstrap = rewire(path.join(lab.getDevebotHome(), 'lib/bootstrap'));
     var expandExtensions = bootstrap.__get__('expandExtensions');
-    assert.isNotNull(expandExtensions);
+    assert.isFunction(expandExtensions);
 
     it('expand empty parameters', function() {
       var output = expandExtensions();
