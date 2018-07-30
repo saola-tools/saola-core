@@ -10,7 +10,7 @@ var expect = require('chai').expect;
 var util = require('util');
 var DevebotApi = require('devebot-api');
 
-describe('devebot:runhook:progress:meter', function() {
+describe('bdd:devebot:runhook:progress:meter', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	var app, api;

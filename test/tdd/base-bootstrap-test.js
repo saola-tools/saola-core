@@ -74,25 +74,25 @@ describe('tdd:devebot:base:bootstrap', function() {
             '/some/path/here/test/lib/plugin3'
           ],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', path: '/some/path/here/test/lib/plugin1/index.js' },
-            'plugin2': { name: 'plugin2', path: '/some/path/here/test/lib/plugin2/index.js' },
-            'plugin3': { name: 'plugin3', path: '/some/path/here/test/lib/plugin3/index.js' }
+            'plugin1': { name: 'plugin1', path: '/some/path/here/test/lib/plugin1' },
+            'plugin2': { name: 'plugin2', path: '/some/path/here/test/lib/plugin2' },
+            'plugin3': { name: 'plugin3', path: '/some/path/here/test/lib/plugin3' }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/some/path/here/test/lib/bridge1/index.js' },
-            'bridge2': { name: 'bridge2', path: '/some/path/here/test/lib/bridge2/index.js' }
+            'bridge1': { name: 'bridge1', path: '/some/path/here/test/lib/bridge1' },
+            'bridge2': { name: 'bridge2', path: '/some/path/here/test/lib/bridge2' }
           }
         }, DEFAULT_CONTEXT),
         {
           libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-            'plugin3': { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1' },
+            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2' },
+            'plugin3': { name: 'plugin3', path: '/test/lib/plugin3' }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
           }
         }
       );
@@ -147,17 +147,17 @@ describe('tdd:devebot:base:bootstrap', function() {
         assert.deepEqual(output, {
           libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
           pluginRefs: {
-            '/test/lib/plugin1/index.js': {
+            '/test/lib/plugin1': {
               name: 'plugin1',
-              path: '/test/lib/plugin1/index.js',
+              path: '/test/lib/plugin1',
               presets: {
                 "configTags": "bridge[dialect-bridge]",
                 layerRootPath: '/test/lib/plugin1'
               }
             },
-            '/test/lib/plugin2/index.js': {
+            '/test/lib/plugin2': {
               name: 'plugin2',
-              path: '/test/lib/plugin2/index.js',
+              path: '/test/lib/plugin2',
               presets: {
                 "configTags": "bridge[dialect-bridge]",
                 layerRootPath: '/test/lib/plugin2'
@@ -165,20 +165,20 @@ describe('tdd:devebot:base:bootstrap', function() {
             }
           },
           bridgeRefs: {
-            '/test/lib/bridge1/index.js': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            '/test/lib/bridge2/index.js': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+            '/test/lib/bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
+            '/test/lib/bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
           }
         });
       } else {
         assert.deepEqual(output, {
           libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' }
+            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1' },
+            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2' }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
           }
         });
       }
@@ -202,13 +202,13 @@ describe('tdd:devebot:base:bootstrap', function() {
           libRootPaths: [],
           pluginRefs: {},
           bridgeRefs: {
-            '/test/lib/bridge1/index.js': {
+            '/test/lib/bridge1': {
               name: 'bridge1',
-              path: '/test/lib/bridge1/index.js'
+              path: '/test/lib/bridge1'
             },
-            '/test/lib/bridge2/index.js': {
+            '/test/lib/bridge2': {
               name: 'bridge2',
-              path: '/test/lib/bridge2/index.js'
+              path: '/test/lib/bridge2'
             }
           }
         });
@@ -217,8 +217,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           libRootPaths: [],
           pluginRefs: {},
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
           }
         });
       }
@@ -253,38 +253,38 @@ describe('tdd:devebot:base:bootstrap', function() {
         assert.deepEqual(output, {
           libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
           pluginRefs: {
-            '/test/lib/plugin1/index.js': {
+            '/test/lib/plugin1': {
               name: 'plugin1',
-              path: '/test/lib/plugin1/index.js',
+              path: '/test/lib/plugin1',
               presets: {
                 "configTags": "bridge[dialect-bridge]",
                 layerRootPath: '/test/lib/plugin1'
               }
             },
-            '/test/lib/plugin2/index.js': {
+            '/test/lib/plugin2': {
               name: 'plugin2',
-              path: '/test/lib/plugin2/index.js',
+              path: '/test/lib/plugin2',
               presets: {
                 "configTags": "bridge[dialect-bridge]",
                 layerRootPath: '/test/lib/plugin2'
               }
             },
-            '/test/lib/plugin3/index.js': {
+            '/test/lib/plugin3': {
               name: 'plugin3',
-              path: '/test/lib/plugin3/index.js',
+              path: '/test/lib/plugin3',
               presets: {
                 layerRootPath: '/test/lib/plugin3'
               }
             }
           },
           bridgeRefs: {
-            '/test/lib/bridge1/index.js': {
+            '/test/lib/bridge1': {
               name: 'bridge1',
-              path: '/test/lib/bridge1/index.js'
+              path: '/test/lib/bridge1'
             },
-            '/test/lib/bridge2/index.js': {
+            '/test/lib/bridge2': {
               name: 'bridge2',
-              path: '/test/lib/bridge2/index.js'
+              path: '/test/lib/bridge2'
             }
           }
         });
@@ -292,13 +292,13 @@ describe('tdd:devebot:base:bootstrap', function() {
         assert.deepEqual(output, {
           libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-            'plugin3': { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1' },
+            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2' },
+            'plugin3': { name: 'plugin3', path: '/test/lib/plugin3' }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2/index.js' }
+            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
+            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
           }
         });
       }
@@ -329,39 +329,39 @@ describe('tdd:devebot:base:bootstrap', function() {
             ],
           pluginRefs:
             {
-              '/test/lib/sub-plugin1/index.js': {
+              '/test/lib/sub-plugin1': {
                 name: 'sub-plugin1',
-                path: '/test/lib/sub-plugin1/index.js',
+                path: '/test/lib/sub-plugin1',
                 presets: {
                   layerRootPath: '/test/lib/sub-plugin1'
                 }
               },
-              '/test/lib/sub-plugin2/index.js': {
+              '/test/lib/sub-plugin2': {
                 name: 'sub-plugin2',
-                path: '/test/lib/sub-plugin2/index.js',
+                path: '/test/lib/sub-plugin2',
                 presets: {
                   layerRootPath: '/test/lib/sub-plugin2'
                 }
               },
-              '/test/lib/plugin1/index.js': {
+              '/test/lib/plugin1': {
                 name: 'plugin1',
-                path: '/test/lib/plugin1/index.js',
+                path: '/test/lib/plugin1',
                 presets: {
                   "configTags": "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin1'
                 }
               },
-              '/test/lib/plugin2/index.js': {
+              '/test/lib/plugin2': {
                 name: 'plugin2',
-                path: '/test/lib/plugin2/index.js',
+                path: '/test/lib/plugin2',
                 presets: {
                   "configTags": "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin2'
                 }
               },
-              '/test/lib/plugin3/index.js': {
+              '/test/lib/plugin3': {
                 name: 'plugin3',
-                path: '/test/lib/plugin3/index.js',
+                path: '/test/lib/plugin3',
                 presets: {
                   layerRootPath: '/test/lib/plugin3'
                 }
@@ -369,17 +369,17 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
           bridgeRefs:
           {
-            '/test/lib/bridge1/index.js': {
+            '/test/lib/bridge1': {
               name: 'bridge1',
-              path: '/test/lib/bridge1/index.js'
+              path: '/test/lib/bridge1'
             },
-            '/test/lib/bridge2/index.js': {
+            '/test/lib/bridge2': {
               name: 'bridge2',
-              path: '/test/lib/bridge2/index.js'
+              path: '/test/lib/bridge2'
             },
-            '/test/lib/bridge3/index.js': {
+            '/test/lib/bridge3': {
               name: 'bridge3',
-              path: '/test/lib/bridge3/index.js'
+              path: '/test/lib/bridge3'
             }
           }
         });
@@ -395,17 +395,17 @@ describe('tdd:devebot:base:bootstrap', function() {
             ],
           pluginRefs:
             {
-              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
-              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
-              plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-              plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-              plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1' },
+              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2' },
+              plugin1: { name: 'plugin1', path: '/test/lib/plugin1' },
+              plugin2: { name: 'plugin2', path: '/test/lib/plugin2' },
+              plugin3: { name: 'plugin3', path: '/test/lib/plugin3' }
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
-              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
+              bridge1: { name: 'bridge1', path: '/test/lib/bridge1' },
+              bridge2: { name: 'bridge2', path: '/test/lib/bridge2' },
+              bridge3: { name: 'bridge3', path: '/test/lib/bridge3' }
             }
         });
       }
@@ -470,46 +470,46 @@ describe('tdd:devebot:base:bootstrap', function() {
             ],
           pluginRefs:
             {
-              '/test/lib/sub-plugin1/index.js': {
+              '/test/lib/sub-plugin1': {
                 name: 'sub-plugin1',
-                path: '/test/lib/sub-plugin1/index.js',
+                path: '/test/lib/sub-plugin1',
                 presets: {
                   layerRootPath: '/test/lib/sub-plugin1'
                 }
               },
-              '/test/lib/sub-plugin2/index.js': {
+              '/test/lib/sub-plugin2': {
                 name: 'sub-plugin2',
-                path: '/test/lib/sub-plugin2/index.js',
+                path: '/test/lib/sub-plugin2',
                 presets: {
                   layerRootPath: '/test/lib/sub-plugin2'
                 }
               },
-              '/test/lib/plugin1/index.js': {
+              '/test/lib/plugin1': {
                 name: 'plugin1',
-                path: '/test/lib/plugin1/index.js',
+                path: '/test/lib/plugin1',
                 presets: {
                   "configTags": "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin1'
                 }
               },
-              '/test/lib/plugin2/index.js': {
+              '/test/lib/plugin2': {
                 name: 'plugin2',
-                path: '/test/lib/plugin2/index.js',
+                path: '/test/lib/plugin2',
                 presets: {
                   "configTags": "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin2'
                 }
               },
-              '/test/lib/plugin3/index.js': {
+              '/test/lib/plugin3': {
                 name: 'plugin3',
-                path: '/test/lib/plugin3/index.js',
+                path: '/test/lib/plugin3',
                 presets: {
                   layerRootPath: '/test/lib/plugin3'
                 }
               },
-              '/test/lib/plugin4/index.js': {
+              '/test/lib/plugin4': {
                 name: 'plugin4',
-                path: '/test/lib/plugin4/index.js',
+                path: '/test/lib/plugin4',
                 presets: {
                   layerRootPath: '/test/lib/plugin4'
                 }
@@ -517,21 +517,21 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
           bridgeRefs:
             {
-              '/test/lib/bridge1/index.js': {
+              '/test/lib/bridge1': {
                 name: 'bridge1',
-                path: '/test/lib/bridge1/index.js'
+                path: '/test/lib/bridge1'
               },
-              '/test/lib/bridge2/index.js': {
+              '/test/lib/bridge2': {
                 name: 'bridge2',
-                path: '/test/lib/bridge2/index.js'
+                path: '/test/lib/bridge2'
               },
-              '/test/lib/bridge3/index.js': {
+              '/test/lib/bridge3': {
                 name: 'bridge3',
-                path: '/test/lib/bridge3/index.js'
+                path: '/test/lib/bridge3'
               },
-              '/test/lib/bridge4/index.js': {
+              '/test/lib/bridge4': {
                 name: 'bridge4',
-                path: '/test/lib/bridge4/index.js'
+                path: '/test/lib/bridge4'
               }
             }
         });
@@ -548,19 +548,19 @@ describe('tdd:devebot:base:bootstrap', function() {
             ],
           pluginRefs:
             {
-              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
-              plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-              plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
-              plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' },
-              plugin4: { name: 'plugin4', path: '/test/lib/plugin4/index.js' }
+              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1' },
+              plugin1: { name: 'plugin1', path: '/test/lib/plugin1' },
+              plugin2: { name: 'plugin2', path: '/test/lib/plugin2' },
+              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2' },
+              plugin3: { name: 'plugin3', path: '/test/lib/plugin3' },
+              plugin4: { name: 'plugin4', path: '/test/lib/plugin4' }
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
-              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' },
-              bridge4: { name: 'bridge4', path: '/test/lib/bridge4/index.js' }
+              bridge1: { name: 'bridge1', path: '/test/lib/bridge1' },
+              bridge2: { name: 'bridge2', path: '/test/lib/bridge2' },
+              bridge3: { name: 'bridge3', path: '/test/lib/bridge3' },
+              bridge4: { name: 'bridge4', path: '/test/lib/bridge4' }
             }
         });
       }
@@ -618,7 +618,7 @@ describe('tdd:devebot:base:bootstrap', function() {
         {
           "type": "framework",
           "name": "devebot",
-          "path": "/devebot/index.js"
+          "path": "/devebot"
         }
       ]);
     });
@@ -705,42 +705,42 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "bridge3",
           "name": "bridge3",
           "nameInCamel": "bridge3",
-          "path": "/test/lib/bridge3/index.js"
+          "path": "/test/lib/bridge3"
         },
         {
           "code": "bridge4",
           "codeInCamel": "bridge4",
           "name": "bridge4",
           "nameInCamel": "bridge4",
-          "path": "/test/lib/bridge4/index.js"
+          "path": "/test/lib/bridge4"
         },
         {
           "code": "bridge1",
           "codeInCamel": "bridge1",
           "name": "bridge1",
           "nameInCamel": "bridge1",
-          "path": "/test/lib/bridge1/index.js"
+          "path": "/test/lib/bridge1"
         },
         {
           "code": "bridge2",
           "codeInCamel": "bridge2",
           "name": "bridge2",
           "nameInCamel": "bridge2",
-          "path": "/test/lib/bridge2/index.js"
+          "path": "/test/lib/bridge2"
         },
         {
           "code": "connector1",
           "codeInCamel": "connector1",
           "name": "devebot-co-connector1",
           "nameInCamel": "devebotCoConnector1",
-          "path": "/test/lib/devebot-co-connector1/bridge.js"
+          "path": "/test/lib/devebot-co-connector1"
         },
         {
           "code": "connector2",
           "codeInCamel": "connector2",
           "name": "devebot-co-connector2",
           "nameInCamel": "devebotCoConnector2",
-          "path": "/test/lib/devebot-co-connector2/bridge.js"
+          "path": "/test/lib/devebot-co-connector2"
         }
       ]);
       // verify pluginRefs
@@ -748,14 +748,14 @@ describe('tdd:devebot:base:bootstrap', function() {
         {
           "type": "application",
           "name": "fullapp",
-          "path": "/test/app/fullapp/index.js"
+          "path": "/test/app/fullapp"
         },
         {
           "code": "sub-plugin1",
           "codeInCamel": "subPlugin1",
           "name": "sub-plugin1",
           "nameInCamel": "subPlugin1",
-          "path": "/test/lib/sub-plugin1/index.js",
+          "path": "/test/lib/sub-plugin1",
           "presets": {
             "layerRootPath": '/test/lib/sub-plugin1'
           }
@@ -765,7 +765,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "subPlugin2",
           "name": "sub-plugin2",
           "nameInCamel": "subPlugin2",
-          "path": "/test/lib/sub-plugin2/index.js",
+          "path": "/test/lib/sub-plugin2",
           "presets": {
             "layerRootPath": '/test/lib/sub-plugin2'
           }
@@ -775,7 +775,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "plugin1",
           "name": "plugin1",
           "nameInCamel": "plugin1",
-          "path": "/test/lib/plugin1/index.js",
+          "path": "/test/lib/plugin1",
           "presets": {
             "configTags": "bridge[dialect-bridge]",
             "layerRootPath": '/test/lib/plugin1'
@@ -786,7 +786,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "plugin2",
           "name": "plugin2",
           "nameInCamel": "plugin2",
-          "path": "/test/lib/plugin2/index.js",
+          "path": "/test/lib/plugin2",
           "presets": {
             "configTags": "bridge[dialect-bridge]",
             "layerRootPath": '/test/lib/plugin2'
@@ -797,7 +797,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "plugin3",
           "name": "plugin3",
           "nameInCamel": "plugin3",
-          "path": "/test/lib/plugin3/index.js",
+          "path": "/test/lib/plugin3",
           "presets": {
             "layerRootPath": '/test/lib/plugin3'
           }
@@ -805,7 +805,7 @@ describe('tdd:devebot:base:bootstrap', function() {
         {
           "type": "framework",
           "name": "devebot",
-          "path": "/devebot/index.js"
+          "path": "/devebot"
         }
       ];
       if (!chores.isUpgradeSupported('presets')) {
@@ -854,39 +854,39 @@ describe('tdd:devebot:base:bootstrap', function() {
             ],
           pluginRefs:
             {
-              '/test/lib/sub-plugin1/index.js': {
+              '/test/lib/sub-plugin1': {
                 name: 'sub-plugin1',
-                path: '/test/lib/sub-plugin1/index.js',
+                path: '/test/lib/sub-plugin1',
                 presets: {
                   layerRootPath: '/test/lib/sub-plugin1'
                 }
               },
-              '/test/lib/sub-plugin2/index.js': {
+              '/test/lib/sub-plugin2': {
                 name: 'sub-plugin2',
-                path: '/test/lib/sub-plugin2/index.js',
+                path: '/test/lib/sub-plugin2',
                 presets: {
                   layerRootPath: '/test/lib/sub-plugin2'
                 }
               },
-              '/test/lib/plugin1/index.js': {
+              '/test/lib/plugin1': {
                 name: 'plugin1',
-                path: '/test/lib/plugin1/index.js',
+                path: '/test/lib/plugin1',
                 presets: {
                   configTags: "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin1'
                 }
               },
-              '/test/lib/plugin2/index.js': {
+              '/test/lib/plugin2': {
                 name: 'plugin2',
-                path: '/test/lib/plugin2/index.js',
+                path: '/test/lib/plugin2',
                 presets: {
                   configTags: "bridge[dialect-bridge]",
                   layerRootPath: '/test/lib/plugin2'
                 }
               },
-              '/test/lib/plugin3/index.js': {
+              '/test/lib/plugin3': {
                 name: 'plugin3',
-                path: '/test/lib/plugin3/index.js',
+                path: '/test/lib/plugin3',
                 presets: {
                   layerRootPath: '/test/lib/plugin3'
                 }
@@ -894,17 +894,17 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
           bridgeRefs:
             {
-              '/test/lib/bridge1/index.js': {
+              '/test/lib/bridge1': {
                 name: 'bridge1',
-                path: '/test/lib/bridge1/index.js'
+                path: '/test/lib/bridge1'
               },
-              '/test/lib/bridge2/index.js': {
+              '/test/lib/bridge2': {
                 name: 'bridge2',
-                path: '/test/lib/bridge2/index.js'
+                path: '/test/lib/bridge2'
               },
-              '/test/lib/bridge3/index.js': {
+              '/test/lib/bridge3': {
                 name: 'bridge3',
-                path: '/test/lib/bridge3/index.js'
+                path: '/test/lib/bridge3'
               }
             }
         });
@@ -920,17 +920,17 @@ describe('tdd:devebot:base:bootstrap', function() {
             ],
           pluginRefs:
             {
-              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1/index.js' },
-              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2/index.js' },
-              plugin1: { name: 'plugin1', path: '/test/lib/plugin1/index.js' },
-              plugin2: { name: 'plugin2', path: '/test/lib/plugin2/index.js' },
-              plugin3: { name: 'plugin3', path: '/test/lib/plugin3/index.js' }
+              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1' },
+              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2' },
+              plugin1: { name: 'plugin1', path: '/test/lib/plugin1' },
+              plugin2: { name: 'plugin2', path: '/test/lib/plugin2' },
+              plugin3: { name: 'plugin3', path: '/test/lib/plugin3' }
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', path: '/test/lib/bridge1/index.js' },
-              bridge2: { name: 'bridge2', path: '/test/lib/bridge2/index.js' },
-              bridge3: { name: 'bridge3', path: '/test/lib/bridge3/index.js' }
+              bridge1: { name: 'bridge1', path: '/test/lib/bridge1' },
+              bridge2: { name: 'bridge2', path: '/test/lib/bridge2' },
+              bridge3: { name: 'bridge3', path: '/test/lib/bridge3' }
             }
         });
       }
@@ -954,15 +954,18 @@ var DEFAULT_CONTEXT = {
 
 var replaceLibPath = function(p, context) {
   if (typeof p !== 'string') return p;
+  var output = p;
   context = context || DEFAULT_CONTEXT;
   context.replacers = context.replacers || [];
   for(var i=0; i<context.replacers.length; i++) {
     var replacer = context.replacers[i];
     if (p.match(replacer.pattern)) {
-      return p.replace(replacer.pattern, replacer.replacement);
+      output = p.replace(replacer.pattern, replacer.replacement);
+      break;
     }
   }
-  return p;
+  output = output.replace(/^\/devebot\/devebot/g, '/devebot');
+  return output;
 }
 
 var replaceObjectFields = function(obj, context) {

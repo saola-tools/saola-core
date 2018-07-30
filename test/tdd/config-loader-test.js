@@ -34,23 +34,23 @@ describe('tdd:devebot:core:config-loader', function() {
   var appRef = {
     name: 'tdd-cfg',
     type: 'application',
-    path: path.join(lab.getAppHome('tdd-cfg'), 'index.js')
+    path: lab.getAppHome('tdd-cfg')
   };
 
   var devebotRef = {
     name: 'devebot',
     type: 'framework',
-    path: path.join(lab.getDevebotHome(), 'index.js')
+    path: lab.getDevebotHome()
   };
 
   var pluginRefs = {
     "plugin1": {
       name: 'plugin1',
-      path: path.join(lab.getLibHome('plugin1'), 'index.js')
+      path: lab.getLibHome('plugin1')
     },
     "plugin2": {
       name: 'plugin2',
-      path: path.join(lab.getLibHome('plugin2'), 'index.js')
+      path: lab.getLibHome('plugin2')
     }
   };
 
