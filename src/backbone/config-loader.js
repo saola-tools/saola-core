@@ -126,8 +126,16 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
       }));
       let configFiles = chores.filterFiles(configDir, '.*\.js');
       let configInfos = lodash.map(configFiles, function(file) {
-        return file.replace('.js', '').split(/[_]/);
+        if (false) {
+          return file.replace('.js', '').split(/_(.+)/).filter(function(sub) {
+            return sub.length > 0;
+          });
+        }
+        return file.replace('.js', '').replace(/[_]/,'&').split('&');
       });
+      LX.has('conlog') && LX.log('conlog', LT.add({ configInfos }).toMessage({
+        text: ' - parsing configFiles result: ${configInfos}'
+      }));
 
       LX.has('conlog') && LX.log('conlog', LT.add({ configType }).toMessage({
         text: ' - load the application default config of "${configType}"'
