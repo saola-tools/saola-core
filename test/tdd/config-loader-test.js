@@ -589,6 +589,57 @@ describe('tdd:devebot:core:config-loader', function() {
           {}));
     });
 
+    it('load application configuration with underscore suffixes', function() {
+      var cfgLoader = new ConfigLoader({appName: 'app', appOptions: {
+        privateSandboxes: ['bs_p1', 'bs_p2']
+      }, appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      var config = cfgLoader.load();
+      false && console.log(JSON.stringify(config, null, 2));
+
+      // Profile configuration
+      assert.deepEqual(
+        lodash.get(config,"profile.mixture"),
+        lodash.get(config,"profile.default")
+      );
+
+      assert.deepInclude(
+        lodash.get(config,"profile.mixture"),
+        lodash.defaultsDeep(
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'profile.js')),
+          loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
+          {}));
+
+      // Sandbox configuration
+      assert.deepInclude(
+        lodash.get(config,"sandbox.mixture"),
+        lodash.defaultsDeep({}, expandedDefaultConfig, lodash.get(config,"sandbox.default"), {
+          "common": {
+            "bs": 2,
+            "bs1": [ "bootstrap", 1 ],
+            "bs2": [ "bootstrap", 2 ],
+            "ev": 2,
+            "ev1": [ "environment variable", 1 ],
+            "ev2": [ "environment variable", 2 ],
+            "name": "bs2"
+          }
+        })
+      );
+
+      assert.deepInclude(
+        lodash.get(config,"sandbox.mixture"),
+        lodash.defaultsDeep(
+          {}, expandedDefaultConfig,
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs_p2.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_bs_p1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
+          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
+          {}));
+    });
+
     it('the order of listed sandbox labels is sensitive', function() {
       var cfgLoader = new ConfigLoader({appName: 'app', appOptions: {
         privateSandboxes: 'bs2, bs1'
