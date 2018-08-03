@@ -489,11 +489,45 @@ describe('tdd:devebot:core:config-loader', function() {
           loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
           loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
           loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox_private1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox_private2.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
+          {}
+        )
+      );
+
+      assert.notDeepEqual(
+        lodash.get(config,"sandbox.mixture"),
+        lodash.merge(
+          {},
+          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox_private2.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox_private1.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
+          {}
+        )
+      );
+
+      assert.notDeepEqual(
+        lodash.get(config,"sandbox.mixture"),
+        lodash.merge(
+          {},
+          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox_private1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox_private2.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
           {}
         )
