@@ -29,6 +29,47 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     errorCollector.reset();
   });
 
+  it('retrieve bridge dialect names correctly', function() {
+    var sandboxManager = lab.createSandboxManager('fullapp');
+    assert.deepEqual(sandboxManager.getBridgeDialectNames(), [
+      'application/bridge1#anyname1z',
+      'plugin1/bridge1#anyname1a',
+      'plugin2/bridge1#anyname1b',
+      'plugin2/bridge1#anyname1c',
+      'application/bridge2#anyname2y',
+      'application/bridge2#anyname2z',
+      'plugin1/bridge2#anyname2a',
+      'plugin1/bridge2#anyname2c',
+      'plugin2/bridge2#anyname2b',
+      'application/connector1#wrapper',
+      'application/connector2#wrapper'
+    ]);
+  });
+
+  it('retrieve plugin service names correctly', function() {
+    var sandboxManager = lab.createSandboxManager('fullapp');
+    assert.deepEqual(sandboxManager.getPluginServiceNames(), [
+      'application/mainService',
+      'sub-plugin1/sublibService',
+      'sub-plugin2/sublibService',
+      'plugin1/plugin1Service',
+      'plugin2/plugin2Service',
+      'plugin3/plugin3Service'
+    ]);
+  });
+
+  it('retrieve plugin trigger names correctly', function() {
+    var sandboxManager = lab.createSandboxManager('fullapp');
+    assert.deepEqual(sandboxManager.getPluginTriggerNames(), [
+      'application/mainTrigger',
+      'sub-plugin1/sublibTrigger',
+      'sub-plugin2/sublibTrigger',
+      'plugin1/plugin1Trigger',
+      'plugin2/plugin2Trigger',
+      'plugin3/plugin3Trigger'
+    ]);
+  });
+
   it('retrieve the unique named service with/without suggested scope', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
 
