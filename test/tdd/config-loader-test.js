@@ -374,24 +374,21 @@ describe('tdd:devebot:core:config-loader', function() {
       false && console.log(JSON.stringify(config, null, 2));
 
       // Profile configuration
-      assert.deepEqual(
-        lodash.get(config,"profile.default"),
-        lodash.get(config,"profile.mixture")
-      );
-
       assert.deepInclude(
-        lodash.get(config,"profile.mixture"),
+        lodash.get(config,"profile.default"),
         lodash.defaultsDeep(
           loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'profile.js')),
           loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
-          {}));
-
-      // Sandbox configuration
-      assert.deepEqual(
-        lodash.get(config,"sandbox.default"),
-        lodash.get(config,"sandbox.mixture")
+          {}
+        )
       );
 
+      assert.deepEqual(
+        lodash.get(config,"profile.mixture"),
+        lodash.get(config,"profile.default")
+      );
+
+      // Sandbox configuration
       assert.deepEqual(
         lodash.get(config,"sandbox.default"),
         lodash.defaultsDeep(
@@ -414,7 +411,14 @@ describe('tdd:devebot:core:config-loader', function() {
           loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
           loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
           loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
-          {}));
+          {}
+        )
+      );
+
+      assert.deepEqual(
+        lodash.get(config,"sandbox.mixture"),
+        lodash.get(config,"sandbox.default")
+      );
     });
 
     after(function() {
@@ -482,6 +486,25 @@ describe('tdd:devebot:core:config-loader', function() {
         )
       );
 
+      // config/* <-> newcfg/dev/*
+      assert.notDeepEqual(
+        lodash.get(config,"sandbox.mixture"),
+        lodash.merge(
+          {},
+          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'newcfg/dev'), 'sandbox_ev2.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox_private1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox_private2.js')),
+          {}
+        )
+      );
+
+      // config/sandbox.js <-> config/sandbox_private1.js
       assert.notDeepEqual(
         lodash.get(config,"sandbox.mixture"),
         lodash.merge(
@@ -499,6 +522,7 @@ describe('tdd:devebot:core:config-loader', function() {
         )
       );
 
+      // config/sandbox_private1.js <-> config/sandbox_private2.js
       assert.notDeepEqual(
         lodash.get(config,"sandbox.mixture"),
         lodash.merge(
@@ -516,6 +540,7 @@ describe('tdd:devebot:core:config-loader', function() {
         )
       );
 
+      // newcfg/dev/sandbox.js <-> newcfg/dev/sandbox_ev1.js
       assert.notDeepEqual(
         lodash.get(config,"sandbox.mixture"),
         lodash.merge(
@@ -533,6 +558,7 @@ describe('tdd:devebot:core:config-loader', function() {
         )
       );
 
+      // newcfg/dev/sandbox_ev1.js <-> newcfg/dev/sandbox_ev2.js
       assert.notDeepEqual(
         lodash.get(config,"sandbox.mixture"),
         lodash.merge(
