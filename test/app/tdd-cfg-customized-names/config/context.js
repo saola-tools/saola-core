@@ -13,7 +13,7 @@ module.exports = {
         level: 'debug',
         json: false,
         timestamp: true,
-        colorize: true
+        colorize: false
       }
     }
   }

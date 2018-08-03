@@ -889,22 +889,6 @@ describe('tdd:devebot:core:config-loader', function() {
       path: lab.getAppHome('tdd-cfg-customized-names')
     };
 
-    var expandedDefaultConfig = {
-      "application": {
-        "step0": "base",
-        "step1": "private1",
-        "step2": "private2"
-      },
-      "plugins": {
-        "plugin1": {
-          "dir": "config"
-        },
-        "plugin2": {
-          "dir": "config"
-        }
-      }
-    };
-
     it('load application configuration with multiple private sandboxes', function() {
       var cfgLoader = new ConfigLoader({appName: 'app', appOptions: {
         privateSandboxes: ['bs1', 'bs2']
@@ -918,42 +902,47 @@ describe('tdd:devebot:core:config-loader', function() {
         lodash.get(config,"profile.default")
       );
 
+      // Profile overriden order: [devebot]/profile <- [app:default]/profile <- [app:external]/profile
       assert.deepInclude(
         lodash.get(config,"profile.mixture"),
         lodash.defaultsDeep(
           loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'context.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'config'), 'context.js')),
           loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
-          {}));
+          {}
+        )
+      );
 
       // Sandbox configuration
       assert.deepInclude(
-        lodash.get(config,"sandbox.mixture"),
-        lodash.defaultsDeep({}, expandedDefaultConfig, lodash.get(config,"sandbox.default"), {
-          "common": {
-            "bs": 2,
-            "bs1": [ "bootstrap", 1 ],
-            "bs2": [ "bootstrap", 2 ],
-            "ev": 2,
-            "ev1": [ "environment variable", 1 ],
-            "ev2": [ "environment variable", 2 ],
-            "name": "bs2"
-          }
-        })
+        lodash.get(config,"sandbox.default"),
+        lodash.merge({},
+          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'config'), 'setting.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting.js')),
+          {}
+        )
       );
 
       assert.deepInclude(
         lodash.get(config,"sandbox.mixture"),
-        lodash.defaultsDeep(
-          {}, expandedDefaultConfig,
-          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting_bs2.js')),
-          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting_bs1.js')),
-          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting_ev2.js')),
-          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting_ev1.js')),
-          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting.js')),
+        lodash.merge({},
+          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
           loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
           loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
-          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
-          {}));
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'config'), 'setting.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'config'), 'setting_private1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'config'), 'setting_private2.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting_ev1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting_ev2.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting_bs1.js')),
+          loader(path.join(lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg/dev'), 'setting_bs2.js')),
+          {}
+        )
+      );
     });
 
     after(function() {

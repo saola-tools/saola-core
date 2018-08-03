@@ -1,10 +1,7 @@
 module.exports = {
   devebot: {
     verbose: false,
-    mode: 'silent',
-    jobqueue: {
-      enabled: true
-    }
+    mode: 'silent'
   },
   logger: {
     transports: {
