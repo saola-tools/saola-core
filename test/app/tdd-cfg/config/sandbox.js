@@ -1,6 +1,8 @@
 module.exports = {
   application: {
     "step0": "base",
+    "step1": "base",
+    "step2": "base",
     "host": "0.0.0.0",
     "port": 17700,
     "verbose": true
