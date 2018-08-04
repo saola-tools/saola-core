@@ -29,7 +29,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     errorCollector.reset();
   });
 
-  it('retrieve bridge dialect names correctly', function() {
+  it('getBridgeDialectNames() - retrieve bridge dialect names correctly', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
     assert.deepEqual(sandboxManager.getBridgeDialectNames(), [
       'application/bridge1#anyname1z',
@@ -46,7 +46,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     ]);
   });
 
-  it('retrieve plugin service names correctly', function() {
+  it('getPluginServiceNames() - retrieve plugin service names correctly', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
     assert.deepEqual(sandboxManager.getPluginServiceNames(), [
       'application/mainService',
@@ -58,7 +58,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     ]);
   });
 
-  it('retrieve plugin trigger names correctly', function() {
+  it('getPluginTriggerNames() - retrieve plugin trigger names correctly', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
     assert.deepEqual(sandboxManager.getPluginTriggerNames(), [
       'application/mainTrigger',
@@ -70,7 +70,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     ]);
   });
 
-  it('retrieve the unique named service with/without suggested scope', function() {
+  it('getSandboxService() - retrieve the unique named service with/without suggested scope', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
 
     var plugin2Service0 = sandboxManager.getSandboxService('plugin2Service');
@@ -90,7 +90,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     assert.equal(plugin2Service1, plugin2Service2);
   });
 
-  it('retrieve the same named services from different plugins', function() {
+  it('getSandboxService() - retrieve the same named services from different plugins', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
 
     assert.throws(function() {
