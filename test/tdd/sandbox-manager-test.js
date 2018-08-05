@@ -4,6 +4,7 @@ var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var Injektor = Devebot.require('injektor');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:sandbox-manager');
@@ -32,45 +33,45 @@ describe('tdd:devebot:core:sandbox-manager', function() {
   it('getBridgeDialectNames() - retrieve bridge dialect names correctly', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
     assert.deepEqual(sandboxManager.getBridgeDialectNames(), [
-      'application/bridge1#anyname1z',
-      'plugin1/bridge1#anyname1a',
-      'plugin2/bridge1#anyname1b',
-      'plugin2/bridge1#anyname1c',
-      'application/bridge2#anyname2y',
-      'application/bridge2#anyname2z',
-      'plugin1/bridge2#anyname2a',
-      'plugin1/bridge2#anyname2c',
-      'plugin2/bridge2#anyname2b',
-      'application/connector1#wrapper',
-      'application/connector2#wrapper'
+      chores.toFullname('application', 'bridge1#anyname1z'),
+      chores.toFullname('plugin1', 'bridge1#anyname1a'),
+      chores.toFullname('plugin2', 'bridge1#anyname1b'),
+      chores.toFullname('plugin2', 'bridge1#anyname1c'),
+      chores.toFullname('application', 'bridge2#anyname2y'),
+      chores.toFullname('application', 'bridge2#anyname2z'),
+      chores.toFullname('plugin1', 'bridge2#anyname2a'),
+      chores.toFullname('plugin1', 'bridge2#anyname2c'),
+      chores.toFullname('plugin2', 'bridge2#anyname2b'),
+      chores.toFullname('application', 'connector1#wrapper'),
+      chores.toFullname('application', 'connector2#wrapper')
     ]);
   });
 
   it('getPluginServiceNames() - retrieve plugin service names correctly', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
     assert.deepEqual(sandboxManager.getPluginServiceNames(), [
-      'application/mainService',
-      'sub-plugin1/sublibService',
-      'sub-plugin2/sublibService',
-      'plugin1/plugin1Service',
-      'plugin2/plugin2Service',
-      'plugin3/plugin3Service'
+      chores.toFullname('application', 'mainService'),
+      chores.toFullname('sub-plugin1', 'sublibService'),
+      chores.toFullname('sub-plugin2', 'sublibService'),
+      chores.toFullname('plugin1', 'plugin1Service'),
+      chores.toFullname('plugin2', 'plugin2Service'),
+      chores.toFullname('plugin3', 'plugin3Service')
     ]);
   });
 
   it('getPluginTriggerNames() - retrieve plugin trigger names correctly', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
     assert.deepEqual(sandboxManager.getPluginTriggerNames(), [
-      'application/mainTrigger',
-      'sub-plugin1/sublibTrigger',
-      'sub-plugin2/sublibTrigger',
-      'plugin1/plugin1Trigger',
-      'plugin2/plugin2Trigger',
-      'plugin3/plugin3Trigger'
+      chores.toFullname('application', 'mainTrigger'),
+      chores.toFullname('sub-plugin1', 'sublibTrigger'),
+      chores.toFullname('sub-plugin2', 'sublibTrigger'),
+      chores.toFullname('plugin1', 'plugin1Trigger'),
+      chores.toFullname('plugin2', 'plugin2Trigger'),
+      chores.toFullname('plugin3', 'plugin3Trigger')
     ]);
   });
 
-  it('getSandboxService() - retrieve the unique named service with/without suggested scope', function() {
+  it('getSandboxService() - retrieve the unique named service with or without suggested scope', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
 
     var plugin2Service0 = sandboxManager.getSandboxService('plugin2Service');
@@ -119,7 +120,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/sandboxManager', 'excluded-internal-services' ],
+          allTags: [ chores.toFullname('devebot', 'sandboxManager'), 'excluded-internal-services' ],
           storeTo: 'list'
         }]
       }]);
@@ -134,7 +135,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       var excluded = lodash.get(loggingStore, 'list.0.excludedServices', {});
       if (true) {
         assert.deepEqual(excluded, [
-          "devebot/sandboxRegistry"
+          chores.toFullname("devebot", "sandboxRegistry")
         ]);
       } else {
         console.log(JSON.stringify(excluded, null, 2));

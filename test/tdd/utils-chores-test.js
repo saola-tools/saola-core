@@ -62,10 +62,10 @@ describe('tdd:devebot:utils:chores', function() {
   describe('getBlockRef()', function() {
     it('should generate blockRef correctly', function() {
       var file = path.join(lab.getLibHome('plugin1'), 'lib/services/plugin1-service.js');
-      assert.equal(chores.getBlockRef(file), 'devebot/plugin1Service');
-      assert.equal(chores.getBlockRef(file, 'mymodule'), 'mymodule/plugin1Service');
-      assert.equal(chores.getBlockRef(file, [ 'mymodule' ]), 'mymodule/plugin1Service');
-      assert.equal(chores.getBlockRef(file, [ 'part1', 'part2' ]), 'part1/part2/plugin1Service');
+      assert.equal(chores.getBlockRef(file), chores.toFullname('devebot', 'plugin1Service'));
+      assert.equal(chores.getBlockRef(file, 'mymodule'), chores.toFullname('mymodule', 'plugin1Service'));
+      assert.equal(chores.getBlockRef(file, [ 'mymodule' ]), chores.toFullname('mymodule', 'plugin1Service'));
+      assert.equal(chores.getBlockRef(file, [ 'part1', 'part2' ]), chores.toFullname('part1', 'part2', 'plugin1Service'));
     });
   });
 

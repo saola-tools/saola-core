@@ -14,7 +14,7 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 
-describe('devebot:command:execution', function() {
+describe('bdd:devebot:command:execution', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	var app, api;
@@ -62,30 +62,30 @@ describe('devebot:command:execution', function() {
 		LogTracer.addStringifyInterceptor(logScraper);
 		app = lab.getApp('default');
 		injectedServiceNames = [
-			"application/mainService",
-			"plugin1/plugin1Service",
-			"plugin2/plugin2Service"
+			chores.toFullname("application", "mainService"),
+			chores.toFullname("plugin1", "plugin1Service"),
+			chores.toFullname("plugin2", "plugin2Service")
 		];
 		// run in bridge-full-ref mode, and apply presets config
 		// don't care for standardizing-config feature
 		if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
 			injectedServiceNames.push.apply(injectedServiceNames, [
-				"plugin1/bridge1#anyname1a",
-				"plugin2/bridge1#anyname1b",
-				"plugin2/bridge1#anyname1c",
-				"plugin1/bridge2#anyname2a",
-				"plugin2/bridge2#anyname2b",
-				"plugin1/bridge2#anyname2c"
+				chores.toFullname("plugin1", "bridge1#anyname1a"),
+				chores.toFullname("plugin2", "bridge1#anyname1b"),
+				chores.toFullname("plugin2", "bridge1#anyname1c"),
+				chores.toFullname("plugin1", "bridge2#anyname2a"),
+				chores.toFullname("plugin2", "bridge2#anyname2b"),
+				chores.toFullname("plugin1", "bridge2#anyname2c")
 			]);
 		}
 		if (!chores.isUpgradeSupported(['bridge-full-ref'])) {
 			injectedServiceNames.push.apply(injectedServiceNames, [
-				"bridge1/anyname1a",
-				"bridge1/anyname1b",
-				"bridge1/anyname1c",
-				"bridge2/anyname2a",
-				"bridge2/anyname2b",
-				"bridge2/anyname2c"
+				chores.toFullname("bridge1", "anyname1a"),
+				chores.toFullname("bridge1", "anyname1b"),
+				chores.toFullname("bridge1", "anyname1c"),
+				chores.toFullname("bridge2", "anyname2a"),
+				chores.toFullname("bridge2", "anyname2b"),
+				chores.toFullname("bridge2", "anyname2c")
 			]);
 		}
 		api = new DevebotApi(lab.getApiConfig());

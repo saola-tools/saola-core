@@ -3,6 +3,7 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('bdd:devebot:loading-invalid-modules');
 var assert = require('chai').assert;
@@ -37,9 +38,9 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/errorCollector', 'examine' ],
+          allTags: [ chores.toFullname('devebot', 'errorCollector'), 'examine' ],
           matchingField: 'invoker',
-          matchingRule: 'devebot/bootstrap',
+          matchingRule: chores.toFullname('devebot', 'bootstrap'),
           storeTo: 'errorSummary'
         }]
       }]);
@@ -100,9 +101,9 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/errorCollector', 'examine', 'sandbox-loading' ],
+          allTags: [ chores.toFullname('devebot', 'errorCollector'), 'examine', 'sandbox-loading' ],
           matchingField: 'invoker',
-          matchingRule: 'devebot/kernel',
+          matchingRule: chores.toFullname('devebot', 'kernel'),
           storeTo: 'errorSummary'
         }]
       }]);
@@ -164,9 +165,9 @@ describe('bdd:devebot:loading-invalid-modules', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/errorCollector', 'examine', 'sandbox-loading' ],
+          allTags: [ chores.toFullname('devebot', 'errorCollector'), 'examine', 'sandbox-loading' ],
           matchingField: 'invoker',
-          matchingRule: 'devebot/kernel',
+          matchingRule: chores.toFullname('devebot', 'kernel'),
           storeTo: 'errorSummary'
         }]
       }]);
@@ -253,9 +254,9 @@ describe('bdd:devebot:loading-invalid-modules', function() {
         ]);
         assert.equal(errorSummary.totalOfErrors, 3);
         assert.deepEqual(lodash.map(errorSummary.errors, 'name'), [
-          'plugin-invalid-trigger-methods/trigger1',
-          'plugin-invalid-trigger-methods/trigger2',
-          'plugin-invalid-trigger-methods/trigger3'
+          chores.toFullname('plugin-invalid-trigger-methods', 'trigger1'),
+          chores.toFullname('plugin-invalid-trigger-methods', 'trigger2'),
+          chores.toFullname('plugin-invalid-trigger-methods', 'trigger3')
         ]);
       } else {
         console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));

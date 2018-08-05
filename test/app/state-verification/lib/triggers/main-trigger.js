@@ -65,10 +65,10 @@ var Service = function(params={}) {
 
 if (chores.isUpgradeSupported('bridge-full-ref')) {
   Service.referenceList = [
-    'application/connector1#wrapper',
-    'application/connector2#wrapper',
-    'devebot-dp-wrapper1/sublibTrigger',
-    'devebot-dp-wrapper2/sublibTrigger'
+    chores.toFullname('application', 'connector1#wrapper'),
+    chores.toFullname('application', 'connector2#wrapper'),
+    chores.toFullname('devebot-dp-wrapper1', 'sublibTrigger'),
+    chores.toFullname('devebot-dp-wrapper2', 'sublibTrigger')
   ]
 }
 

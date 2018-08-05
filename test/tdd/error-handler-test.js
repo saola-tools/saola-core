@@ -3,6 +3,7 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:error-collector');
@@ -36,7 +37,7 @@ describe('tdd:devebot:core:error-collector', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/errorCollector', 'examine' ],
+          allTags: [ chores.toFullname('devebot', 'errorCollector'), 'examine' ],
           storeTo: 'errorSummary'
         }]
       }]);

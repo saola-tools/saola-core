@@ -247,336 +247,335 @@ describe('tdd:devebot:core:bridge-loader', function() {
           ]), lodash.omit(dialect, ['construktor']));
       });
       false && console.log('dialectMap: ', JSON.stringify(dialectMap, null, 2));
-      var expectedMap = {
-        "application/bridge1/anyname1z": {
-          "construktor": {
-            "argumentSchema": {
-              "$id": "application/bridge1/anyname1z",
-              "type": "object",
-              "properties": {
-                "sandboxName": {
-                  "type": "string"
-                },
-                "sandboxConfig": {
-                  "type": "object"
-                },
-                "profileName": {
-                  "type": "string"
-                },
-                "profileConfig": {
-                  "type": "object"
-                },
-                "loggingFactory": {
-                  "type": "object"
-                }
+      // uniqueName = [pluginName, bridgeName, dialectName].join(chores.getSeparator());
+      var expectedMap = {};
+      expectedMap[chores.toFullname("application", "bridge1", "anyname1z")] = {
+        "construktor": {
+          "argumentSchema": {
+            "$id": chores.toFullname("application", "bridge1", "anyname1z"),
+            "type": "object",
+            "properties": {
+              "sandboxName": {
+                "type": "string"
+              },
+              "sandboxConfig": {
+                "type": "object"
+              },
+              "profileName": {
+                "type": "string"
+              },
+              "profileConfig": {
+                "type": "object"
+              },
+              "loggingFactory": {
+                "type": "object"
               }
             }
-          },
-          "crateScope": "application",
-          "name": "bridge1#anyname1z"
+          }
         },
-        "plugin1/bridge1/anyname1a": {
-          "construktor": {
-            "argumentSchema": {
-              "$id": "plugin1/bridge1/anyname1a",
-              "type": "object",
-              "properties": {
-                "sandboxName": {
-                  "type": "string"
-                },
-                "sandboxConfig": {
-                  "type": "object"
-                },
-                "profileName": {
-                  "type": "string"
-                },
-                "profileConfig": {
-                  "type": "object"
-                },
-                "loggingFactory": {
-                  "type": "object"
-                }
+        "crateScope": "application",
+        "name": "bridge1#anyname1z"
+      };
+      expectedMap[chores.toFullname("plugin1", "bridge1", "anyname1a")] = {
+        "construktor": {
+          "argumentSchema": {
+            "$id": chores.toFullname("plugin1", "bridge1", "anyname1a"),
+            "type": "object",
+            "properties": {
+              "sandboxName": {
+                "type": "string"
+              },
+              "sandboxConfig": {
+                "type": "object"
+              },
+              "profileName": {
+                "type": "string"
+              },
+              "profileConfig": {
+                "type": "object"
+              },
+              "loggingFactory": {
+                "type": "object"
               }
             }
-          },
-          "crateScope": "plugin1",
-          "name": "bridge1#anyname1a"
+          }
         },
-        "plugin2/bridge1/anyname1b": {
-          "construktor": {
-            "argumentSchema": {
-              "$id": "plugin2/bridge1/anyname1b",
-              "type": "object",
-              "properties": {
-                "sandboxName": {
-                  "type": "string"
-                },
-                "sandboxConfig": {
-                  "type": "object"
-                },
-                "profileName": {
-                  "type": "string"
-                },
-                "profileConfig": {
-                  "type": "object"
-                },
-                "loggingFactory": {
-                  "type": "object"
-                }
+        "crateScope": "plugin1",
+        "name": "bridge1#anyname1a"
+      };
+      expectedMap[chores.toFullname("plugin2", "bridge1", "anyname1b")] = {
+        "construktor": {
+          "argumentSchema": {
+            "$id": chores.toFullname("plugin2", "bridge1", "anyname1b"),
+            "type": "object",
+            "properties": {
+              "sandboxName": {
+                "type": "string"
+              },
+              "sandboxConfig": {
+                "type": "object"
+              },
+              "profileName": {
+                "type": "string"
+              },
+              "profileConfig": {
+                "type": "object"
+              },
+              "loggingFactory": {
+                "type": "object"
               }
             }
-          },
-          "crateScope": "plugin2",
-          "name": "bridge1#anyname1b"
+          }
         },
-        "plugin1/bridge2/anyname2a": {
-          "construktor": {
-            "argumentSchema": {
-              "$id": "plugin1/bridge2/anyname2a",
-              "type": "object",
-              "properties": {
-                "sandboxName": {
-                  "type": "string"
-                },
-                "sandboxConfig": {
-                  "type": "object"
-                },
-                "profileName": {
-                  "type": "string"
-                },
-                "profileConfig": {
-                  "type": "object"
-                },
-                "loggingFactory": {
-                  "type": "object"
-                }
+        "crateScope": "plugin2",
+        "name": "bridge1#anyname1b"
+      };
+      expectedMap[chores.toFullname("plugin1", "bridge2", "anyname2a")] = {
+        "construktor": {
+          "argumentSchema": {
+            "$id": chores.toFullname("plugin1", "bridge2", "anyname2a"),
+            "type": "object",
+            "properties": {
+              "sandboxName": {
+                "type": "string"
+              },
+              "sandboxConfig": {
+                "type": "object"
+              },
+              "profileName": {
+                "type": "string"
+              },
+              "profileConfig": {
+                "type": "object"
+              },
+              "loggingFactory": {
+                "type": "object"
               }
             }
-          },
-          "crateScope": "plugin1",
-          "name": "bridge2#anyname2a"
+          }
         },
-        "plugin1/bridge2/anyname2c": {
-          "construktor": {
-            "argumentSchema": {
-              "$id": "plugin1/bridge2/anyname2c",
-              "type": "object",
-              "properties": {
-                "sandboxName": {
-                  "type": "string"
-                },
-                "sandboxConfig": {
-                  "type": "object"
-                },
-                "profileName": {
-                  "type": "string"
-                },
-                "profileConfig": {
-                  "type": "object"
-                },
-                "loggingFactory": {
-                  "type": "object"
-                }
+        "crateScope": "plugin1",
+        "name": "bridge2#anyname2a"
+      };
+      expectedMap[chores.toFullname("plugin1", "bridge2", "anyname2c")] = {
+        "construktor": {
+          "argumentSchema": {
+            "$id": chores.toFullname("plugin1", "bridge2", "anyname2c"),
+            "type": "object",
+            "properties": {
+              "sandboxName": {
+                "type": "string"
+              },
+              "sandboxConfig": {
+                "type": "object"
+              },
+              "profileName": {
+                "type": "string"
+              },
+              "profileConfig": {
+                "type": "object"
+              },
+              "loggingFactory": {
+                "type": "object"
               }
             }
-          },
-          "crateScope": "plugin1",
-          "name": "bridge2#anyname2c"
+          }
         },
-        "plugin1/bridge3/anyname3a": {
-          "construktor": {
-            "argumentSchema": {
-              "$id": "plugin1/bridge3/anyname3a",
-              "type": "object",
-              "properties": {
-                "sandboxName": {
-                  "type": "string"
-                },
-                "sandboxConfig": {
-                  "type": "object"
-                },
-                "profileName": {
-                  "type": "string"
-                },
-                "profileConfig": {
-                  "type": "object"
-                },
-                "loggingFactory": {
-                  "type": "object"
-                }
+        "crateScope": "plugin1",
+        "name": "bridge2#anyname2c"
+      };
+      expectedMap[chores.toFullname("plugin1", "bridge3", "anyname3a")] = {
+        "construktor": {
+          "argumentSchema": {
+            "$id": chores.toFullname("plugin1", "bridge3", "anyname3a"),
+            "type": "object",
+            "properties": {
+              "sandboxName": {
+                "type": "string"
+              },
+              "sandboxConfig": {
+                "type": "object"
+              },
+              "profileName": {
+                "type": "string"
+              },
+              "profileConfig": {
+                "type": "object"
+              },
+              "loggingFactory": {
+                "type": "object"
               }
             }
-          },
-          "crateScope": "plugin1",
-          "name": "bridge3#anyname3a"
+          }
         },
-        "application/devebot-co-connector1/wrapper": {
-          "construktor": {
-            "argumentSchema": {
-              "$id": "application/devebot-co-connector1/wrapper",
-              "type": "object",
-              "properties": {
-                "sandboxName": {
-                  "type": "string"
-                },
-                "sandboxConfig": {
-                  "type": "object"
-                },
-                "profileName": {
-                  "type": "string"
-                },
-                "profileConfig": {
-                  "type": "object"
-                },
-                "loggingFactory": {
-                  "type": "object"
-                }
+        "crateScope": "plugin1",
+        "name": "bridge3#anyname3a"
+      };
+      expectedMap[chores.toFullname("application", "devebot-co-connector1", "wrapper")] = {
+        "construktor": {
+          "argumentSchema": {
+            "$id": chores.toFullname("application", "devebot-co-connector1", "wrapper"),
+            "type": "object",
+            "properties": {
+              "sandboxName": {
+                "type": "string"
+              },
+              "sandboxConfig": {
+                "type": "object"
+              },
+              "profileName": {
+                "type": "string"
+              },
+              "profileConfig": {
+                "type": "object"
+              },
+              "loggingFactory": {
+                "type": "object"
               }
             }
-          },
-          "crateScope": "application",
-          "name": "connector1#wrapper"
+          }
         },
-        "application/devebot-co-connector2/wrapper": {
-          "construktor": {
-            "argumentSchema": {
-              "$id": "application/devebot-co-connector2/wrapper",
-              "type": "object",
-              "properties": {
-                "sandboxName": {
-                  "type": "string"
-                },
-                "sandboxConfig": {
-                  "type": "object"
-                },
-                "profileName": {
-                  "type": "string"
-                },
-                "profileConfig": {
-                  "type": "object"
-                },
-                "loggingFactory": {
-                  "type": "object"
-                }
+        "crateScope": "application",
+        "name": "connector1#wrapper"
+      };
+      expectedMap[chores.toFullname("application", "devebot-co-connector2", "wrapper")] = {
+        "construktor": {
+          "argumentSchema": {
+            "$id": chores.toFullname("application", "devebot-co-connector2", "wrapper"),
+            "type": "object",
+            "properties": {
+              "sandboxName": {
+                "type": "string"
+              },
+              "sandboxConfig": {
+                "type": "object"
+              },
+              "profileName": {
+                "type": "string"
+              },
+              "profileConfig": {
+                "type": "object"
+              },
+              "loggingFactory": {
+                "type": "object"
               }
             }
-          },
-          "crateScope": "application",
-          "name": "connector2#wrapper"
-        }
+          }
+        },
+        "crateScope": "application",
+        "name": "connector2#wrapper"
       };
 
       if (!chores.isUpgradeSupported('bridge-full-ref')) {
-        expectedMap = {
-          "bridge1/anyname1a": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "bridge1/anyname1a",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+        expectedMap = {};
+        expectedMap[chores.toFullname("bridge1", "anyname1a")] = {
+          "construktor": {
+            "argumentSchema": {
+              "$id": chores.toFullname("bridge1", "anyname1a"),
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
                 }
               }
-            },
-            "crateScope": "bridge1",
-            "name": "anyname1a"
+            }
           },
-          "bridge1/anyname1b": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "bridge1/anyname1b",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+          "crateScope": "bridge1",
+          "name": "anyname1a"
+        };
+        expectedMap[chores.toFullname("bridge1", "anyname1b")] = {
+          "construktor": {
+            "argumentSchema": {
+              "$id": chores.toFullname("bridge1", "anyname1b"),
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
                 }
               }
-            },
-            "crateScope": "bridge1",
-            "name": "anyname1b"
+            }
           },
-          "bridge2/anyname2a": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "bridge2/anyname2a",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+          "crateScope": "bridge1",
+          "name": "anyname1b"
+        };
+        expectedMap[chores.toFullname("bridge2", "anyname2a")] = {
+          "construktor": {
+            "argumentSchema": {
+              "$id": chores.toFullname("bridge2", "anyname2a"),
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
                 }
               }
-            },
-            "crateScope": "bridge2",
-            "name": "anyname2a"
+            }
           },
-          "bridge3/anyname3a": {
-            "construktor": {
-              "argumentSchema": {
-                "$id": "bridge3/anyname3a",
-                "type": "object",
-                "properties": {
-                  "sandboxName": {
-                    "type": "string"
-                  },
-                  "sandboxConfig": {
-                    "type": "object"
-                  },
-                  "profileName": {
-                    "type": "string"
-                  },
-                  "profileConfig": {
-                    "type": "object"
-                  },
-                  "loggingFactory": {
-                    "type": "object"
-                  }
+          "crateScope": "bridge2",
+          "name": "anyname2a"
+        };
+        expectedMap[chores.toFullname("bridge3", "anyname3a")] = {
+          "construktor": {
+            "argumentSchema": {
+              "$id": chores.toFullname("bridge3", "anyname3a"),
+              "type": "object",
+              "properties": {
+                "sandboxName": {
+                  "type": "string"
+                },
+                "sandboxConfig": {
+                  "type": "object"
+                },
+                "profileName": {
+                  "type": "string"
+                },
+                "profileConfig": {
+                  "type": "object"
+                },
+                "loggingFactory": {
+                  "type": "object"
                 }
               }
-            },
-            "crateScope": "bridge3",
-            "name": "anyname3a"
-          }
-        }
+            }
+          },
+          "crateScope": "bridge3",
+          "name": "anyname3a"
+        };
       }
       assert.sameMembers(lodash.keys(dialectMap), lodash.keys(expectedMap));
       assert.deepInclude(dialectMap, expectedMap);

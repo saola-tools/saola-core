@@ -3,6 +3,7 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:runhook-manager');
@@ -35,7 +36,7 @@ describe('tdd:devebot:core:runhook-manager', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/runhookManager', 'definition' ],
+          allTags: [ chores.toFullname('devebot', 'runhookManager'), 'definition' ],
           storeTo: 'definition'
         }]
       }]);
@@ -251,7 +252,7 @@ describe('tdd:devebot:core:runhook-manager', function() {
       assert.isTrue(runhookManager.isAvailable({ name: 'routine2' }));
     });
 
-    it('retrieve the unique named routine with/without suggested package', function() {
+    it('retrieve the unique named routine with or without suggested package', function() {
       var runhookManager = lab.createRunhookManager('fullapp');
 
       var runhook1 = runhookManager.getRunhook({ name: 'routine1' });

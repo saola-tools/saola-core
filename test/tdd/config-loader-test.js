@@ -752,178 +752,190 @@ describe('tdd:devebot:core:config-loader', function() {
       );
     });
 
-    describe('bridge configure transformation', function() {
-      var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
-      var convertSandboxConfig = ConfigLoader.__get__('convertSandboxConfig');
-      var RELOADING_FORCED = ConfigLoader.__get__('RELOADING_FORCED');
-  
-      it('transform sandboxConfig.bridges from application', function() {
-        var sandboxConfig = {
-          "plugins": {
-            "plugin1": {},
-            "plugin2": {}
-          },
-          "bridges": {
-            "bridge1": {
-              "plugin1": {
-                "anyname1a": {
-                  "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
-                },
-                "anyname1c": {
-                  "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
-                }
-              }
-            },
-            "bridge2": {
-              "plugin2": {
-                "anyname2b": {
-                  "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
-                }
-              }
-            }
-          }
-        };
-        var exptectedConfig = {
-          "plugins": {
-            "plugin1": {},
-            "plugin2": {}
-          },
-          "bridges": {
-            "bridge1": {
-              "plugin1": {
-                "anyname1a": {
-                  "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
-                },
-                "anyname1c": {
-                  "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
-                }
-              }
-            },
-            "bridge2": {
-              "plugin2": {
-                "anyname2b": {
-                  "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
-                }
-              }
-            }
-          }
-        };
-        var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'application');
-        false && console.log(JSON.stringify(convertedCfg, null, 2));
-        assert.deepInclude(convertedCfg, exptectedConfig);
-      });
+    after(function() {
+      envtool.reset();
+    });
+  });
 
-      it('transform sandboxConfig.bridges from a plugin (without name)', function() {
-        var sandboxConfig = {
-          "plugins": {
-            "plugin1": {},
-            "plugin2": {}
-          },
-          "bridges": {
-            "anyname1a": {
-              "bridge1": {
-                "refPath": "sandbox -> bridge1 -> anyname1a"
+  describe('bridge configure transformation', function() {
+    before(function() {
+      envtool.setup({
+        NODE_ENV: 'test',
+        DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
+        DEVEBOT_CONFIG_ENV: 'dev'
+      });
+    });
+
+    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var convertSandboxConfig = ConfigLoader.__get__('convertSandboxConfig');
+    var RELOADING_FORCED = ConfigLoader.__get__('RELOADING_FORCED');
+
+    it('transform sandboxConfig.bridges from application', function() {
+      var sandboxConfig = {
+        "plugins": {
+          "plugin1": {},
+          "plugin2": {}
+        },
+        "bridges": {
+          "bridge1": {
+            "plugin1": {
+              "anyname1a": {
+                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
+              },
+              "anyname1c": {
+                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
               }
-            },
-            "anyname1c": {
-              "bridge1": {
+            }
+          },
+          "bridge2": {
+            "plugin2": {
+              "anyname2b": {
+                "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
+              }
+            }
+          }
+        }
+      };
+      var exptectedConfig = {
+        "plugins": {
+          "plugin1": {},
+          "plugin2": {}
+        },
+        "bridges": {
+          "bridge1": {
+            "plugin1": {
+              "anyname1a": {
+                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
+              },
+              "anyname1c": {
+                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
+              }
+            }
+          },
+          "bridge2": {
+            "plugin2": {
+              "anyname2b": {
+                "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
+              }
+            }
+          }
+        }
+      };
+      var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'application');
+      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      assert.deepInclude(convertedCfg, exptectedConfig);
+    });
+
+    it('transform sandboxConfig.bridges from a plugin (without name)', function() {
+      var sandboxConfig = {
+        "plugins": {
+          "plugin1": {},
+          "plugin2": {}
+        },
+        "bridges": {
+          "anyname1a": {
+            "bridge1": {
+              "refPath": "sandbox -> bridge1 -> anyname1a"
+            }
+          },
+          "anyname1c": {
+            "bridge1": {
+              "refPath": "sandbox -> bridge1 -> anyname1c"
+            }
+          },
+          "anyname2b": {
+            "bridge2": {
+              "refPath": "sandbox -> bridge2 -> anyname2b"
+            }
+          }
+        }
+      };
+      var exptectedConfig = lodash.cloneDeep(sandboxConfig);
+      if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
+        exptectedConfig.bridges = {
+          "bridge1": {
+            "*": {
+              "anyname1a": {
+                "refPath": "sandbox -> bridge1 -> anyname1a"
+              },
+              "anyname1c": {
                 "refPath": "sandbox -> bridge1 -> anyname1c"
               }
-            },
-            "anyname2b": {
-              "bridge2": {
+            }
+          },
+          "bridge2": {
+            "*": {
+              "anyname2b": {
                 "refPath": "sandbox -> bridge2 -> anyname2b"
               }
             }
           }
         };
-        var exptectedConfig = lodash.cloneDeep(sandboxConfig);
-        if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
-          exptectedConfig.bridges = {
+        if (!RELOADING_FORCED) {
+          exptectedConfig.bridges.__status__ = true;
+        }
+      }
+      var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', null, {
+        configTags: ['bridge[dialect-bridge]']
+      });
+      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      assert.deepInclude(convertedCfg, exptectedConfig);
+    });
+
+    it('transform sandboxConfig.bridges from a named plugin', function() {
+      var sandboxConfig = {
+        "plugins": {
+          "plugin1": {},
+          "plugin2": {}
+        },
+        "bridges": {
+          "anyname1a": {
             "bridge1": {
-              "*": {
-                "anyname1a": {
-                  "refPath": "sandbox -> bridge1 -> anyname1a"
-                },
-                "anyname1c": {
-                  "refPath": "sandbox -> bridge1 -> anyname1c"
-                }
-              }
-            },
-            "bridge2": {
-              "*": {
-                "anyname2b": {
-                  "refPath": "sandbox -> bridge2 -> anyname2b"
-                }
-              }
+              "refPath": "sandbox -> bridge1 -> anyname1a"
             }
-          };
-          if (!RELOADING_FORCED) {
-            exptectedConfig.bridges.__status__ = true;
+          },
+          "anyname1b": {
+            "bridge1": {
+              "refPath": "sandbox -> bridge1 -> anyname1b"
+            }
+          },
+          "anyname3a": {
+            "bridge3": {
+              "refPath": "sandbox -> bridge3 -> anyname3a"
+            }
           }
         }
-        var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', null, {
-          configTags: ['bridge[dialect-bridge]']
-        });
-        false && console.log(JSON.stringify(convertedCfg, null, 2));
-        assert.deepInclude(convertedCfg, exptectedConfig);
-      });
-
-      it('transform sandboxConfig.bridges from a named plugin', function() {
-        var sandboxConfig = {
-          "plugins": {
-            "plugin1": {},
-            "plugin2": {}
-          },
-          "bridges": {
-            "anyname1a": {
-              "bridge1": {
+      };
+      var exptectedConfig = lodash.cloneDeep(sandboxConfig);
+      if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
+        exptectedConfig.bridges = {
+          "bridge1": {
+            "plugin1": {
+              "anyname1a": {
                 "refPath": "sandbox -> bridge1 -> anyname1a"
-              }
-            },
-            "anyname1b": {
-              "bridge1": {
+              },
+              "anyname1b": {
                 "refPath": "sandbox -> bridge1 -> anyname1b"
               }
-            },
-            "anyname3a": {
-              "bridge3": {
+            }
+          },
+          "bridge3": {
+            "plugin1": {
+              "anyname3a": {
                 "refPath": "sandbox -> bridge3 -> anyname3a"
               }
             }
           }
         };
-        var exptectedConfig = lodash.cloneDeep(sandboxConfig);
-        if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
-          exptectedConfig.bridges = {
-            "bridge1": {
-              "plugin1": {
-                "anyname1a": {
-                  "refPath": "sandbox -> bridge1 -> anyname1a"
-                },
-                "anyname1b": {
-                  "refPath": "sandbox -> bridge1 -> anyname1b"
-                }
-              }
-            },
-            "bridge3": {
-              "plugin1": {
-                "anyname3a": {
-                  "refPath": "sandbox -> bridge3 -> anyname3a"
-                }
-              }
-            }
-          };
-          if (!RELOADING_FORCED) {
-            exptectedConfig.bridges.__status__ = true;
-          }
+        if (!RELOADING_FORCED) {
+          exptectedConfig.bridges.__status__ = true;
         }
-        var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
-          configTags: 'bridge[dialect-bridge]'
-        });
-        false && console.log(JSON.stringify(convertedCfg, null, 2));
-        assert.deepInclude(convertedCfg, exptectedConfig);
+      }
+      var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
+        configTags: 'bridge[dialect-bridge]'
       });
+      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      assert.deepInclude(convertedCfg, exptectedConfig);
     });
 
     after(function() {

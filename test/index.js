@@ -139,7 +139,7 @@ var _loadBackboneServices = function(injektor, names) {
 
 lab.getContextManager = function(appName) {
   var app = lab.getApp(appName);
-  return app.runner.getSandboxService('devebot/contextManager');
+  return app.runner.getSandboxService('contextManager', { scope: 'devebot' });
 }
 
 lab.createKernel = function(appName) {

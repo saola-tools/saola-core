@@ -13,7 +13,7 @@ var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 var util = require('util');
 
-describe('devebot:application', function() {
+describe('bdd:devebot:application', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	before(function() {
@@ -34,11 +34,11 @@ describe('devebot:application', function() {
 					accumulator: serverStats,
 					mappings: [
 						{
-							allTags: [ 'devebot/server', 'start()' ],
+							allTags: [ chores.toFullname("devebot", "server"), 'start()' ],
 							countTo: 'startingCount'
 						},
 						{
-							allTags: [ 'devebot/server', 'close()' ],
+							allTags: [ chores.toFullname("devebot", "server"), 'close()' ],
 							countTo: 'stoppingCount'
 						}
 					]
@@ -70,37 +70,37 @@ describe('devebot:application', function() {
 		it('total of constructor startpoints must equal to constructor endpoints', function(done) {
 			app = lab.getApp();
 			var devebotScopes = [
-				"devebot/bootstrap",
-				"devebot/appinfoLoader",
-				"devebot/nameResolver",
-				"devebot/configLoader",
-				"devebot/contextManager",
-				"devebot/kernel",
-				"devebot/server",
+				chores.toFullname("devebot", "bootstrap"),
+				chores.toFullname("devebot", "appinfoLoader"),
+				chores.toFullname("devebot", "nameResolver"),
+				chores.toFullname("devebot", "configLoader"),
+				chores.toFullname("devebot", "contextManager"),
+				chores.toFullname("devebot", "kernel"),
+				chores.toFullname("devebot", "server"),
 				"devebot",
-				"devebot/bridgeLoader",
-				"devebot/schemaValidator",
-				"devebot/pluginLoader",
-				"devebot/sandboxManager",
-				"devebot/jobqueueBinder",
-				"devebot/processManager",
-				"devebot/runhookManager",
-				"devebot/scriptExecutor",
-				"devebot/scriptRenderer",
-				"devebot/securityManager",
-				"devebot/repeatedTimer"
+				chores.toFullname("devebot", "bridgeLoader"),
+				chores.toFullname("devebot", "schemaValidator"),
+				chores.toFullname("devebot", "pluginLoader"),
+				chores.toFullname("devebot", "sandboxManager"),
+				chores.toFullname("devebot", "jobqueueBinder"),
+				chores.toFullname("devebot", "processManager"),
+				chores.toFullname("devebot", "runhookManager"),
+				chores.toFullname("devebot", "scriptExecutor"),
+				chores.toFullname("devebot", "scriptRenderer"),
+				chores.toFullname("devebot", "securityManager"),
+				chores.toFullname("devebot", "repeatedTimer")
 			];
 			var plugin1Scopes = [
-				"plugin1/plugin1Service",
-				"plugin1/plugin1Trigger"
+				chores.toFullname("plugin1", "plugin1Service"),
+				chores.toFullname("plugin1", "plugin1Trigger")
 			];
 			var plugin2Scopes = [
-				"plugin2/plugin2Service",
-				"plugin2/plugin2Trigger"
+				chores.toFullname("plugin2", "plugin2Service"),
+				chores.toFullname("plugin2", "plugin2Trigger")
 			];
 			var mainScopes = [
-				"demo-app/mainService",
-				"demo-app/mainTrigger"
+				chores.toFullname("demo-app", "mainService"),
+				chores.toFullname("demo-app", "mainTrigger")
 			];
 
 			var bridge1Scopes = [];
@@ -108,27 +108,27 @@ describe('devebot:application', function() {
 
 			if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
 				bridge1Scopes = [
-					"plugin1/bridge1#anyname1a",
-					"plugin2/bridge1#anyname1b",
-					"plugin2/bridge1#anyname1c"
+					chores.toFullname("plugin1", "bridge1#anyname1a"),
+					chores.toFullname("plugin2", "bridge1#anyname1b"),
+					chores.toFullname("plugin2", "bridge1#anyname1c")
 				];
 				bridge2Scopes = [
-					"plugin1/bridge2#anyname2a",
-					"plugin2/bridge2#anyname2b",
-					"plugin1/bridge2#anyname2c"
+					chores.toFullname("plugin1", "bridge2#anyname2a"),
+					chores.toFullname("plugin2", "bridge2#anyname2b"),
+					chores.toFullname("plugin1", "bridge2#anyname2c")
 				];
 			}
 
 			if (!chores.isUpgradeSupported(['bridge-full-ref'])) {
 				bridge1Scopes = [
-					"bridge1/anyname1a",
-					"bridge1/anyname1b",
-					"bridge1/anyname1c"
+					chores.toFullname("bridge1", "anyname1a"),
+					chores.toFullname("bridge1", "anyname1b"),
+					chores.toFullname("bridge1", "anyname1c")
 				];
 				bridge2Scopes = [
-					"bridge2/anyname2a",
-					"bridge2/anyname2b",
-					"bridge2/anyname2c"
+					chores.toFullname("bridge2", "anyname2a"),
+					chores.toFullname("bridge2", "anyname2b"),
+					chores.toFullname("bridge2", "anyname2c")
 				];
 			}
 
@@ -187,15 +187,15 @@ describe('devebot:application', function() {
 					accumulator: moduleStats,
 					mappings: [
 						{
-							allTags: [ 'devebot/sandboxManager', 'instantiateObject' ],
+							allTags: [ chores.toFullname('devebot', 'sandboxManager'), 'instantiateObject' ],
 							storeTo: 'dependencyInfo'
 						},
 						{
-							allTags: [ 'devebot-dp-wrapper1/sublibTrigger', 'bridge-config' ],
+							allTags: [ chores.toFullname('devebot-dp-wrapper1', 'sublibTrigger'), 'bridge-config' ],
 							storeTo: 'bridgeConfigOfWrapper1'
 						},
 						{
-							allTags: [ 'devebot-dp-wrapper2/sublibTrigger', 'bridge-config' ],
+							allTags: [ chores.toFullname('devebot-dp-wrapper2', 'sublibTrigger'), 'bridge-config' ],
 							storeTo: 'bridgeConfigOfWrapper2'
 						},
 						{
@@ -225,69 +225,69 @@ describe('devebot:application', function() {
 
 			var expectedDependencies = [
 				{
-					"handlerName": "application/mainService",
+					"handlerName": chores.toFullname("application", "mainService"),
 					"handlerType": "SERVICE"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper1/sublibService",
+					"handlerName": chores.toFullname("devebot-dp-wrapper1", "sublibService"),
 					"handlerType": "SERVICE"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper2/sublibService",
+					"handlerName": chores.toFullname("devebot-dp-wrapper2", "sublibService"),
 					"handlerType": "SERVICE"
 				},
 				{
-					"handlerName": "application/mainTrigger",
+					"handlerName": chores.toFullname("application", "mainTrigger"),
 					"handlerType": "TRIGGER"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper1/sublibTrigger",
+					"handlerName": chores.toFullname("devebot-dp-wrapper1", "sublibTrigger"),
 					"handlerType": "TRIGGER"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper2/sublibTrigger",
+					"handlerName": chores.toFullname("devebot-dp-wrapper2", "sublibTrigger"),
 					"handlerType": "TRIGGER"
 				}
 			];
 			if (chores.isUpgradeSupported('bridge-full-ref')) {
 				expectedDependencies.push({
-					"handlerName": "application/connector1#wrapper",
+					"handlerName": chores.toFullname("application", "connector1#wrapper"),
 					"handlerType": "DIALECT"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper1/connector1#bean",
+					"handlerName": chores.toFullname("devebot-dp-wrapper1", "connector1#bean"),
 					"handlerType": "DIALECT"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper2/connector1#bean",
+					"handlerName": chores.toFullname("devebot-dp-wrapper2", "connector1#bean"),
 					"handlerType": "DIALECT"
 				},
 				{
-					"handlerName": "application/connector2#wrapper",
+					"handlerName": chores.toFullname("application", "connector2#wrapper"),
 					"handlerType": "DIALECT"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper1/connector2#bean",
+					"handlerName": chores.toFullname("devebot-dp-wrapper1", "connector2#bean"),
 					"handlerType": "DIALECT"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper2/connector2#bean",
+					"handlerName": chores.toFullname("devebot-dp-wrapper2", "connector2#bean"),
 					"handlerType": "DIALECT"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper1/bridgeKebabCase1#pointer",
+					"handlerName": chores.toFullname("devebot-dp-wrapper1", "bridgeKebabCase1#pointer"),
 					"handlerType": "DIALECT"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper2/bridgeKebabCase1#pointer",
+					"handlerName": chores.toFullname("devebot-dp-wrapper2", "bridgeKebabCase1#pointer"),
 					"handlerType": "DIALECT"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper1/bridgeKebabCase2#pointer",
+					"handlerName": chores.toFullname("devebot-dp-wrapper1", "bridgeKebabCase2#pointer"),
 					"handlerType": "DIALECT"
 				},
 				{
-					"handlerName": "devebot-dp-wrapper2/bridgeKebabCase2#pointer",
+					"handlerName": chores.toFullname("devebot-dp-wrapper2", "bridgeKebabCase2#pointer"),
 					"handlerType": "DIALECT"
 				});
 			};
@@ -307,7 +307,7 @@ describe('devebot:application', function() {
 					scope: 'devebot-dp-wrapper1'
 				});
 				assert(service1.getConfig(), { port: 17741, host: 'localhost' });
-				var service2 = sandboxManager.getSandboxService('devebot-dp-wrapper2/sublibService');
+				var service2 = sandboxManager.getSandboxService(chores.toFullname('devebot-dp-wrapper2', 'sublibService'));
 				assert(service2.getConfig(), { port: 17742, host: 'localhost' });
 				return done();
 			});
@@ -363,19 +363,19 @@ describe('devebot:application', function() {
 			false && console.log(JSON.stringify(dependencyInfo, null, 2));
 			assert.sameDeepMembers(dependencyInfo, [
 				{
-					"handlerName": "application/mainService",
+					"handlerName": chores.toFullname("application", "mainService"),
 					"handlerType": "SERVICE"
 				},
 				{
-					"handlerName": "plugin-reference-alias/sublibService",
+					"handlerName": chores.toFullname("plugin-reference-alias", "sublibService"),
 					"handlerType": "SERVICE"
 				},
 				{
-					"handlerName": "application/mainTrigger",
+					"handlerName": chores.toFullname("application", "mainTrigger"),
 					"handlerType": "TRIGGER"
 				},
 				{
-					"handlerName": "plugin-reference-alias/sublibTrigger",
+					"handlerName": chores.toFullname("plugin-reference-alias", "sublibTrigger"),
 					"handlerType": "TRIGGER"
 				}
 			]);
@@ -400,19 +400,19 @@ describe('devebot:application', function() {
 			false && console.log(JSON.stringify(dependencyInfo, null, 2));
 			assert.sameDeepMembers(dependencyInfo, [
 				{
-					"handlerName": "application/mainService",
+					"handlerName": chores.toFullname("application", "mainService"),
 					"handlerType": "SERVICE"
 				},
 				{
-					"handlerName": "plugin-rename-comp-dir/sublibService",
+					"handlerName": chores.toFullname("plugin-rename-comp-dir", "sublibService"),
 					"handlerType": "SERVICE"
 				},
 				{
-					"handlerName": "application/mainTrigger",
+					"handlerName": chores.toFullname("application", "mainTrigger"),
 					"handlerType": "TRIGGER"
 				},
 				{
-					"handlerName": "plugin-rename-comp-dir/sublibTrigger",
+					"handlerName": chores.toFullname("plugin-rename-comp-dir", "sublibTrigger"),
 					"handlerType": "TRIGGER"
 				}
 			]);

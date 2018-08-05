@@ -37,13 +37,13 @@ describe('tdd:devebot:base:bootstrap', function() {
           allTags: [ 'constructor-begin', 'appLoader' ],
           countTo: 'appLoader'
         }, {
-          allTags: [ 'devebot/kernel', 'constructor-begin' ],
+          allTags: [ chores.toFullname('devebot', 'kernel'), 'constructor-begin' ],
           countTo: 'loadingKernel'
         }, {
-          allTags: [ 'devebot/server', 'constructor-begin' ],
+          allTags: [ chores.toFullname('devebot', 'server'), 'constructor-begin' ],
           countTo: 'loadingServer'
         }, {
-          allTags: [ 'devebot/runner', 'constructor-begin' ],
+          allTags: [ chores.toFullname('devebot', 'runner'), 'constructor-begin' ],
           countTo: 'loadingRunner'
         }]
       }]);

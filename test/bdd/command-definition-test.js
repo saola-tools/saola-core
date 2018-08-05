@@ -10,7 +10,7 @@ var expect = require('chai').expect;
 var util = require('util');
 var DevebotApi = require('devebot-api');
 
-describe('devebot:command:definition', function() {
+describe('bdd:devebot:command:definition', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	var app, api;

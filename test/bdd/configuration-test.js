@@ -9,7 +9,7 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var util = require('util');
 
-describe('devebot:configuration', function() {
+describe('bdd:devebot:configuration', function() {
 	this.timeout(lab.getDefaultTimeout());
 	var app;
 	describe('default configuration (without profile & sandbox)', function() {

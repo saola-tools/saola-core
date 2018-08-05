@@ -54,12 +54,12 @@ var Service = function(params={}) {
 
 if (chores.isUpgradeSupported('bridge-full-ref')) {
   Service.referenceList = [
-    'application/bridge1#anyname1z',
-    'application/bridge2#anyname2z',
-    'connector1#wrapper',
-    'connector2#wrapper',
-    'plugin2/bridge1#anyname1b',
-    'plugin2/bridge2#anyname2b'
+    chores.toFullname('application', 'bridge1#anyname1z'),
+    chores.toFullname('application', 'bridge2#anyname2z'),
+    chores.toFullname('connector1#wrapper'),
+    chores.toFullname('connector2#wrapper'),
+    chores.toFullname('plugin2', 'bridge1#anyname1b'),
+    chores.toFullname('plugin2', 'bridge2#anyname2b')
   ]
 }
 

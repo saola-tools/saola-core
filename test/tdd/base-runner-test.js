@@ -13,6 +13,7 @@ var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
+var envbox = require(lab.getDevebotModule('utils/envbox'));
 var rewire = require('rewire');
 var Runner = rewire(lab.getDevebotModule('runner'));
 var WsServerMock = Runner.__get__("WsServerMock");
@@ -33,6 +34,7 @@ describe.skip('tdd:devebot:base:runner', function() {
     });
     LogConfig.reset();
     errorCollector.reset();
+    envbox.clearCache();
   });
 
   describe('MockWsServer', function() {

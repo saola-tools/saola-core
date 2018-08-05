@@ -4,13 +4,13 @@ var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('bdd:devebot:command:applica-info');
+var debugx = Devebot.require('pinbug')('bdd:devebot:routine:applica-info');
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 var util = require('util');
 var DevebotApi = require('devebot-api');
 
-describe('bdd:devebot:command:applica-info', function() {
+describe('bdd:devebot:routine:applica-info', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	describe('app.runner', function() {

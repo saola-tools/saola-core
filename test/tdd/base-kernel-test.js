@@ -192,13 +192,13 @@ describe('tdd:devebot:base:kernel', function() {
       assert.sameDeepMembers(result, [
         {
           "stage": "config/schema",
-          "name": "application/connector1#wrapper",
+          "name": chores.toFullname("application", "connector1#wrapper"),
           "type": "bridge",
           "hasError": false
         },
         {
           "stage": "config/schema",
-          "name": "application/connector2#wrapper",
+          "name": chores.toFullname("application", "connector2#wrapper"),
           "type": "bridge",
           "hasError": false
         }
@@ -213,24 +213,24 @@ describe('tdd:devebot:base:kernel', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/kernel', 'bridge-config-schema-input' ],
+          allTags: [ chores.toFullname('devebot', 'kernel'), 'bridge-config-schema-input' ],
           storeTo: 'bridgeInput'
         }, {
-          allTags: [ 'devebot/kernel', 'plugin-config-schema-input' ],
+          allTags: [ chores.toFullname('devebot', 'kernel'), 'plugin-config-schema-input' ],
           storeTo: 'pluginInput'
         }, {
-          allTags: [ 'devebot/kernel', 'validate-bridge-config-by-schema' ],
+          allTags: [ chores.toFullname('devebot', 'kernel'), 'validate-bridge-config-by-schema' ],
           storeTo: 'bridgeData'
         }, {
-          allTags: [ 'devebot/kernel', 'validate-plugin-config-by-schema' ],
+          allTags: [ chores.toFullname('devebot', 'kernel'), 'validate-plugin-config-by-schema' ],
           storeTo: 'pluginData'
         }, {
-          allTags: [ 'devebot/kernel', 'validating-config-by-schema-result' ],
+          allTags: [ chores.toFullname('devebot', 'kernel'), 'validating-config-by-schema-result' ],
           storeTo: 'outputValidation'
         }, {
-          allTags: [ 'devebot/errorCollector', 'examine', 'metadata-validating' ],
+          allTags: [ chores.toFullname('devebot', 'errorCollector'), 'examine', 'metadata-validating' ],
           matchingField: 'invoker',
-          matchingRule: 'devebot/kernel',
+          matchingRule: chores.toFullname('devebot', 'kernel'),
           storeTo: 'errorSummary'
         }]
       }]);
