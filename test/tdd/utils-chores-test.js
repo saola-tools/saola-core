@@ -89,4 +89,17 @@ describe('tdd:devebot:utils:chores', function() {
       assert.deepEqual(chores.extractCodeByPattern(CTX, BRIDGE_NAME_PATTERNS, 'devebot-co-your-5ecret'), { i: 0, code: 'your-5ecret' });
     });
   });
+
+  describe('transformBeanName()', function() {
+    it('should transform by default pattern correctly', function() {
+      var someObj = { name: 'object' };
+      assert.deepEqual(chores.transformBeanName(someObj),  someObj);
+      assert.equal(chores.transformBeanName(1024),  1024);
+      assert.equal(chores.transformBeanName(true),  true);
+      assert.equal(chores.transformBeanName(3.14159),  3.14159);
+      assert.equal(chores.transformBeanName('@org/app:serviceName#bridgeName'),  '@org/app:serviceName#bridgeName');
+      assert.equal(chores.transformBeanName('@org/app/serviceName#bridgeName'),  '@org/app:serviceName#bridgeName');
+      assert.equal(chores.transformBeanName('oldPackageName/serviceName'),  'oldPackageName:serviceName');
+    });
+  });
 });
