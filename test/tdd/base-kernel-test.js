@@ -21,17 +21,17 @@ var sinon = require('sinon');
 describe('tdd:devebot:base:kernel', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envtool.setup({
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
-      DEVEBOT_FORCING_SILENT: 'error-collector'
+      DEVEBOT_FORCING_SILENT: 'issue-inspector'
     });
     LogConfig.reset();
-    errorCollector.reset();
+    issueInspector.reset();
     envbox.clearCache();
   });
 
@@ -228,7 +228,7 @@ describe('tdd:devebot:base:kernel', function() {
           allTags: [ chores.toFullname('devebot', 'kernel'), 'validating-config-by-schema-result' ],
           storeTo: 'outputValidation'
         }, {
-          allTags: [ chores.toFullname('devebot', 'errorCollector'), 'examine', 'metadata-validating' ],
+          allTags: [ chores.toFullname('devebot', 'issueInspector'), 'examine', 'metadata-validating' ],
           matchingField: 'invoker',
           matchingRule: chores.toFullname('devebot', 'kernel'),
           storeTo: 'errorSummary'
@@ -238,7 +238,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
-      errorCollector.reset();
+      issueInspector.reset();
     });
 
     it('kernel constructor is ok if no error has occurred in validating', function() {
@@ -612,7 +612,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     after(function() {
       LogTracer.clearStringifyInterceptors();
-      errorCollector.reset();
+      issueInspector.reset();
     });
   });
 

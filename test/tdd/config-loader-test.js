@@ -21,13 +21,13 @@ var rewire = require('rewire');
 
 describe('tdd:devebot:core:config-loader', function() {
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
   var stateInspector = lab.getStateInspector();
 
   var CTX = {
     LX: LogAdapter.getLogger(),
     LT: LogTracer.ROOT,
-    errorCollector,
+    issueInspector,
     CONFIG_PROFILE_NAME: 'profile',
     CONFIG_SANDBOX_NAME: 'sandbox'
   };
@@ -58,7 +58,7 @@ describe('tdd:devebot:core:config-loader', function() {
   var bridgeRefs = {};
 
   var nameResolver = new NameResolver({
-    errorCollector,
+    issueInspector,
     pluginRefs: lodash.values(pluginRefs),
     bridgeRefs: lodash.values(bridgeRefs)
   });
@@ -68,7 +68,7 @@ describe('tdd:devebot:core:config-loader', function() {
   describe('default configuration (without profile & sandbox)', function() {
     it('load configuration of nothing (empty loader)', function() {
       // appName: null, appOptions: null, appRootDir: null, libRootDirs: null
-      var cfgLoader = new ConfigLoader({errorCollector, stateInspector, nameResolver});
+      var cfgLoader = new ConfigLoader({issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
       assert.deepEqual(config, {
@@ -85,7 +85,7 @@ describe('tdd:devebot:core:config-loader', function() {
 
     it('load configuration of empty application', function() {
       // appName: empty-app, appOptions: null, appRootDir: null, libRootDirs: [...]
-      var cfgLoader = new ConfigLoader({appName: 'empty-app', devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      var cfgLoader = new ConfigLoader({appName: 'empty-app', devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -111,7 +111,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('load application configuration (without options)', function() {
-      var cfgLoader = new ConfigLoader({appName: 'app', appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      var cfgLoader = new ConfigLoader({appName: 'app', appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -369,7 +369,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('load application configuration (without customized profile, sandbox)', function() {
-      var cfgLoader = new ConfigLoader({appName: 'app', appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      var cfgLoader = new ConfigLoader({appName: 'app', appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -423,7 +423,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('load application configuration (without private sandboxes)', function() {
-      var cfgLoader = new ConfigLoader({appName: 'app', appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      var cfgLoader = new ConfigLoader({appName: 'app', appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -566,7 +566,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('load application configuration with single private sandboxes', function() {
       var cfgLoader = new ConfigLoader({appName: 'app', appOptions: {
         privateSandboxes: 'bs1'
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -608,7 +608,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('load application configuration with multiple private sandboxes', function() {
       var cfgLoader = new ConfigLoader({appName: 'app', appOptions: {
         privateSandboxes: ['bs1', 'bs2']
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -651,7 +651,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('load application configuration with underscore suffixes', function() {
       var cfgLoader = new ConfigLoader({appName: 'app', appOptions: {
         privateSandboxes: ['bs_p1', 'bs_p2']
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -694,7 +694,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('the order of listed sandbox labels is sensitive', function() {
       var cfgLoader = new ConfigLoader({appName: 'app', appOptions: {
         privateSandboxes: 'bs2, bs1'
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
 
       // Profile configuration
@@ -965,7 +965,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('load application configuration with multiple private sandboxes', function() {
       var cfgLoader = new ConfigLoader({appName: 'app', appOptions: {
         privateSandboxes: ['bs1', 'bs2']
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, errorCollector, stateInspector, nameResolver});
+      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 

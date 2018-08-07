@@ -17,7 +17,7 @@ var envtool = require('logolite/envtool');
 describe('tdd:devebot:core:runhook-manager', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envtool.setup({
@@ -26,7 +26,7 @@ describe('tdd:devebot:core:runhook-manager', function() {
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
-    errorCollector.reset();
+    issueInspector.reset();
   });
 
   describe('definition', function() {
@@ -297,6 +297,6 @@ describe('tdd:devebot:core:runhook-manager', function() {
 
   after(function() {
     envtool.reset();
-    errorCollector.reset();
+    issueInspector.reset();
   });
 });

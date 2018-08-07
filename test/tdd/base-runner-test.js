@@ -23,17 +23,17 @@ var sinon = require('sinon');
 describe.skip('tdd:devebot:base:runner', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envtool.setup({
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
-      DEVEBOT_FORCING_SILENT: 'error-collector'
+      DEVEBOT_FORCING_SILENT: 'issue-inspector'
     });
     LogConfig.reset();
-    errorCollector.reset();
+    issueInspector.reset();
     envbox.clearCache();
   });
 
@@ -44,7 +44,7 @@ describe.skip('tdd:devebot:base:runner', function() {
 
     after(function() {
       LogTracer.clearStringifyInterceptors();
-      errorCollector.reset();
+      issueInspector.reset();
     });
   });
 

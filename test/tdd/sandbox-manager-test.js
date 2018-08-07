@@ -18,7 +18,7 @@ var envtool = require('logolite/envtool');
 describe('tdd:devebot:core:sandbox-manager', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envtool.setup({
@@ -27,7 +27,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
-    errorCollector.reset();
+    issueInspector.reset();
   });
 
   it('getBridgeDialectNames() - retrieve bridge dialect names correctly', function() {
@@ -149,6 +149,6 @@ describe('tdd:devebot:core:sandbox-manager', function() {
 
   after(function() {
     envtool.reset();
-    errorCollector.reset();
+    issueInspector.reset();
   });
 });

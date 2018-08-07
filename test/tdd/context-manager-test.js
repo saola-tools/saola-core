@@ -17,7 +17,7 @@ var debugx = Devebot.require('pinbug')('tdd:devebot:core:context-manager');
 describe('tdd:devebot:core:context-manager', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envtool.setup({
@@ -25,7 +25,7 @@ describe('tdd:devebot:core:context-manager', function() {
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
-    errorCollector.reset();
+    issueInspector.reset();
     LogConfig.reset();
   });
 
@@ -59,6 +59,6 @@ describe('tdd:devebot:core:context-manager', function() {
 
   after(function() {
     envtool.reset();
-    errorCollector.reset();
+    issueInspector.reset();
   });
 });

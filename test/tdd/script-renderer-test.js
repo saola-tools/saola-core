@@ -20,7 +20,7 @@ var sinon = require('sinon');
 describe('tdd:devebot:core:script-renderer', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
   var {loggingFactory, schemaValidator} = lab.createBasicServices();
 
   before(function() {
@@ -30,7 +30,7 @@ describe('tdd:devebot:core:script-renderer', function() {
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
-    errorCollector.reset();
+    issueInspector.reset();
   });
 
   describe('WebSocketOutlet', function() {
@@ -311,6 +311,6 @@ describe('tdd:devebot:core:script-renderer', function() {
 
   after(function() {
     envtool.reset();
-    errorCollector.reset();
+    issueInspector.reset();
   });
 });

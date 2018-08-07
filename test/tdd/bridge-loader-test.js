@@ -19,7 +19,7 @@ var rewire = require('rewire');
 describe('tdd:devebot:core:bridge-loader', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envtool.setup({
@@ -48,7 +48,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
       var bridgeLoader = lab.createBridgeLoader('fullapp');
       var metadataMap = {};
       bridgeLoader.loadMetadata(metadataMap);
-      errorCollector.barrier({exitOnError: true});
+      issueInspector.barrier({exitOnError: true});
       false && console.log('metadataMap: %s', JSON.stringify(metadataMap, null, 2));
       assert.deepInclude(metadataMap, {
         "bridge1": {
@@ -132,7 +132,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
       var bridgeLoader = lab.createBridgeLoader('fullapp');
       var originMap = {};
       bridgeLoader.loadDialects(originMap); // dialectOptions is omitted
-      errorCollector.barrier({exitOnError: true});
+      issueInspector.barrier({exitOnError: true});
       false && console.log('dialectMap: ', util.inspect(originMap, { depth: 5 }));
       var dialectMap = lodash.mapValues(originMap, function(dialect) {
         return lodash.assign(lodash.pick(dialect, [
@@ -238,7 +238,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
       };
       var originMap = {};
       bridgeLoader.loadDialects(originMap, bridgeConfig);
-      errorCollector.barrier({exitOnError: true});
+      issueInspector.barrier({exitOnError: true});
       false && console.log('dialectMap: ', util.inspect(originMap, { depth: 5 }));
       var dialectMap = lodash.mapValues(originMap, function(dialect) {
         return lodash.assign(lodash.pick(dialect, [

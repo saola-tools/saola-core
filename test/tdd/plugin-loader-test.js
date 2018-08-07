@@ -19,7 +19,7 @@ var rewire = require('rewire');
 describe('tdd:devebot:core:plugin-loader', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envtool.setup({
@@ -372,7 +372,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
       var metadataMap = {};
       pluginLoader.loadMetadata(metadataMap);
-      errorCollector.barrier({exitOnError: true});
+      issueInspector.barrier({exitOnError: true});
       false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
       var expectedMap = {};
       expectedMap[chores.toFullname("fullapp", "sandbox")] = {
@@ -459,7 +459,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
       var originMap = {};
       pluginLoader.loadServices(originMap);
-      errorCollector.barrier({exitOnError: true});
+      issueInspector.barrier({exitOnError: true});
       false && console.log('serviceMap: ', util.inspect(originMap, { depth: 5 }));
       var serviceMap = lodash.mapValues(originMap, function(service) {
         return lodash.assign(lodash.pick(service, [
@@ -712,7 +712,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var pluginLoader = lab.createPluginLoader('fullapp');
       var originMap = {};
       pluginLoader.loadTriggers(originMap);
-      errorCollector.barrier({exitOnError: true});
+      issueInspector.barrier({exitOnError: true});
       false && console.log('triggerMap: ', util.inspect(originMap, { depth: 5 }));
       var triggerMap = lodash.mapValues(originMap, function(trigger) {
         return lodash.assign(lodash.pick(trigger, [

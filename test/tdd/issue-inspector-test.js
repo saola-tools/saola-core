@@ -6,7 +6,7 @@ var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
-var debugx = Devebot.require('pinbug')('tdd:devebot:core:error-collector');
+var debugx = Devebot.require('pinbug')('tdd:devebot:core:issue-inspector');
 var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
@@ -14,20 +14,20 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envtool = require('logolite/envtool');
 
-describe('tdd:devebot:core:error-collector', function() {
+describe('tdd:devebot:core:issue-inspector', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var errorCollector = lab.getErrorCollector();
+  var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envtool.setup({
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
-      DEVEBOT_FORCING_SILENT: 'error-collector'
+      DEVEBOT_FORCING_SILENT: 'issue-inspector'
     });
     LogConfig.reset();
-    errorCollector.reset();
+    issueInspector.reset();
   });
 
   describe('barrier()', function() {
@@ -37,7 +37,7 @@ describe('tdd:devebot:core:error-collector', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname('devebot', 'errorCollector'), 'examine' ],
+          allTags: [ chores.toFullname('devebot', 'issueInspector'), 'examine' ],
           storeTo: 'errorSummary'
         }]
       }]);
@@ -49,13 +49,13 @@ describe('tdd:devebot:core:error-collector', function() {
 
     it('pass if no error has occurred', function() {
       var unhook = lab.preventExit();
-      errorCollector.collect();
-      errorCollector.collect({
+      issueInspector.collect();
+      issueInspector.collect({
         hasError: false,
         stage: 'instantiating',
         type: 'ROUTINE'
       });
-      errorCollector.collect([{
+      issueInspector.collect([{
         hasError: false,
         stage: 'instantiating',
         type: 'ROUTINE'
@@ -68,7 +68,7 @@ describe('tdd:devebot:core:error-collector', function() {
         stage: 'instantiating',
         type: 'TRIGGER'
       }]);
-      errorCollector.barrier({exitOnError: true});
+      issueInspector.barrier({exitOnError: true});
       var totalOfExit = unhook();
       assert.equal(totalOfExit, 0);
     });
@@ -77,15 +77,15 @@ describe('tdd:devebot:core:error-collector', function() {
       var unhook = lab.preventExit({ throwException: true });
 
       function doSomething() {
-        errorCollector.collect();
+        issueInspector.collect();
 
-        errorCollector.collect({
+        issueInspector.collect({
           hasError: false,
           stage: 'bootstrap',
           type: 'plugin'
         });
 
-        errorCollector.collect([{
+        issueInspector.collect([{
           hasError: false,
           stage: 'naming',
           type: 'bridge'
@@ -95,7 +95,7 @@ describe('tdd:devebot:core:error-collector', function() {
           type: 'plugin'
         }]);
 
-        errorCollector.collect({
+        issueInspector.collect({
           hasError: true,
           stage: 'config/schema',
           type: 'bridge',
@@ -103,7 +103,7 @@ describe('tdd:devebot:core:error-collector', function() {
           stack: 'Error: {}'
         });
 
-        errorCollector.barrier({exitOnError: true});
+        issueInspector.barrier({exitOnError: true});
       }
 
       assert.throws(doSomething, lab.ProcessExitError);
@@ -113,7 +113,7 @@ describe('tdd:devebot:core:error-collector', function() {
     });
 
     afterEach(function() {
-      errorCollector.reset();
+      issueInspector.reset();
     })
 
     after(function() {
