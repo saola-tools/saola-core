@@ -5,9 +5,7 @@ var Devebot = lab.getDevebot().parseArguments(require.main === module);
 
 var app = Devebot.launchApplication({
   appRootPath: __dirname,
-  presets: {
-    defaultFeatures: ['def', 'xyz']
-  }
+  defaultFeatures: ['def', 'xyz']
 }, [
   {
     name: 'devebot-dp-wrapper1',
