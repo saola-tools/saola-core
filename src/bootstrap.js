@@ -165,6 +165,19 @@ function registerLayerware(context, pluginNames, bridgeNames) {
     context = { layerRootPath: context };
   }
 
+  if (!lodash.isEmpty(context)) {
+    let result = chores.validate(context, constx.BOOTSTRAP.registerLayerware.context.schema);
+    if (!result.ok) {
+      issueInspector.collect({
+        stage: 'bootstrap',
+        type: 'application',
+        name: 'registerLayerware',
+        hasError: true,
+        stack: JSON.stringify(result.errors, null, 4)
+      });
+    }
+  }
+
   function initialize(context, pluginNames, bridgeNames, accumulator) {
     context = context || {};
     accumulator = accumulator || {};
@@ -174,11 +187,12 @@ function registerLayerware(context, pluginNames, bridgeNames) {
     }
     if (chores.isUpgradeSupported('presets')) {
       if (accumulator.libRootPath) {
-        let _presets = lodash.get(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], null);
-        if (_presets) {
-          lodash.defaultsDeep(_presets, context.presets || {});
+        let newPresets = context.presets || {};
+        let oldPresets = lodash.get(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], null);
+        if (oldPresets) {
+          lodash.defaultsDeep(oldPresets, newPresets);
         } else {
-          lodash.set(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], context.presets || {});
+          lodash.set(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], newPresets);
         }
       }
     }
@@ -193,11 +207,11 @@ function launchApplication(context, pluginNames, bridgeNames) {
     context = { appRootPath: context };
   }
   if (!lodash.isEmpty(context)) {
-    let result = chores.validate(context, constx.BOOTSTRAP.appbox.schema);
+    let result = chores.validate(context, constx.BOOTSTRAP.launchApplication.context.schema);
     if (!result.ok) {
       issueInspector.collect({
         stage: 'bootstrap',
-        type: 'appbox',
+        type: 'application',
         name: 'launchApplication',
         hasError: true,
         stack: JSON.stringify(result.errors, null, 4)
