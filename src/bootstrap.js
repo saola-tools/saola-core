@@ -165,24 +165,24 @@ function registerLayerware(presets, pluginNames, bridgeNames) {
     presets = { layerRootPath: presets };
   }
 
-  function initialize(presets, pluginNames, bridgeNames, context) {
+  function initialize(presets, pluginNames, bridgeNames, accumulator) {
     presets = presets || {};
-    context = context || {};
+    accumulator = accumulator || {};
     if (typeof(presets.layerRootPath) === 'string' && presets.layerRootPath.length > 0) {
-      context.libRootPaths = context.libRootPaths || [];
-      context.libRootPaths.push(presets.layerRootPath);
+      accumulator.libRootPaths = accumulator.libRootPaths || [];
+      accumulator.libRootPaths.push(presets.layerRootPath);
     }
     if (chores.isUpgradeSupported('presets')) {
-      if (context.libRootPath) {
-        let _presets = lodash.get(context, ['pluginRefs', context.libRootPath, 'presets'], null);
+      if (accumulator.libRootPath) {
+        let _presets = lodash.get(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], null);
         if (_presets) {
           lodash.defaultsDeep(_presets, presets);
         } else {
-          lodash.set(context, ['pluginRefs', context.libRootPath, 'presets'], presets);
+          lodash.set(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], presets);
         }
       }
     }
-    return expandExtensions(context, pluginNames, bridgeNames);
+    return expandExtensions(accumulator, pluginNames, bridgeNames);
   };
 
   return initialize.bind(undefined, presets, pluginNames, bridgeNames);
