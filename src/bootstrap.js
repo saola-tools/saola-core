@@ -154,46 +154,46 @@ function appLoader(params={}) {
 
 const ATTRS = ['libRootPaths', 'pluginRefs', 'bridgeRefs'];
 
-function registerLayerware(presets, pluginNames, bridgeNames) {
-  if ((arguments.length < 3) && lodash.isArray(presets)) {
+function registerLayerware(context, pluginNames, bridgeNames) {
+  if ((arguments.length < 3) && lodash.isArray(context)) {
     bridgeNames = pluginNames;
-    pluginNames = presets;
-    presets = null;
+    pluginNames = context;
+    context = null;
   }
 
-  if (lodash.isString(presets)) {
-    presets = { layerRootPath: presets };
+  if (lodash.isString(context)) {
+    context = { layerRootPath: context };
   }
 
-  function initialize(presets, pluginNames, bridgeNames, accumulator) {
-    presets = presets || {};
+  function initialize(context, pluginNames, bridgeNames, accumulator) {
+    context = context || {};
     accumulator = accumulator || {};
-    if (typeof(presets.layerRootPath) === 'string' && presets.layerRootPath.length > 0) {
+    if (typeof(context.layerRootPath) === 'string' && context.layerRootPath.length > 0) {
       accumulator.libRootPaths = accumulator.libRootPaths || [];
-      accumulator.libRootPaths.push(presets.layerRootPath);
+      accumulator.libRootPaths.push(context.layerRootPath);
     }
     if (chores.isUpgradeSupported('presets')) {
       if (accumulator.libRootPath) {
         let _presets = lodash.get(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], null);
         if (_presets) {
-          lodash.defaultsDeep(_presets, presets);
+          lodash.defaultsDeep(_presets, context);
         } else {
-          lodash.set(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], presets);
+          lodash.set(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], context);
         }
       }
     }
     return expandExtensions(accumulator, pluginNames, bridgeNames);
   };
 
-  return initialize.bind(undefined, presets, pluginNames, bridgeNames);
+  return initialize.bind(undefined, context, pluginNames, bridgeNames);
 }
 
 function launchApplication(context, pluginNames, bridgeNames) {
   if (lodash.isString(context)) {
     context = { appRootPath: context };
   }
-  let result = chores.validate(context, constx.BOOTSTRAP.appbox.schema);
   if (!lodash.isEmpty(context)) {
+    let result = chores.validate(context, constx.BOOTSTRAP.appbox.schema);
     if (!result.ok) {
       issueInspector.collect({
         stage: 'bootstrap',
