@@ -176,9 +176,9 @@ function registerLayerware(context, pluginNames, bridgeNames) {
       if (accumulator.libRootPath) {
         let _presets = lodash.get(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], null);
         if (_presets) {
-          lodash.defaultsDeep(_presets, context);
+          lodash.defaultsDeep(_presets, context.presets || {});
         } else {
-          lodash.set(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], context);
+          lodash.set(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], context.presets || {});
         }
       }
     }

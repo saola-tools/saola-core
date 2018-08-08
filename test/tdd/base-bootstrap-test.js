@@ -166,16 +166,14 @@ describe('tdd:devebot:base:bootstrap', function() {
               name: 'plugin1',
               path: '/test/lib/plugin1',
               presets: {
-                "configTags": "bridge[dialect-bridge]",
-                layerRootPath: '/test/lib/plugin1'
+                "configTags": "bridge[dialect-bridge]"
               }
             },
             '/test/lib/plugin2': {
               name: 'plugin2',
               path: '/test/lib/plugin2',
               presets: {
-                "configTags": "bridge[dialect-bridge]",
-                layerRootPath: '/test/lib/plugin2'
+                "configTags": "bridge[dialect-bridge]"
               }
             }
           },
@@ -272,23 +270,20 @@ describe('tdd:devebot:base:bootstrap', function() {
               name: 'plugin1',
               path: '/test/lib/plugin1',
               presets: {
-                "configTags": "bridge[dialect-bridge]",
-                layerRootPath: '/test/lib/plugin1'
+                "configTags": "bridge[dialect-bridge]"
               }
             },
             '/test/lib/plugin2': {
               name: 'plugin2',
               path: '/test/lib/plugin2',
               presets: {
-                "configTags": "bridge[dialect-bridge]",
-                layerRootPath: '/test/lib/plugin2'
+                "configTags": "bridge[dialect-bridge]"
               }
             },
             '/test/lib/plugin3': {
               name: 'plugin3',
               path: '/test/lib/plugin3',
               presets: {
-                layerRootPath: '/test/lib/plugin3'
               }
             }
           },
@@ -348,37 +343,32 @@ describe('tdd:devebot:base:bootstrap', function() {
                 name: 'sub-plugin1',
                 path: '/test/lib/sub-plugin1',
                 presets: {
-                  layerRootPath: '/test/lib/sub-plugin1'
                 }
               },
               '/test/lib/sub-plugin2': {
                 name: 'sub-plugin2',
                 path: '/test/lib/sub-plugin2',
                 presets: {
-                  layerRootPath: '/test/lib/sub-plugin2'
                 }
               },
               '/test/lib/plugin1': {
                 name: 'plugin1',
                 path: '/test/lib/plugin1',
                 presets: {
-                  "configTags": "bridge[dialect-bridge]",
-                  layerRootPath: '/test/lib/plugin1'
+                  "configTags": "bridge[dialect-bridge]"
                 }
               },
               '/test/lib/plugin2': {
                 name: 'plugin2',
                 path: '/test/lib/plugin2',
                 presets: {
-                  "configTags": "bridge[dialect-bridge]",
-                  layerRootPath: '/test/lib/plugin2'
+                  "configTags": "bridge[dialect-bridge]"
                 }
               },
               '/test/lib/plugin3': {
                 name: 'plugin3',
                 path: '/test/lib/plugin3',
                 presets: {
-                  layerRootPath: '/test/lib/plugin3'
                 }
               }
             },
@@ -489,44 +479,38 @@ describe('tdd:devebot:base:bootstrap', function() {
                 name: 'sub-plugin1',
                 path: '/test/lib/sub-plugin1',
                 presets: {
-                  layerRootPath: '/test/lib/sub-plugin1'
                 }
               },
               '/test/lib/sub-plugin2': {
                 name: 'sub-plugin2',
                 path: '/test/lib/sub-plugin2',
                 presets: {
-                  layerRootPath: '/test/lib/sub-plugin2'
                 }
               },
               '/test/lib/plugin1': {
                 name: 'plugin1',
                 path: '/test/lib/plugin1',
                 presets: {
-                  "configTags": "bridge[dialect-bridge]",
-                  layerRootPath: '/test/lib/plugin1'
+                  "configTags": "bridge[dialect-bridge]"
                 }
               },
               '/test/lib/plugin2': {
                 name: 'plugin2',
                 path: '/test/lib/plugin2',
                 presets: {
-                  "configTags": "bridge[dialect-bridge]",
-                  layerRootPath: '/test/lib/plugin2'
+                  "configTags": "bridge[dialect-bridge]"
                 }
               },
               '/test/lib/plugin3': {
                 name: 'plugin3',
                 path: '/test/lib/plugin3',
                 presets: {
-                  layerRootPath: '/test/lib/plugin3'
                 }
               },
               '/test/lib/plugin4': {
                 name: 'plugin4',
                 path: '/test/lib/plugin4',
                 presets: {
-                  layerRootPath: '/test/lib/plugin4'
                 }
               }
             },
@@ -772,7 +756,6 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "subPlugin1",
           "path": "/test/lib/sub-plugin1",
           "presets": {
-            "layerRootPath": '/test/lib/sub-plugin1'
           }
         },
         {
@@ -782,7 +765,6 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "subPlugin2",
           "path": "/test/lib/sub-plugin2",
           "presets": {
-            "layerRootPath": '/test/lib/sub-plugin2'
           }
         },
         {
@@ -792,8 +774,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "plugin1",
           "path": "/test/lib/plugin1",
           "presets": {
-            "configTags": "bridge[dialect-bridge]",
-            "layerRootPath": '/test/lib/plugin1'
+            "configTags": "bridge[dialect-bridge]"
           }
         },
         {
@@ -803,8 +784,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "plugin2",
           "path": "/test/lib/plugin2",
           "presets": {
-            "configTags": "bridge[dialect-bridge]",
-            "layerRootPath": '/test/lib/plugin2'
+            "configTags": "bridge[dialect-bridge]"
           }
         },
         {
@@ -814,7 +794,6 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "plugin3",
           "path": "/test/lib/plugin3",
           "presets": {
-            "layerRootPath": '/test/lib/plugin3'
           }
         },
         {
@@ -873,37 +852,32 @@ describe('tdd:devebot:base:bootstrap', function() {
                 name: 'sub-plugin1',
                 path: '/test/lib/sub-plugin1',
                 presets: {
-                  layerRootPath: '/test/lib/sub-plugin1'
                 }
               },
               '/test/lib/sub-plugin2': {
                 name: 'sub-plugin2',
                 path: '/test/lib/sub-plugin2',
                 presets: {
-                  layerRootPath: '/test/lib/sub-plugin2'
                 }
               },
               '/test/lib/plugin1': {
                 name: 'plugin1',
                 path: '/test/lib/plugin1',
                 presets: {
-                  configTags: "bridge[dialect-bridge]",
-                  layerRootPath: '/test/lib/plugin1'
+                  configTags: "bridge[dialect-bridge]"
                 }
               },
               '/test/lib/plugin2': {
                 name: 'plugin2',
                 path: '/test/lib/plugin2',
                 presets: {
-                  configTags: "bridge[dialect-bridge]",
-                  layerRootPath: '/test/lib/plugin2'
+                  configTags: "bridge[dialect-bridge]"
                 }
               },
               '/test/lib/plugin3': {
                 name: 'plugin3',
                 path: '/test/lib/plugin3',
                 presets: {
-                  layerRootPath: '/test/lib/plugin3'
                 }
               }
             },
