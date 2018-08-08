@@ -32,21 +32,38 @@ const PRESETS_SCHEMA = {
     },
     "referenceAlias": {
       "type": "object"
+    },
+    "schemaValidation": {
+      "type": "boolean"
     }
   },
   "additionalProperties": false
 }
 
-const DEPENDENCY_SCHEMA = {
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string"
-    },
-    "path": {
-      "type": "string"
-    },
-    "presets": PRESETS_SCHEMA
+const DEPENDENCIES_SCHEMA = {
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "type": "string"
+      },
+      {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "presets": PRESETS_SCHEMA
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    ]
   }
 }
 
@@ -196,11 +213,11 @@ module.exports = {
           }
         }
       },
-      plugin: {
-        schema: DEPENDENCY_SCHEMA
+      plugins: {
+        schema: DEPENDENCIES_SCHEMA
       },
-      bridge: {
-        schema: DEPENDENCY_SCHEMA
+      bridges: {
+        schema: DEPENDENCIES_SCHEMA
       }
     },
     registerLayerware: {
@@ -216,11 +233,11 @@ module.exports = {
           "additionalProperties": false
         }
       },
-      plugin: {
-        schema: DEPENDENCY_SCHEMA
+      plugins: {
+        schema: DEPENDENCIES_SCHEMA
       },
-      bridge: {
-        schema: DEPENDENCY_SCHEMA
+      bridges: {
+        schema: DEPENDENCIES_SCHEMA
       }
     }
   },
