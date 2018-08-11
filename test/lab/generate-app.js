@@ -2,17 +2,13 @@
 var path = require('path');
 var Temporify = require('temporify');
 
-function AppGenerator(params) {
-  params = params || {};
+var flow = Promise.resolve();
 
-  var projectName = params.projectName || 'example-project';
-  var testHomeDir = params.testHomeDir || path.join(__dirname, '../index');
-
+flow = flow.then(function() {
   var builder = new Temporify({
-    subdir: projectName,
+    subdir: 'invalid-appbox-context',
     variables: {
-      projectName: projectName,
-      testHomeDir: testHomeDir
+      testHomeDir: path.join(__dirname, '../index')
     }
   });
 
@@ -41,7 +37,7 @@ function AppGenerator(params) {
     filename: 'package.json',
     template: `
     {
-      "name": "<%- projectName %>",
+      "name": "invalid-appbox-context",
       "version": "0.1.0",
       "description": "Testapp: invalid context",
       "main": "index.js",
@@ -49,36 +45,23 @@ function AppGenerator(params) {
         "test": "echo 'Error: no test specified' && exit 1"
       },
       "author": "devebot",
-      "license": "ISC"
+      "license": "ISC",
+      "devDependencies": {
+        "chai": "^4.1.2"
+      }
     }
     `
   }]);
 
-  this.customize = function(args) {
-    return builder.assign({
-      filename: 'index.js',
-      variables: args
-    }).generate();
-  };
-
-  this.destroy = function() {
-    builder.destroy();
-  }
-}
-
-var flow = Promise.resolve();
-
-flow = flow.then(function() {
-  var generator = new AppGenerator({
-    projectName: 'invalid-appbox-context',
-    testHomeDir: path.join(__dirname, '../index')
-  });
-
-  var tempor = generator.customize({
-    privateProfile: JSON.stringify('123')
-  });
+  var tempor = builder.assign({
+    filename: 'index.js',
+    variables: {
+      privateProfile: JSON.stringify('123')
+    }
+  }).generate();
 
   console.log('Home: %s', tempor.homedir);
+  console.log('Stats: %s', JSON.stringify(tempor.stats(), null, 2));
 
   var app = require(tempor.homedir);
   var subf = app.server.start();
@@ -90,7 +73,7 @@ flow = flow.then(function() {
   });
 
   subf = subf.then(function() {
-    generator.destroy();
+    builder.destroy();
   });
 
   return subf;
