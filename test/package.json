@@ -13,6 +13,7 @@
     "freshy": "^1.0.4",
     "minimist": "^1.2.0",
     "rewire": "^3.0.2",
-    "sinon": "^3.3.0"
+    "sinon": "^3.3.0",
+    "temporify": "^0.1.1"
   }
 }

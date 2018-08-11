@@ -37,7 +37,7 @@ const PRESETS_SCHEMA = {
       "type": "boolean"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }
 
 const DEPENDENCIES_SCHEMA = {
