@@ -50,32 +50,32 @@ describe('tdd:devebot:core:logging-factory', function() {
           verbose: {
             level: 6,
             color: 'magenta',
-            inflow: 'silly'
+            admit: 'silly'
           },
           debug: {
             level: 5,
             color: 'blue',
-            inflow: 'debug'
+            admit: 'debug'
           },
           info: {
             level: 4,
             color: 'cyan',
-            inflow: 'trace'
+            admit: 'trace'
           },
           trace: {
             level: 3,
             color: 'green',
-            inflow: 'info'
+            admit: 'info'
           },
           warn: {
             level: 2,
             color: 'yellow',
-            inflow: 'warn'
+            admit: 'warn'
           },
           error: {
             level: 1,
             color: 'red',
-            inflow: 'error'
+            admit: 'error'
           },
           fatal: {
             level: 0,
@@ -118,6 +118,88 @@ describe('tdd:devebot:core:logging-factory', function() {
       assert.deepEqual(output, expected);
     });
 
+    it('transformLoggingLabels() transform logging labels + mappings correctly', function() {
+      var loggerCfg = {
+        labels: {
+          verbose: {
+            level: 6,
+            color: 'magenta',
+            admit: 'silly'
+          },
+          debug: {
+            level: 5,
+            color: 'blue',
+            admit: 'debug'
+          },
+          info: {
+            level: 4,
+            color: 'cyan',
+            admit: 'trace'
+          },
+          trace: {
+            level: 3,
+            color: 'green',
+            admit: 'info'
+          },
+          warn: {
+            level: 2,
+            color: 'yellow',
+            admit: 'warn'
+          },
+          error: {
+            level: 1,
+            color: 'red',
+            admit: 'error'
+          },
+          fatal: {
+            level: 0,
+            color: 'orange'
+          }
+        },
+        mappings: {
+          info: 'text, message',
+          trace: ['track', 'trail']
+        }
+      }
+
+      var expected = {
+        levels: {
+          verbose: 6,
+          debug: 5,
+          info: 4,
+          trace: 3,
+          warn: 2,
+          error: 1,
+          fatal: 0
+        },
+        colors: {
+          verbose: 'magenta',
+          debug: 'blue',
+          info: 'cyan',
+          trace: 'green',
+          warn: 'yellow',
+          error: 'red',
+          fatal: 'orange'
+        },
+        mappings: {
+          silly: 'verbose',
+          debug: 'debug',
+          trace: 'info',
+          info: 'trace',
+          warn: 'warn',
+          error: 'error',
+          text: 'info',
+          message: 'info',
+          track: 'trace',
+          trail: 'trace'
+        }
+      }
+
+      var output = transformLoggingLabels(loggerCfg.labels, loggerCfg.mappings);
+      false && console.log('transformLoggingLabels(): ', output);
+      assert.deepEqual(output, expected);
+    });
+
     it('old logging messages are mapped to new logging labels', function() {
       var factory = new LoggingFactory({
         profileConfig: {
@@ -126,33 +208,37 @@ describe('tdd:devebot:core:logging-factory', function() {
               level_s: {
                 level: 5,
                 color: 'magenta',
-                inflow: 'silly'
+                admit: 'silly'
               },
               level_d: {
                 level: 4,
                 color: 'blue',
-                inflow: 'debug'
+                admit: 'debug'
               },
               level_i: {
                 level: 3,
                 color: 'cyan',
-                inflow: 'info'
+                admit: 'info'
               },
               level_t: {
                 level: 2,
                 color: 'green',
-                inflow: 'trace'
+                admit: 'trace'
               },
               level_w: {
                 level: 1,
                 color: 'yellow',
-                inflow: 'warn'
+                admit: 'warn'
               },
               level_e: {
                 level: 0,
                 color: 'red',
-                inflow: ['error', 'fatal']
+                admit: ['error', 'fatal']
               }
+            },
+            mappings: {
+              level_i: 'text',
+              level_t: ['track', 'trail']
             },
             transports: {
               console: {
@@ -186,6 +272,8 @@ describe('tdd:devebot:core:logging-factory', function() {
       rootLogger.log('error', 'Error message #1');
       rootLogger.log('error', 'Error message #2');
       rootLogger.log('trace', 'Trace message #1');
+      rootLogger.log('track', 'Track message #1');
+      rootLogger.log('trail', 'Trail message #1');
       rootLogger.log('fatal', 'Error message #3');
 
       var msgs = mockLogger._reset();
@@ -203,6 +291,14 @@ describe('tdd:devebot:core:logging-factory', function() {
         {
           "severity": "level_t",
           "payload": "Trace message #1"
+        },
+        {
+          "severity": "level_t",
+          "payload": "Track message #1"
+        },
+        {
+          "severity": "level_t",
+          "payload": "Trail message #1"
         },
         {
           "severity": "level_e",
