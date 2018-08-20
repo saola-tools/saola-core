@@ -267,7 +267,9 @@ module.exports = {
         level: 0,
         color: 'red'
       }
-    }
+    },
+    STARTING_POINT: 'affix',
+    INTERNAL_LEVEL: 'check'
   },
   TRACER: {
     SECTOR: {

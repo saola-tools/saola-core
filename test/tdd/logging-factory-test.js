@@ -326,18 +326,64 @@ describe('tdd:devebot:core:logging-factory', function() {
     });
 
     it('default Tracer must contain framework information', function() {
-      var mockLogger = new MockLogger();
+      var mockLogger = new MockLogger({
+        levels: {
+          silly: 5,
+          debug: 4,
+          trace: 3,
+          info: 2,
+          warn: 1,
+          error: 0
+        }
+      });
       LogAdapter.clearInterceptors().addInterceptor(mockLogger);
 
       var factory = new LoggingFactory({
-        logger: {
-          transports: {
-            console: {
-              type: 'console',
-              level: 'debug',
-              json: false,
-              timestamp: true,
-              colorize: true
+        profileConfig: {
+          logger: {
+            labels: {
+              silly: {
+                level: 5,
+                color: 'magenta',
+                admit: 'silly'
+              },
+              debug: {
+                level: 4,
+                color: 'blue',
+                admit: 'debug'
+              },
+              trace: {
+                level: 3,
+                color: 'cyan',
+                admit: 'trace'
+              },
+              info: {
+                level: 2,
+                color: 'green',
+                admit: 'info'
+              },
+              warn: {
+                level: 1,
+                color: 'yellow',
+                admit: 'warn'
+              },
+              error: {
+                level: 0,
+                color: 'red',
+                admit: 'error'
+              }
+            },
+            mappings: {
+              info: 'affix'
+            },
+            transports: {
+              console: {
+                type: 'console',
+                level: 'debug',
+                json: false,
+                timestamp: true,
+                colorize: true
+              }
             }
           }
         }
@@ -394,18 +440,64 @@ describe('tdd:devebot:core:logging-factory', function() {
     });
 
     it('recursive branch() calls will return hierarchical loggingFactory objects', function() {
-      var mockLogger = new MockLogger();
+      var mockLogger = new MockLogger({
+        levels: {
+          silly: 5,
+          debug: 4,
+          trace: 3,
+          info: 2,
+          warn: 1,
+          error: 0
+        }
+      });
       LogAdapter.clearInterceptors().addInterceptor(mockLogger);
 
       var factory = new LoggingFactory({
-        logger: {
-          transports: {
-            console: {
-              type: 'console',
-              level: 'debug',
-              json: false,
-              timestamp: true,
-              colorize: true
+        profileConfig: {
+          logger: {
+            labels: {
+              silly: {
+                level: 5,
+                color: 'magenta',
+                admit: 'silly'
+              },
+              debug: {
+                level: 4,
+                color: 'blue',
+                admit: 'debug'
+              },
+              trace: {
+                level: 3,
+                color: 'cyan',
+                admit: 'trace'
+              },
+              info: {
+                level: 2,
+                color: 'green',
+                admit: 'info'
+              },
+              warn: {
+                level: 1,
+                color: 'yellow',
+                admit: 'warn'
+              },
+              error: {
+                level: 0,
+                color: 'red',
+                admit: 'error'
+              }
+            },
+            mappings: {
+              info: 'affix'
+            },
+            transports: {
+              console: {
+                type: 'console',
+                level: 'debug',
+                json: false,
+                timestamp: true,
+                colorize: true
+              }
             }
           }
         }

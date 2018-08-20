@@ -9,6 +9,7 @@ const chores = require('../utils/chores');
 const constx = require('../utils/constx');
 const nodash = require('../utils/nodash');
 const DEFAULT_SECTOR_NAME = chores.getBlockRef(__filename);
+const STAMP = constx.LOGGER.STARTING_POINT;
 
 function LoggingService(params={}) {
   let more = {};
@@ -27,16 +28,19 @@ function LoggingService(params={}) {
   });
 };
 
-let LoggingFactory = function(args={}) {
+function LoggingFactory(args={}) {
   args.root = args.root || {};
   if (!lodash.isFunction(args.root.getLogger)) {
     if (lodash.isEmpty(args.originalLogger)) {
       throw new Error('The root LoggingFactory must be provided the originalLogger');
     }
+    let originalLogger = args.originalLogger;
+    LogAdapter.connectTo(originalLogger, {
+      onLevel: STAMP,
+      mappings: args.mappings
+    });
 
     let logoliteLogger = {};
-    let originalLogger = args.originalLogger;
-    LogAdapter.connectTo(originalLogger);
 
     args.root.getLogger = function(opts) {
       let logger = null;
@@ -80,7 +84,10 @@ let LoggingFactory = function(args={}) {
   }
 
   this.getLogger = function(opts) {
-    return args.root.getLogger(lodash.defaults({ sector: args.sectorName }, opts));
+    return args.root.getLogger(lodash.defaults({
+      sector: args.sectorName,
+      mappings: args.mappings
+    }, opts));
   }
 
   let subTracer = null;
@@ -100,7 +107,7 @@ let LoggingFactory = function(args={}) {
         blockInfo[constx.TRACER.SECTOR.NAME_FIELD] = args.sectorName;
       }
       let rootLogger = args.root.getLogger();
-      rootLogger.has('info') && rootLogger.log('info', subTracer.add(blockInfo)
+      rootLogger.has(STAMP) && rootLogger.log(STAMP, subTracer.add(blockInfo)
           .toMessage({ tags: [ 'devebot-metadata' ] }));
     }
     return subTracer;
