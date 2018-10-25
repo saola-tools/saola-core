@@ -13,7 +13,7 @@ var util = require('util');
 var kernel = require(lab.getDevebotModule('kernel'));
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var envbox = require(lab.getDevebotModule('utils/envbox'));
 var rewire = require('rewire');
 var sinon = require('sinon');
@@ -24,7 +24,7 @@ describe('tdd:devebot:base:kernel', function() {
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envtool.setup({
+    envmask.setup({
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
@@ -617,6 +617,6 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   after(function() {
-    envtool.reset();
+    envmask.reset();
   });
 });

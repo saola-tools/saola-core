@@ -10,6 +10,7 @@
     "chai": "^4.1.2",
     "devebot-api": "^0.2.2",
     "devebot-cli": "^0.2.2",
+    "envmask": "^0.1.1",
     "freshy": "^1.0.4",
     "minimist": "^1.2.0",
     "rewire": "^3.0.2",

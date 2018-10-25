@@ -12,7 +12,7 @@ var util = require('util');
 var LoggingFactory = require(lab.getDevebotModule('backbone/logging-factory'));
 var LogAdapter = require('logolite').LogAdapter;
 var MockLogger = require('logolite').MockLogger;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var rewire = require('rewire');
 
 describe('tdd:devebot:core:logging-factory', function() {
@@ -23,7 +23,7 @@ describe('tdd:devebot:core:logging-factory', function() {
     assert.isNotNull(transformLoggingLabels);
     
     before(function() {
-      envtool.setup({
+      envmask.setup({
         LOGOLITE_ALWAYS_MUTED: 'all'
       });
     });
@@ -308,14 +308,14 @@ describe('tdd:devebot:core:logging-factory', function() {
     });
 
     after(function() {
-      envtool.reset();
+      envmask.reset();
     });
   });
 
   describe('extend Tracer using branch() method', function() {
 
     before(function() {
-      envtool.setup({
+      envmask.setup({
         LOGOLITE_DEBUGLOG_ENABLED: 'false',
         LOGOLITE_ALWAYS_MUTED: 'all'
       });
@@ -402,7 +402,7 @@ describe('tdd:devebot:core:logging-factory', function() {
             "instanceId": "dUr6BLK5Sjei7mk_yXlwlQ",
             "message": "Application Information",
             "lib_name": "devebot",
-            "lib_version": "0.2.6",
+            "lib_version": "0.2.7",
             "os_name": "linux",
             "os_version": "4.4.0-119-generic",
             "os_arch": "x64",
@@ -430,7 +430,33 @@ describe('tdd:devebot:core:logging-factory', function() {
       queue.forEach(function(item) {
         item.payload = JSON.parse(item.payload);
       });
+
+      assert.equal(lodash.get(queue, [0, 'severity']), 'info');
+      assert.equal(lodash.get(queue, [0, 'payload', 'lib_name']), 'devebot');
+      assert.containsAllKeys(lodash.get(queue, [0, 'payload']), [
+        'instanceId',
+        'message',
+        'lib_name',
+        'lib_version',
+        'os_name',
+        'os_version',
+        'os_arch'
+      ]);
+
+      assert.equal(lodash.get(queue, [1, 'severity']), 'info');
       assert.equal(lodash.get(queue, [1, 'payload', 'blockName']), 'devebot');
+      assert.containsAllKeys(lodash.get(queue, [1, 'payload']), [
+        'instanceId',
+        'blockId',
+        'blockName',
+        'parentKey',
+        'parentValue'
+      ]);
+
+      assert.equal(
+        lodash.get(queue, [0, 'payload', 'instanceId']),
+        lodash.get(queue, [1, 'payload', 'instanceId'])
+      );
 
       var logObject_1 = rootTracer.toMessage();
       assert.deepEqual(
@@ -548,7 +574,7 @@ describe('tdd:devebot:core:logging-factory', function() {
     });
 
     after(function() {
-      envtool.reset();
+      envmask.reset();
     });
   });
 });

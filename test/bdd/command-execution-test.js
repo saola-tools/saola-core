@@ -12,7 +12,7 @@ var util = require('util');
 var DevebotApi = require('devebot-api');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 
 describe('bdd:devebot:command:execution', function() {
 	this.timeout(lab.getDefaultTimeout());
@@ -52,7 +52,7 @@ describe('bdd:devebot:command:execution', function() {
 	var injectedServiceNames = [];
 
 	before(function() {
-		envtool.setup({
+		envmask.setup({
 			LOGOLITE_ALWAYS_ENABLED: 'all'
 		});
 		LogConfig.reset();
@@ -166,6 +166,6 @@ describe('bdd:devebot:command:execution', function() {
 
 	after(function() {
 		LogTracer.clearStringifyInterceptors();
-		envtool.reset();
+		envmask.reset();
 	});
 });

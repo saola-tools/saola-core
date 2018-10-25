@@ -13,7 +13,7 @@ var util = require('util');
 var Injektor = require('injektor');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var rewire = require('rewire');
 
 describe('tdd:devebot:core:bridge-loader', function() {
@@ -22,7 +22,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envtool.setup({
+    envmask.setup({
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
@@ -584,6 +584,6 @@ describe('tdd:devebot:core:bridge-loader', function() {
 
   after(function() {
     LogTracer.clearStringifyInterceptors();
-    envtool.reset();
+    envmask.reset();
   });
 });

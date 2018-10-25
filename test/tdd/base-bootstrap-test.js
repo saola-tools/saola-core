@@ -14,14 +14,14 @@ var util = require('util');
 var bootstrap = require(lab.getDevebotModule('bootstrap'));
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var rewire = require('rewire');
 
 describe('tdd:devebot:base:bootstrap', function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
-    envtool.setup({
+    envmask.setup({
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
@@ -928,7 +928,7 @@ describe('tdd:devebot:base:bootstrap', function() {
 
   after(function() {
     LogTracer.clearStringifyInterceptors();
-    envtool.reset();
+    envmask.reset();
   });
 });
 

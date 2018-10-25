@@ -12,7 +12,7 @@ var path = require('path');
 var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
 var envbox = require(lab.getDevebotModule('utils/envbox'));
@@ -60,7 +60,7 @@ describe('tdd:devebot:utils:envbox', function() {
 
   describe('getEnv()', function() {
     before(function() {
-      envtool.setup({
+      envmask.setup({
         ENV_PRESETS_STRING: "hello world",
         DEVEBOT_PRESETS_STRING: "hello devebot",
         ENV_EMPTY_ARRAY1: "",
@@ -84,13 +84,13 @@ describe('tdd:devebot:utils:envbox', function() {
     });
 
     after(function() {
-      envtool.reset();
+      envmask.reset();
     });
   });
 
   describe('setNamespace() & occupySystemVariables', function() {
     beforeEach(function() {
-      envtool.setup({
+      envmask.setup({
         ENV_PRESETS_STRING: "hello world",
         DEVEBOT_PRESETS_STRING: "hello devebot",
         ENV_EMPTY_ARRAY1: "",
@@ -144,13 +144,13 @@ describe('tdd:devebot:utils:envbox', function() {
     });
 
     afterEach(function() {
-      envtool.reset();
+      envmask.reset();
     });
   });
 
   describe('printEnvList()', function() {
     before(function() {
-      envtool.setup({
+      envmask.setup({
         ENV_PRESETS_STRING: "hello devebot",
         ENV_EMPTY_ARRAY1: "",
         ENV_EMPTY_ARRAY2: ", ,",
@@ -188,7 +188,7 @@ describe('tdd:devebot:utils:envbox', function() {
     });
 
     after(function() {
-      envtool.reset();
+      envmask.reset();
     });
   });
 });

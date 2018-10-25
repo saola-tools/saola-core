@@ -11,7 +11,7 @@ var expect = require('chai').expect;
 var path = require('path');
 var util = require('util');
 var chores = require(lab.getDevebotModule('utils/chores'));
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var LogAdapter = require('logolite').LogAdapter;
 var LogTracer = require('logolite').LogTracer;
 

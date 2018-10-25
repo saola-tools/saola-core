@@ -10,14 +10,14 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var util = require('util');
 
 describe('bdd:devebot:application', function() {
 	this.timeout(lab.getDefaultTimeout());
 
 	before(function() {
-		envtool.setup({
+		envmask.setup({
 			LOGOLITE_ALWAYS_ENABLED: 'all'
 		});
 		LogConfig.reset();
@@ -424,6 +424,6 @@ describe('bdd:devebot:application', function() {
 	});
 
 	after(function() {
-		envtool.reset();
+		envmask.reset();
 	});
 });

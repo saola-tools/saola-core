@@ -13,7 +13,7 @@ var path = require('path');
 var util = require('util');
 var LogAdapter = require('logolite').LogAdapter;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var rewire = require('rewire');
 
 describe('tdd:devebot:core:name-resolver', function() {

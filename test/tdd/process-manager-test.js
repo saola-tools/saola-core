@@ -11,7 +11,8 @@ var path = require('path');
 var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var EnvMask = require('envmask');
+var envmask = EnvMask.instance;
 
 describe('tdd:devebot:core:process-manager', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -19,7 +20,7 @@ describe('tdd:devebot:core:process-manager', function() {
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envtool.setup({
+    envmask.setup({
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
@@ -29,7 +30,7 @@ describe('tdd:devebot:core:process-manager', function() {
   });
 
   it("process with 'pm_id'~6, 'instances'~3 will run in cluster mode, as a master", function() {
-    var localEnv = envtool.new({
+    var localEnv = new EnvMask({
       pm_id: '6',
       instances: '3'
     });
@@ -42,7 +43,7 @@ describe('tdd:devebot:core:process-manager', function() {
   });
 
   it("process with 'pm_id'~3, 'instances'~2 will run in cluster mode, as a worker", function() {
-    var localEnv = envtool.new({
+    var localEnv = new EnvMask({
       pm_id: '3',
       instances: '2'
     });
@@ -55,7 +56,7 @@ describe('tdd:devebot:core:process-manager', function() {
   });
 
   it("process with 'pm_id'~3, undefined 'instances' will run in single mode", function() {
-    var localEnv = envtool.new({
+    var localEnv = new EnvMask({
       pm_id: '3'
     });
     var processManager = lab.createProcessManager(null);
@@ -67,7 +68,7 @@ describe('tdd:devebot:core:process-manager', function() {
   });
 
   it("process with undefined 'pm_id', 'instances'~1 will run in single mode", function() {
-    var localEnv = envtool.new({
+    var localEnv = new EnvMask({
       instances: '1'
     });
     var processManager = lab.createProcessManager(null);
@@ -79,7 +80,7 @@ describe('tdd:devebot:core:process-manager', function() {
   });
 
   after(function() {
-    envtool.reset();
+    envmask.reset();
     issueInspector.reset();
   });
 });

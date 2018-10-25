@@ -15,7 +15,7 @@ var ConfigLoader = require(lab.getDevebotModule('backbone/config-loader'));
 var NameResolver = require(lab.getDevebotModule('backbone/name-resolver'));
 var LogAdapter = require('logolite').LogAdapter;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var envbox = require(lab.getDevebotModule('utils/envbox'));
 var rewire = require('rewire');
 
@@ -361,7 +361,7 @@ describe('tdd:devebot:core:config-loader', function() {
 
   describe('customize configDir and mixture', function() {
     before(function() {
-      envtool.setup({
+      envmask.setup({
         NODE_ENV: 'test',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
         DEVEBOT_CONFIG_ENV: 'dev'
@@ -408,13 +408,13 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     after(function() {
-      envtool.reset();
+      envmask.reset();
     });
   });
 
   describe('private sandbox configurations', function() {
     before(function() {
-      envtool.setup({
+      envmask.setup({
         NODE_ENV: 'test',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
         DEVEBOT_CONFIG_ENV: 'dev',
@@ -753,13 +753,13 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     after(function() {
-      envtool.reset();
+      envmask.reset();
     });
   });
 
   describe('bridge configure transformation', function() {
     before(function() {
-      envtool.setup({
+      envmask.setup({
         NODE_ENV: 'test',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
         DEVEBOT_CONFIG_ENV: 'dev'
@@ -939,13 +939,13 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     after(function() {
-      envtool.reset();
+      envmask.reset();
     });
   });
 
   describe('change PROFILE/SANDBOX labels', function() {
     before(function() {
-      envtool.setup({
+      envmask.setup({
         NODE_ENV: 'test',
         DEVEBOT_CONFIG_PROFILE_ALIASES: 'context',
         DEVEBOT_CONFIG_SANDBOX_ALIASES: 'setting',
@@ -1019,7 +1019,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     after(function() {
-      envtool.reset();
+      envmask.reset();
     });
   });
 });

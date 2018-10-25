@@ -13,7 +13,7 @@ var util = require('util');
 var LogAdapter = require('logolite').LogAdapter;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envtool = require('logolite/envtool');
+var envmask = require('envmask').instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
 
@@ -24,7 +24,7 @@ describe('tdd:devebot:core:script-renderer', function() {
   var {loggingFactory, schemaValidator} = lab.createBasicServices();
 
   before(function() {
-    envtool.setup({
+    envmask.setup({
       NODE_ENV: 'test',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
@@ -310,7 +310,7 @@ describe('tdd:devebot:core:script-renderer', function() {
   });
 
   after(function() {
-    envtool.reset();
+    envmask.reset();
     issueInspector.reset();
   });
 });
