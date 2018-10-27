@@ -10,8 +10,8 @@ var Service = function(params) {
   params = params || {};
   var self = this;
 
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
 
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
   debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));

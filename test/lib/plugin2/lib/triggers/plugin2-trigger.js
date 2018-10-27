@@ -10,8 +10,8 @@ var Service = function(params) {
   var self = this;
   params = params || {};
 
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
 
   var packageName = params.packageName || 'plugin2';
   var blockRef = params.componentId;
@@ -20,7 +20,7 @@ var Service = function(params) {
   var server = http.createServer();
 
   server.on('error', function(error) {
-    LX.has('error') && LX.log('error', LT.add({ error: error }).toMessage({
+    L.has('error') && L.log('error', T.add({ error: error }).toMessage({
       tags: [ blockRef, 'server-error' ],
       text: ' - Server Error: {error}'
     }));

@@ -19,8 +19,8 @@ var rewire = require('rewire');
 describe('tdd:devebot:core:name-resolver', function() {
 
   var CTX = {
-    LX: LogAdapter.getLogger(),
-    LT: LogTracer.ROOT
+    L: LogAdapter.getLogger(),
+    T: LogTracer.ROOT
   };
 
   describe('standardizing loaded configuration data', function() {

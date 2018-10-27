@@ -20,10 +20,10 @@ function Server(params={}) {
 
   // init the default parameters
   let loggingWrapper = new LoggingWrapper(blockRef);
-  let LX = loggingWrapper.getLogger();
-  let LT = loggingWrapper.getTracer();
+  let L = loggingWrapper.getLogger();
+  let T = loggingWrapper.getTracer();
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
@@ -74,14 +74,14 @@ function Server(params={}) {
     loggingFactory: loggingFactory,
     period: 60 * 1000,
     target: function() {
-      LX.has('conlog') && LX.log('conlog', ' - Since: %s, Uptime: %s', this.startTime.toISOString(), this.uptime);
+      L.has('conlog') && L.log('conlog', ' - Since: %s, Uptime: %s', this.startTime.toISOString(), this.uptime);
     }
   });
 
   let mode = ['silent', 'tictac', 'server'].indexOf(getDevebotMode(devebotCfg.mode));
 
   this.start = function() {
-    LX.has('silly') && LX.log('silly', LT.toMessage({
+    L.has('silly') && L.log('silly', T.toMessage({
       tags: [ blockRef, 'start()' ],
       text: 'start() is invoked'
     }));
@@ -101,13 +101,13 @@ function Server(params={}) {
         });
       });
     }).then(function() {
-      LX.has('silly') && LX.log('silly', LT.toMessage({
+      L.has('silly') && L.log('silly', T.toMessage({
         tags: [ blockRef, 'start()', 'webserver-started' ],
         text: 'webserver has started'
       }));
       return sandboxManager.startTriggers();
     }).then(function(info) {
-      LX.has('silly') && LX.log('silly', LT.toMessage({
+      L.has('silly') && L.log('silly', T.toMessage({
         tags: [ blockRef, 'start()', 'triggers-started' ],
         text: 'triggers have started'
       }));
@@ -119,14 +119,14 @@ function Server(params={}) {
 
   let serverCloseEvent;
   this.stop = function() {
-    LX.has('silly') && LX.log('silly', LT.toMessage({
+    L.has('silly') && L.log('silly', T.toMessage({
       tags: [ blockRef, 'close()' ],
       text: 'close() is invoked'
     }));
     return Promise.resolve().then(function() {
       return sandboxManager.stopTriggers();
     }).then(function() {
-      LX.has('silly') && LX.log('silly', LT.toMessage({
+      L.has('silly') && L.log('silly', T.toMessage({
         tags: [ blockRef, 'close()', 'triggers-stopped' ],
         text: 'triggers have stopped'
       }));
@@ -134,23 +134,23 @@ function Server(params={}) {
       if (mode == 1) return rhythm.stop();
       return new Promise(function(onResolved, onRejected) {
         let timeoutHandler = setTimeout(function() {
-          LX.has('conlog') && LX.log('conlog', 'Timeout closing Server');
+          L.has('conlog') && L.log('conlog', 'Timeout closing Server');
           onRejected();
         }, 60000);
         if (typeof(serverCloseEvent) === 'function') {
           server.removeListener("close", serverCloseEvent);
         }
         server.on("close", serverCloseEvent = function() {
-          LX.has('conlog') && LX.log('conlog', 'HTTP Server is invoked');
+          L.has('conlog') && L.log('conlog', 'HTTP Server is invoked');
         });
         server.close(function() {
-          LX.has('conlog') && LX.log('conlog', 'HTTP Server has been closed');
+          L.has('conlog') && L.log('conlog', 'HTTP Server has been closed');
           clearTimeout(timeoutHandler);
           onResolved();
         });
       });
     }).then(function() {
-      LX.has('silly') && LX.log('silly', LT.toMessage({
+      L.has('silly') && L.log('silly', T.toMessage({
         tags: [ blockRef, 'close()', 'webserver-stopped' ],
         text: 'webserver has stopped'
       }));
@@ -178,28 +178,28 @@ function Server(params={}) {
     let outlet = scriptRenderer.createOutlet({ ws: ws });
 
     ws.on('open', function handler() {
-      LX.has('conlog') && LX.log('conlog', ' - Websocket@server is opened');
+      L.has('conlog') && L.log('conlog', ' - Websocket@server is opened');
     });
 
     ws.on('message', function incoming(command) {
-      LX.has('conlog') && LX.log('conlog', ' - Websocket@server is received a command: <%s>', command);
+      L.has('conlog') && L.log('conlog', ' - Websocket@server is received a command: <%s>', command);
       scriptExecutor.executeCommand(command, outlet);
     });
 
     ws.on('close', function handler(code, message) {
-      LX.has('conlog') && LX.log('conlog', ' - Websocket@server is closed, code: <%s>, message: <%s>', code, message);
+      L.has('conlog') && L.log('conlog', ' - Websocket@server is closed, code: <%s>, message: <%s>', code, message);
     });
 
     ws.on('error', function handler(error) {
-      LX.has('conlog') && LX.log('conlog', ' - Websocket@server encounter an error: <%s>', error);
+      L.has('conlog') && L.log('conlog', ' - Websocket@server encounter an error: <%s>', error);
     });
   });
 
   wss.on('error', function connection(error) {
-    LX.has('conlog') && LX.log('conlog', ' - Websocket@server has an error: <%s>', JSON.stringify(error));
+    L.has('conlog') && L.log('conlog', ' - Websocket@server has an error: <%s>', JSON.stringify(error));
   });
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-end' ],
     text: ' - constructor has finished'
   }));

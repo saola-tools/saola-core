@@ -9,12 +9,12 @@ var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainService');
 var Service = function(params={}) {
   var self = this;
 
-  var LX = params.loggingFactory.getLogger();
-  var TR = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
 
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
 
-  LX.has('info') && LX.log('info', 'configuration: %s', JSON.stringify(mainCfg));
+  L.has('info') && L.log('info', 'configuration: %s', JSON.stringify(mainCfg));
 };
 
 module.exports = Service;

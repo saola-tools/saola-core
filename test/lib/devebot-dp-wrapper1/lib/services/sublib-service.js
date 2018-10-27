@@ -9,10 +9,10 @@ var Service = function(params) {
 
   var packageName = params.packageName || 'devebot-dp-wrapper1';
   var blockRef = chores.getBlockRef(__filename, packageName);
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [blockRef, 'constructor-begin'],
     text: ' + constructor begin ...'
   }));
@@ -23,7 +23,7 @@ var Service = function(params) {
     return pluginCfg;
   }
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [blockRef, 'constructor-end'],
     text: ' + constructor end!'
   }));

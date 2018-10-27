@@ -177,19 +177,19 @@ chores.extractCodeByPattern = function(ctx, patterns, name) {
   for(let k in patterns) {
     assert.ok(patterns[k] instanceof RegExp);
   }
-  let {LX, LT} = ctx;
+  let {L, T} = ctx;
   let info = {};
   for(info.i=0; info.i<patterns.length; info.i++) {
     if (name.match(patterns[info.i])) break;
   }
   if (info.i >= patterns.length) {
-    LX.has('conlog') && LX.log('conlog', LT.add({ name }).toMessage({
+    L.has('conlog') && L.log('conlog', T.add({ name }).toMessage({
       text: ' - The name "${name}" is not matched the patterns'
     }));
     return { i: -1, code: name };
   }
   info.code = name.replace(patterns[info.i], '\$1');
-  LX.has('conlog') && LX.log('conlog', LT.add(lodash.assign({name}, info)).toMessage({
+  L.has('conlog') && L.log('conlog', T.add(lodash.assign({name}, info)).toMessage({
     text: ' - extracted code of "${name}" is "${code}"'
   }));
   return info;

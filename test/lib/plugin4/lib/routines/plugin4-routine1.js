@@ -12,10 +12,10 @@ var runhookDialect = {
   },
   mode: 'direct',
   handler: function(opts, payload, ctx) {
-    var LX = this.loggingFactory.getLogger();
-    var LT = this.loggingFactory.getTracer();
+    var L = this.loggingFactory.getLogger();
+    var T = this.loggingFactory.getTracer();
 
-    LX.has('conlog') && LX.log('conlog', LT.add({
+    L.has('conlog') && L.log('conlog', T.add({
       checkpoint: 'plugin4-routine1-begin'
     }).toMessage({
       text: ' - runhook start',
@@ -24,7 +24,7 @@ var runhookDialect = {
 
     var result = { runhookName: 'Plugin4 - Routine1' }
 
-    LX.has('conlog') && LX.log('conlog', LT.add({
+    L.has('conlog') && L.log('conlog', T.add({
       checkpoint: 'plugin4-routine1-injected-names',
       injectedServiceNames: Object.keys(this.injectedServices)
     }).toMessage({
@@ -38,7 +38,7 @@ var runhookDialect = {
         data: result
     }]);
 
-    LX.has('conlog') && LX.log('conlog', LT.add({
+    L.has('conlog') && L.log('conlog', T.add({
       checkpoint: 'plugin4-routine1-end'
     }).toMessage({
       text: ' - runhook end',

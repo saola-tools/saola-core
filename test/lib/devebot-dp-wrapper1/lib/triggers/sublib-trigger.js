@@ -10,17 +10,17 @@ var Service = function(params) {
 
   var packageName = params.packageName || 'devebot-dp-wrapper1';
   var blockRef = chores.getBlockRef(__filename, packageName);
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [blockRef, 'constructor-begin'],
     text: ' + constructor begin ...'
   }));
 
   if (chores.isUpgradeSupported('bridge-full-ref')) {
     var connector1 = params["connector1#bean"];
-    LX.has('silly') && LX.log('silly', LT.add({
+    L.has('silly') && L.log('silly', T.add({
       config: connector1.getConfig()
     }).toMessage({
       tags: [blockRef, 'connector1#bean', 'bridge-config'],
@@ -28,7 +28,7 @@ var Service = function(params) {
     }));
 
     var connector2 = params["connector2#bean"];
-    LX.has('silly') && LX.log('silly', LT.add({
+    L.has('silly') && L.log('silly', T.add({
       config: connector2.getConfig()
     }).toMessage({
       tags: [blockRef, 'connector2#bean', 'bridge-config'],
@@ -45,7 +45,7 @@ var Service = function(params) {
   var server = http.createServer();
 
   server.on('error', function(err) {
-    LX.has('silly') && LX.log('silly', LT.add({
+    L.has('silly') && L.log('silly', T.add({
       error: err
     }).toMessage({
       tags: [blockRef, 'webserver-error'],
@@ -89,7 +89,7 @@ var Service = function(params) {
     });
   };
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [blockRef, 'constructor-end'],
     text: ' + constructor end!'
   }));

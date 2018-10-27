@@ -25,8 +25,8 @@ describe('tdd:devebot:core:config-loader', function() {
   var stateInspector = lab.getStateInspector();
 
   var CTX = {
-    LX: LogAdapter.getLogger(),
-    LT: LogTracer.ROOT,
+    L: LogAdapter.getLogger(),
+    T: LogTracer.ROOT,
     issueInspector,
     CONFIG_PROFILE_NAME: 'profile',
     CONFIG_SANDBOX_NAME: 'sandbox'

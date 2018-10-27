@@ -9,8 +9,8 @@ var util = require('util');
 var Service = function(params) {
   params = params || {};
 
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
 
   var packageName = params.packageName || 'sub-plugin2';
   var blockRef = chores.getBlockRef(__filename, packageName);
@@ -19,7 +19,7 @@ var Service = function(params) {
   var server = http.createServer();
 
   server.on('error', function(err) {
-    LX.has('silly') && LX.log('silly', LT.add({ error: err }).toMessage({
+    L.has('silly') && L.log('silly', T.add({ error: err }).toMessage({
       tags: [blockRef, 'webserver-error'],
       text: 'Server Error: ${error}'
     }));

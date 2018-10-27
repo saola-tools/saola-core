@@ -24,16 +24,16 @@ const stateInspector = StateInspector.instance;
 
 function appLoader(params={}) {
   let loggingWrapper = new LoggingWrapper(blockRef);
-  let LX = loggingWrapper.getLogger();
-  let LT = loggingWrapper.getTracer();
-  let ctx = { LX, LT };
+  let L = loggingWrapper.getLogger();
+  let T = loggingWrapper.getTracer();
+  let ctx = { L, T };
 
-  LX.has('silly') && LX.log('silly', LT.add({ context: lodash.cloneDeep(params) }).toMessage({
+  L.has('silly') && L.log('silly', T.add({ context: lodash.cloneDeep(params) }).toMessage({
     tags: [ blockRef, 'constructor-begin', 'appLoader' ],
     text: ' + application loading start ...'
   }));
 
-  LX.has('conlog') && LX.log('conlog', LT.add({ context: params }).toMessage({
+  L.has('conlog') && L.log('conlog', T.add({ context: params }).toMessage({
     text: ' * application parameters: ${context}'
   }));
 
@@ -50,7 +50,7 @@ function appLoader(params={}) {
     privateSandbox: params.privateSandbox || params.privateSandboxes
   };
 
-  LX.has('conlog') && LX.log('conlog', LT.add({ appName }).toMessage({
+  L.has('conlog') && L.log('conlog', T.add({ appName }).toMessage({
     text: ' - application name (appName): ${appName}'
   }));
 
@@ -145,7 +145,7 @@ function appLoader(params={}) {
     set: function(value) {}
   });
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-end', 'appLoader' ],
     text: ' - Application loading has done'
   }));

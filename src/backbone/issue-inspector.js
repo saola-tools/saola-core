@@ -9,10 +9,10 @@ const blockRef = chores.getBlockRef(__filename);
 function IssueInspector(params={}) {
   let self = this;
   let loggingWrapper = new LoggingWrapper(blockRef);
-  let LX = loggingWrapper.getLogger();
-  let LT = loggingWrapper.getTracer();
+  let L = loggingWrapper.getLogger();
+  let T = loggingWrapper.getTracer();
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
@@ -43,7 +43,7 @@ function IssueInspector(params={}) {
       }
       return store;
     }, { numberOfErrors: 0, failedServices: [] });
-    LX.has('silly') && LX.log('silly', LT.add({
+    L.has('silly') && L.log('silly', T.add({
       invoker: options.invoker,
       totalOfErrors: summary.numberOfErrors,
       errors: summary.failedServices
@@ -157,7 +157,7 @@ function IssueInspector(params={}) {
           }
         });
       }
-      LX.has('silly') && LX.log('silly', LT.add({
+      L.has('silly') && L.log('silly', T.add({
         invoker: options.invoker,
         silent: silent,
         exitOnError: (options.exitOnError !== false)
@@ -177,7 +177,7 @@ function IssueInspector(params={}) {
 
   this.exit = function(exitCode) {
     exitCode = lodash.isNumber(exitCode) ? exitCode : 0;
-    LX.has('silly') && LX.log('silly', LT.add({ exitCode }).toMessage({
+    L.has('silly') && L.log('silly', T.add({ exitCode }).toMessage({
       tags: [ blockRef, 'exit' ],
       text: 'process.exit(${exitCode}) is invoked'
     }));
@@ -199,7 +199,7 @@ function IssueInspector(params={}) {
     return this;
   }
 
-  LX.has('silly') && LX.log('silly', LT.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-end' ],
     text: ' - constructor has finished'
   }));

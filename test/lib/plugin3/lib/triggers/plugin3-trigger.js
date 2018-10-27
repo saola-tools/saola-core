@@ -9,8 +9,8 @@ var Service = function(params) {
   var self = this;
   params = params || {};
 
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
   var packageName = params.packageName || 'plugin3';
 
   var pluginCfg = lodash.get(params, ['sandboxConfig', 'plugins', 'plugin3'], {});
@@ -18,7 +18,7 @@ var Service = function(params) {
   var server = http.createServer();
 
   server.on('error', function(error) {
-    LX.has('error') && LX.log('error', LT.add({ error }).toMessage({
+    L.has('error') && L.log('error', T.add({ error }).toMessage({
       tags: [ packageName, 'server-error' ],
       text: ' - Server Error: {error}',
       reset: true

@@ -38,12 +38,12 @@ describe('tdd:devebot:base:kernel', function() {
   describe('validateBridgeConfig()', function() {
     var validateBridgeConfig = rewire(lab.getDevebotModule('kernel')).__get__('validateBridgeConfig');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
-    var LX = loggingFactory.getLogger();
-    var LT = loggingFactory.getTracer();
+    var L = loggingFactory.getLogger();
+    var T = loggingFactory.getTracer();
 
     it("result should be ok if bridge config is valid with bridge schema", function() {
       var result = [];
-      validateBridgeConfig({LX, LT, schemaValidator}, {
+      validateBridgeConfig({L, T, schemaValidator}, {
         "bridge1": {
           "application": {
             "anyname1z": {

@@ -10,16 +10,16 @@ var Service = function(params) {
 
   var packageName = params.packageName || 'plugin-invalid-service';
   var blockRef = chores.getBlockRef(__filename, packageName);
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
+  L.has('conlog') && L.log('conlog', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor begin'
   }));
 
   var pluginCfg = lodash.get(params, 'sandboxConfig', {});
-  LX.has('conlog') && LX.log('conlog', LT.add({
+  L.has('conlog') && L.log('conlog', T.add({
     pluginCfg: pluginCfg
   }).toMessage({
     tags: [ blockRef ],
@@ -29,7 +29,7 @@ var Service = function(params) {
   // invalid code
   unknownVar = 1024;
 
-  LX.has('conlog') && LX.log('conlog', LT.toMessage({
+  L.has('conlog') && L.log('conlog', T.toMessage({
     tags: [ blockRef, 'constructor-end' ],
     text: ' - constructor end!'
   }));

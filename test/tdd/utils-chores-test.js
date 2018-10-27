@@ -71,8 +71,8 @@ describe('tdd:devebot:utils:chores', function() {
 
   describe('extractCodeByPattern()', function() {
     const CTX = {
-      LX: LogAdapter.getLogger(),
-      LT: LogTracer.ROOT
+      L: LogAdapter.getLogger(),
+      T: LogTracer.ROOT
     }
     it('should extract code by pattern from name correctly', function() {
       const BRIDGE_NAME_PATTERNS = [

@@ -8,8 +8,8 @@ var Service = function(params) {
   params = params || {};
 
   var self = this;
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
 
   var packageName = params.packageName || 'sub-plugin2';
   var blockRef = chores.getBlockRef(__filename, packageName);

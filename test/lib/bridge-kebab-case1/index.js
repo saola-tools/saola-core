@@ -9,9 +9,9 @@ var Service = function(params) {
 
   params = params || {};
 
-  var LX = this.logger, LT = this.tracer;
+  var L = this.logger, T = this.tracer;
 
-  LX.has('debug') && LX.log('debug', LT.add({ data: params }).toMessage({
+  L.has('debug') && L.log('debug', T.add({ data: params }).toMessage({
     tags: [ 'bridge-kebab-case1', 'configuration' ],
     message: 'Configuration: ${data}'
   }));

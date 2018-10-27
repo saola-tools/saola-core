@@ -39,8 +39,8 @@ describe.skip('tdd:devebot:base:runner', function() {
 
   describe('MockWsServer', function() {
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
-    var LX = loggingFactory.getLogger();
-    var LT = loggingFactory.getTracer();
+    var L = loggingFactory.getLogger();
+    var T = loggingFactory.getTracer();
 
     after(function() {
       LogTracer.clearStringifyInterceptors();

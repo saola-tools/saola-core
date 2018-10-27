@@ -6,13 +6,13 @@ var lodash = Devebot.require('lodash');
 
 var Service = function(params={}) {
   var self = this;
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
+  var L = params.loggingFactory.getLogger();
+  var T = params.loggingFactory.getTracer();
   var blockRef = params.componentId;
 
   var mainCfg = lodash.get(params, ['sandboxConfig'], {});
 
-  LX.has('conlog') && LX.log('conlog', LT.add({
+  L.has('conlog') && L.log('conlog', T.add({
     pluginCfg: mainCfg
   }).toMessage({
     tags: [ blockRef, 'configuration' ],
