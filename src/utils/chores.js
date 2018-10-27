@@ -12,11 +12,10 @@ const constx = require('./constx');
 const loader = require('./loader');
 const envbox = require('./envbox');
 const nodash = require('./nodash');
-const DEFAULT_SCOPE = require('./getenv')('DEVEBOT_DEFAULT_SCOPE', 'devebot');
-const debugx = require('./pinbug')(DEFAULT_SCOPE + ':utils:chores');
+const getenv = require('./getenv');
 
 let store = {
-  defaultScope: DEFAULT_SCOPE,
+  defaultScope: getenv('DEVEBOT_DEFAULT_SCOPE', 'devebot'),
   injektorOptions: {
     namePatternTemplate: '^[a-zA-Z]{1}[a-zA-Z0-9&#\\-_%s]*$',
     separator: '/'
@@ -92,10 +91,6 @@ chores.filterFiles = function(dir, filter, filenames) {
 };
 
 chores.loadServiceByNames = function(serviceMap, serviceFolder, serviceNames) {
-  let self = this;
-  
-  debugx.enabled && debugx(' - load services by names: %s', JSON.stringify(serviceNames));
-  
   serviceNames = nodash.arrayify(serviceNames);
   serviceNames.forEach(function(serviceName) {
     let filepath = path.join(serviceFolder, serviceName + '.js');
@@ -106,7 +101,6 @@ chores.loadServiceByNames = function(serviceMap, serviceFolder, serviceNames) {
       lodash.defaults(serviceMap, serviceEntry);
     }
   });
-
   return serviceMap;
 };
 
@@ -129,7 +123,6 @@ chores.stringCamelCase = function camelCase(str) {
 
 chores.assertDir = function(appName) {
   let configDir = path.join(this.homedir(), '.' + appName);
-  debugx.enabled && debugx('config in homeDir: %s', configDir);
   try {
     fs.readdirSync(configDir);
   } catch (err) {
@@ -253,15 +246,17 @@ chores.lookupMethodRef = function(methodName, serviceName, proxyName, sandboxReg
 }
 
 chores.printError = function(err) {
-  [
-    '',
-    '========== FATAL ERROR ==========',
-    err,
-    '---------------------------------',
-    ''
-  ].forEach(function(item) {
-    debugx.enabled && debugx(item);
-  });
+  if (getenv(['DEVEBOT_ENV', 'NODE_ENV']) !== 'test') {
+    [
+      '',
+      '========== FATAL ERROR ==========',
+      err,
+      '---------------------------------',
+      ''
+    ].forEach(function(item) {
+      console.error(item);
+    });
+  }
 }
 
 chores.injektorOptions = store.injektorOptions;
