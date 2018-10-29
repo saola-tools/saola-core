@@ -8,6 +8,6 @@ var appName = argv['app'] || argv['a'] || 'default';
 
 var main = require(path.join(__dirname, '../index')).getApp(appName);
 main.runner.invoke(function(injektor) {
-	console.log('Profile config: %s', JSON.stringify(injektor.lookup('profileConfig'), null, 2));
-	return Promise.resolve();
+  console.log('Profile config: %s', JSON.stringify(injektor.lookup('profileConfig'), null, 2));
+  return Promise.resolve();
 });

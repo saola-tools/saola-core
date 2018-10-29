@@ -32,6 +32,17 @@ describe('tdd:devebot:core:sandbox-manager', function() {
 
   it('getBridgeDialectNames() - retrieve bridge dialect names correctly', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
+    if (!chores.isUpgradeSupported(['bridge-full-ref'])) {
+      assert.deepEqual(sandboxManager.getBridgeDialectNames(), [
+        "bridge1/anyname1a",
+        "bridge1/anyname1b",
+        "bridge2/anyname2a",
+        "bridge2/anyname2b",
+        "bridge2/anyname2c",
+        "bridge1/anyname1c"
+      ]);
+      return;
+    }
     assert.deepEqual(sandboxManager.getBridgeDialectNames(), [
       chores.toFullname('application', 'bridge1#anyname1z'),
       chores.toFullname('plugin1', 'bridge1#anyname1a'),
