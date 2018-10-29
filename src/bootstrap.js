@@ -21,6 +21,7 @@ const Server = require('./server');
 const blockRef = chores.getBlockRef(__filename);
 const issueInspector = IssueInspector.instance;
 const stateInspector = StateInspector.instance;
+const FRAMEWORK_CAPNAME = lodash.capitalize(constx.FRAMEWORK.NAME);
 
 function appLoader(params={}) {
   let loggingWrapper = new LoggingWrapper(blockRef);
@@ -44,7 +45,7 @@ function appLoader(params={}) {
   let topRootPath = path.join(__dirname, '/..');
 
   let appInfo = appinfoLoader(appRootPath, libRootPaths, topRootPath);
-  let appName = params.appName || appInfo.name || 'devebot-application';
+  let appName = params.appName || appInfo.name || constx.FRAMEWORK.NAME + '-application';
   let appOptions = {
     privateProfile: params.privateProfile || params.privateProfiles,
     privateSandbox: params.privateSandbox || params.privateSandboxes
@@ -66,7 +67,7 @@ function appLoader(params={}) {
 
   let devebotRef = {
     type: 'framework',
-    name: 'devebot',
+    name: constx.FRAMEWORK.NAME,
     path: topRootPath
   };
 
@@ -453,4 +454,4 @@ function loadPackageJson(pkgRootPath) {
   }
 }
 
-module.exports = global.devebot = global.Devebot = bootstrap;
+module.exports = global[constx.FRAMEWORK.NAME] = global[FRAMEWORK_CAPNAME] = bootstrap;

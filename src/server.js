@@ -11,6 +11,7 @@ const WebSocketServer = require('ws').Server;
 
 const Kernel = require('./kernel');
 const chores = require('./utils/chores');
+const constx = require('./utils/constx');
 const LoggingWrapper = require('./backbone/logging-wrapper');
 const RepeatedTimer = require('./backbone/repeated-timer');
 const blockRef = chores.getBlockRef(__filename);
@@ -43,14 +44,14 @@ function Server(params={}) {
   let appName = injektor.lookup('appName', chores.injektorContext);
   let appRootUrl = '/' + chores.stringKebabCase(appName);
 
-  // devebot configures
-  let devebotCfg = lodash.get(profileConfig, ['devebot'], {});
+  // framework configures
+  let frameworkCfg = lodash.get(profileConfig, [constx.FRAMEWORK.NAME], {});
 
-  let tunnelCfg = lodash.get(devebotCfg, ['tunnel'], {});
+  let tunnelCfg = lodash.get(frameworkCfg, ['tunnel'], {});
   let sslEnabled = tunnelCfg.enabled && tunnelCfg.key_file && tunnelCfg.crt_file;
 
   let processRequest = function(req, res) {
-    if (chores.isDevelopmentMode() || devebotCfg.appInfoLevel === 'all') {
+    if (chores.isDevelopmentMode() || frameworkCfg.appInfoLevel === 'all') {
       let appInfo = injektor.lookup('appInfo', chores.injektorContext);
       let appInfoBody = JSON.stringify(appInfo, null, 2);
       res.writeHead(200, 'OK', {
@@ -78,7 +79,7 @@ function Server(params={}) {
     }
   });
 
-  let mode = ['silent', 'tictac', 'server'].indexOf(getDevebotMode(devebotCfg.mode));
+  let mode = ['silent', 'tictac', 'server'].indexOf(getDevebotMode(frameworkCfg.mode));
 
   this.start = function() {
     L.has('silly') && L.log('silly', T.toMessage({
@@ -89,13 +90,13 @@ function Server(params={}) {
       if (mode == 0) return Promise.resolve();
       if (mode == 1) return rhythm.start();
       return new Promise(function(onResolved, onRejected) {
-        let serverHost = lodash.get(devebotCfg, ['host'], '0.0.0.0');
-        let serverPort = lodash.get(devebotCfg, ['port'], 17779);
+        let serverHost = lodash.get(frameworkCfg, ['host'], '0.0.0.0');
+        let serverPort = lodash.get(frameworkCfg, ['port'], 17779);
         let serverInstance = server.listen(serverPort, serverHost, function () {
           let proto = sslEnabled ? 'wss' : 'ws';
           let host = serverInstance.address().address;
           let port = serverInstance.address().port;
-          chores.isVerboseForced('devebot', devebotCfg) &&
+          chores.isVerboseForced(constx.FRAMEWORK.NAME, frameworkCfg) &&
               console.log('%s is listening on %s://%s:%s%s', appName, proto, host, port, appRootUrl);
           onResolved(serverInstance);
         });
@@ -154,7 +155,7 @@ function Server(params={}) {
         tags: [ blockRef, 'close()', 'webserver-stopped' ],
         text: 'webserver has stopped'
       }));
-      chores.isVerboseForced('devebot', devebotCfg) &&
+      chores.isVerboseForced(constx.FRAMEWORK.NAME, frameworkCfg) &&
           console.log('%s has been closed', appName);
       return Promise.resolve();
     });

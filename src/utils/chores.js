@@ -15,12 +15,12 @@ const nodash = require('./nodash');
 const getenv = require('./getenv');
 
 let store = {
-  defaultScope: getenv('DEVEBOT_DEFAULT_SCOPE', 'devebot'),
+  defaultScope: getenv('DEVEBOT_DEFAULT_SCOPE', constx.FRAMEWORK.NAME),
   injektorOptions: {
     namePatternTemplate: '^[a-zA-Z]{1}[a-zA-Z0-9&#\\-_%s]*$',
     separator: '/'
   },
-  injektorContext: { scope: 'devebot' },
+  injektorContext: { scope: constx.FRAMEWORK.NAME },
   validatorOptions: { schemaVersion: 4 }
 };
 let chores = {};
@@ -159,7 +159,7 @@ chores.homedir = (typeof os.homedir === 'function') ? os.homedir : function() {
   return home || null;
 };
 
-const SPECIAL_PLUGINS = ['application', 'devebot'];
+const SPECIAL_PLUGINS = ['application', constx.FRAMEWORK.NAME];
 
 chores.isSpecialPlugin = function(pluginCode) {
   return (SPECIAL_PLUGINS.indexOf(pluginCode) >= 0);

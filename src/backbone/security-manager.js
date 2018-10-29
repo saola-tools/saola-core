@@ -20,7 +20,7 @@ function SecurityManager(params={}) {
     text: ' + constructor start ...'
   }));
 
-  let authenCfg = lodash.get(params, ['profileConfig', 'devebot', 'authen'], {});
+  let authenCfg = lodash.get(params, ['profileConfig', constx.FRAMEWORK.NAME, 'authen'], {});
 
   self.authenticate = function(tokens) {
     let output = Promise.resolve({ result: true });

@@ -347,7 +347,7 @@ SandboxManager.argumentSchema = {
 module.exports = SandboxManager;
 
 let getComponentLabel = function(compName) {
-  return 'devebot' + chores.getSeparator() + compName;
+  return constx.FRAMEWORK.NAME + chores.getSeparator() + compName;
 }
 
 let wrapScriptConstructor = function(ScriptConstructor, wrapperNames) {
@@ -399,9 +399,9 @@ function SandboxRegistry(params) {
   this.defineService = function(name, construktor, context) {
     context = context || {};
     let info = injektor.parseName(name, context);
-    if (info.scope === 'devebot') {
+    if (info.scope === constx.FRAMEWORK.NAME) {
       let RestrictedError = errors.createConstructor('RestrictedDevebotError');
-      throw new RestrictedError('dependency scope [devebot] is restricted');
+      throw new RestrictedError(util.format('dependency scope [%s] is restricted', constx.FRAMEWORK.NAME));
     }
     let exceptions = [];
     let fullname = injektor.resolveName(serviceName, {

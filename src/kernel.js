@@ -4,6 +4,7 @@ const Injektor = require('injektor');
 const lodash = require('lodash');
 const path = require('path');
 const chores = require('./utils/chores');
+const constx = require('./utils/constx');
 const LoggingWrapper = require('./backbone/logging-wrapper');
 const blockRef = chores.getBlockRef(__filename);
 
@@ -135,7 +136,7 @@ function Kernel(params={}) {
   // initialize plugins, bridges, sandboxManager
   let sandboxManager = injektor.lookup('sandboxManager', chores.injektorContext);
 
-  let devebotCfg = lodash.get(configObject, ['profile', 'mixture', 'devebot'], {});
+  let devebotCfg = lodash.get(configObject, ['profile', 'mixture', constx.FRAMEWORK.NAME], {});
   let inOpts = lodash.assign({ invoker: blockRef, footmark: 'sandbox-loading' }, devebotCfg);
   issueInspector.barrier(inOpts);
   stateInspector.conclude(inOpts);
@@ -147,7 +148,8 @@ function Kernel(params={}) {
   }
 
   let profileConfig = injektor.lookup('profileConfig', chores.injektorContext);
-  if (profileConfig.devebot && profileConfig.devebot.coupling === 'loose') {
+  let frameworkCfg = profileConfig[constx.FRAMEWORK.NAME] || {};
+  if (frameworkCfg.coupling === 'loose') {
     let sandboxManager = injektor.lookup('sandboxManager', chores.injektorContext);
     this.getSandboxManager = function() {
       return sandboxManager;

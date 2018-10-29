@@ -4,6 +4,7 @@ const lodash = require('lodash');
 const LogTracer = require('logolite').LogTracer;
 const LoggingWrapper = require('./logging-wrapper');
 const chores = require('../utils/chores');
+const constx = require('../utils/constx');
 const blockRef = chores.getBlockRef(__filename);
 
 function NameResolver(params={}) {
@@ -118,11 +119,11 @@ module.exports = NameResolver;
 
 const LIB_NAME_PATTERNS = {
   bridge: [
-    /^devebot-co-([a-z][a-z0-9\-]*[a-z0-9])$/g,
+    new RegExp("^" + constx.FRAMEWORK.NAME + "-co-([a-z][a-z0-9\-]*[a-z0-9])$", "g"),
     /^([a-z][a-z0-9\-]*[a-z0-9])$/g
   ],
   plugin: [
-    /^devebot-dp-([a-z][a-z0-9\-]*[a-z0-9])$/g,
+    new RegExp("^" + constx.FRAMEWORK.NAME + "-dp-([a-z][a-z0-9\-]*[a-z0-9])$" ,"g"),
     /^([a-z][a-z0-9\-]*[a-z0-9])$/g
   ]
 }

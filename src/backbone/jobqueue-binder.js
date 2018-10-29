@@ -18,7 +18,7 @@ function JobqueueBinder(params={}) {
     text: ' + constructor start in sandbox <{sandboxName}>'
   }));
 
-  let jqCfg = lodash.get(params, ['profileConfig', 'devebot', 'jobqueue'], {});
+  let jqCfg = lodash.get(params, ['profileConfig', constx.FRAMEWORK.NAME, 'jobqueue'], {});
 
   let jobqueueMasterName = null;
   let getJobqueueMasterName = function() {

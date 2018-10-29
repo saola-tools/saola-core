@@ -3,6 +3,7 @@
 const lodash = require('lodash');
 const Chalk = require('../utils/chalk');
 const chores = require('../utils/chores');
+const constx = require('../utils/constx');
 const LoggingWrapper = require('./logging-wrapper');
 const blockRef = chores.getBlockRef(__filename);
 
@@ -70,7 +71,7 @@ function IssueInspector(params={}) {
               console.error(chalk.errorStack("  " + fsv.stack));
               return;
               case 'plugin':
-              case 'devebot':
+              case constx.FRAMEWORK.NAME:
               console.error(chalk.errorMessage('--> [%s:%s] loading plugin is failed, reasons:'), fsv.type, fsv.name);
               console.error(chalk.errorStack("  " + fsv.stack));
               return;
@@ -96,7 +97,7 @@ function IssueInspector(params={}) {
             switch(fsv.type) {
               case 'application':
               case 'plugin':
-              case 'devebot':
+              case constx.FRAMEWORK.NAME:
               console.error(chalk.errorMessage('--> [%s:%s] plugin configure is invalid, reasons:'), fsv.type, fsv.name);
               console.error(chalk.errorStack("  " + fsv.stack));
               return;
