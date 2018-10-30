@@ -2,15 +2,11 @@
 
 var lab = require('../index');
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
-var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:base:bootstrap');
 var assert = require('chai').assert;
-var expect = require('chai').expect;
 var path = require('path');
-var util = require('util');
 var bootstrap = require(lab.getDevebotModule('bootstrap'));
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;

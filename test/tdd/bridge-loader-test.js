@@ -2,19 +2,14 @@
 
 var lab = require('../index');
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:bridge-loader');
 var assert = require('chai').assert;
-var expect = require('chai').expect;
-var path = require('path');
 var util = require('util');
-var Injektor = require('injektor');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
-var rewire = require('rewire');
 
 describe('tdd:devebot:core:bridge-loader', function() {
   this.timeout(lab.getDefaultTimeout());

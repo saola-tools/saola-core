@@ -4,17 +4,10 @@ var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var loader = Devebot.require('loader');
 var assert = require('chai').assert;
-var expect = require('chai').expect;
 var path = require('path');
 var util = require('util');
-var chores = require(lab.getDevebotModule('utils/chores'));
 var errors = require(lab.getDevebotModule('utils/errors'));
-var envmask = require('envmask').instance;
-var LogAdapter = require('logolite').LogAdapter;
-var LogTracer = require('logolite').LogTracer;
-
 var debugx = Devebot.require('pinbug')('tdd:devebot:utils:errors');
 
 describe('tdd:devebot:utils:errors', function() {

@@ -2,7 +2,6 @@
 
 var lab = require('../index');
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:logging-factory');
 var assert = require('chai').assert;

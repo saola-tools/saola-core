@@ -2,21 +2,15 @@
 
 var lab = require('../index');
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
-var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:base:kernel');
 var assert = require('chai').assert;
-var path = require('path');
-var util = require('util');
-var kernel = require(lab.getDevebotModule('kernel'));
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
 var envbox = require(lab.getDevebotModule('utils/envbox'));
 var rewire = require('rewire');
-var sinon = require('sinon');
 
 describe('tdd:devebot:base:kernel', function() {
   this.timeout(lab.getDefaultTimeout());

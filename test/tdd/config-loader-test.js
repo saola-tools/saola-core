@@ -2,15 +2,12 @@
 
 var lab = require('../index');
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:config-loader');
 var assert = require('chai').assert;
-var expect = require('chai').expect;
 var path = require('path');
-var util = require('util');
 var ConfigLoader = require(lab.getDevebotModule('backbone/config-loader'));
 var NameResolver = require(lab.getDevebotModule('backbone/name-resolver'));
 var LogAdapter = require('logolite').LogAdapter;

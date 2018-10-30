@@ -5,16 +5,9 @@ var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
-var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:utils:envbox');
 var assert = require('chai').assert;
-var path = require('path');
-var util = require('util');
-var LogConfig = require('logolite').LogConfig;
-var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
-var rewire = require('rewire');
-var sinon = require('sinon');
 var envbox = require(lab.getDevebotModule('utils/envbox'));
 
 describe('tdd:devebot:utils:envbox', function() {
