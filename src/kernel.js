@@ -83,7 +83,7 @@ function Kernel(params={}) {
     text: " - plugin's metadata: ${metadata}"
   }));
 
-  let SELECTED_FIELDS = [ 'crateScope', 'schema', 'extension' ];
+  let SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'validator' ];
   let extractPluginSchema = function(pluginMetadata) {
     let configSchema = { profile: {}, sandbox: {} };
     lodash.forOwn(pluginMetadata, function(ref, key) {
