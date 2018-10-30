@@ -2,8 +2,10 @@
 
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
+var chores = Devebot.require('chores');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:plugin1:plugin1Trigger');
 var http = require('http');
+var util = require('util');
 
 var Service = function(params) {
   var self = this;
@@ -11,6 +13,8 @@ var Service = function(params) {
 
   debugx.enabled && debugx(' + constructor begin ...');
 
+  var packageName = params.packageName || 'plugin1-default-name';
+  var blockRef = params.componentId;
   var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
   var server = http.createServer();
@@ -21,7 +25,7 @@ var Service = function(params) {
 
   server.on('request', function(req, res) {
     res.writeHead(200);
-    res.end('plugin1 webserver');
+    res.end(util.format('%s webserver', packageName));
   });
 
   self.getServer = function() {
@@ -36,8 +40,8 @@ var Service = function(params) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
-        (pluginCfg && pluginCfg.verbose !== false || debugx.enabled) &&
-        console.log('plugin1 webserver is listening at http://%s:%s', host, port);
+        chores.isVerboseForced(packageName, pluginCfg) &&
+            console.log('%s webserver is listening at http://%s:%s', packageName, host, port);
         resolved(serverInstance);
       });
     });
@@ -46,8 +50,8 @@ var Service = function(params) {
   self.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
-        (pluginCfg && pluginCfg.verbose !== false || debugx.enabled) &&
-        console.log('plugin1 webserver has been closed');
+        chores.isVerboseForced(packageName, pluginCfg) &&
+            console.log('%s webserver has been closed', packageName);
         resolved();
       });
     });

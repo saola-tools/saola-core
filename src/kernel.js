@@ -161,7 +161,7 @@ function Kernel(params={}) {
 
   this._injektor = injektor;
 
-L.has('silly') && L.log('silly', T.toMessage({
+  L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-end' ],
     text: ' - constructor has finished'
   }));
@@ -234,7 +234,7 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
   let sandboxSchema = pluginSchema.sandbox || {};
 
   let customizeResult = function(result, crateScope, crateName) {
-    if (result == null) result = false;
+    result = (result == undefined || result == null) ? false : result;
     result = (typeof result === 'boolean') ? { ok: result } : result;
     let output = {};
     output.stage = 'config/schema';
