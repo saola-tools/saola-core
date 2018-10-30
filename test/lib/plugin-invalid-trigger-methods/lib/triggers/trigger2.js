@@ -14,7 +14,7 @@ var Service = function(params) {
   var L = params.loggingFactory.getLogger();
   var T = params.loggingFactory.getTracer();
 
-  L.has('conlog') && L.log('conlog', T.toMessage({
+  L.has('dunce') && L.log('dunce', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor begin'
   }));
@@ -55,7 +55,7 @@ var Service = function(params) {
     });
   };
 
-  L.has('conlog') && L.log('conlog', T.toMessage({
+  L.has('dunce') && L.log('dunce', T.toMessage({
     tags: [ blockRef, 'constructor-end' ],
     text: ' - constructor end!'
   }));

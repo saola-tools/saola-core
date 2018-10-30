@@ -24,7 +24,7 @@ var runhookDialect = {
     var L = this.loggingFactory.getLogger();
     var T = this.loggingFactory.getTracer();
 
-    L.has('conlog') && L.log('conlog', T.add({
+    L.has('dunce') && L.log('dunce', T.add({
       tags: ['sub-plugin2', 'routine0', 'begin'],
       checkpoint: 'sub-plugin2-routine0-begin'
     }).toMessage({
@@ -40,7 +40,7 @@ var runhookDialect = {
         data: { fibonacci: result }
     }]);
 
-    L.has('conlog') && L.log('conlog', T.add({
+    L.has('dunce') && L.log('dunce', T.add({
       checkpoint: 'sub-plugin2-routine0-end'
     }).toMessage({
       tags: ['sub-plugin2', 'routine0', 'end'],

@@ -24,7 +24,7 @@ var runhookDialect = {
     var L = this.loggingFactory.getLogger();
     var T = this.loggingFactory.getTracer();
 
-    L.has('conlog') && L.log('conlog', T.toMessage({
+    L.has('dunce') && L.log('dunce', T.toMessage({
       text: ' - runhook start'
     }));
 
@@ -37,7 +37,7 @@ var runhookDialect = {
         data: { fibonacci: result }
     }]);
 
-    L.has('conlog') && L.log('conlog', T.toMessage({
+    L.has('dunce') && L.log('dunce', T.toMessage({
       text: ' - runhook end'
     }));
 

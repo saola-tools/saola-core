@@ -12,7 +12,7 @@ var Service = function(params) {
   var packageName = params.packageName || 'plugin3';
 
   var pluginCfg = lodash.get(params, ['sandboxConfig', 'plugins', 'plugin3'], {});
-  L.has('conlog') && L.log('conlog', T.add({
+  L.has('dunce') && L.log('dunce', T.add({
     pluginCfg: pluginCfg
   }).toMessage({
     tags: [ packageName, 'configuration' ],

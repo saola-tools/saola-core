@@ -12,7 +12,7 @@ var Service = function(params={}) {
 
   var mainCfg = lodash.get(params, ['sandboxConfig'], {});
 
-  L.has('conlog') && L.log('conlog', T.add({
+  L.has('dunce') && L.log('dunce', T.add({
     pluginCfg: mainCfg
   }).toMessage({
     tags: [ blockRef, 'configuration' ],

@@ -14,7 +14,7 @@ var Service = function(params) {
   var blockRef = params.componentId;
   var pluginCfg = params.sandboxConfig || {};
 
-  L.has('conlog') && L.log('conlog', T.add({
+  L.has('dunce') && L.log('dunce', T.add({
     pluginCfg: pluginCfg
   }).toMessage({
     tags: [ blockRef, 'configuration' ],

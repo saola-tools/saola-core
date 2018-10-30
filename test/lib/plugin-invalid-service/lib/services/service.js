@@ -13,13 +13,13 @@ var Service = function(params) {
   var L = params.loggingFactory.getLogger();
   var T = params.loggingFactory.getTracer();
 
-  L.has('conlog') && L.log('conlog', T.toMessage({
+  L.has('dunce') && L.log('dunce', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor begin'
   }));
 
   var pluginCfg = lodash.get(params, 'sandboxConfig', {});
-  L.has('conlog') && L.log('conlog', T.add({
+  L.has('dunce') && L.log('dunce', T.add({
     pluginCfg: pluginCfg
   }).toMessage({
     tags: [ blockRef ],
@@ -29,7 +29,7 @@ var Service = function(params) {
   // invalid code
   unknownVar = 1024;
 
-  L.has('conlog') && L.log('conlog', T.toMessage({
+  L.has('dunce') && L.log('dunce', T.toMessage({
     tags: [ blockRef, 'constructor-end' ],
     text: ' - constructor end!'
   }));
