@@ -152,30 +152,49 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('plugin2')
         }
       ], null);
-      output = replaceObjectFields(output, DEFAULT_CONTEXT);
-      false && console.log('expandExtensions(): ', output);
+      output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
+      false && console.log('expandExtensions(): ', JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
-          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
-          pluginRefs: {
-            '/test/lib/plugin1': {
-              name: 'plugin1',
-              path: '/test/lib/plugin1',
-              presets: {
+          "libRootPaths": [
+            "/test/lib/plugin1",
+            "/test/lib/plugin2"
+          ],
+          "pluginRefs": {
+            "/test/lib/plugin1": {
+              "name": "plugin1",
+              "path": "/test/lib/plugin1",
+              "presets": {
                 "configTags": "bridge[dialect-bridge]"
-              }
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
             },
-            '/test/lib/plugin2': {
-              name: 'plugin2',
-              path: '/test/lib/plugin2',
-              presets: {
+            "/test/lib/plugin2": {
+              "name": "plugin2",
+              "path": "/test/lib/plugin2",
+              "presets": {
                 "configTags": "bridge[dialect-bridge]"
-              }
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
             }
           },
-          bridgeRefs: {
-            '/test/lib/bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
-            '/test/lib/bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
+          "bridgeRefs": {
+            "/test/lib/bridge1": {
+              "name": "bridge1",
+              "path": "/test/lib/bridge1"
+            },
+            "/test/lib/bridge2": {
+              "name": "bridge2",
+              "path": "/test/lib/bridge2"
+            }
           }
         });
       } else {
@@ -257,40 +276,56 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('bridge2')
         }
       ]);
-      output = replaceObjectFields(output, DEFAULT_CONTEXT);
+      output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
+      false && console.log('expandExtensions(): ', JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
-          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
-          pluginRefs: {
-            '/test/lib/plugin1': {
-              name: 'plugin1',
-              path: '/test/lib/plugin1',
-              presets: {
+          "libRootPaths": [
+            "/test/lib/plugin1",
+            "/test/lib/plugin2",
+            "/test/lib/plugin3"
+          ],
+          "pluginRefs": {
+            "/test/lib/plugin1": {
+              "name": "plugin1",
+              "path": "/test/lib/plugin1",
+              "presets": {
                 "configTags": "bridge[dialect-bridge]"
-              }
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
             },
-            '/test/lib/plugin2': {
-              name: 'plugin2',
-              path: '/test/lib/plugin2',
-              presets: {
+            "/test/lib/plugin2": {
+              "name": "plugin2",
+              "path": "/test/lib/plugin2",
+              "presets": {
                 "configTags": "bridge[dialect-bridge]"
-              }
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
             },
-            '/test/lib/plugin3': {
-              name: 'plugin3',
-              path: '/test/lib/plugin3',
-              presets: {
-              }
+            "/test/lib/plugin3": {
+              "name": "plugin3",
+              "path": "/test/lib/plugin3",
+              "presets": {},
+              "bridgeDepends": [],
+              "pluginDepends": []
             }
           },
-          bridgeRefs: {
-            '/test/lib/bridge1': {
-              name: 'bridge1',
-              path: '/test/lib/bridge1'
+          "bridgeRefs": {
+            "/test/lib/bridge1": {
+              "name": "bridge1",
+              "path": "/test/lib/bridge1"
             },
-            '/test/lib/bridge2': {
-              name: 'bridge2',
-              path: '/test/lib/bridge2'
+            "/test/lib/bridge2": {
+              "name": "bridge2",
+              "path": "/test/lib/bridge2"
             }
           }
         });
@@ -321,66 +356,88 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('sub-plugin2')
         }
       ]);
-      output = replaceObjectFields(output, DEFAULT_CONTEXT);
-      false && console.log('expandExtensions(): ', output);
+      output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
+      false && console.log('expandExtensions(): ', JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
-          libRootPaths:
-            [
-              '/test/lib/sub-plugin1',
-              '/test/lib/plugin1',
-              '/test/lib/plugin2',
-              '/test/lib/sub-plugin2',
-              '/test/lib/plugin3'
-            ],
-          pluginRefs:
-            {
-              '/test/lib/sub-plugin1': {
-                name: 'sub-plugin1',
-                path: '/test/lib/sub-plugin1',
-                presets: {
-                }
-              },
-              '/test/lib/sub-plugin2': {
-                name: 'sub-plugin2',
-                path: '/test/lib/sub-plugin2',
-                presets: {
-                }
-              },
-              '/test/lib/plugin1': {
-                name: 'plugin1',
-                path: '/test/lib/plugin1',
-                presets: {
-                  "configTags": "bridge[dialect-bridge]"
-                }
-              },
-              '/test/lib/plugin2': {
-                name: 'plugin2',
-                path: '/test/lib/plugin2',
-                presets: {
-                  "configTags": "bridge[dialect-bridge]"
-                }
-              },
-              '/test/lib/plugin3': {
-                name: 'plugin3',
-                path: '/test/lib/plugin3',
-                presets: {
-                }
-              }
+          "libRootPaths": [
+            "/test/lib/sub-plugin1",
+            "/test/lib/plugin1",
+            "/test/lib/plugin2",
+            "/test/lib/sub-plugin2",
+            "/test/lib/plugin3"
+          ],
+          "pluginRefs": {
+            "/test/lib/sub-plugin1": {
+              "name": "sub-plugin1",
+              "path": "/test/lib/sub-plugin1",
+              "presets": {},
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": [
+                "plugin1",
+                "plugin2"
+              ]
             },
-          bridgeRefs:
-          {
-            '/test/lib/bridge1': {
-              name: 'bridge1',
-              path: '/test/lib/bridge1'
+            "/test/lib/sub-plugin2": {
+              "name": "sub-plugin2",
+              "path": "/test/lib/sub-plugin2",
+              "presets": {},
+              "bridgeDepends": [
+                "bridge2",
+                "bridge3"
+              ],
+              "pluginDepends": [
+                "plugin2",
+                "plugin3"
+              ]
             },
-            '/test/lib/bridge2': {
-              name: 'bridge2',
-              path: '/test/lib/bridge2'
+            "/test/lib/plugin1": {
+              "name": "plugin1",
+              "path": "/test/lib/plugin1",
+              "presets": {
+                "configTags": "bridge[dialect-bridge]"
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
             },
-            '/test/lib/bridge3': {
-              name: 'bridge3',
-              path: '/test/lib/bridge3'
+            "/test/lib/plugin2": {
+              "name": "plugin2",
+              "path": "/test/lib/plugin2",
+              "presets": {
+                "configTags": "bridge[dialect-bridge]"
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
+            },
+            "/test/lib/plugin3": {
+              "name": "plugin3",
+              "path": "/test/lib/plugin3",
+              "presets": {},
+              "bridgeDepends": [],
+              "pluginDepends": []
+            }
+          },
+          "bridgeRefs": {
+            "/test/lib/bridge1": {
+              "name": "bridge1",
+              "path": "/test/lib/bridge1"
+            },
+            "/test/lib/bridge2": {
+              "name": "bridge2",
+              "path": "/test/lib/bridge2"
+            },
+            "/test/lib/bridge3": {
+              "name": "bridge3",
+              "path": "/test/lib/bridge3"
             }
           }
         });
@@ -456,79 +513,102 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('bridge4')
         }
       ]);
-      output = replaceObjectFields(output, DEFAULT_CONTEXT);
-      false && console.log('expandExtensions(): ', output);
+      output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
+      false && console.log('expandExtensions(): ', JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
-          libRootPaths:
-            [
-              '/test/lib/sub-plugin1',
-              '/test/lib/plugin1',
-              '/test/lib/plugin2',
-              '/test/lib/sub-plugin2',
-              '/test/lib/plugin3',
-              '/test/lib/plugin4'
-            ],
-          pluginRefs:
-            {
-              '/test/lib/sub-plugin1': {
-                name: 'sub-plugin1',
-                path: '/test/lib/sub-plugin1',
-                presets: {
-                }
-              },
-              '/test/lib/sub-plugin2': {
-                name: 'sub-plugin2',
-                path: '/test/lib/sub-plugin2',
-                presets: {
-                }
-              },
-              '/test/lib/plugin1': {
-                name: 'plugin1',
-                path: '/test/lib/plugin1',
-                presets: {
-                  "configTags": "bridge[dialect-bridge]"
-                }
-              },
-              '/test/lib/plugin2': {
-                name: 'plugin2',
-                path: '/test/lib/plugin2',
-                presets: {
-                  "configTags": "bridge[dialect-bridge]"
-                }
-              },
-              '/test/lib/plugin3': {
-                name: 'plugin3',
-                path: '/test/lib/plugin3',
-                presets: {
-                }
-              },
-              '/test/lib/plugin4': {
-                name: 'plugin4',
-                path: '/test/lib/plugin4',
-                presets: {
-                }
-              }
+          "libRootPaths": [
+            "/test/lib/sub-plugin1",
+            "/test/lib/plugin1",
+            "/test/lib/plugin2",
+            "/test/lib/sub-plugin2",
+            "/test/lib/plugin3",
+            "/test/lib/plugin4"
+          ],
+          "pluginRefs": {
+            "/test/lib/sub-plugin1": {
+              "name": "sub-plugin1",
+              "path": "/test/lib/sub-plugin1",
+              "presets": {},
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": [
+                "plugin1",
+                "plugin2"
+              ]
             },
-          bridgeRefs:
-            {
-              '/test/lib/bridge1': {
-                name: 'bridge1',
-                path: '/test/lib/bridge1'
+            "/test/lib/plugin1": {
+              "name": "plugin1",
+              "path": "/test/lib/plugin1",
+              "presets": {
+                "configTags": "bridge[dialect-bridge]"
               },
-              '/test/lib/bridge2': {
-                name: 'bridge2',
-                path: '/test/lib/bridge2'
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
+            },
+            "/test/lib/plugin2": {
+              "name": "plugin2",
+              "path": "/test/lib/plugin2",
+              "presets": {
+                "configTags": "bridge[dialect-bridge]"
               },
-              '/test/lib/bridge3': {
-                name: 'bridge3',
-                path: '/test/lib/bridge3'
-              },
-              '/test/lib/bridge4': {
-                name: 'bridge4',
-                path: '/test/lib/bridge4'
-              }
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
+            },
+            "/test/lib/sub-plugin2": {
+              "name": "sub-plugin2",
+              "path": "/test/lib/sub-plugin2",
+              "presets": {},
+              "bridgeDepends": [
+                "bridge2",
+                "bridge3"
+              ],
+              "pluginDepends": [
+                "plugin2",
+                "plugin3"
+              ]
+            },
+            "/test/lib/plugin3": {
+              "name": "plugin3",
+              "path": "/test/lib/plugin3",
+              "presets": {},
+              "bridgeDepends": [],
+              "pluginDepends": []
+            },
+            "/test/lib/plugin4": {
+              "name": "plugin4",
+              "path": "/test/lib/plugin4",
+              "presets": {},
+              "bridgeDepends": [],
+              "pluginDepends": []
             }
+          },
+          "bridgeRefs": {
+            "/test/lib/bridge1": {
+              "name": "bridge1",
+              "path": "/test/lib/bridge1"
+            },
+            "/test/lib/bridge2": {
+              "name": "bridge2",
+              "path": "/test/lib/bridge2"
+            },
+            "/test/lib/bridge3": {
+              "name": "bridge3",
+              "path": "/test/lib/bridge3"
+            },
+            "/test/lib/bridge4": {
+              "name": "bridge4",
+              "path": "/test/lib/bridge4"
+            }
+          }
         });
       } else {
         assert.deepEqual(output, {
@@ -696,46 +776,46 @@ describe('tdd:devebot:base:bootstrap', function() {
       // verify bridgeRefs
       assert.sameDeepMembers(cfg.bridgeRefs, [
         {
+          "name": "bridge3",
+          "path": "/test/lib/bridge3",
           "code": "bridge3",
           "codeInCamel": "bridge3",
-          "name": "bridge3",
-          "nameInCamel": "bridge3",
-          "path": "/test/lib/bridge3"
+          "nameInCamel": "bridge3"
         },
         {
+          "name": "bridge4",
+          "path": "/test/lib/bridge4",
           "code": "bridge4",
           "codeInCamel": "bridge4",
-          "name": "bridge4",
-          "nameInCamel": "bridge4",
-          "path": "/test/lib/bridge4"
+          "nameInCamel": "bridge4"
         },
         {
-          "code": "bridge1",
-          "codeInCamel": "bridge1",
-          "name": "bridge1",
-          "nameInCamel": "bridge1",
-          "path": "/test/lib/bridge1"
-        },
-        {
-          "code": "bridge2",
-          "codeInCamel": "bridge2",
-          "name": "bridge2",
-          "nameInCamel": "bridge2",
-          "path": "/test/lib/bridge2"
-        },
-        {
+          "name": "devebot-co-connector1",
+          "path": "/test/lib/devebot-co-connector1",
           "code": "connector1",
           "codeInCamel": "connector1",
-          "name": "devebot-co-connector1",
-          "nameInCamel": "devebotCoConnector1",
-          "path": "/test/lib/devebot-co-connector1"
+          "nameInCamel": "devebotCoConnector1"
         },
         {
+          "name": "devebot-co-connector2",
+          "path": "/test/lib/devebot-co-connector2",
           "code": "connector2",
           "codeInCamel": "connector2",
-          "name": "devebot-co-connector2",
-          "nameInCamel": "devebotCoConnector2",
-          "path": "/test/lib/devebot-co-connector2"
+          "nameInCamel": "devebotCoConnector2"
+        },
+        {
+          "name": "bridge1",
+          "path": "/test/lib/bridge1",
+          "code": "bridge1",
+          "codeInCamel": "bridge1",
+          "nameInCamel": "bridge1"
+        },
+        {
+          "name": "bridge2",
+          "path": "/test/lib/bridge2",
+          "code": "bridge2",
+          "codeInCamel": "bridge2",
+          "nameInCamel": "bridge2"
         }
       ]);
       // verify pluginRefs
@@ -746,51 +826,76 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/app/fullapp"
         },
         {
+          "name": "sub-plugin1",
+          "path": "/test/lib/sub-plugin1",
+          "presets": {},
+          "bridgeDepends": [
+            "bridge1",
+            "bridge2"
+          ],
+          "pluginDepends": [
+            "plugin1",
+            "plugin2"
+          ],
           "code": "sub-plugin1",
           "codeInCamel": "subPlugin1",
-          "name": "sub-plugin1",
-          "nameInCamel": "subPlugin1",
-          "path": "/test/lib/sub-plugin1",
-          "presets": {
-          }
+          "nameInCamel": "subPlugin1"
         },
         {
+          "name": "sub-plugin2",
+          "path": "/test/lib/sub-plugin2",
+          "presets": {},
+          "bridgeDepends": [
+            "bridge2",
+            "bridge3"
+          ],
+          "pluginDepends": [
+            "plugin2",
+            "plugin3"
+          ],
           "code": "sub-plugin2",
           "codeInCamel": "subPlugin2",
-          "name": "sub-plugin2",
-          "nameInCamel": "subPlugin2",
-          "path": "/test/lib/sub-plugin2",
-          "presets": {
-          }
+          "nameInCamel": "subPlugin2"
         },
         {
-          "code": "plugin1",
-          "codeInCamel": "plugin1",
           "name": "plugin1",
-          "nameInCamel": "plugin1",
           "path": "/test/lib/plugin1",
           "presets": {
             "configTags": "bridge[dialect-bridge]"
-          }
+          },
+          "bridgeDepends": [
+            "bridge1",
+            "bridge2"
+          ],
+          "pluginDepends": [],
+          "code": "plugin1",
+          "codeInCamel": "plugin1",
+          "nameInCamel": "plugin1"
         },
         {
-          "code": "plugin2",
-          "codeInCamel": "plugin2",
           "name": "plugin2",
-          "nameInCamel": "plugin2",
           "path": "/test/lib/plugin2",
           "presets": {
             "configTags": "bridge[dialect-bridge]"
-          }
+          },
+          "bridgeDepends": [
+            "bridge1",
+            "bridge2"
+          ],
+          "pluginDepends": [],
+          "code": "plugin2",
+          "codeInCamel": "plugin2",
+          "nameInCamel": "plugin2"
         },
         {
+          "name": "plugin3",
+          "path": "/test/lib/plugin3",
+          "presets": {},
+          "bridgeDepends": [],
+          "pluginDepends": [],
           "code": "plugin3",
           "codeInCamel": "plugin3",
-          "name": "plugin3",
-          "nameInCamel": "plugin3",
-          "path": "/test/lib/plugin3",
-          "presets": {
-          }
+          "nameInCamel": "plugin3"
         },
         {
           "type": "framework",
@@ -800,7 +905,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       ];
       if (!chores.isUpgradeSupported('presets')) {
         expectedPluginRefs = lodash.map(expectedPluginRefs, function(item) {
-          return lodash.omit(item, ["presets"]);
+          return lodash.omit(item, ["presets", "bridgeDepends", "pluginDepends"]);
         });
       }
       assert.sameDeepMembers(cfg.pluginRefs, expectedPluginRefs);
@@ -814,7 +919,7 @@ describe('tdd:devebot:base:bootstrap', function() {
 
     it('register a new plugin with empty parameters', function() {
       var pluginLauncher = bootstrap.registerLayerware();
-      var pluginStore = pluginLauncher();
+      var pluginStore = removeLoggingUtils(pluginLauncher());
       false && console.log(JSON.stringify(pluginStore, null, 2));
       assert.deepEqual(pluginStore, { libRootPaths: [], bridgeRefs: {}, pluginRefs: {} });
     });
@@ -830,68 +935,90 @@ describe('tdd:devebot:base:bootstrap', function() {
           path: lab.getLibHome('sub-plugin2')
         }
       ], []);
-      var output = replaceObjectFields(pluginLauncher(), DEFAULT_CONTEXT);
-      false && console.log('pluginLauncher(): ', output);
+      var output = replaceObjectFields(removeLoggingUtils(pluginLauncher()), DEFAULT_CONTEXT);
+      false && console.log('pluginLauncher(): ', JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported('presets')) {
         assert.deepEqual(output, {
-          libRootPaths:
-            [
-              '/test/lib/sub-plugin1',
-              '/test/lib/plugin1',
-              '/test/lib/plugin2',
-              '/test/lib/sub-plugin2',
-              '/test/lib/plugin3'
-            ],
-          pluginRefs:
-            {
-              '/test/lib/sub-plugin1': {
-                name: 'sub-plugin1',
-                path: '/test/lib/sub-plugin1',
-                presets: {
-                }
-              },
-              '/test/lib/sub-plugin2': {
-                name: 'sub-plugin2',
-                path: '/test/lib/sub-plugin2',
-                presets: {
-                }
-              },
-              '/test/lib/plugin1': {
-                name: 'plugin1',
-                path: '/test/lib/plugin1',
-                presets: {
-                  configTags: "bridge[dialect-bridge]"
-                }
-              },
-              '/test/lib/plugin2': {
-                name: 'plugin2',
-                path: '/test/lib/plugin2',
-                presets: {
-                  configTags: "bridge[dialect-bridge]"
-                }
-              },
-              '/test/lib/plugin3': {
-                name: 'plugin3',
-                path: '/test/lib/plugin3',
-                presets: {
-                }
-              }
+          "libRootPaths": [
+            "/test/lib/sub-plugin1",
+            "/test/lib/plugin1",
+            "/test/lib/plugin2",
+            "/test/lib/sub-plugin2",
+            "/test/lib/plugin3"
+          ],
+          "pluginRefs": {
+            "/test/lib/sub-plugin1": {
+              "name": "sub-plugin1",
+              "path": "/test/lib/sub-plugin1",
+              "presets": {},
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": [
+                "plugin1",
+                "plugin2"
+              ]
             },
-          bridgeRefs:
-            {
-              '/test/lib/bridge1': {
-                name: 'bridge1',
-                path: '/test/lib/bridge1'
+            "/test/lib/sub-plugin2": {
+              "name": "sub-plugin2",
+              "path": "/test/lib/sub-plugin2",
+              "presets": {},
+              "bridgeDepends": [
+                "bridge2",
+                "bridge3"
+              ],
+              "pluginDepends": [
+                "plugin2",
+                "plugin3"
+              ]
+            },
+            "/test/lib/plugin1": {
+              "name": "plugin1",
+              "path": "/test/lib/plugin1",
+              "presets": {
+                "configTags": "bridge[dialect-bridge]"
               },
-              '/test/lib/bridge2': {
-                name: 'bridge2',
-                path: '/test/lib/bridge2'
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
+            },
+            "/test/lib/plugin2": {
+              "name": "plugin2",
+              "path": "/test/lib/plugin2",
+              "presets": {
+                "configTags": "bridge[dialect-bridge]"
               },
-              '/test/lib/bridge3': {
-                name: 'bridge3',
-                path: '/test/lib/bridge3'
-              }
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
+            },
+            "/test/lib/plugin3": {
+              "name": "plugin3",
+              "path": "/test/lib/plugin3",
+              "presets": {},
+              "bridgeDepends": [],
+              "pluginDepends": []
             }
+          },
+          "bridgeRefs": {
+            "/test/lib/bridge1": {
+              "name": "bridge1",
+              "path": "/test/lib/bridge1"
+            },
+            "/test/lib/bridge2": {
+              "name": "bridge2",
+              "path": "/test/lib/bridge2"
+            },
+            "/test/lib/bridge3": {
+              "name": "bridge3",
+              "path": "/test/lib/bridge3"
+            }
+          }
         });
       } else {
         assert.deepEqual(output, {
@@ -986,4 +1113,8 @@ var replaceObjectFields = function(obj, context) {
   }
   replaceFields([obj]);
   return obj;
+}
+
+var removeLoggingUtils = function(config) {
+  return lodash.omit(config, ['logger', 'tracer']);
 }

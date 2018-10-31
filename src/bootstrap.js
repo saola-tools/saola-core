@@ -210,7 +210,7 @@ function registerLayerware(context, pluginNames, bridgeNames) {
     accumulator = accumulator || {};
 
     let {logger: L, tracer: T} = context;
-    // lodash.defaults(accumulator, lodash.pick(context, ['logger', 'tracer']));
+    lodash.defaults(accumulator, lodash.pick(context, ['logger', 'tracer']));
 
     if (context.layerRootPath && context.layerRootPath != accumulator.libRootPath) {
       L.has('warn') && L.log('warn', T.add({
@@ -297,6 +297,7 @@ function launchApplication(context, pluginNames, bridgeNames) {
 function expandExtensions(accumulator, pluginNames, bridgeNames) {
   accumulator = accumulator || {};
   let context = lodash.pick(accumulator, ATTRS.concat(['logger', 'tracer']));
+  let {logger: L, tracer: T} = context;
 
   context.libRootPaths = context.libRootPaths || [];
   context.bridgeRefs = context.bridgeRefs || {};
@@ -323,6 +324,31 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
     item.path = locatePackage(CTX, item, 'plugin');
     return item;
   });
+
+  // create the bridge & plugin dependencies
+  if (lodash.isString(accumulator.libRootPath)) {
+    let crateRef = accumulator.pluginRefs[accumulator.libRootPath];
+    if (lodash.isObject(crateRef)) {
+      crateRef.bridgeDepends = lodash.map(bridgeInfos, function(item) {
+        return item.name;
+      });
+      crateRef.pluginDepends = lodash.map(pluginInfos, function(item) {
+        return item.name;
+      });
+      L.has('debug') && L.log('debug', T.add({
+        libRootPath: accumulator.libRootPath,
+        crateObject: crateRef
+      }).toMessage({
+        text: ' - crate "${libRootPath}" object: ${crateObject}'
+      }));
+    } else {
+      L.has('warn') && L.log('warn', T.add({
+        libRootPath: accumulator.libRootPath
+      }).toMessage({
+        text: ' - crate "${libRootPath}" hasnot defined'
+      }));
+    }
+  }
 
   let bridgeDiffs = lodash.differenceWith(bridgeInfos, lodash.keys(context.bridgeRefs), function(bridgeInfo, bridgeKey) {
     if (!chores.isUpgradeSupported('presets')) {
