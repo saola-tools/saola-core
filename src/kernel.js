@@ -119,7 +119,7 @@ function Kernel(params={}) {
   }
 
   L.has('silly') && L.log('silly', T.add({ pluginConfig, pluginSchema }).toMessage({
-    tags: [ blockRef, 'validate-plugin-config-by-metadata' ],
+    tags: [ blockRef, 'validate-plugin-config-by-schema' ],
     text: ' - Synchronize the structure of configuration data and schemas'
   }));
 
@@ -127,7 +127,7 @@ function Kernel(params={}) {
 
   // summarize validating result
   L.has('silly') && L.log('silly', T.add({ result }).toMessage({
-    tags: [ blockRef, 'validating-config-by-metadata-result' ],
+    tags: [ blockRef, 'validating-config-by-schema-result' ],
     text: ' - Validating sandbox configuration using schemas'
   }));
 
@@ -177,7 +177,7 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
   bridgeSchema = bridgeSchema || {};
 
   L.has('silly') && L.log('silly', T.add({ bridgeConfig, bridgeSchema }).toMessage({
-    tags: [ blockRef, 'validate-bridge-config-by-metadata' ],
+    tags: [ blockRef, 'validate-bridge-config-by-schema' ],
     text: ' - bridge config/schema:\n${bridgeSchema}\n${bridgeConfig}'
   }));
 
@@ -263,7 +263,7 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     }
     if (!validated) {
       L.has('silly') && L.log('silly', T.add({ crateName, crateConfig, crateSchema }).toMessage({
-        tags: [ blockRef, 'validate-plugin-config-by-metadata-skipped' ],
+        tags: [ blockRef, 'validate-plugin-config-by-schema-skipped' ],
         text: ' - Validating sandboxConfig[${crateName}] is skipped'
       }));
     }

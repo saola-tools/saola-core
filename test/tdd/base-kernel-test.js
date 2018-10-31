@@ -213,13 +213,13 @@ describe('tdd:devebot:base:kernel', function() {
           allTags: [ chores.toFullname('devebot', 'kernel'), 'plugin-config-schema-input' ],
           storeTo: 'pluginInput'
         }, {
-          allTags: [ chores.toFullname('devebot', 'kernel'), 'validate-bridge-config-by-metadata' ],
+          allTags: [ chores.toFullname('devebot', 'kernel'), 'validate-bridge-config-by-schema' ],
           storeTo: 'bridgeData'
         }, {
-          allTags: [ chores.toFullname('devebot', 'kernel'), 'validate-plugin-config-by-metadata' ],
+          allTags: [ chores.toFullname('devebot', 'kernel'), 'validate-plugin-config-by-schema' ],
           storeTo: 'pluginData'
         }, {
-          allTags: [ chores.toFullname('devebot', 'kernel'), 'validating-config-by-metadata-result' ],
+          allTags: [ chores.toFullname('devebot', 'kernel'), 'validating-config-by-schema-result' ],
           storeTo: 'outputValidation'
         }, {
           allTags: [ chores.toFullname('devebot', 'issueInspector'), 'examine', 'metadata-validating' ],
