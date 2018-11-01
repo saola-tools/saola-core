@@ -19,8 +19,8 @@
     "clean-build": "npm run clean && npm run build",
     "prepublish": "BABEL_ENV=${DEVEBOT_BABEL_ENV:-production} npm run clean-build",
     "pretest": "BABEL_ENV=${DEVEBOT_BABEL_ENV:-test} npm run clean-build",
-    "test": "mocha --recursive ./test/**/*-test.js",
-    "test-publish": "npm run prepublish && mocha --recursive ./test/**/*-test.js"
+    "test": "mocha --recursive ./test/**/${DEVEBOT_TESTCASES:-*}-test.js",
+    "test-publish": "npm run prepublish && mocha --recursive ./test/**/${DEVEBOT_TESTCASES:-*}-test.js"
   },
   "repository": {
     "type": "git",
