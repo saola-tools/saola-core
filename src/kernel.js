@@ -244,7 +244,7 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     return output;
   }
 
-  let validateSandboxOfCrate = function(result, crateConfig, crateSchema, crateName) {
+  let validateSandboxSchemaOfCrate = function(result, crateConfig, crateSchema, crateName) {
     let validated = false;
     if (crateSchema && crateSchema.enabled !== false) {
       if (lodash.isObject(crateSchema.schema)) {
@@ -266,16 +266,16 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     }
   }
 
-  let validateSandboxOfCrates = function(sandboxConfig, sandboxSchema) {
-    sandboxConfig = sandboxConfig || {};
-    sandboxSchema = sandboxSchema || {};
-    if (sandboxConfig.application) {
-      validateSandboxOfCrate(result, sandboxConfig.application, sandboxSchema.application, 'application');
+  let validateSandboxOfCrates = function(config, schema) {
+    config = config || {};
+    schema = schema || {};
+    if (config.application) {
+      validateSandboxSchemaOfCrate(result, config.application, schema.application, 'application');
     }
-    if (sandboxConfig.plugins) {
-      lodash.forOwn(sandboxConfig.plugins, function(pluginObject, pluginName) {
-        if (lodash.isObject(sandboxSchema.plugins)) {
-          validateSandboxOfCrate(result, pluginObject, sandboxSchema.plugins[pluginName], pluginName);
+    if (config.plugins) {
+      lodash.forOwn(config.plugins, function(pluginObject, pluginName) {
+        if (lodash.isObject(schema.plugins)) {
+          validateSandboxSchemaOfCrate(result, pluginObject, schema.plugins[pluginName], pluginName);
         }
       });
     }
