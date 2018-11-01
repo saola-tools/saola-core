@@ -49,7 +49,7 @@ function Kernel(params={}) {
 
   let schemaValidator = injektor.lookup('schemaValidator', chores.injektorContext);
   let result = [];
-  let CTX = {L, T, schemaValidator};
+  let CTX = {L, T, nameResolver, schemaValidator};
 
   // validate bridge's configures
   let bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
@@ -83,46 +83,8 @@ function Kernel(params={}) {
     text: " - plugin's metadata: ${metadata}"
   }));
 
-  let SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'validator' ];
-  let extractPluginSchema = function(ctx, pluginSchema, pluginMetadata) {
-    pluginSchema = pluginSchema || {};
-    pluginSchema.profile = pluginSchema.profile || {};
-    pluginSchema.sandbox = pluginSchema.sandbox || {};
-    lodash.forOwn(pluginMetadata, function(ref, key) {
-      let def = ref && ref.default || {};
-      if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
-        if (chores.isSpecialPlugin(def.pluginCode)) {
-          pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
-        } else {
-          pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
-          pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
-        }
-      }
-    });
-    return pluginSchema;
-  }
-  let pluginSchema = extractPluginSchema(CTX, null, pluginMetadata);
-
-  let enrichPluginSchema = function(ctx, pluginSchema, pluginRefs) {
-    lodash.forEach(pluginRefs, function(pluginRef) {
-      let pluginCode = nameResolver.getDefaultAlias(pluginRef);
-      // apply 'schemaValidation' option from presets for plugins
-      if (pluginRef.presets && pluginRef.presets.schemaValidation === false) {
-        if (!chores.isSpecialPlugin(pluginCode)) {
-          lodash.forEach(['profile', 'sandbox'], function(configType) {
-            lodash.set(pluginSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
-          });
-        }
-      }
-      // apply 'pluginDepends' & 'bridgeDepends' to pluginSchema
-      lodash.forEach(['bridgeDepends', 'pluginDepends'], function(depType) {
-        if (lodash.isArray(pluginRef[depType])) {
-        lodash.set(pluginSchema, ['sandbox', 'plugins', pluginCode, depType], pluginRef[depType]);
-        }
-      });
-    });
-    return pluginSchema;
-  }
+  let pluginSchema = {};
+  pluginSchema = extractPluginSchema(CTX, pluginSchema, pluginMetadata);
   pluginSchema = enrichPluginSchema(CTX, pluginSchema, configObject.pluginRefs);
 
   let pluginConfig = {
@@ -180,6 +142,48 @@ function Kernel(params={}) {
 }
 
 module.exports = Kernel;
+
+const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'validator' ];
+
+let extractPluginSchema = function(ctx, pluginSchema, pluginMetadata) {
+  pluginSchema = pluginSchema || {};
+  pluginSchema.profile = pluginSchema.profile || {};
+  pluginSchema.sandbox = pluginSchema.sandbox || {};
+  lodash.forOwn(pluginMetadata, function(ref, key) {
+    let def = ref && ref.default || {};
+    if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
+      if (chores.isSpecialPlugin(def.pluginCode)) {
+        pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+      } else {
+        pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
+        pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+      }
+    }
+  });
+  return pluginSchema;
+}
+
+let enrichPluginSchema = function(ctx, pluginSchema, pluginRefs) {
+  let { nameResolver } = ctx;
+  lodash.forEach(pluginRefs, function(pluginRef) {
+    let pluginCode = nameResolver.getDefaultAlias(pluginRef);
+    // apply 'schemaValidation' option from presets for plugins
+    if (pluginRef.presets && pluginRef.presets.schemaValidation === false) {
+      if (!chores.isSpecialPlugin(pluginCode)) {
+        lodash.forEach(['profile', 'sandbox'], function(configType) {
+          lodash.set(pluginSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
+        });
+      }
+    }
+    // apply 'pluginDepends' & 'bridgeDepends' to pluginSchema
+    lodash.forEach(['bridgeDepends', 'pluginDepends'], function(depType) {
+      if (lodash.isArray(pluginRef[depType])) {
+      lodash.set(pluginSchema, ['sandbox', 'plugins', pluginCode, depType], pluginRef[depType]);
+      }
+    });
+  });
+  return pluginSchema;
+}
 
 let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
   let { L, T, schemaValidator } = ctx;
