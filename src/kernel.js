@@ -237,65 +237,64 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
 }
 
 let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
-  let { L, T, schemaValidator } = ctx;
   result = result || [];
-
-  let customizeSandboxResult = function(result, crateScope, crateName) {
-    result = (result == undefined || result == null) ? false : result;
-    result = (typeof result === 'boolean') ? { ok: result } : result;
-    let output = {};
-    output.stage = 'config/schema';
-    output.name = crateScope;
-    output.type = chores.isSpecialPlugin(crateName) ? crateName : 'plugin';
-    output.hasError = result.ok !== true;
-    if (!result.ok) {
-      if (result.errors) {
-        output.stack = JSON.stringify(result.errors, null, 2);
-      }
-      if (result.reason) {
-        output.stack = result.reason;
-      }
-    }
-    return output;
-  }
-
-  let validateSandboxSchemaOfCrate = function(ctx, result, crateConfig, crateSchema, crateName) {
-    let validated = false;
-    if (crateSchema && crateSchema.enabled !== false) {
-      if (lodash.isObject(crateSchema.schema)) {
-        let r = schemaValidator.validate(crateConfig, crateSchema.schema);
-        result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
-        validated = true;
-      }
-      if (lodash.isFunction(crateSchema.validator)) {
-        let r = crateSchema.validator(crateConfig);
-        result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
-        validated = true;
-      }
-    }
-    if (!validated) {
-      L.has('silly') && L.log('silly', T.add({ crateName, crateConfig, crateSchema }).toMessage({
-        tags: [ blockRef, 'validate-plugin-config-by-schema-skipped' ],
-        text: ' - Validating sandboxConfig[${crateName}] is skipped'
-      }));
-    }
-  }
-
-  let validateSandboxSchemaOfCrates = function(ctx, result, config, schema) {
-    let {L, T} = ctx;
-    config = config || {};
-    schema = schema || {};
-    if (config.application) {
-      validateSandboxSchemaOfCrate(ctx, result, config.application, schema.application, 'application');
-    }
-    if (config.plugins) {
-      lodash.forOwn(config.plugins, function(pluginObject, pluginName) {
-        if (lodash.isObject(schema.plugins)) {
-          validateSandboxSchemaOfCrate(ctx, result, pluginObject, schema.plugins[pluginName], pluginName);
-        }
-      });
-    }
-  }
-
   validateSandboxSchemaOfCrates(ctx, result, pluginConfig.sandbox, pluginSchema.sandbox);
+}
+
+let validateSandboxSchemaOfCrates = function(ctx, result, config, schema) {
+  let {L, T} = ctx;
+  config = config || {};
+  schema = schema || {};
+  if (config.application) {
+    validateSandboxSchemaOfCrate(ctx, result, config.application, schema.application, 'application');
+  }
+  if (config.plugins) {
+    lodash.forOwn(config.plugins, function(pluginObject, pluginName) {
+      if (lodash.isObject(schema.plugins)) {
+        validateSandboxSchemaOfCrate(ctx, result, pluginObject, schema.plugins[pluginName], pluginName);
+      }
+    });
+  }
+}
+
+let validateSandboxSchemaOfCrate = function(ctx, result, crateConfig, crateSchema, crateName) {
+  let { L, T, schemaValidator } = ctx;
+  let validated = false;
+  if (crateSchema && crateSchema.enabled !== false) {
+    if (lodash.isObject(crateSchema.schema)) {
+      let r = schemaValidator.validate(crateConfig, crateSchema.schema);
+      result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
+      validated = true;
+    }
+    if (lodash.isFunction(crateSchema.validator)) {
+      let r = crateSchema.validator(crateConfig);
+      result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
+      validated = true;
+    }
+  }
+  if (!validated) {
+    L.has('silly') && L.log('silly', T.add({ crateName, crateConfig, crateSchema }).toMessage({
+      tags: [ blockRef, 'validate-plugin-config-by-schema-skipped' ],
+      text: ' - Validating sandboxConfig[${crateName}] is skipped'
+    }));
+  }
+}
+
+let customizeSandboxResult = function(result, crateScope, crateName) {
+  result = (result == undefined || result == null) ? false : result;
+  result = (typeof result === 'boolean') ? { ok: result } : result;
+  let output = {};
+  output.stage = 'config/schema';
+  output.name = crateScope;
+  output.type = chores.isSpecialPlugin(crateName) ? crateName : 'plugin';
+  output.hasError = result.ok !== true;
+  if (!result.ok) {
+    if (result.errors) {
+      output.stack = JSON.stringify(result.errors, null, 2);
+    }
+    if (result.reason) {
+      output.stack = result.reason;
+    }
+  }
+  return output;
 }
