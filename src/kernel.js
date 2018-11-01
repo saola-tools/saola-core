@@ -230,9 +230,6 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
   let { L, T, schemaValidator } = ctx;
   result = result || [];
 
-  let sandboxConfig = pluginConfig.sandbox || {};
-  let sandboxSchema = pluginSchema.sandbox || {};
-
   let customizeResult = function(result, crateScope, crateName) {
     result = (result == undefined || result == null) ? false : result;
     result = (typeof result === 'boolean') ? { ok: result } : result;
@@ -247,7 +244,7 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     return output;
   }
 
-  let validateSandbox = function(result, crateConfig, crateSchema, crateName) {
+  let validateSandboxOfCrate = function(result, crateConfig, crateSchema, crateName) {
     let validated = false;
     if (crateSchema && crateSchema.enabled !== false) {
       if (lodash.isObject(crateSchema.schema)) {
@@ -269,15 +266,20 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     }
   }
 
-  if (sandboxConfig.application) {
-    validateSandbox(result, sandboxConfig.application, sandboxSchema.application, 'application');
+  let validateSandboxOfCrates = function(sandboxConfig, sandboxSchema) {
+    sandboxConfig = sandboxConfig || {};
+    sandboxSchema = sandboxSchema || {};
+    if (sandboxConfig.application) {
+      validateSandboxOfCrate(result, sandboxConfig.application, sandboxSchema.application, 'application');
+    }
+    if (sandboxConfig.plugins) {
+      lodash.forOwn(sandboxConfig.plugins, function(pluginObject, pluginName) {
+        if (lodash.isObject(sandboxSchema.plugins)) {
+          validateSandboxOfCrate(result, pluginObject, sandboxSchema.plugins[pluginName], pluginName);
+        }
+      });
+    }
   }
 
-  if (sandboxConfig.plugins) {
-    lodash.forOwn(sandboxConfig.plugins, function(pluginObject, pluginName) {
-      if (lodash.isObject(sandboxSchema.plugins)) {
-        validateSandbox(result, pluginObject, sandboxSchema.plugins[pluginName], pluginName);
-      }
-    });
-  }
+  validateSandboxOfCrates(pluginConfig.sandbox, pluginSchema.sandbox);
 }
