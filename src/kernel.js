@@ -114,7 +114,9 @@ function Kernel(params={}) {
       }
       // apply 'pluginDepends' & 'bridgeDepends' to pluginSchema
       lodash.forEach(['bridgeDepends', 'pluginDepends'], function(depType) {
+        if (lodash.isArray(pluginRef[depType])) {
         lodash.set(pluginSchema, ['sandbox', 'plugins', pluginCode, depType], pluginRef[depType]);
+        }
       });
     });
     return pluginSchema;

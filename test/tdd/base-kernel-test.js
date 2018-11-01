@@ -455,7 +455,8 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       });
-      assert.deepInclude(pluginSchema.sandbox, {
+
+      var expectedPluginSchemaSandbox = {
         "application": {
           "crateScope": "application",
           "schema": {
@@ -478,8 +479,34 @@ describe('tdd:devebot:base:kernel', function() {
           }
         },
         "plugins": {
+          "plugin1": {
+            "bridgeDepends": [
+              "bridge1",
+              "bridge2"
+            ],
+            "pluginDepends": []
+          },
+          "plugin2": {
+            "bridgeDepends": [
+              "bridge1",
+              "bridge2"
+            ],
+            "pluginDepends": []
+          },
+          "plugin3": {
+            "bridgeDepends": [],
+            "pluginDepends": []
+          },
           "subPlugin1": {
             "crateScope": "sub-plugin1",
+            "bridgeDepends": [
+              "bridge1",
+              "bridge2"
+            ],
+            "pluginDepends": [
+              "plugin1",
+              "plugin2"
+            ],
             "schema": {
               "type": "object",
               "properties": {
@@ -494,6 +521,14 @@ describe('tdd:devebot:base:kernel', function() {
           },
           "subPlugin2": {
             "crateScope": "sub-plugin2",
+            "bridgeDepends": [
+              "bridge2",
+              "bridge3"
+            ],
+            "pluginDepends": [
+              "plugin2",
+              "plugin3"
+            ],
             "schema": {
               "type": "object",
               "properties": {
@@ -507,7 +542,18 @@ describe('tdd:devebot:base:kernel', function() {
             }
           }
         }
-      });
+      };
+      if (!chores.isUpgradeSupported('presets')) {
+        lodash.forEach(lodash.keys(expectedPluginSchemaSandbox.plugins), function(pluginName) {
+          let plugin = lodash.omit(expectedPluginSchemaSandbox.plugins[pluginName], ['bridgeDepends', 'pluginDepends']);
+          if (lodash.isEmpty(plugin)) {
+            delete expectedPluginSchemaSandbox.plugins[pluginName];
+          } else {
+            expectedPluginSchemaSandbox.plugins[pluginName] = plugin;
+          }
+        });
+      }
+      assert.deepInclude(pluginSchema.sandbox, expectedPluginSchemaSandbox);
 
       // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
       if (true) {
