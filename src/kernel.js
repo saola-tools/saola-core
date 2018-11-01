@@ -101,17 +101,25 @@ function Kernel(params={}) {
   }
   let pluginSchema = extractPluginSchema(pluginMetadata);
 
-  // apply 'schemaValidation' option from presets for plugins
-  lodash.forEach(configObject.pluginRefs, function(pluginRef) {
-    let pluginCode = nameResolver.getDefaultAlias(pluginRef);
-    if (pluginRef.presets && pluginRef.presets.schemaValidation === false) {
-      if (!chores.isSpecialPlugin(pluginCode)) {
-        lodash.forEach(['profile', 'sandbox'], function(configType) {
-          lodash.set(pluginSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
-        });
+  let enrichPluginSchema = function(pluginSchema, pluginRefs) {
+    lodash.forEach(pluginRefs, function(pluginRef) {
+      let pluginCode = nameResolver.getDefaultAlias(pluginRef);
+      // apply 'schemaValidation' option from presets for plugins
+      if (pluginRef.presets && pluginRef.presets.schemaValidation === false) {
+        if (!chores.isSpecialPlugin(pluginCode)) {
+          lodash.forEach(['profile', 'sandbox'], function(configType) {
+            lodash.set(pluginSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
+          });
+        }
       }
-    }
-  });
+      // apply 'pluginDepends' & 'bridgeDepends' to pluginSchema
+      lodash.forEach(['bridgeDepends', 'pluginDepends'], function(depType) {
+        lodash.set(pluginSchema, ['sandbox', 'plugins', pluginCode, depType], pluginRef[depType]);
+      });
+    });
+    return pluginSchema;
+  }
+  pluginSchema = enrichPluginSchema(pluginSchema, configObject.pluginRefs);
 
   let pluginConfig = {
     profile: lodash.get(configObject, ['profile', 'mixture'], {}),
@@ -181,7 +189,7 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
     text: ' - bridge config/schema:\n${bridgeSchema}\n${bridgeConfig}'
   }));
 
-  let customizeResult = function(result, bridgeCode, pluginName, dialectName) {
+  let customizeBridgeResult = function(result, bridgeCode, pluginName, dialectName) {
     let output = {};
     output.stage = 'config/schema';
     output.name = [pluginName, chores.getSeparator(), bridgeCode, '#', dialectName].join('');
@@ -202,7 +210,7 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
         if (bridgeMetadata.enabled === false || lodash.isNull(dialectSchema)) continue;
         let dialectConfig = dialectMap[bridgeCode] || {};
         let r = schemaValidator.validate(dialectConfig, dialectSchema);
-        result.push(customizeResult(r, bridgeCode, '*', dialectName));
+        result.push(customizeBridgeResult(r, bridgeCode, '*', dialectName));
       }
     }
     return result;
@@ -218,7 +226,7 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
       for(let dialectName in pluginMap) {
         let dialectConfig = pluginMap[dialectName] || {};
         let r = schemaValidator.validate(dialectConfig, dialectSchema);
-        result.push(customizeResult(r, bridgeCode, pluginName, dialectName));
+        result.push(customizeBridgeResult(r, bridgeCode, pluginName, dialectName));
       }
     }
   }
@@ -230,7 +238,7 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
   let { L, T, schemaValidator } = ctx;
   result = result || [];
 
-  let customizeResult = function(result, crateScope, crateName) {
+  let customizeSandboxResult = function(result, crateScope, crateName) {
     result = (result == undefined || result == null) ? false : result;
     result = (typeof result === 'boolean') ? { ok: result } : result;
     let output = {};
@@ -238,23 +246,28 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     output.name = crateScope;
     output.type = chores.isSpecialPlugin(crateName) ? crateName : 'plugin';
     output.hasError = result.ok !== true;
-    if (!result.ok && result.errors) {
-      output.stack = JSON.stringify(result.errors, null, 2);
+    if (!result.ok) {
+      if (result.errors) {
+        output.stack = JSON.stringify(result.errors, null, 2);
+      }
+      if (result.reason) {
+        output.stack = result.reason;
+      }
     }
     return output;
   }
 
-  let validateSandboxSchemaOfCrate = function(result, crateConfig, crateSchema, crateName) {
+  let validateSandboxSchemaOfCrate = function(ctx, result, crateConfig, crateSchema, crateName) {
     let validated = false;
     if (crateSchema && crateSchema.enabled !== false) {
       if (lodash.isObject(crateSchema.schema)) {
         let r = schemaValidator.validate(crateConfig, crateSchema.schema);
-        result.push(customizeResult(r, crateSchema.crateScope, crateName));
+        result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
         validated = true;
       }
       if (lodash.isFunction(crateSchema.validator)) {
         let r = crateSchema.validator(crateConfig);
-        result.push(customizeResult(r, crateSchema.crateScope, crateName));
+        result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
         validated = true;
       }
     }
@@ -266,20 +279,21 @@ let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
     }
   }
 
-  let validateSandboxOfCrates = function(config, schema) {
+  let validateSandboxSchemaOfCrates = function(ctx, result, config, schema) {
+    let {L, T} = ctx;
     config = config || {};
     schema = schema || {};
     if (config.application) {
-      validateSandboxSchemaOfCrate(result, config.application, schema.application, 'application');
+      validateSandboxSchemaOfCrate(ctx, result, config.application, schema.application, 'application');
     }
     if (config.plugins) {
       lodash.forOwn(config.plugins, function(pluginObject, pluginName) {
         if (lodash.isObject(schema.plugins)) {
-          validateSandboxSchemaOfCrate(result, pluginObject, schema.plugins[pluginName], pluginName);
+          validateSandboxSchemaOfCrate(ctx, result, pluginObject, schema.plugins[pluginName], pluginName);
         }
       });
     }
   }
 
-  validateSandboxOfCrates(pluginConfig.sandbox, pluginSchema.sandbox);
+  validateSandboxSchemaOfCrates(ctx, result, pluginConfig.sandbox, pluginSchema.sandbox);
 }
