@@ -84,24 +84,26 @@ function Kernel(params={}) {
   }));
 
   let SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'validator' ];
-  let extractPluginSchema = function(pluginMetadata) {
-    let configSchema = { profile: {}, sandbox: {} };
+  let extractPluginSchema = function(ctx, pluginSchema, pluginMetadata) {
+    pluginSchema = pluginSchema || {};
+    pluginSchema.profile = pluginSchema.profile || {};
+    pluginSchema.sandbox = pluginSchema.sandbox || {};
     lodash.forOwn(pluginMetadata, function(ref, key) {
       let def = ref && ref.default || {};
       if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
         if (chores.isSpecialPlugin(def.pluginCode)) {
-          configSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+          pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
         } else {
-          configSchema[def.type]['plugins'] = configSchema[def.type]['plugins'] || {};
-          configSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+          pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
+          pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
         }
       }
     });
-    return configSchema;
+    return pluginSchema;
   }
-  let pluginSchema = extractPluginSchema(pluginMetadata);
+  let pluginSchema = extractPluginSchema(CTX, null, pluginMetadata);
 
-  let enrichPluginSchema = function(pluginSchema, pluginRefs) {
+  let enrichPluginSchema = function(ctx, pluginSchema, pluginRefs) {
     lodash.forEach(pluginRefs, function(pluginRef) {
       let pluginCode = nameResolver.getDefaultAlias(pluginRef);
       // apply 'schemaValidation' option from presets for plugins
@@ -121,7 +123,7 @@ function Kernel(params={}) {
     });
     return pluginSchema;
   }
-  pluginSchema = enrichPluginSchema(pluginSchema, configObject.pluginRefs);
+  pluginSchema = enrichPluginSchema(CTX, pluginSchema, configObject.pluginRefs);
 
   let pluginConfig = {
     profile: lodash.get(configObject, ['profile', 'mixture'], {}),
