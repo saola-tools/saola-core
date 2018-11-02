@@ -89,6 +89,17 @@ var lab = module.exports = {
   getStateInspector: function() {
     return stateInspector;
   },
+  getNameResolver: function(bridgeNames, pluginNames) {
+    return new NameResolver({
+      issueInspector,
+      bridgeRefs: lodash.map(bridgeNames, function(name) {
+        return { name, path: lab.getLibHome(name) }
+      }),
+      pluginRefs: lodash.map(pluginNames, function(name) {
+        return { name, path: lab.getLibHome(name) }
+      })
+    });
+  },
   unloadApp: function(appName) {
     appName = appName || 'default';
     freshy.unload(require.resolve(this.getAppHome(appName)));

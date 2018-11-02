@@ -127,4 +127,238 @@ describe('tdd:devebot:core:name-resolver', function() {
       assert.deepEqual(pluginAliasMap, expectedMap);
     });
   });
+
+  describe('converting and reverting the plugin & bridge names', function() {
+    var nameResolver = lab.getNameResolver([
+      'bridge1', 'bridge-kebab-case1', 'devebot-co-connector1', 'bridge2', 'bridge-kebab-case2', 'devebot-co-connector2'
+    ], [
+      'sub-plugin1', 'devebot-dp-wrapper1', 'sub-plugin2', 'devebot-dp-wrapper2'
+    ]);
+    it('should build absoluteAliasMap correctly', function() {
+      var absoluteAliasMap = nameResolver.getAbsoluteAliasMap();
+      false && console.log('absoluteAliasMap: %s', JSON.stringify(absoluteAliasMap, null, 2));
+      assert.deepEqual(absoluteAliasMap, {
+        "plugin": {
+          "sub-plugin1": "sub-plugin1",
+          "subPlugin1": "sub-plugin1",
+          "devebot-dp-wrapper1": "devebot-dp-wrapper1",
+          "devebotDpWrapper1": "devebot-dp-wrapper1",
+          "wrapper1": "devebot-dp-wrapper1",
+          "sub-plugin2": "sub-plugin2",
+          "subPlugin2": "sub-plugin2",
+          "devebot-dp-wrapper2": "devebot-dp-wrapper2",
+          "devebotDpWrapper2": "devebot-dp-wrapper2",
+          "wrapper2": "devebot-dp-wrapper2"
+        },
+        "bridge": {
+          "bridge1": "bridge1",
+          "bridge-kebab-case1": "bridge-kebab-case1",
+          "bridgeKebabCase1": "bridge-kebab-case1",
+          "devebot-co-connector1": "devebot-co-connector1",
+          "devebotCoConnector1": "devebot-co-connector1",
+          "connector1": "devebot-co-connector1",
+          "bridge2": "bridge2",
+          "bridge-kebab-case2": "bridge-kebab-case2",
+          "bridgeKebabCase2": "bridge-kebab-case2",
+          "devebot-co-connector2": "devebot-co-connector2",
+          "devebotCoConnector2": "devebot-co-connector2",
+          "connector2": "devebot-co-connector2"
+        }
+      });
+    });
+  
+    it('should build relativeAliasMap correctly', function() {
+      var relativeAliasMap = nameResolver.getRelativeAliasMap();
+      false && console.log('relativeAliasMap: %s', JSON.stringify(relativeAliasMap, null, 2));
+      assert.deepEqual(relativeAliasMap, {
+        "plugin": {
+          "sub-plugin1": "subPlugin1",
+          "devebot-dp-wrapper1": "wrapper1",
+          "sub-plugin2": "subPlugin2",
+          "devebot-dp-wrapper2": "wrapper2"
+        },
+        "bridge": {
+          "bridge1": "bridge1",
+          "bridge-kebab-case1": "bridgeKebabCase1",
+          "devebot-co-connector1": "connector1",
+          "bridge2": "bridge2",
+          "bridge-kebab-case2": "bridgeKebabCase2",
+          "devebot-co-connector2": "connector2"
+        }
+      });
+    });
+
+    it('getOriginalNameOf(_, "bridge")', function() {
+      var result = [
+        'bridge1',
+        'bridge-kebab-case1',
+        'bridgeKebabCase1',
+        'devebot-co-connector1',
+        'devebotCoConnector1',
+        'connector1',
+        'unknown',
+        null
+      ].map(function(name) {
+        return {
+          source: name,
+          target: nameResolver.getOriginalNameOf(name, 'bridge')
+        }
+      });
+      false && console.log(JSON.stringify(result, null, 2));
+      assert.deepEqual(result, [
+        {
+          "source": "bridge1",
+          "target": "bridge1"
+        },
+        {
+          "source": "bridge-kebab-case1",
+          "target": "bridge-kebab-case1"
+        },
+        {
+          "source": "bridgeKebabCase1",
+          "target": "bridge-kebab-case1"
+        },
+        {
+          "source": "devebot-co-connector1",
+          "target": "devebot-co-connector1"
+        },
+        {
+          "source": "devebotCoConnector1",
+          "target": "devebot-co-connector1"
+        },
+        {
+          "source": "connector1",
+          "target": "devebot-co-connector1"
+        },
+        {
+          "source": "unknown",
+          "target": "unknown"
+        },
+        {
+          "source": null,
+          "target": null
+        }
+      ]);
+    });
+
+    it('getOriginalNameOf(_, "plugin")', function() {
+      var result = [
+        'sub-plugin1',
+        'subPlugin1',
+        'devebot-dp-wrapper1',
+        'devebotDpWrapper1',
+        'wrapper1',
+        'unknown',
+        null
+      ].map(function(name) {
+        return {
+          source: name,
+          target: nameResolver.getOriginalNameOf(name, 'plugin')
+        }
+      });
+      false && console.log(JSON.stringify(result, null, 2));
+      assert.deepEqual(result, [
+        {
+          "source": "sub-plugin1",
+          "target": "sub-plugin1"
+        },
+        {
+          "source": "subPlugin1",
+          "target": "sub-plugin1"
+        },
+        {
+          "source": "devebot-dp-wrapper1",
+          "target": "devebot-dp-wrapper1"
+        },
+        {
+          "source": "devebotDpWrapper1",
+          "target": "devebot-dp-wrapper1"
+        },
+        {
+          "source": "wrapper1",
+          "target": "devebot-dp-wrapper1"
+        },
+        {
+          "source": "unknown",
+          "target": "unknown"
+        },
+        {
+          "source": null,
+          "target": null
+        }
+      ]);
+    });
+
+    it('getDefaultAliasOf(_, "bridge")', function() {
+      var result = [
+        'bridge1', 'bridge-kebab-case1', 'devebot-co-connector1', 'unknown', null
+      ].map(function(name) {
+        return {
+          source: name,
+          target: nameResolver.getDefaultAliasOf(name, "bridge")
+        }
+      });
+      false && console.log(JSON.stringify(result, null, 2));
+      assert.deepEqual(result, [
+        {
+          "source": "bridge1",
+          "target": "bridge1"
+        },
+        {
+          "source": "bridge-kebab-case1",
+          "target": "bridgeKebabCase1"
+        },
+        {
+          "source": "devebot-co-connector1",
+          "target": "connector1"
+        },
+        {
+          "source": "unknown",
+          "target": "unknown"
+        },
+        {
+          "source": null,
+          "target": null
+        }
+      ]);
+    });
+
+    it('getDefaultAliasOf(_, "plugin")', function() {
+      var result = [
+        'sub-plugin1', 'sub-plugin2', 'devebot-dp-wrapper1', 'devebot-dp-wrapper2', 'unknown', null
+      ].map(function(name) {
+        return {
+          source: name,
+          target: nameResolver.getDefaultAliasOf(name, "plugin")
+        }
+      });
+      false && console.log(JSON.stringify(result, null, 2));
+      assert.deepEqual(result, [
+        {
+          "source": "sub-plugin1",
+          "target": "subPlugin1"
+        },
+        {
+          "source": "sub-plugin2",
+          "target": "subPlugin2"
+        },
+        {
+          "source": "devebot-dp-wrapper1",
+          "target": "wrapper1"
+        },
+        {
+          "source": "devebot-dp-wrapper2",
+          "target": "wrapper2"
+        },
+        {
+          "source": "unknown",
+          "target": "unknown"
+        },
+        {
+          "source": null,
+          "target": null
+        }
+      ]);
+    });
+  });
 });
