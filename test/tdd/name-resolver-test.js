@@ -130,9 +130,9 @@ describe('tdd:devebot:core:name-resolver', function() {
 
   describe('converting and reverting the plugin & bridge names', function() {
     var nameResolver = lab.getNameResolver([
-      'bridge1', 'bridge-kebab-case1', 'devebot-co-connector1', 'bridge2', 'bridge-kebab-case2', 'devebot-co-connector2'
-    ], [
       'sub-plugin1', 'devebot-dp-wrapper1', 'sub-plugin2', 'devebot-dp-wrapper2'
+    ], [
+      'bridge1', 'bridge-kebab-case1', 'devebot-co-connector1', 'bridge2', 'bridge-kebab-case2', 'devebot-co-connector2'
     ]);
     it('should build absoluteAliasMap correctly', function() {
       var absoluteAliasMap = nameResolver.getAbsoluteAliasMap();

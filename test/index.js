@@ -89,14 +89,20 @@ var lab = module.exports = {
   getStateInspector: function() {
     return stateInspector;
   },
-  getNameResolver: function(bridgeNames, pluginNames) {
+  getNameResolver: function(pluginDescriptors, bridgeDescriptors) {
     return new NameResolver({
       issueInspector,
-      bridgeRefs: lodash.map(bridgeNames, function(name) {
-        return { name, path: lab.getLibHome(name) }
+      bridgeRefs: lodash.map(bridgeDescriptors, function(descriptor) {
+        if (lodash.isString(descriptor)) {
+          descriptor = { name: descriptor, path: lab.getLibHome(descriptor) }
+        }
+        return descriptor;
       }),
-      pluginRefs: lodash.map(pluginNames, function(name) {
-        return { name, path: lab.getLibHome(name) }
+      pluginRefs: lodash.map(pluginDescriptors, function(descriptor) {
+        if (lodash.isString(descriptor)) {
+          descriptor = { name: descriptor, path: lab.getLibHome(descriptor) }
+        }
+        return descriptor;
       })
     });
   },

@@ -44,6 +44,10 @@ function NameResolver(params={}) {
     return crateAlias;
   }
 
+  this.getOriginalName = this.getAliasBy.bind(this, 'name');
+
+  this.getDefaultAlias = this.getAliasBy.bind(this, 'codeInCamel');
+
   this.getOriginalNameOf = function(crateName, crateType) {
     if (crateType === 'plugin' || crateType === 'bridge') {
       let absoluteAlias = this.getAbsoluteAliasMap();
@@ -51,8 +55,6 @@ function NameResolver(params={}) {
     }
     return crateName;
   }
-
-  this.getOriginalName = this.getAliasBy.bind(this, 'name');
 
   this.getDefaultAliasOf = function(crateName, crateType) {
     if (crateType === 'plugin' || crateType === 'bridge') {
@@ -62,8 +64,6 @@ function NameResolver(params={}) {
     }
     return crateName;
   }
-
-  this.getDefaultAlias = this.getAliasBy.bind(this, 'codeInCamel');
 
   extractAliasNames(CTX, 'plugin', params.pluginRefs);
   extractAliasNames(CTX, 'bridge', params.bridgeRefs);
