@@ -776,6 +776,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       // verify bridgeRefs
       assert.sameDeepMembers(cfg.bridgeRefs, [
         {
+          "type": "bridge",
           "name": "bridge3",
           "path": "/test/lib/bridge3",
           "code": "bridge3",
@@ -783,6 +784,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "bridge3"
         },
         {
+          "type": "bridge",
           "name": "bridge4",
           "path": "/test/lib/bridge4",
           "code": "bridge4",
@@ -790,6 +792,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "bridge4"
         },
         {
+          "type": "bridge",
           "name": "devebot-co-connector1",
           "path": "/test/lib/devebot-co-connector1",
           "code": "connector1",
@@ -797,6 +800,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "devebotCoConnector1"
         },
         {
+          "type": "bridge",
           "name": "devebot-co-connector2",
           "path": "/test/lib/devebot-co-connector2",
           "code": "connector2",
@@ -804,6 +808,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "devebotCoConnector2"
         },
         {
+          "type": "bridge",
           "name": "bridge1",
           "path": "/test/lib/bridge1",
           "code": "bridge1",
@@ -811,6 +816,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "bridge1"
         },
         {
+          "type": "bridge",
           "name": "bridge2",
           "path": "/test/lib/bridge2",
           "code": "bridge2",
@@ -826,6 +832,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/app/fullapp"
         },
         {
+          "type": "plugin",
           "name": "sub-plugin1",
           "path": "/test/lib/sub-plugin1",
           "presets": {},
@@ -842,6 +849,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "subPlugin1"
         },
         {
+          "type": "plugin",
           "name": "sub-plugin2",
           "path": "/test/lib/sub-plugin2",
           "presets": {},
@@ -858,6 +866,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "subPlugin2"
         },
         {
+          "type": "plugin",
           "name": "plugin1",
           "path": "/test/lib/plugin1",
           "presets": {
@@ -873,6 +882,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "plugin1"
         },
         {
+          "type": "plugin",
           "name": "plugin2",
           "path": "/test/lib/plugin2",
           "presets": {
@@ -888,6 +898,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "nameInCamel": "plugin2"
         },
         {
+          "type": "plugin",
           "name": "plugin3",
           "path": "/test/lib/plugin3",
           "presets": {},

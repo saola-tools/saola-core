@@ -68,6 +68,9 @@ function appLoader(params={}) {
     path: topRootPath
   };
 
+  lodash.forOwn(params.pluginRefs, function(ref) { ref.type = 'plugin' });
+  lodash.forOwn(params.bridgeRefs, function(ref) { ref.type = 'bridge' });
+
   // declare user-defined environment variables
   let currentEnvNames = envbox.getEnvNames();
   let evDescriptors = lodash.get(params, ['environmentVarDescriptors'], []);
