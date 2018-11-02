@@ -110,8 +110,9 @@ function Kernel(params={}) {
   // initialize plugins, bridges, sandboxManager
   let sandboxManager = injektor.lookup('sandboxManager', chores.injektorContext);
 
-  let devebotCfg = lodash.get(configObject, ['profile', 'mixture', constx.FRAMEWORK.NAME], {});
-  let inOpts = lodash.assign({ invoker: blockRef, footmark: 'sandbox-loading' }, devebotCfg);
+  let profileConfig = injektor.lookup('profileConfig', chores.injektorContext);
+  let frameworkCfg = profileConfig[constx.FRAMEWORK.NAME] || {};
+  let inOpts = lodash.assign({ invoker: blockRef, footmark: 'sandbox-loading' }, frameworkCfg);
   issueInspector.barrier(inOpts);
   stateInspector.conclude(inOpts);
 
@@ -121,10 +122,7 @@ function Kernel(params={}) {
     });
   }
 
-  let profileConfig = injektor.lookup('profileConfig', chores.injektorContext);
-  let frameworkCfg = profileConfig[constx.FRAMEWORK.NAME] || {};
   if (frameworkCfg.coupling === 'loose') {
-    let sandboxManager = injektor.lookup('sandboxManager', chores.injektorContext);
     this.getSandboxManager = function() {
       return sandboxManager;
     }
