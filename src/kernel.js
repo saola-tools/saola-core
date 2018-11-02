@@ -63,7 +63,10 @@ function Kernel(params={}) {
 
   // apply 'schemaValidation' option from presets for bridges
   lodash.forEach(configObject.bridgeRefs, function(bridgeRef) {
-    let bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
+    let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
+    if (!chores.isUpgradeSupported('improving-name-resolver')) {
+      bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
+    }
     if (bridgeRef.presets && bridgeRef.presets.schemaValidation === false) {
       lodash.set(bridgeMetadata, [bridgeCode, 'metadata', 'enabled'], false);
     }
@@ -164,7 +167,10 @@ let extractPluginSchema = function(ctx, pluginSchema, pluginMetadata) {
 let enrichPluginSchema = function(ctx, pluginSchema, pluginRefs) {
   let { nameResolver } = ctx;
   lodash.forEach(pluginRefs, function(pluginRef) {
-    let pluginCode = nameResolver.getDefaultAlias(pluginRef);
+    let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
+    if (!chores.isUpgradeSupported('improving-name-resolver')) {
+      pluginCode = nameResolver.getDefaultAlias(pluginRef);
+    }
     // apply 'schemaValidation' option from presets for plugins
     if (pluginRef.presets && pluginRef.presets.schemaValidation === false) {
       if (!chores.isSpecialPlugin(pluginCode)) {

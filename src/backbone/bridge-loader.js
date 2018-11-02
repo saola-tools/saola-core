@@ -85,9 +85,13 @@ let loadBridgeContructor = function(ctx, bridgeRef) {
 
   bridgeRef = bridgeRef || {};
 
-  let bridgeName = nameResolver.getOriginalName(bridgeRef);
-  let bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
   let bridgePath = bridgeRef.path;
+  let bridgeName = nameResolver.getOriginalNameOf(bridgeRef.name, bridgeRef.type);
+  let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
+  if (!chores.isUpgradeSupported('improving-name-resolver')) {
+    bridgeName = nameResolver.getOriginalName(bridgeRef);
+    bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
+  }
 
   L.has('dunce') && L.log('dunce', T.add(bridgeRef).toMessage({
     text: ' - bridge constructor (${name}) loading is started'

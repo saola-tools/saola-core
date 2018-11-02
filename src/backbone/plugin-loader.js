@@ -166,7 +166,10 @@ let loadScriptEntry = function(CTX, scriptMap, scriptType, scriptSubDir, scriptF
         opStatus.hasError = false;
         let scriptName = scriptFile.replace('.js', '').toLowerCase();
         let uniqueName = [pluginRootDir.name, scriptName].join(chores.getSeparator());
-        let pluginName = nameResolver.getOriginalName(pluginRootDir);
+        let pluginName = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
+        if (!chores.isUpgradeSupported('improving-name-resolver')) {
+          pluginName = nameResolver.getOriginalName(pluginRootDir);
+        }
         let entry = {};
         entry[uniqueName] = {
           crateScope: pluginName,
@@ -287,11 +290,17 @@ let loadMetainfEntry = function(CTX, metainfMap, metainfSubDir, schemaFile, plug
       let typeName = metainfObject.type || schemaFile.replace('.js', '').toLowerCase();
       let subtypeName = metainfObject.subtype || 'default';
       let uniqueName = [pluginRootDir.name, typeName].join(chores.getSeparator());
+      let crateScope = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
+      let pluginCode = nameResolver.getDefaultAliasOf(pluginRootDir.name, pluginRootDir.type);
+      if (!chores.isUpgradeSupported('improving-name-resolver')) {
+        crateScope = nameResolver.getOriginalName(pluginRootDir);
+        pluginCode = nameResolver.getDefaultAlias(pluginRootDir);
+      }
       let entry = {};
       entry[uniqueName] = entry[uniqueName] || {};
       entry[uniqueName][subtypeName] = {
-        crateScope: nameResolver.getOriginalName(pluginRootDir),
-        pluginCode: nameResolver.getDefaultAlias(pluginRootDir),
+        crateScope: crateScope,
+        pluginCode: pluginCode,
         type: typeName,
         subtype: subtypeName,
         schema: metainfObject.schema
@@ -398,8 +407,12 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
     return result;
   }
 
-  let pluginName = nameResolver.getOriginalName(pluginRootDir);
-  let pluginCode = nameResolver.getDefaultAlias(pluginRootDir);
+  let pluginName = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
+  let pluginCode = nameResolver.getDefaultAliasOf(pluginRootDir.name, pluginRootDir.type);
+  if (!chores.isUpgradeSupported('improving-name-resolver')) {
+    pluginName = nameResolver.getOriginalName(pluginRootDir);
+    pluginCode = nameResolver.getDefaultAlias(pluginRootDir);
+  }
   let uniqueName = [pluginRootDir.name, wrapperName].join(chores.getSeparator());
   let referenceAlias = lodash.get(pluginRootDir, ['presets', 'referenceAlias'], {});
 
