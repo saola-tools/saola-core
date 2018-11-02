@@ -309,18 +309,14 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
   const CTX = { issueInspector };
 
   let bridgeInfos = lodash.map(bridgeNames, function(bridgeName) {
-    if (!chores.isUpgradeSupported('presets')) {
-      return lodash.isString(bridgeName) ? { name: bridgeName, path: bridgeName } : bridgeName;
-    }
     let item = lodash.isString(bridgeName) ? { name: bridgeName, path: bridgeName } : bridgeName;
+    if (!chores.isUpgradeSupported('presets')) { return item }
     item.path = locatePackage(CTX, item, 'bridge');
     return item;
   });
   let pluginInfos = lodash.map(pluginNames, function(pluginName) {
-    if (!chores.isUpgradeSupported('presets')) {
-      return lodash.isString(pluginName) ? { name: pluginName, path: pluginName } : pluginName;
-    }
     let item = lodash.isString(pluginName) ? { name: pluginName, path: pluginName } : pluginName;
+    if (!chores.isUpgradeSupported('presets')) { return item }
     item.path = locatePackage(CTX, item, 'plugin');
     return item;
   });
