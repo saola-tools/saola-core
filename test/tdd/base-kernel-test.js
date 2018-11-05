@@ -147,6 +147,235 @@ describe('tdd:devebot:base:kernel', function() {
         }
       });
     });
+
+    it("should extract plugin metadata and enrich with dependencies (normal case)", function() {
+      var nameResolver = lab.getNameResolver([
+        'sub-plugin1', 'sub-plugin2', 'plugin1', 'plugin2', 'plugin3'
+      ], [
+        "bridge1", "bridge2", "bridge3"
+      ]);
+      var pluginMetadata = {
+        "sub-plugin1/sandbox": {
+          "default": {
+            "crateScope": "sub-plugin1",
+            "pluginCode": "subPlugin1",
+            "type": "sandbox",
+            "subtype": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "sub-plugin2/sandbox": {
+          "default": {
+            "crateScope": "sub-plugin2",
+            "pluginCode": "subPlugin2",
+            "type": "sandbox",
+            "subtype": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "plugin1/sandbox": {
+          "default": {
+            "crateScope": "plugin1",
+            "pluginCode": "plugin1",
+            "type": "sandbox",
+            "schema": {}
+          }
+        },
+        "plugin2/sandbox": {
+          "default": {
+            "crateScope": "plugin2",
+            "pluginCode": "plugin2",
+            "type": "sandbox",
+            "schema": {}
+          }
+        },
+        "plugin3/sandbox": {
+          "default": {
+            "crateScope": "plugin3",
+            "pluginCode": "plugin3",
+            "type": "sandbox",
+            "schema": {}
+          }
+        }
+      }
+      var pluginRefs = [
+        {
+          "type": "plugin",
+          "name": "sub-plugin1",
+          "nameInCamel": "subPlugin1",
+          "code": "sub-plugin1",
+          "codeInCamel": "subPlugin1",
+          "path": lab.getLibHome('sub-plugin1'),
+          "presets": {},
+          "bridgeDepends": [
+            "bridge1",
+            "bridge2"
+          ],
+          "pluginDepends": [
+            "plugin1",
+            "plugin2"
+          ]
+        },
+        {
+          "type": "plugin",
+          "name": "sub-plugin2",
+          "nameInCamel": "subPlugin2",
+          "code": "sub-plugin2",
+          "codeInCamel": "subPlugin2",
+          "path": lab.getLibHome('sub-plugin2'),
+          "presets": {},
+          "bridgeDepends": [
+            "bridge2",
+            "bridge3"
+          ],
+          "pluginDepends": [
+            "plugin2",
+            "plugin3"
+          ]
+        },
+        {
+          "type": "plugin",
+          "name": "plugin1",
+          "nameInCamel": "plugin1",
+          "code": "plugin1",
+          "codeInCamel": "plugin1",
+          "path": "/test/lib/plugin1",
+          "presets": {
+            "configTags": "bridge[dialect-bridge]"
+          },
+          "bridgeDepends": [
+            "bridge1",
+            "bridge2"
+          ],
+          "pluginDepends": []
+        },
+        {
+          "type": "plugin",
+          "name": "plugin2",
+          "nameInCamel": "plugin2",
+          "code": "plugin2",
+          "codeInCamel": "plugin2",
+          "path": "/test/lib/plugin2",
+          "presets": {
+            "configTags": "bridge[dialect-bridge]"
+          },
+          "bridgeDepends": [
+            "bridge1",
+            "bridge2"
+          ],
+          "pluginDepends": []
+        },
+        {
+          "type": "plugin",
+          "name": "plugin3",
+          "nameInCamel": "plugin3",
+          "code": "plugin3",
+          "codeInCamel": "plugin3",
+          "path": "/test/lib/plugin3",
+          "presets": {},
+          "bridgeDepends": [],
+          "pluginDepends": []
+        }
+      ];
+      var expectedPluginSchema = {
+        "profile": {},
+        "sandbox": {
+          "plugins": {
+            "subPlugin1": {
+              "crateScope": "sub-plugin1",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  }
+                }
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": [
+                "plugin1",
+                "plugin2"
+              ]
+            },
+            "subPlugin2": {
+              "crateScope": "sub-plugin2",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  }
+                }
+              },
+              "bridgeDepends": [
+                "bridge2",
+                "bridge3"
+              ],
+              "pluginDepends": [
+                "plugin2",
+                "plugin3"
+              ]
+            },
+            "plugin1": {
+              "crateScope": "plugin1",
+              "schema": {},
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
+            },
+            "plugin2": {
+              "crateScope": "plugin2",
+              "schema": {},
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
+            },
+            "plugin3": {
+              "crateScope": "plugin3",
+              "schema": {},
+              "bridgeDepends": [],
+              "pluginDepends": []
+            }
+          }
+        }
+      };
+      var pluginSchema = extractPluginSchema(C, nameResolver, pluginRefs, pluginMetadata);
+      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
+      assert.deepEqual(pluginSchema, expectedPluginSchema);
+    });
   });
 
   describe('validateBridgeConfig()', function() {
