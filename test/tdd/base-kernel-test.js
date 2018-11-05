@@ -156,6 +156,21 @@ describe('tdd:devebot:base:kernel', function() {
         "bridge1", "bridge2", "bridge3"
       ]);
       var pluginMetadata = {
+        "application/sandbox": {
+          "default": {
+            "crateScope": "application",
+            "pluginCode": "application",
+            "type": "sandbox",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "contextPath": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
         "sub-plugin1/sandbox": {
           "default": {
             "crateScope": "sub-plugin1",
@@ -301,6 +316,17 @@ describe('tdd:devebot:base:kernel', function() {
       var expectedPluginSchema = {
         "profile": {},
         "sandbox": {
+          "application": {
+            "crateScope": "application",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "contextPath": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "plugins": {
             "subPlugin1": {
               "crateScope": "sub-plugin1",
@@ -390,7 +416,7 @@ describe('tdd:devebot:base:kernel', function() {
     it("checkSandboxConstraintsOfCrates() invokes checkConstraints function properly", function() {
       var result = [];
       var fakedCheckers = {};
-      lodash.forEach(['subPlugin1', 'subPlugin2'], function(pluginName) {
+      lodash.forEach(['application', 'subPlugin1', 'subPlugin2'], function(pluginName) {
         fakedCheckers[pluginName] = sinon.stub();
         fakedCheckers[pluginName].callsFake(function(depends) {
           false && console.log('config of dependencies: %s', JSON.stringify(depends, null, 2));
@@ -398,6 +424,9 @@ describe('tdd:devebot:base:kernel', function() {
         });
       })
       var sandboxConfig = {
+        "application": {
+          "contextPath": "path/to/appbox"
+        },
         "plugins": {
           "subPlugin1": {
             "host": "127.0.0.1",
@@ -430,6 +459,25 @@ describe('tdd:devebot:base:kernel', function() {
         }
       };
       var sandboxSchema = {
+        "application": {
+          "crateScope": "application",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "contextPath": {
+                "type": "string"
+              }
+            }
+          },
+          "bridgeDepends": [
+            "bridge3"
+          ],
+          "pluginDepends": [
+            "subPlugin1",
+            "subPlugin2"
+          ],
+          checkConstraints: fakedCheckers['application']
+        },
         "plugins": {
           "subPlugin1": {
             "crateScope": "sub-plugin1",
@@ -504,6 +552,27 @@ describe('tdd:devebot:base:kernel', function() {
         }
       };
       checkSandboxConstraintsOfCrates(C, result, sandboxConfig, sandboxSchema);
+      assert.equal(fakedCheckers['application'].callCount, 1);
+      assert.deepEqual(fakedCheckers['application'].firstCall.args[0], {
+        "plugins": {
+          "subPlugin1": {
+            "host": "127.0.0.1",
+            "port": 17701
+          },
+          "subPlugin2": {
+            "host": "127.0.0.1",
+            "port": 17702
+          }
+        },
+        "bridges": {
+          "bridge3": {
+            "total": 3
+          }
+        },
+        "application": {
+          "contextPath": "path/to/appbox"
+        }
+      });
       assert.equal(fakedCheckers['subPlugin1'].callCount, 1);
       assert.deepEqual(fakedCheckers['subPlugin1'].firstCall.args[0], {
         "plugins": {
@@ -552,6 +621,12 @@ describe('tdd:devebot:base:kernel', function() {
       });
       false && console.log('Result: %s', JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
+        {
+          "stage": "config/schema",
+          "name": "application",
+          "type": "application",
+          "hasError": false
+        },
         {
           "stage": "config/schema",
           "name": "sub-plugin1",
