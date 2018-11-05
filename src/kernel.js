@@ -247,6 +247,7 @@ let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
 let validatePluginConfig = function(ref, pluginConfig, pluginSchema, result) {
   result = result || [];
   validateSandboxSchemaOfCrates(ref, result, pluginConfig.sandbox, pluginSchema.sandbox);
+  checkSandboxConstraintsOfCrates(ref, result, pluginConfig.sandbox, pluginSchema.sandbox);
 }
 
 let validateSandboxSchemaOfCrates = function(ref, result, config, schema) {
@@ -295,7 +296,7 @@ let checkSandboxConstraintsOfCrates = function(ref, result, config, schema) {
   if (lodash.isObject(config.application)) {
     checkSandboxConstraintsOfAppbox(ref, result, config, schema);
   }
-  if (config.plugins) {
+  if (lodash.isObject(config.plugins)) {
     lodash.forOwn(config.plugins, function(pluginObject, pluginName) {
       checkSandboxConstraintsOfPlugin(ref, result, config, schema, pluginName);
     });
@@ -331,7 +332,7 @@ let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
 let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crateName) {
   let {L, T} = ref;
   let crateConfig = config.plugins[crateName];
-  let crateSchema = schema.plugins[crateName];
+  let crateSchema = schema && schema.plugins && schema.plugins[crateName];
   if (crateSchema && lodash.isFunction(crateSchema.checkConstraints)) {
     let extractedCfg = { plugins: {}, bridges: {} };
     extractedCfg.plugins[crateName] = crateConfig;

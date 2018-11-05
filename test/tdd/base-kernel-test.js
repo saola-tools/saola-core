@@ -11,6 +11,7 @@ var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
 var envbox = require(lab.getDevebotModule('utils/envbox'));
 var rewire = require('rewire');
+var sinon = require('sinon');
 
 describe('tdd:devebot:base:kernel', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -375,6 +376,195 @@ describe('tdd:devebot:base:kernel', function() {
       var pluginSchema = extractPluginSchema(C, nameResolver, pluginRefs, pluginMetadata);
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
       assert.deepEqual(pluginSchema, expectedPluginSchema);
+    });
+  });
+
+  describe('validatePluginConfig()', function() {
+    var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
+    var checkSandboxConstraintsOfCrates = rewiredKernel.__get__('checkSandboxConstraintsOfCrates');
+    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
+    var L = loggingFactory.getLogger();
+    var T = loggingFactory.getTracer();
+    var C = {L, T, schemaValidator};
+
+    it("checkSandboxConstraintsOfCrates() invokes checkConstraints function properly", function() {
+      var result = [];
+      var fakedCheckers = {};
+      lodash.forEach(['subPlugin1', 'subPlugin2'], function(pluginName) {
+        fakedCheckers[pluginName] = sinon.stub();
+        fakedCheckers[pluginName].callsFake(function(depends) {
+          false && console.log('config of dependencies: %s', JSON.stringify(depends, null, 2));
+          return true;
+        });
+      })
+      var sandboxConfig = {
+        "plugins": {
+          "subPlugin1": {
+            "host": "127.0.0.1",
+            "port": 17701
+          },
+          "subPlugin2": {
+            "host": "127.0.0.1",
+            "port": 17702
+          },
+          "plugin1": {
+            "total": 1
+          },
+          "plugin2": {
+            "total": 2
+          },
+          "plugin3": {
+            "total": 3
+          }
+        },
+        "bridges": {
+          "bridge1": {
+            "total": 1
+          },
+          "bridge2": {
+            "total": 2
+          },
+          "bridge3": {
+            "total": 3
+          }
+        }
+      };
+      var sandboxSchema = {
+        "plugins": {
+          "subPlugin1": {
+            "crateScope": "sub-plugin1",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                }
+              }
+            },
+            "bridgeDepends": [
+              "bridge1",
+              "bridge2"
+            ],
+            "pluginDepends": [
+              "plugin1",
+              "plugin2"
+            ],
+            checkConstraints: fakedCheckers['subPlugin1']
+          },
+          "subPlugin2": {
+            "crateScope": "sub-plugin2",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                }
+              }
+            },
+            "bridgeDepends": [
+              "bridge2",
+              "bridge3"
+            ],
+            "pluginDepends": [
+              "plugin2",
+              "plugin3"
+            ],
+            checkConstraints: fakedCheckers['subPlugin2']
+          },
+          "plugin1": {
+            "crateScope": "plugin1",
+            "schema": {},
+            "bridgeDepends": [
+              "bridge1",
+              "bridge2"
+            ],
+            "pluginDepends": []
+          },
+          "plugin2": {
+            "crateScope": "plugin2",
+            "schema": {},
+            "bridgeDepends": [
+              "bridge1",
+              "bridge2"
+            ],
+            "pluginDepends": []
+          },
+          "plugin3": {
+            "crateScope": "plugin3",
+            "schema": {},
+            "bridgeDepends": [],
+            "pluginDepends": []
+          }
+        }
+      };
+      checkSandboxConstraintsOfCrates(C, result, sandboxConfig, sandboxSchema);
+      assert.equal(fakedCheckers['subPlugin1'].callCount, 1);
+      assert.deepEqual(fakedCheckers['subPlugin1'].firstCall.args[0], {
+        "plugins": {
+          "subPlugin1": {
+            "host": "127.0.0.1",
+            "port": 17701
+          },
+          "plugin1": {
+            "total": 1
+          },
+          "plugin2": {
+            "total": 2
+          }
+        },
+        "bridges": {
+          "bridge1": {
+            "total": 1
+          },
+          "bridge2": {
+            "total": 2
+          }
+        }
+      });
+      assert.equal(fakedCheckers['subPlugin2'].callCount, 1);
+      assert.deepEqual(fakedCheckers['subPlugin2'].firstCall.args[0], {
+        "plugins": {
+          "subPlugin2": {
+            "host": "127.0.0.1",
+            "port": 17702
+          },
+          "plugin2": {
+            "total": 2
+          },
+          "plugin3": {
+            "total": 3
+          }
+        },
+        "bridges": {
+          "bridge2": {
+            "total": 2
+          },
+          "bridge3": {
+            "total": 3
+          }
+        }
+      });
+      false && console.log('Result: %s', JSON.stringify(result, null, 2));
+      assert.deepEqual(result, [
+        {
+          "stage": "config/schema",
+          "name": "sub-plugin1",
+          "type": "plugin",
+          "hasError": false
+        },
+        {
+          "stage": "config/schema",
+          "name": "sub-plugin2",
+          "type": "plugin",
+          "hasError": false
+        }
+      ]);
     });
   });
 
