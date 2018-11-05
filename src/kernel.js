@@ -3,6 +3,7 @@
 const Injektor = require('injektor');
 const lodash = require('lodash');
 const path = require('path');
+const util = require('util');
 const chores = require('./utils/chores');
 const constx = require('./utils/constx');
 const LoggingWrapper = require('./backbone/logging-wrapper');
@@ -308,7 +309,8 @@ let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
   let crateName = 'application';
   let crateConfig = config.application;
   let crateSchema = schema.application;
-  if (crateSchema && lodash.isFunction(crateSchema.checkConstraints)) {
+  let checkConstraints = crateSchema && crateSchema.checkConstraints;
+  if (lodash.isFunction(checkConstraints)) {
     let extractedCfg = { plugins: {}, bridges: {} };
     extractedCfg.application = crateConfig;
     let pluginDepends = crateSchema.pluginDepends || [];
@@ -321,9 +323,9 @@ let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
     });
     let r = null;
     try {
-      r = crateSchema.checkConstraints(extractedCfg);
+      r = checkConstraints(extractedCfg);
     } catch (error) {
-      r = { ok: false, reason: 'crateSchema.checkConstraints() raises an error' }
+      r = { ok: false, reason: 'application.checkConstraints() raises an error' }
     }
     result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
   }
@@ -333,7 +335,8 @@ let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crat
   let { L, T } = ref;
   let crateConfig = config.plugins[crateName];
   let crateSchema = schema && schema.plugins && schema.plugins[crateName];
-  if (crateSchema && lodash.isFunction(crateSchema.checkConstraints)) {
+  let checkConstraints = crateSchema && crateSchema.checkConstraints;
+  if (lodash.isFunction(checkConstraints)) {
     let extractedCfg = { plugins: {}, bridges: {} };
     extractedCfg.plugins[crateName] = crateConfig;
     let pluginDepends = crateSchema.pluginDepends || [];
@@ -353,9 +356,12 @@ let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crat
     });
     let r = null;
     try {
-      r = crateSchema.checkConstraints(extractedCfg);
+      r = checkConstraints(extractedCfg);
     } catch (error) {
-      r = { ok: false, reason: 'crateSchema.checkConstraints() raises an error' }
+      r = {
+        ok: false,
+        reason: util.format('plugins[%s].checkConstraints() raises an error', crateName)
+      }
     }
     result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
   }
