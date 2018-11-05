@@ -165,11 +165,11 @@ let loadScriptEntry = function(CTX, scriptMap, scriptType, scriptSubDir, scriptF
         }));
         opStatus.hasError = false;
         let scriptName = scriptFile.replace('.js', '').toLowerCase();
-        let uniqueName = [pluginRootDir.name, scriptName].join(chores.getSeparator());
         let pluginName = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
         if (!chores.isUpgradeSupported('improving-name-resolver')) {
           pluginName = nameResolver.getOriginalName(pluginRootDir);
         }
+        let uniqueName = [pluginName, scriptName].join(chores.getSeparator());
         let entry = {};
         entry[uniqueName] = {
           crateScope: pluginName,
@@ -289,13 +289,13 @@ let loadMetainfEntry = function(CTX, metainfMap, metainfSubDir, schemaFile, plug
       opStatus.hasError = false;
       let typeName = metainfObject.type || schemaFile.replace('.js', '').toLowerCase();
       let subtypeName = metainfObject.subtype || 'default';
-      let uniqueName = [pluginRootDir.name, typeName].join(chores.getSeparator());
       let crateScope = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
       let pluginCode = nameResolver.getDefaultAliasOf(pluginRootDir.name, pluginRootDir.type);
       if (!chores.isUpgradeSupported('improving-name-resolver')) {
         crateScope = nameResolver.getOriginalName(pluginRootDir);
         pluginCode = nameResolver.getDefaultAlias(pluginRootDir);
       }
+      let uniqueName = [crateScope, typeName].join(chores.getSeparator());
       let entry = {};
       entry[uniqueName] = entry[uniqueName] || {};
       entry[uniqueName][subtypeName] = {
@@ -413,7 +413,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
     pluginName = nameResolver.getOriginalName(pluginRootDir);
     pluginCode = nameResolver.getDefaultAlias(pluginRootDir);
   }
-  let uniqueName = [pluginRootDir.name, wrapperName].join(chores.getSeparator());
+  let uniqueName = [pluginName, wrapperName].join(chores.getSeparator());
   let referenceAlias = lodash.get(pluginRootDir, ['presets', 'referenceAlias'], {});
 
   function wrapperConstructor(kwargs) {

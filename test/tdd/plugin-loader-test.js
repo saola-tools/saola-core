@@ -142,7 +142,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       var routineMap = lab.simplifyRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
       var expectedMap = {};
-      expectedMap[chores.toFullname("fullapp", "main-cmd1")] = {
+      expectedMap[chores.toFullname("application", "main-cmd1")] = {
         "crateScope": "application",
         "name": "main-cmd1",
         "object": {
@@ -153,7 +153,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("fullapp", "main-cmd2")] = {
+      expectedMap[chores.toFullname("application", "main-cmd2")] = {
         "crateScope": "application",
         "name": "main-cmd2",
         "object": {
@@ -371,7 +371,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       issueInspector.barrier({exitOnError: true});
       false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
       var expectedMap = {};
-      expectedMap[chores.toFullname("fullapp", "sandbox")] = {
+      expectedMap[chores.toFullname("application", "sandbox")] = {
         "default": {
           "crateScope": "application",
           "pluginCode": "application",
@@ -464,7 +464,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           ]), lodash.omit(service, ['construktor']));
       });
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
-      var mainServiceField = chores.toFullname('fullapp', 'mainService');
+      var mainServiceField = chores.toFullname('application', 'mainService');
       var expectedMap = {};
       expectedMap[mainServiceField] = {
         "construktor": {
@@ -717,7 +717,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
           ]), lodash.omit(trigger, ['construktor']));
       });
       false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
-      var mainTriggerField = chores.toFullname('fullapp', 'mainTrigger');
+      var mainTriggerField = chores.toFullname('application', 'mainTrigger');
       var expectedMap = {};
       expectedMap[mainTriggerField] = {
         "construktor": {
