@@ -251,7 +251,7 @@ let validatePluginConfig = function(ref, pluginConfig, pluginSchema, result) {
 }
 
 let validateSandboxSchemaOfCrates = function(ref, result, config, schema) {
-  let {L, T} = ref;
+  let { L, T } = ref;
   config = config || {};
   schema = schema || {};
   if (config.application) {
@@ -290,7 +290,7 @@ let validateSandboxSchemaOfCrate = function(ref, result, crateConfig, crateSchem
 }
 
 let checkSandboxConstraintsOfCrates = function(ref, result, config, schema) {
-  let {L, T} = ref;
+  let { L, T } = ref;
   config = config || {};
   schema = schema || {};
   if (lodash.isObject(config.application)) {
@@ -304,7 +304,7 @@ let checkSandboxConstraintsOfCrates = function(ref, result, config, schema) {
 }
 
 let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
-  let {L, T} = ref;
+  let { L, T } = ref;
   let crateName = 'application';
   let crateConfig = config.application;
   let crateSchema = schema.application;
@@ -330,7 +330,7 @@ let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
 }
 
 let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crateName) {
-  let {L, T} = ref;
+  let { L, T } = ref;
   let crateConfig = config.plugins[crateName];
   let crateSchema = schema && schema.plugins && schema.plugins[crateName];
   if (crateSchema && lodash.isFunction(crateSchema.checkConstraints)) {

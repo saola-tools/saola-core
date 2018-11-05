@@ -264,6 +264,10 @@ function launchApplication(context, pluginNames, bridgeNames) {
   }
   context = context || {};
 
+  if (lodash.isString(context.appRootPath)) {
+    context.libRootPath = context.appRootPath;
+  }
+
   const loggingWrapper = new LoggingWrapper(blockRef);
   context.logger = loggingWrapper.getLogger();
   context.tracer = loggingWrapper.getTracer();
@@ -299,6 +303,8 @@ function launchApplication(context, pluginNames, bridgeNames) {
 
 function expandExtensions(accumulator, pluginNames, bridgeNames) {
   accumulator = accumulator || {};
+  accumulator.bridgeRefs = accumulator.bridgeRefs || {};
+  accumulator.pluginRefs = accumulator.pluginRefs || {};
   let context = lodash.pick(accumulator, ATTRS.concat(['logger', 'tracer']));
   let {logger: L, tracer: T} = context;
 
