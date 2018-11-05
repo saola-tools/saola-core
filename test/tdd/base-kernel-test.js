@@ -29,6 +29,126 @@ describe('tdd:devebot:base:kernel', function() {
     envbox.clearCache();
   });
 
+  describe('extractPluginSchema()', function() {
+    var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
+    var extractPluginSchema = rewiredKernel.__get__('extractPluginSchema');
+    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
+    var L = loggingFactory.getLogger();
+    var T = loggingFactory.getTracer();
+    var C = {L, T, schemaValidator};
+
+    it("should extract plugin metadata and enrich with dependencies (empty dependencies)", function() {
+      var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
+      // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
+      var pluginMetadata = {
+        "devebot-dp-wrapper1/sandbox": {
+          "default": {
+            "crateScope": "devebot-dp-wrapper1",
+            "pluginCode": "wrapper1",
+            "type": "sandbox",
+            "subtype": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "devebot-dp-wrapper2/sandbox": {
+          "default": {
+            "crateScope": "devebot-dp-wrapper2",
+            "pluginCode": "wrapper2",
+            "type": "sandbox",
+            "subtype": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+      var pluginRefs = [
+        {
+          "type": "plugin",
+          "name": "devebot-dp-wrapper1",
+          "nameInCamel": "devebotDpWrapper1",
+          "code": "wrapper1",
+          "codeInCamel": "wrapper1",
+          "path": lab.getLibHome('devebot-dp-wrapper1'),
+          "presets": {},
+          "bridgeDepends": [],
+          "pluginDepends": []
+        },
+        {
+          "type": "plugin",
+          "name": "devebot-dp-wrapper2",
+          "nameInCamel": "devebotDpWrapper2",
+          "code": "wrapper2",
+          "codeInCamel": "wrapper2",
+          "path": lab.getLibHome('devebot-dp-wrapper2'),
+          "presets": {},
+          "bridgeDepends": [],
+          "pluginDepends": []
+        }
+      ];
+
+      var pluginSchema = extractPluginSchema(C, nameResolver, pluginRefs, pluginMetadata);
+      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
+      assert.deepEqual(pluginSchema, {
+        "profile": {},
+        "sandbox": {
+          "plugins": {
+            "wrapper1": {
+              "crateScope": "devebot-dp-wrapper1",
+              "bridgeDepends": [],
+              "pluginDepends": [],
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "wrapper2": {
+              "crateScope": "devebot-dp-wrapper2",
+              "bridgeDepends": [],
+              "pluginDepends": [],
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+  });
+
   describe('validateBridgeConfig()', function() {
     var validateBridgeConfig = rewire(lab.getDevebotModule('kernel')).__get__('validateBridgeConfig');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');

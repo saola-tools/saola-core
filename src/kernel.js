@@ -86,9 +86,7 @@ function Kernel(params={}) {
     text: " - plugin's metadata: ${metadata}"
   }));
 
-  let pluginSchema = {};
-  pluginSchema = extractPluginSchema(CTX, pluginSchema, pluginMetadata);
-  pluginSchema = enrichPluginSchema(CTX, pluginSchema, configObject.pluginRefs);
+  let pluginSchema = extractPluginSchema(CTX, nameResolver, configObject.pluginRefs, pluginMetadata);
 
   let pluginConfig = {
     profile: lodash.get(configObject, ['profile', 'mixture'], {}),
@@ -144,14 +142,14 @@ function Kernel(params={}) {
 
 module.exports = Kernel;
 
-const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'validator' ];
+const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
-let extractPluginSchema = function(ctx, pluginSchema, pluginMetadata) {
+let extractPluginSchema = function(ref, nameResolver, pluginRefs, pluginMetadata, pluginSchema) {
   pluginSchema = pluginSchema || {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
-  lodash.forOwn(pluginMetadata, function(ref, key) {
-    let def = ref && ref.default || {};
+  lodash.forOwn(pluginMetadata, function(metainf, key) {
+    let def = metainf && metainf.default || {};
     if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
       if (chores.isSpecialPlugin(def.pluginCode)) {
         pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
@@ -161,11 +159,11 @@ let extractPluginSchema = function(ctx, pluginSchema, pluginMetadata) {
       }
     }
   });
-  return pluginSchema;
+  return enrichPluginSchema(ref, nameResolver, pluginRefs, pluginSchema);
 }
 
-let enrichPluginSchema = function(ctx, pluginSchema, pluginRefs) {
-  let { nameResolver } = ctx;
+let enrichPluginSchema = function(ref, nameResolver, pluginRefs, pluginSchema) {
+  let { L, T } = ref;
   lodash.forEach(pluginRefs, function(pluginRef) {
     let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
     if (!chores.isUpgradeSupported('improving-name-resolver')) {
@@ -182,15 +180,15 @@ let enrichPluginSchema = function(ctx, pluginSchema, pluginRefs) {
     // apply 'pluginDepends' & 'bridgeDepends' to pluginSchema
     lodash.forEach(['bridgeDepends', 'pluginDepends'], function(depType) {
       if (lodash.isArray(pluginRef[depType])) {
-      lodash.set(pluginSchema, ['sandbox', 'plugins', pluginCode, depType], pluginRef[depType]);
+        lodash.set(pluginSchema, ['sandbox', 'plugins', pluginCode, depType], pluginRef[depType]);
       }
     });
   });
   return pluginSchema;
 }
 
-let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
-  let { L, T, schemaValidator } = ctx;
+let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
+  let { L, T, schemaValidator } = ref;
   result = result || [];
 
   bridgeConfig = bridgeConfig || {};
@@ -246,29 +244,29 @@ let validateBridgeConfig = function(ctx, bridgeConfig, bridgeSchema, result) {
   return result;
 }
 
-let validatePluginConfig = function(ctx, pluginConfig, pluginSchema, result) {
+let validatePluginConfig = function(ref, pluginConfig, pluginSchema, result) {
   result = result || [];
-  validateSandboxSchemaOfCrates(ctx, result, pluginConfig.sandbox, pluginSchema.sandbox);
+  validateSandboxSchemaOfCrates(ref, result, pluginConfig.sandbox, pluginSchema.sandbox);
 }
 
-let validateSandboxSchemaOfCrates = function(ctx, result, config, schema) {
-  let {L, T} = ctx;
+let validateSandboxSchemaOfCrates = function(ref, result, config, schema) {
+  let {L, T} = ref;
   config = config || {};
   schema = schema || {};
   if (config.application) {
-    validateSandboxSchemaOfCrate(ctx, result, config.application, schema.application, 'application');
+    validateSandboxSchemaOfCrate(ref, result, config.application, schema.application, 'application');
   }
   if (config.plugins) {
     lodash.forOwn(config.plugins, function(pluginObject, pluginName) {
       if (lodash.isObject(schema.plugins)) {
-        validateSandboxSchemaOfCrate(ctx, result, pluginObject, schema.plugins[pluginName], pluginName);
+        validateSandboxSchemaOfCrate(ref, result, pluginObject, schema.plugins[pluginName], pluginName);
       }
     });
   }
 }
 
-let validateSandboxSchemaOfCrate = function(ctx, result, crateConfig, crateSchema, crateName) {
-  let { L, T, schemaValidator } = ctx;
+let validateSandboxSchemaOfCrate = function(ref, result, crateConfig, crateSchema, crateName) {
+  let { L, T, schemaValidator } = ref;
   let validated = false;
   if (crateSchema && crateSchema.enabled !== false) {
     if (lodash.isObject(crateSchema.schema)) {
@@ -287,6 +285,78 @@ let validateSandboxSchemaOfCrate = function(ctx, result, crateConfig, crateSchem
       tags: [ blockRef, 'validate-plugin-config-by-schema-skipped' ],
       text: ' - Validating sandboxConfig[${crateName}] is skipped'
     }));
+  }
+}
+
+let checkSandboxConstraintsOfCrates = function(ref, result, config, schema) {
+  let {L, T} = ref;
+  config = config || {};
+  schema = schema || {};
+  if (lodash.isObject(config.application)) {
+    checkSandboxConstraintsOfAppbox(ref, result, config, schema);
+  }
+  if (config.plugins) {
+    lodash.forOwn(config.plugins, function(pluginObject, pluginName) {
+      checkSandboxConstraintsOfPlugin(ref, result, config, schema, pluginName);
+    });
+  }
+}
+
+let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
+  let {L, T} = ref;
+  let crateName = 'application';
+  let crateConfig = config.application;
+  let crateSchema = schema.application;
+  if (crateSchema && lodash.isFunction(crateSchema.checkConstraints)) {
+    let extractedCfg = { plugins: {}, bridges: {} };
+    extractedCfg.application = crateConfig;
+    let pluginDepends = crateSchema.pluginDepends || [];
+    lodash.forEach(pluginDepends, function(depName) {
+      extractedCfg.plugins[depName] = config.plugins[depName];
+    });
+    let bridgeDepends = crateSchema.bridgeDepends || [];
+    lodash.forEach(bridgeDepends, function(depName) {
+      extractedCfg.bridges[depName] = config.bridges[depName];
+    });
+    let r = null;
+    try {
+      r = crateSchema.checkConstraints(extractedCfg);
+    } catch (error) {
+      r = { ok: false, reason: 'crateSchema.checkConstraints() raises an error' }
+    }
+    result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
+  }
+}
+
+let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crateName) {
+  let {L, T} = ref;
+  let crateConfig = config.plugins[crateName];
+  let crateSchema = schema.plugins[crateName];
+  if (crateSchema && lodash.isFunction(crateSchema.checkConstraints)) {
+    let extractedCfg = { plugins: {}, bridges: {} };
+    extractedCfg.plugins[crateName] = crateConfig;
+    let pluginDepends = crateSchema.pluginDepends || [];
+    lodash.forEach(pluginDepends, function(depName) {
+      if (depName === crateName) {
+        let r = { ok: false, reason: {
+          pluginName: crateName,
+          message: 'plugin depends on itself'
+        } };
+        result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
+      }
+      extractedCfg.plugins[depName] = config.plugins[depName];
+    });
+    let bridgeDepends = crateSchema.bridgeDepends || [];
+    lodash.forEach(bridgeDepends, function(depName) {
+      extractedCfg.bridges[depName] = config.bridges[depName];
+    });
+    let r = null;
+    try {
+      r = crateSchema.checkConstraints(extractedCfg);
+    } catch (error) {
+      r = { ok: false, reason: 'crateSchema.checkConstraints() raises an error' }
+    }
+    result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
   }
 }
 
