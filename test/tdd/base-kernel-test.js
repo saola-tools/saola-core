@@ -622,19 +622,19 @@ describe('tdd:devebot:base:kernel', function() {
       false && console.log('Result: %s', JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
         {
-          "stage": "config/schema",
+          "stage": "config/constraints",
           "name": "application",
           "type": "application",
           "hasError": false
         },
         {
-          "stage": "config/schema",
+          "stage": "config/constraints",
           "name": "sub-plugin1",
           "type": "plugin",
           "hasError": false
         },
         {
-          "stage": "config/schema",
+          "stage": "config/constraints",
           "name": "sub-plugin2",
           "type": "plugin",
           "hasError": false

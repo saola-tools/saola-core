@@ -273,12 +273,7 @@ let validateSandboxSchemaOfCrate = function(ref, result, crateConfig, crateSchem
   if (crateSchema && crateSchema.enabled !== false) {
     if (lodash.isObject(crateSchema.schema)) {
       let r = schemaValidator.validate(crateConfig, crateSchema.schema);
-      result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
-      validated = true;
-    }
-    if (lodash.isFunction(crateSchema.validator)) {
-      let r = crateSchema.validator(crateConfig);
-      result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
+      result.push(customizeSandboxResult(r, crateSchema.crateScope, 'schema'));
       validated = true;
     }
   }
@@ -327,7 +322,7 @@ let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
     } catch (error) {
       r = { ok: false, reason: 'application.checkConstraints() raises an error' }
     }
-    result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
+    result.push(customizeSandboxResult(r, crateSchema.crateScope, 'constraints'));
   }
 }
 
@@ -346,7 +341,7 @@ let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crat
           pluginName: crateName,
           message: 'plugin depends on itself'
         } };
-        result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
+        result.push(customizeSandboxResult(r, crateSchema.crateScope, 'constraints'));
       }
       extractedCfg.plugins[depName] = config.plugins[depName];
     });
@@ -363,17 +358,17 @@ let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crat
         reason: util.format('plugins[%s].checkConstraints() raises an error', crateName)
       }
     }
-    result.push(customizeSandboxResult(r, crateSchema.crateScope, crateName));
+    result.push(customizeSandboxResult(r, crateSchema.crateScope, 'constraints'));
   }
 }
 
-let customizeSandboxResult = function(result, crateScope, crateName) {
+let customizeSandboxResult = function(result, crateScope, validationType) {
   result = (result == undefined || result == null) ? false : result;
   result = (typeof result === 'boolean') ? { ok: result } : result;
   let output = {};
-  output.stage = 'config/schema';
+  output.stage = 'config/' + validationType;
   output.name = crateScope;
-  output.type = chores.isSpecialPlugin(crateName) ? crateName : 'plugin';
+  output.type = chores.isSpecialPlugin(crateScope) ? crateScope : 'plugin';
   output.hasError = result.ok !== true;
   if (!result.ok) {
     if (result.errors) {
