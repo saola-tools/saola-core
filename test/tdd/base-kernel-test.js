@@ -448,14 +448,36 @@ describe('tdd:devebot:base:kernel', function() {
         },
         "bridges": {
           "bridge1": {
-            "total": 1
+            "subPlugin1": {
+              "instance": {
+                "total": 1
+              }
+            }
           },
           "bridge2": {
-            "total": 2
+            "subPlugin1": {
+              "instance": {
+                "total": 2
+              }
+            },
+            "subPlugin2": {
+              "instance": {
+                "total": 2
+              }
+            }
           },
           "bridge3": {
-            "total": 3
-          }
+            "subPlugin2": {
+              "instance": {
+                "total": 3
+              }
+            },
+            "application": {
+              "instance": {
+                "total": 3
+              }
+            }
+          },
         }
       };
       var sandboxSchema = {
@@ -566,7 +588,9 @@ describe('tdd:devebot:base:kernel', function() {
         },
         "bridges": {
           "bridge3": {
-            "total": 3
+            "instance": {
+              "total": 3
+            }
           }
         },
         "application": {
@@ -589,10 +613,14 @@ describe('tdd:devebot:base:kernel', function() {
         },
         "bridges": {
           "bridge1": {
-            "total": 1
+            "instance": {
+              "total": 1
+            }
           },
           "bridge2": {
-            "total": 2
+            "instance": {
+              "total": 2
+            }
           }
         }
       });
@@ -612,10 +640,14 @@ describe('tdd:devebot:base:kernel', function() {
         },
         "bridges": {
           "bridge2": {
-            "total": 2
+            "instance": {
+              "total": 2
+            }
           },
           "bridge3": {
-            "total": 3
+            "instance": {
+              "total": 3
+            }
           }
         }
       });

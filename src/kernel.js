@@ -309,7 +309,7 @@ let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
     });
     let bridgeDepends = crateSchema.bridgeDepends || [];
     lodash.forEach(bridgeDepends, function(depName) {
-      extractedCfg.bridges[depName] = config.bridges[depName];
+      extractedCfg.bridges[depName] = lodash.get(config, ["bridges", depName, "application"]);
     });
     let r = null;
     try {
@@ -342,7 +342,7 @@ let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crat
     });
     let bridgeDepends = crateSchema.bridgeDepends || [];
     lodash.forEach(bridgeDepends, function(depName) {
-      extractedCfg.bridges[depName] = config.bridges[depName];
+      extractedCfg.bridges[depName] = lodash.get(config, ["bridges", depName, crateName]);
     });
     let r = null;
     try {
