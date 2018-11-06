@@ -269,15 +269,10 @@ let validateSandboxSchemaOfCrates = function(ref, result, config, schema) {
 
 let validateSandboxSchemaOfCrate = function(ref, result, crateConfig, crateSchema, crateName) {
   let { L, T, schemaValidator } = ref;
-  let validated = false;
-  if (crateSchema && crateSchema.enabled !== false) {
-    if (lodash.isObject(crateSchema.schema)) {
-      let r = schemaValidator.validate(crateConfig, crateSchema.schema);
-      result.push(customizeSandboxResult(r, crateSchema.crateScope, 'schema'));
-      validated = true;
-    }
-  }
-  if (!validated) {
+  if (crateSchema && crateSchema.enabled !== false && lodash.isObject(crateSchema.schema)) {
+    let r = schemaValidator.validate(crateConfig, crateSchema.schema);
+    result.push(customizeSandboxResult(r, crateSchema.crateScope, 'schema'));
+  } else {
     L.has('silly') && L.log('silly', T.add({ crateName, crateConfig, crateSchema }).toMessage({
       tags: [ blockRef, 'validate-plugin-config-by-schema-skipped' ],
       text: ' - Validating sandboxConfig[${crateName}] is skipped'
