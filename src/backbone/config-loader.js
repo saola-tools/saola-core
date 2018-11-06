@@ -85,8 +85,12 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   }));
   const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME];
 
-  let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
-  let transCTX = { L, T, pluginAliasMap, bridgeAliasMap, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME };
+  let transCTX = { L, T, nameResolver, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME };
+
+  if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
+    let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
+    transCTX = { L, T, pluginAliasMap, bridgeAliasMap, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME };
+  }
 
   let libRefs = lodash.values(pluginRefs);
   if (devebotRef) {
@@ -215,10 +219,16 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   });
 
   if (chores.isUpgradeSupported('standardizing-config')) {
-    let {plugin: pluginReverseMap, bridge: bridgeReverseMap} = nameResolver.getRelativeAliasMap();
-    doAliasMap(ctx, config.sandbox.default, pluginReverseMap, bridgeReverseMap);
-    doAliasMap(ctx, config.sandbox.expanse, pluginReverseMap, bridgeReverseMap);
-    doAliasMap(ctx, config.sandbox.mixture, pluginReverseMap, bridgeReverseMap);
+    if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
+      applyAliasMap(ctx, config.sandbox.default, nameResolver.getDefaultAliasOf);
+      applyAliasMap(ctx, config.sandbox.expanse, nameResolver.getDefaultAliasOf);
+      applyAliasMap(ctx, config.sandbox.mixture, nameResolver.getDefaultAliasOf);
+    } else {
+      let {plugin: pluginReverseMap, bridge: bridgeReverseMap} = nameResolver.getRelativeAliasMap();
+      doAliasMap(ctx, config.sandbox.default, pluginReverseMap, bridgeReverseMap);
+      doAliasMap(ctx, config.sandbox.expanse, pluginReverseMap, bridgeReverseMap);
+      doAliasMap(ctx, config.sandbox.mixture, pluginReverseMap, bridgeReverseMap);
+    }
     stateInspector.collect({config});
   }
 
@@ -304,10 +314,16 @@ let standardizeNames = function(ctx, cfgLabels) {
 }
 
 let transformConfig = function(ctx, configType, configData, moduleType, moduleName, modulePresets) {
-  let { L, T, pluginAliasMap, bridgeAliasMap, CONFIG_SANDBOX_NAME } = ctx || this;
+  let { L, T, nameResolver, CONFIG_SANDBOX_NAME } = ctx || this;
   if (configType === CONFIG_SANDBOX_NAME) {
     configData = convertSandboxConfig(ctx, configData, moduleType, moduleName, modulePresets);
-    configData = doAliasMap(ctx, configData, pluginAliasMap, bridgeAliasMap);
+    if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
+      configData = applyAliasMap(ctx, configData, nameResolver.getOriginalNameOf);
+    } else {
+      // @Deprecated
+      let {pluginAliasMap, bridgeAliasMap} = ctx;
+      configData = doAliasMap(ctx, configData, pluginAliasMap, bridgeAliasMap);
+    }
   }
   return configData;
 }
@@ -353,14 +369,14 @@ let convertSandboxConfig = function(ctx, sandboxConfig, moduleType, moduleName, 
   return sandboxConfig;
 }
 
-let doAliasMap = function(ctx, sandboxConfig, pluginAliasMap, bridgeAliasMap) {
+let applyAliasMap = function(ctx, sandboxConfig, nameTransformer) {
   let { L, T } = ctx || this;
   if (chores.isUpgradeSupported(['standardizing-config'])) {
     if (sandboxConfig && lodash.isObject(sandboxConfig.plugins)) {
       let oldPlugins = sandboxConfig.plugins;
       let newPlugins = {};
       lodash.forOwn(oldPlugins, function(oldPlugin, oldPluginName) {
-        let newPluginName = pluginAliasMap[oldPluginName] || oldPluginName;
+        let newPluginName = nameTransformer(oldPluginName, 'plugin');
         newPlugins[newPluginName] = oldPlugin;
       });
       sandboxConfig.plugins = newPlugins;
@@ -371,12 +387,12 @@ let doAliasMap = function(ctx, sandboxConfig, pluginAliasMap, bridgeAliasMap) {
       let oldBridges = sandboxConfig.bridges;
       let newBridges = {};
       lodash.forOwn(oldBridges, function(oldBridge, oldBridgeName) {
-        let newBridgeName = bridgeAliasMap[oldBridgeName] || oldBridgeName;
+        let newBridgeName = nameTransformer(oldBridgeName, 'bridge');
         if (newBridgeName) {
           if (lodash.isObject(oldBridge)) {
             newBridges[newBridgeName] = {};
             lodash.forOwn(oldBridge, function(oldPlugin, oldPluginName) {
-              let newPluginName = pluginAliasMap[oldPluginName] || oldPluginName;
+              let newPluginName = nameTransformer(oldPluginName, 'plugin');
               newBridges[newBridgeName][newPluginName] = oldPlugin;
             });
           } else {
@@ -388,4 +404,20 @@ let doAliasMap = function(ctx, sandboxConfig, pluginAliasMap, bridgeAliasMap) {
     }
   }
   return sandboxConfig;
+}
+
+let doAliasMap = null;
+if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
+  doAliasMap = function(ctx, sandboxConfig, pluginAliasMap, bridgeAliasMap) {
+    function nameTransformer(name, type) {
+      switch(type) {
+        case 'plugin':
+          return pluginAliasMap[name] || name;
+        case 'bridge':
+          return bridgeAliasMap[name] || name;
+      }
+      return name;
+    }
+    return applyAliasMap(ctx, sandboxConfig, nameTransformer);
+  }
 }

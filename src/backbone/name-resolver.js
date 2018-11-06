@@ -19,7 +19,7 @@ function NameResolver(params={}) {
 
   let absoluteAliasMap, relativeAliasMap;
 
-  this.getAbsoluteAliasMap = function() {
+  function _getAbsoluteAliasMap() {
     absoluteAliasMap = absoluteAliasMap || {
       plugin: buildAbsoluteAliasMap(params.pluginRefs),
       bridge: buildAbsoluteAliasMap(params.bridgeRefs)
@@ -27,12 +27,53 @@ function NameResolver(params={}) {
     return absoluteAliasMap;
   }
 
-  this.getRelativeAliasMap = function() {
+  function _getRelativeAliasMap() {
     relativeAliasMap = relativeAliasMap || {
       plugin: buildRelativeAliasMap(params.pluginRefs),
       bridge: buildRelativeAliasMap(params.bridgeRefs)
     }
     return relativeAliasMap;
+  }
+
+  function _getOriginalNameOf(crateName, crateType) {
+    switch(crateType) {
+      case 'application': {
+        crateName = crateType;
+        break;
+      }
+      case 'plugin':
+      case 'bridge': {
+        let absoluteAlias = _getAbsoluteAliasMap();
+        crateName = absoluteAlias[crateType][crateName] || crateName;
+        break;
+      }
+    }
+    return crateName;
+  }
+
+  function _getDefaultAliasOf(crateName, crateType) {
+    switch(crateType) {
+      case 'application': {
+        crateName = crateType;
+        break;
+      }
+      case 'plugin':
+      case 'bridge': {
+        crateName = _getOriginalNameOf(crateName, crateType);
+        let relativeAlias = _getRelativeAliasMap();
+        crateName = relativeAlias[crateType][crateName] || crateName;
+        break;
+      }
+    }
+    return crateName;
+  }
+
+  this.getOriginalNameOf = _getOriginalNameOf;
+  this.getDefaultAliasOf = _getDefaultAliasOf;
+
+  if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
+    this.getAbsoluteAliasMap = _getAbsoluteAliasMap;
+    this.getRelativeAliasMap = _getRelativeAliasMap;
   }
 
   if (!chores.isUpgradeSupported('improving-name-resolver')) {
@@ -48,39 +89,6 @@ function NameResolver(params={}) {
     this.getOriginalName = this.getAliasBy.bind(this, 'name');
 
     this.getDefaultAlias = this.getAliasBy.bind(this, 'codeInCamel');
-  }
-
-  this.getOriginalNameOf = function(crateName, crateType) {
-    switch(crateType) {
-      case 'application': {
-        crateName = crateType;
-        break;
-      }
-      case 'plugin':
-      case 'bridge': {
-        let absoluteAlias = this.getAbsoluteAliasMap();
-        crateName = absoluteAlias[crateType][crateName] || crateName;
-        break;
-      }
-    }
-    return crateName;
-  }
-
-  this.getDefaultAliasOf = function(crateName, crateType) {
-    switch(crateType) {
-      case 'application': {
-        crateName = crateType;
-        break;
-      }
-      case 'plugin':
-      case 'bridge': {
-        crateName = this.getOriginalNameOf(crateName, crateType);
-        let relativeAlias = this.getRelativeAliasMap();
-        crateName = relativeAlias[crateType][crateName] || crateName;
-        break;
-      }
-    }
-    return crateName;
   }
 
   extractAliasNames(CTX, 'plugin', params.pluginRefs);
