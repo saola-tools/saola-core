@@ -447,6 +447,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
     }
     // transform parameters by referenceAlias
     if (!lodash.isEmpty(referenceAlias)) {
+      kwargs = getWrappedParams(kwargs);
       lodash.forOwn(referenceAlias, function(oldKey, newKey) {
         if (kwargs[oldKey]) {
           kwargs[newKey] = kwargs[oldKey];
@@ -462,6 +463,16 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
           }
         });
       }
+    }
+    // transform parameters by referenceHash (after referenceAlias)
+    let referenceHash = gadgetConstructor.referenceHash;
+    if (lodash.isObject(referenceHash)) {
+      kwargs = getWrappedParams(kwargs);
+      lodash.forOwn(referenceHash, function(fullname, shortname) {
+        if (kwargs[fullname]) {
+          kwargs[shortname] = kwargs[fullname];
+        }
+      });
     }
     // write around-log begin
     let _LX, _TR;
@@ -521,13 +532,17 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
       text: ' - wrapperConstructor.argumentSchema: ${argumentSchema}'
     }));
   } else {
-    let referenceList = gadgetConstructor.referenceList || [];
+    let wrappedArgumentProps = gadgetConstructor.referenceList || [];
+    if (gadgetConstructor.referenceHash) {
+      wrappedArgumentProps = lodash.values(gadgetConstructor.referenceHash);
+    }
     if (!lodash.isEmpty(referenceAlias)) {
-      referenceList = lodash.map(referenceList, function(key) {
+      wrappedArgumentProps = lodash.map(wrappedArgumentProps, function(key) {
         return referenceAlias[key] || key;
       });
     }
-    wrapperConstructor.argumentProperties = wrappedArgumentFields.concat(referenceList);
+    wrappedArgumentProps = wrappedArgumentFields.concat(wrappedArgumentProps);
+    wrapperConstructor.argumentProperties = lodash.uniq(wrappedArgumentProps);
     L.has('dunce') && L.log('dunce', T.add({
       argumentProperties: wrapperConstructor.argumentProperties
     }).toMessage({

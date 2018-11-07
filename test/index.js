@@ -110,6 +110,9 @@ var lab = module.exports = {
     appName = appName || 'default';
     freshy.unload(require.resolve(this.getAppHome(appName)));
     return appName;
+  },
+  require: function(pkg) {
+    return require(pkg);
   }
 }
 
