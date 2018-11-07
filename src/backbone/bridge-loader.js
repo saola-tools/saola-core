@@ -228,11 +228,9 @@ let buildBridgeDialect = function(ctx, dialectOpts) {
   function dialectConstructor(kwargs) {
     kwargs = kwargs || {};
 
-    let isWrapped = false;
-    let getWrappedParams = function() {
-      if (isWrapped) return kwargs;
-      isWrapped = true;
-      return kwargs = lodash.clone(kwargs);
+    let kwargsRef = null;
+    let getWrappedParams = function(kwargs) {
+      return kwargsRef = kwargsRef || lodash.clone(kwargs) || {};
     }
 
     let newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', dialectName], null);

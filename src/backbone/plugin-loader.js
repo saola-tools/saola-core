@@ -418,11 +418,9 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
 
   function wrapperConstructor(kwargs) {
     kwargs = kwargs || {};
-    let isWrapped = false;
-    let getWrappedParams = function() {
-      if (isWrapped) return kwargs;
-      isWrapped = true;
-      return kwargs = lodash.clone(kwargs);
+    let kwargsRef = null;
+    let getWrappedParams = function(kwargs) {
+      return kwargsRef = kwargsRef || lodash.clone(kwargs) || {};
     }
     // crateScope & componentName
     kwargs.packageName = pluginRootDir.name;
@@ -435,7 +433,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
     }));
     // resolve plugin configuration path
     if (newFeatures.sandboxConfig !== false) {
-      kwargs = getWrappedParams();
+      kwargs = getWrappedParams(kwargs);
       if (chores.isSpecialPlugin(pluginRootDir.type)) {
         kwargs.sandboxConfig = lodash.get(kwargs, ['sandboxConfig', pluginCode], {});
       } else {
@@ -444,7 +442,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
     }
     // wrap getLogger() and add getTracer()
     if (newFeatures.logoliteEnabled !== false) {
-      kwargs = getWrappedParams();
+      kwargs = getWrappedParams(kwargs);
       kwargs.loggingFactory = kwargs.loggingFactory.branch(uniqueName);
     }
     // transform parameters by referenceAlias
