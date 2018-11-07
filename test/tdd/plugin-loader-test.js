@@ -465,70 +465,35 @@ describe('tdd:devebot:core:plugin-loader', function() {
       });
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       var mainServiceField = chores.toFullname('application', 'mainService');
+      var mainServiceDepends = lodash.map([
+        ["bridge1#anyname1z"],
+        ["application", "bridge1#anyname1z"],
+        ["plugin1", "bridge1#anyname1a"],
+        ["plugin1", "bridge2#anyname2a"]
+      ], function(eles) {
+        return chores.toFullname.apply(chores, eles);
+      });
       var expectedMap = {};
       expectedMap[mainServiceField] = {
         "construktor": {
-          "argumentProperties": [
+          "argumentProperties": lodash.concat([
             "sandboxName",
             "sandboxConfig",
             "profileName",
             "profileConfig",
-            "loggingFactory",
-            chores.toFullname("bridge1#anyname1z"),
-            chores.toFullname("application", "bridge1#anyname1z"),
-            chores.toFullname("plugin1", "bridge1#anyname1a"),
-            chores.toFullname("plugin1", "bridge2#anyname2a")
-          ],
-          "argumentSchema": {
-            "$id": mainServiceField,
-            "type": "object",
-            "properties": {
-              "sandboxName": {
-                "type": "string"
-              },
-              "sandboxConfig": {
-                "type": "object"
-              },
-              "profileName": {
-                "type": "string"
-              },
-              "profileConfig": {
-                "type": "object"
-              },
-              "loggingFactory": {
-                "type": "object"
-              },
-              "bridge1#anyname1z": {
-                "type": "object"
-              },
-              "application/bridge1#anyname1z": {
-                "type": "object"
-              },
-              "plugin1/bridge1#anyname1a": {
-                "type": "object"
-              },
-              "plugin1/bridge2#anyname2a": {
-                "type": "object"
-              }
-            }
-          }
+            "loggingFactory"], mainServiceDepends)
         },
         "crateScope": "application",
         "name": "mainService"
       };
-      lodash.forEach([
-        ["application", "bridge1#anyname1z"],
-        ["bridge1#anyname1z"],
-        ["plugin1", "bridge1#anyname1a"],
-        ["plugin1", "bridge2#anyname2a"]
-      ], function(eles) {
-        var oldField = eles.join('/');
-        delete expectedMap[mainServiceField]["construktor"]["argumentSchema"]["properties"][oldField];
-        var newField = chores.toFullname.apply(chores, eles);
-        expectedMap[mainServiceField]["construktor"]["argumentSchema"]["properties"][newField] = {
-          "type": "object"
+      if (!chores.isUpgradeSupported('bridge-full-ref')) {
+        var argumentProperties = lodash.get(expectedMap, [mainServiceField, "construktor", "argumentProperties"]);
+        if (lodash.isArray(argumentProperties)) {
+          lodash.remove(argumentProperties, function(depend) {
+            return mainServiceDepends.indexOf(depend) >= 0;
+          });
         }
-      })
+      }
       expectedMap[chores.toFullname("sub-plugin1", "sublibService")] = {
         "construktor": {
           "argumentSchema": {
@@ -568,31 +533,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
             "profileConfig",
             "loggingFactory",
             "sublibTrigger"
-          ],
-          "argumentSchema": {
-            "$id": chores.toFullname("sub-plugin2", "sublibService"),
-            "type": "object",
-            "properties": {
-              "sandboxName": {
-                "type": "string"
-              },
-              "sandboxConfig": {
-                "type": "object"
-              },
-              "profileName": {
-                "type": "string"
-              },
-              "profileConfig": {
-                "type": "object"
-              },
-              "loggingFactory": {
-                "type": "object"
-              },
-              "sublibTrigger": {
-                "type": "object"
-              }
-            }
-          }
+          ]
         },
         "crateScope": "sub-plugin2",
         "name": "sublibService"
@@ -678,13 +619,6 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "crateScope": "plugin3",
         "name": "plugin3Service"
       };
-      if (!chores.isUpgradeSupported('bridge-full-ref')) {
-        delete expectedMap[mainServiceField]['construktor']['argumentProperties'];
-        delete expectedMap[mainServiceField]['construktor']['argumentSchema']["properties"][chores.toFullname("bridge1#anyname1z")];
-        delete expectedMap[mainServiceField]['construktor']['argumentSchema']["properties"][chores.toFullname("application", "bridge1#anyname1z")];
-        delete expectedMap[mainServiceField]['construktor']['argumentSchema']["properties"][chores.toFullname("plugin1", "bridge1#anyname1a")];
-        delete expectedMap[mainServiceField]['construktor']['argumentSchema']["properties"][chores.toFullname("plugin1", "bridge2#anyname2a")];
-      }
       assert.deepInclude(serviceMap, expectedMap);
     });
   });
@@ -718,66 +652,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       });
       false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
       var mainTriggerField = chores.toFullname('application', 'mainTrigger');
-      var expectedMap = {};
-      expectedMap[mainTriggerField] = {
-        "construktor": {
-          "argumentProperties": [
-            "sandboxName",
-            "sandboxConfig",
-            "profileName",
-            "profileConfig",
-            "loggingFactory",
-            chores.toFullname("application", "bridge1#anyname1z"),
-            chores.toFullname("application", "bridge2#anyname2z"),
-            chores.toFullname("connector1#wrapper"),
-            chores.toFullname("connector2#wrapper"),
-            chores.toFullname("plugin2", "bridge1#anyname1b"),
-            chores.toFullname("plugin2", "bridge2#anyname2b")
-          ],
-          "argumentSchema": {
-            "$id": mainTriggerField,
-            "type": "object",
-            "properties": {
-              "sandboxName": {
-                "type": "string"
-              },
-              "sandboxConfig": {
-                "type": "object"
-              },
-              "profileName": {
-                "type": "string"
-              },
-              "profileConfig": {
-                "type": "object"
-              },
-              "loggingFactory": {
-                "type": "object"
-              },
-              "application/bridge1#anyname1z": {
-                "type": "object"
-              },
-              "application/bridge2#anyname2z": {
-                "type": "object"
-              },
-              "connector1#wrapper": {
-                "type": "object"
-              },
-              "connector2#wrapper": {
-                "type": "object"
-              },
-              "plugin2/bridge1#anyname1b": {
-                "type": "object"
-              },
-              "plugin2/bridge2#anyname2b": {
-                "type": "object"
-              }
-            }
-          }
-        },
-        "crateScope": "application",
-        "name": "mainTrigger"
-      };
-      lodash.forEach([
+      var mainTriggerDepends = lodash.map([
         ["application", "bridge1#anyname1z"],
         ["application", "bridge2#anyname2z"],
         ["connector1#wrapper"],
@@ -785,63 +660,52 @@ describe('tdd:devebot:core:plugin-loader', function() {
         ["plugin2", "bridge1#anyname1b"],
         ["plugin2", "bridge2#anyname2b"]
       ], function(eles) {
-        var oldField = eles.join('/');
-        delete expectedMap[mainTriggerField]["construktor"]["argumentSchema"]["properties"][oldField];
-        var newField = chores.toFullname.apply(chores, eles);
-        expectedMap[mainTriggerField]["construktor"]["argumentSchema"]["properties"][newField] = {
-          "type": "object"
+        return chores.toFullname.apply(chores, eles);
+      });
+      var expectedMap = {};
+      expectedMap[mainTriggerField] = {
+        "construktor": {
+          "argumentProperties": lodash.concat([
+            "sandboxName",
+            "sandboxConfig",
+            "profileName",
+            "profileConfig",
+            "loggingFactory"
+          ], mainTriggerDepends)
+        },
+        "crateScope": "application",
+        "name": "mainTrigger"
+      };
+      if (!chores.isUpgradeSupported('bridge-full-ref')) {
+        var argumentProperties = lodash.get(expectedMap, [mainTriggerField, "construktor", "argumentProperties"]);
+        if (lodash.isArray(argumentProperties)) {
+          lodash.remove(argumentProperties, function(depend) {
+            return mainTriggerDepends.indexOf(depend) >= 0;
+          });
         }
-      })
+      }
       expectedMap[chores.toFullname("sub-plugin1", "sublibTrigger")] = {
         "construktor": {
-          "argumentSchema": {
-            "$id": chores.toFullname("sub-plugin1", "sublibTrigger"),
-            "type": "object",
-            "properties": {
-              "sandboxName": {
-                "type": "string"
-              },
-              "sandboxConfig": {
-                "type": "object"
-              },
-              "profileName": {
-                "type": "string"
-              },
-              "profileConfig": {
-                "type": "object"
-              },
-              "loggingFactory": {
-                "type": "object"
-              }
-            }
-          }
+          "argumentProperties": [
+            "sandboxName",
+            "sandboxConfig",
+            "profileName",
+            "profileConfig",
+            "loggingFactory",
+          ]
         },
         "crateScope": "sub-plugin1",
         "name": "sublibTrigger"
       };
       expectedMap[chores.toFullname("sub-plugin2", "sublibTrigger")] = {
         "construktor": {
-          "argumentSchema": {
-            "$id": chores.toFullname("sub-plugin2", "sublibTrigger"),
-            "type": "object",
-            "properties": {
-              "sandboxName": {
-                "type": "string"
-              },
-              "sandboxConfig": {
-                "type": "object"
-              },
-              "profileName": {
-                "type": "string"
-              },
-              "profileConfig": {
-                "type": "object"
-              },
-              "loggingFactory": {
-                "type": "object"
-              }
-            }
-          }
+          "argumentProperties": [
+            "sandboxName",
+            "sandboxConfig",
+            "profileName",
+            "profileConfig",
+            "loggingFactory",
+          ]
         },
         "crateScope": "sub-plugin2",
         "name": "sublibTrigger"
@@ -927,15 +791,6 @@ describe('tdd:devebot:core:plugin-loader', function() {
         "crateScope": "plugin3",
         "name": "plugin3Trigger"
       };
-      if (!chores.isUpgradeSupported('bridge-full-ref')) {
-        delete expectedMap[mainTriggerField]['construktor']['argumentProperties'];
-        delete expectedMap[mainTriggerField]['construktor']['argumentSchema']["properties"][chores.toFullname("connector1#wrapper")];
-        delete expectedMap[mainTriggerField]['construktor']['argumentSchema']["properties"][chores.toFullname("connector2#wrapper")];
-        delete expectedMap[mainTriggerField]['construktor']['argumentSchema']["properties"][chores.toFullname("application", "bridge1#anyname1z")];
-        delete expectedMap[mainTriggerField]['construktor']['argumentSchema']["properties"][chores.toFullname("application", "bridge2#anyname2z")];
-        delete expectedMap[mainTriggerField]['construktor']['argumentSchema']["properties"][chores.toFullname("plugin2", "bridge1#anyname1b")];
-        delete expectedMap[mainTriggerField]['construktor']['argumentSchema']["properties"][chores.toFullname("plugin2", "bridge2#anyname2b")];
-      }
       assert.deepInclude(triggerMap, expectedMap);
     });
   });

@@ -487,23 +487,21 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
 
   wrapperConstructor.prototype = Object.create(gadgetConstructor.prototype);
 
-  let wrappedArgumentSchema = {
-    "$id": uniqueName,
-    "type": "object",
-    "properties": {}
-  }
-
   let wrappedArgumentFields = ["sandboxName", "sandboxConfig", "profileName", "profileConfig", "loggingFactory"];
 
-  lodash.forEach(wrappedArgumentFields, function(fieldName) {
-    if (['sandboxName', 'profileName'].indexOf(fieldName) >= 0) {
-      wrappedArgumentSchema.properties[fieldName] = { "type": "string" }
-    } else {
-      wrappedArgumentSchema.properties[fieldName] = { "type": "object" }
-    }
-  });
-
   if (gadgetConstructor.argumentSchema) {
+    let wrappedArgumentSchema = {
+      "$id": uniqueName,
+      "type": "object",
+      "properties": {}
+    }
+    lodash.forEach(wrappedArgumentFields, function(fieldName) {
+      if (['sandboxName', 'profileName'].indexOf(fieldName) >= 0) {
+        wrappedArgumentSchema.properties[fieldName] = { "type": "string" }
+      } else {
+        wrappedArgumentSchema.properties[fieldName] = { "type": "object" }
+      }
+    });
     let originalArgumentSchema = gadgetConstructor.argumentSchema;
     if (originalArgumentSchema['$id']) {
       originalArgumentSchema = lodash.omit(originalArgumentSchema, ['$id']);
@@ -517,27 +515,25 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
         properties: properties
       });
     }
+    L.has('dunce') && L.log('dunce', T.add({
+      argumentSchema: wrapperConstructor.argumentSchema
+    }).toMessage({
+      text: ' - wrapperConstructor.argumentSchema: ${argumentSchema}'
+    }));
   } else {
     let referenceList = gadgetConstructor.referenceList || [];
-    if (!lodash.isEmpty(referenceList)) {
-      if (!lodash.isEmpty(referenceAlias)) {
-        referenceList = lodash.map(referenceList, function(key) {
-          return referenceAlias[key] || key;
-        });
-      }
-      wrapperConstructor.argumentProperties = wrappedArgumentFields.concat(referenceList);
+    if (!lodash.isEmpty(referenceAlias)) {
+      referenceList = lodash.map(referenceList, function(key) {
+        return referenceAlias[key] || key;
+      });
     }
-    lodash.forEach(referenceList, function(refName) {
-      wrappedArgumentSchema.properties[refName] = wrappedArgumentSchema.properties[refName] || {type: "object"};
-    });
-    wrapperConstructor.argumentSchema = wrappedArgumentSchema;
+    wrapperConstructor.argumentProperties = wrappedArgumentFields.concat(referenceList);
+    L.has('dunce') && L.log('dunce', T.add({
+      argumentProperties: wrapperConstructor.argumentProperties
+    }).toMessage({
+      text: ' - wrapperConstructor.argumentProperties: ${argumentProperties}'
+    }));
   }
-
-  L.has('dunce') && L.log('dunce', T.add({
-    argumentSchema: wrapperConstructor.argumentSchema
-  }).toMessage({
-    text: ' - wrapperConstructor.argumentSchema: ${argumentSchema}'
-  }));
 
   result[uniqueName] = {
     crateScope: pluginName,
