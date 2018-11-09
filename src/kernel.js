@@ -36,13 +36,15 @@ function Kernel(params={}) {
   });
 
   injektor
-    .registerObject('sandboxNames', configObject['sandbox']['names'], chores.injektorContext)
-    .registerObject('sandboxConfig', configObject['sandbox']['mixture'], chores.injektorContext)
-    .registerObject('profileNames', configObject['profile']['names'], chores.injektorContext)
-    .registerObject('profileConfig', configObject['profile']['mixture'], chores.injektorContext)
     .registerObject('contextManager', contextManager, chores.injektorContext)
     .registerObject('issueInspector', issueInspector, chores.injektorContext)
-    .registerObject('nameResolver', nameResolver, chores.injektorContext);
+    .registerObject('nameResolver', nameResolver, chores.injektorContext)
+    .registerObject('profileNames', configObject['profile']['names'], chores.injektorContext)
+    .registerObject('profileConfig', configObject['profile']['mixture'], chores.injektorContext)
+    .registerObject('sandboxNames', configObject['sandbox']['names'], chores.injektorContext)
+    .registerObject('sandboxConfig', configObject['sandbox']['mixture'], chores.injektorContext)
+    .registerObject('textureNames', configObject['texture']['names'], chores.injektorContext)
+    .registerObject('textureConfig', configObject['texture']['mixture'], chores.injektorContext);
 
   lodash.forOwn(CONSTRUCTORS, function(constructor, serviceName) {
     injektor.defineService(serviceName, constructor, chores.injektorContext);

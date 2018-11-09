@@ -12,9 +12,10 @@ const LoggingWrapper = require('./logging-wrapper');
 const blockRef = chores.getBlockRef(__filename);
 
 const CONFIG_SUBDIR = '/config';
-const CONFIG_VAR_NAMES = [ 'PROFILE',  'SANDBOX', 'CONFIG_DIR', 'CONFIG_ENV' ];
+const CONFIG_VAR_NAMES = [ 'PROFILE',  'SANDBOX',  'TEXTURE', 'CONFIG_DIR', 'CONFIG_ENV' ];
 const CONFIG_PROFILE_NAME = 'profile';
 const CONFIG_SANDBOX_NAME = 'sandbox';
+const CONFIG_TEXTURE_NAME = 'texture';
 const RELOADING_FORCED = true;
 
 function ConfigLoader(params={}) {
@@ -70,7 +71,7 @@ let readVariable = function(ctx, appLabel, varName) {
   return value;
 }
 
-let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, customDir, customEnv) {
+let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
   let { L, T, issueInspector, stateInspector, nameResolver } = ctx || this;
   appOptions = appOptions || {};
 
@@ -79,17 +80,19 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   ALIASES_OF[CONFIG_PROFILE_NAME].unshift(CONFIG_PROFILE_NAME);
   ALIASES_OF[CONFIG_SANDBOX_NAME] = lodash.clone(envbox.getEnv('CONFIG_SANDBOX_ALIASES'));
   ALIASES_OF[CONFIG_SANDBOX_NAME].unshift(CONFIG_SANDBOX_NAME);
+  ALIASES_OF[CONFIG_TEXTURE_NAME] = lodash.clone(envbox.getEnv('CONFIG_TEXTURE_ALIASES'));
+  ALIASES_OF[CONFIG_TEXTURE_NAME].unshift(CONFIG_TEXTURE_NAME);
   L.has('silly') && L.log('silly', T.add({ aliasesOf: ALIASES_OF }).toMessage({
     tags: [ blockRef, 'config-dir', 'aliases-of' ],
     text: ' - configType aliases mapping: ${aliasesOf}'
   }));
-  const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME];
+  const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME];
 
-  let transCTX = { L, T, nameResolver, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME };
+  let transCTX = { L, T, nameResolver, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
 
   if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
     let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
-    transCTX = { L, T, pluginAliasMap, bridgeAliasMap, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME };
+    transCTX = { L, T, pluginAliasMap, bridgeAliasMap, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
   }
 
   let libRefs = lodash.values(pluginRefs);
@@ -119,6 +122,7 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   let includedNames = {};
   includedNames[CONFIG_PROFILE_NAME] = standardizeNames(ctx, profileName);
   includedNames[CONFIG_SANDBOX_NAME] = standardizeNames(ctx, sandboxName);
+  includedNames[CONFIG_TEXTURE_NAME] = standardizeNames(ctx, textureName);
 
   let appProfiles = standardizeNames(ctx, appOptions.privateProfile || appOptions.privateProfiles);
   includedNames[CONFIG_PROFILE_NAME] = lodash.concat(
@@ -127,6 +131,10 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   let appSandboxes = standardizeNames(ctx, appOptions.privateSandbox || appOptions.privateSandboxes);
   includedNames[CONFIG_SANDBOX_NAME] = lodash.concat(
     lodash.difference(includedNames[CONFIG_SANDBOX_NAME], appSandboxes), appSandboxes);
+
+  let appTextures = standardizeNames(ctx, appOptions.privateTexture || appOptions.privateTextures);
+  includedNames[CONFIG_TEXTURE_NAME] = lodash.concat(
+    lodash.difference(includedNames[CONFIG_TEXTURE_NAME], appTextures), appTextures);
 
   L.has('dunce') && L.log('dunce', T.add({ includedNames }).toMessage({
     text: ' + included names: ${includedNames}'
@@ -218,19 +226,21 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
   });
 
-  if (chores.isUpgradeSupported('standardizing-config')) {
-    if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
-      applyAliasMap(ctx, config.sandbox.default, nameResolver.getDefaultAliasOf);
-      applyAliasMap(ctx, config.sandbox.expanse, nameResolver.getDefaultAliasOf);
-      applyAliasMap(ctx, config.sandbox.mixture, nameResolver.getDefaultAliasOf);
-    } else {
-      let {plugin: pluginReverseMap, bridge: bridgeReverseMap} = nameResolver.getRelativeAliasMap();
-      doAliasMap(ctx, config.sandbox.default, pluginReverseMap, bridgeReverseMap);
-      doAliasMap(ctx, config.sandbox.expanse, pluginReverseMap, bridgeReverseMap);
-      doAliasMap(ctx, config.sandbox.mixture, pluginReverseMap, bridgeReverseMap);
+  lodash.forEach([CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME], function(configType) {
+    if (chores.isUpgradeSupported('standardizing-config')) {
+      if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
+        applyAliasMap(ctx, config[configType].default, nameResolver.getDefaultAliasOf);
+        applyAliasMap(ctx, config[configType].expanse, nameResolver.getDefaultAliasOf);
+        applyAliasMap(ctx, config[configType].mixture, nameResolver.getDefaultAliasOf);
+      } else {
+        let {plugin: pluginReverseMap, bridge: bridgeReverseMap} = nameResolver.getRelativeAliasMap();
+        doAliasMap(ctx, config[configType].default, pluginReverseMap, bridgeReverseMap);
+        doAliasMap(ctx, config[configType].expanse, pluginReverseMap, bridgeReverseMap);
+        doAliasMap(ctx, config[configType].mixture, pluginReverseMap, bridgeReverseMap);
+      }
+      stateInspector.collect({config});
     }
-    stateInspector.collect({config});
-  }
+  });
 
   issueInspector.barrier({ invoker: blockRef, footmark: 'config-file-loading' });
 
@@ -316,7 +326,7 @@ let standardizeNames = function(ctx, cfgLabels) {
 let transformConfig = function(ctx, configType, configData, moduleType, moduleName, modulePresets) {
   let { L, T, nameResolver, CONFIG_SANDBOX_NAME } = ctx || this;
   if (configType === CONFIG_SANDBOX_NAME) {
-    configData = convertSandboxConfig(ctx, configData, moduleType, moduleName, modulePresets);
+    configData = convertPreciseConfig(ctx, configData, moduleType, moduleName, modulePresets);
     if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
       configData = applyAliasMap(ctx, configData, nameResolver.getOriginalNameOf);
     } else {
@@ -328,15 +338,15 @@ let transformConfig = function(ctx, configType, configData, moduleType, moduleNa
   return configData;
 }
 
-let convertSandboxConfig = function(ctx, sandboxConfig, moduleType, moduleName, modulePresets) {
+let convertPreciseConfig = function(ctx, preciseConfig, moduleType, moduleName, modulePresets) {
   let { L, T } = ctx || this;
-  if (lodash.isEmpty(sandboxConfig) || !lodash.isObject(sandboxConfig)) {
-    return sandboxConfig;
+  if (lodash.isEmpty(preciseConfig) || !lodash.isObject(preciseConfig)) {
+    return preciseConfig;
   }
   // convert old bridge structures
   if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
     let tags = nodash.arrayify(lodash.get(modulePresets, ['configTags'], []));
-    let cfgBridges = sandboxConfig.bridges;
+    let cfgBridges = preciseConfig.bridges;
     let loadable = RELOADING_FORCED || !(cfgBridges && cfgBridges.__status__);
     if (lodash.isObject(cfgBridges) && tags.indexOf('bridge[dialect-bridge]') >= 0 && loadable) {
       let newBridges = RELOADING_FORCED ? {} : { __status__: true };
@@ -363,28 +373,28 @@ let convertSandboxConfig = function(ctx, sandboxConfig, moduleType, moduleName, 
         });
       }
       traverseBackward(cfgBridges, newBridges);
-      sandboxConfig.bridges = newBridges;
+      preciseConfig.bridges = newBridges;
     }
   }
-  return sandboxConfig;
+  return preciseConfig;
 }
 
-let applyAliasMap = function(ctx, sandboxConfig, nameTransformer) {
+let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
   let { L, T } = ctx || this;
   if (chores.isUpgradeSupported(['standardizing-config'])) {
-    if (sandboxConfig && lodash.isObject(sandboxConfig.plugins)) {
-      let oldPlugins = sandboxConfig.plugins;
+    if (preciseConfig && lodash.isObject(preciseConfig.plugins)) {
+      let oldPlugins = preciseConfig.plugins;
       let newPlugins = {};
       lodash.forOwn(oldPlugins, function(oldPlugin, oldPluginName) {
         let newPluginName = nameTransformer(oldPluginName, 'plugin');
         newPlugins[newPluginName] = oldPlugin;
       });
-      sandboxConfig.plugins = newPlugins;
+      preciseConfig.plugins = newPlugins;
     }
   }
   if (chores.isUpgradeSupported(['standardizing-config', 'bridge-full-ref'])) {
-    if (sandboxConfig && lodash.isObject(sandboxConfig.bridges)) {
-      let oldBridges = sandboxConfig.bridges;
+    if (preciseConfig && lodash.isObject(preciseConfig.bridges)) {
+      let oldBridges = preciseConfig.bridges;
       let newBridges = {};
       lodash.forOwn(oldBridges, function(oldBridge, oldBridgeName) {
         let newBridgeName = nameTransformer(oldBridgeName, 'bridge');
@@ -400,15 +410,15 @@ let applyAliasMap = function(ctx, sandboxConfig, nameTransformer) {
           }
         }
       });
-      sandboxConfig.bridges = newBridges;
+      preciseConfig.bridges = newBridges;
     }
   }
-  return sandboxConfig;
+  return preciseConfig;
 }
 
 let doAliasMap = null;
 if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
-  doAliasMap = function(ctx, sandboxConfig, pluginAliasMap, bridgeAliasMap) {
+  doAliasMap = function(ctx, preciseConfig, pluginAliasMap, bridgeAliasMap) {
     function nameTransformer(name, type) {
       switch(type) {
         case 'plugin':
@@ -418,6 +428,6 @@ if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
       }
       return name;
     }
-    return applyAliasMap(ctx, sandboxConfig, nameTransformer);
+    return applyAliasMap(ctx, preciseConfig, nameTransformer);
   }
 }

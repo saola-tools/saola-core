@@ -76,6 +76,10 @@ describe('tdd:devebot:core:config-loader', function() {
         "sandbox": {
           "mixture": {},
           "names": [ "default" ]
+        },
+        "texture": {
+          "mixture": {},
+          "names": [ "default" ]
         }
       });
     });
@@ -774,7 +778,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
-    var convertSandboxConfig = ConfigLoader.__get__('convertSandboxConfig');
+    var convertPreciseConfig = ConfigLoader.__get__('convertPreciseConfig');
     var RELOADING_FORCED = ConfigLoader.__get__('RELOADING_FORCED');
 
     it('transform sandboxConfig.bridges from application', function() {
@@ -828,7 +832,7 @@ describe('tdd:devebot:core:config-loader', function() {
           }
         }
       };
-      var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'application');
+      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, 'application');
       false && console.log(JSON.stringify(convertedCfg, null, 2));
       assert.deepInclude(convertedCfg, exptectedConfig);
     });
@@ -882,7 +886,7 @@ describe('tdd:devebot:core:config-loader', function() {
           exptectedConfig.bridges.__status__ = true;
         }
       }
-      var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', null, {
+      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, 'plugin', null, {
         configTags: ['bridge[dialect-bridge]']
       });
       false && console.log(JSON.stringify(convertedCfg, null, 2));
@@ -938,7 +942,7 @@ describe('tdd:devebot:core:config-loader', function() {
           exptectedConfig.bridges.__status__ = true;
         }
       }
-      var convertedCfg = convertSandboxConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
+      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
         configTags: 'bridge[dialect-bridge]'
       });
       false && console.log(JSON.stringify(convertedCfg, null, 2));

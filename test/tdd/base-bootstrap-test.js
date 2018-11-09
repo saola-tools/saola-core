@@ -647,7 +647,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       var cfg = app.config;
       false && console.log('SHOW [app.config]: ', cfg);
       assert.hasAllKeys(cfg, [
-        'profile', 'sandbox', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
+        'profile', 'sandbox', 'texture', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
       ]);
       assert.equal(cfg.appName, 'devebot-application');
       assert.deepEqual(cfg.appInfo, {
@@ -718,7 +718,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       var cfg = replaceObjectFields(app.config, DEFAULT_CONTEXT);
       false && console.log('fullapp cfg: ', JSON.stringify(cfg, null, 2));
       assert.hasAllKeys(cfg, [
-        'profile', 'sandbox', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
+        'profile', 'sandbox', 'texture', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
       ]);
       // verify appInfo
       assert.equal(cfg.appName, 'fullapp');
