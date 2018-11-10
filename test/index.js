@@ -193,6 +193,15 @@ lab.createBasicServices = function(appName, injectedObjects) {
   }
 }
 
+lab.createObjectDecorator = function(appName, injectedObjects) {
+  var injektor = new Injektor({ separator: chores.getSeparator() });
+  _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
+  _loadBackboneServices(injektor, [
+    'object-decorator', 'schema-validator', 'logging-factory'
+  ]);
+  return injektor.lookup('objectDecorator');
+}
+
 lab.createBridgeLoader = function(appName, injectedObjects) {
   injectedObjects = _initInjectedObjects(appName, injectedObjects);
   var injektor = new Injektor({ separator: chores.getSeparator() });
