@@ -102,4 +102,20 @@ describe('tdd:devebot:utils:chores', function() {
       assert.equal(chores.transformBeanName('oldPackageName/serviceName'),  'oldPackageName:serviceName');
     });
   });
+
+  describe('deepFreeze()', function() {
+    it('should prevent assign value to freezed fields', function() {
+      var obj = { a: { b: { c: 1000 }, f: function(x) { return x } } }
+      chores.deepFreeze(obj);
+      assert.throws(function() { obj.s = {} }, TypeError)
+      assert.throws(function() { delete obj.a }, TypeError)
+      assert.throws(function() { obj.a.f = function(x) { return 2*x } }, TypeError)
+      assert.throws(function() { obj.a.f.prototype.z = function(x) { return 3*x } }, TypeError)
+      assert.throws(function() { obj.a.b.c = 2000; }, TypeError)
+      assert.throws(function() { obj.a.b.d = 1024; }, TypeError)
+      assert.equal(obj.a.f(100), 100);
+      assert.equal(obj.a.b.c, 1000);
+      assert.isUndefined(obj.a.b.d);
+    });
+  });
 });
