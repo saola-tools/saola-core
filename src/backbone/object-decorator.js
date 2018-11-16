@@ -165,6 +165,215 @@ function wrapMethod(ref, method, texture, opts) {
   return wrapped;
 }
 
+function MethodExecutor(params={}) {
+  const { logger:L, tracer:T } = params;
+  const { texture, object, objectName, method, methodName } = params;
+  let counter = { promise: 0, callback: 0, general: 0 }
+  let pointer = { current: null }
+  const logState = { objectName, methodName, requestId: null }
+
+  // pre-processing logging texture
+  let methodType = texture.methodType;
+
+  function createListener(texture, eventName) {
+    if (!isEnabled(texture.logging)) return null;
+    let onEvent = texture.logging['on' + eventName];
+    if (!isEnabled(onEvent)) return null;
+    return function (data, metadata) {
+      if (nodash.isFunction(onEvent.extractReqId) && eventName === 'Request') {
+        logState.requestId = onEvent.extractReqId(data, metadata);
+      }
+      let msgObj = {
+        text: "#{objectName}.#{methodName} - Request[#{requestId}]"
+      }
+      switch (eventName) {
+        case 'Request':
+          msgObj.text += ' is invoked';
+          break;
+        case 'Success':
+          msgObj.text += ' has done';
+          break;
+        case 'Failure':
+          msgObj.text += ' has failed';
+          break;
+      }
+      if (nodash.isFunction(onEvent.extractInfo)) {
+        msgObj.info = onEvent.extractInfo(data, metadata);
+      }
+      if (nodash.isString(onEvent.template)) {
+        msgObj.text = onEvent.template;
+      }
+      msgObj.tags = onEvent.tags || texture.tags;
+      if (!lodash.isArray(msgObj.tags) && lodash.isEmpty(msgObj.tags)) {
+        delete msgObj.tags;
+      }
+      let logLevel = onEvent.logLevel || (eventName === 'Failure' ? 'error' : 'debug');
+      L.has(logLevel) && L.log(logLevel, T.add(logState).toMessage(msgObj));
+    }
+  }
+  const CALLED_EVENTS = ['Request', 'Success', 'Failure'];
+  let logOnEvent = lodash.mapValues(lodash.keyBy(CALLED_EVENTS), function(value) {
+    return createListener(texture, value);
+  });
+
+  this.__state__ = { object, method, methodType, counter, pointer, logOnEvent }
+}
+
+MethodExecutor.prototype.run = function(parameters) {
+  const { object, method, methodType, counter, pointer, logOnEvent } = this.__state__;
+
+  function _detect(parameters) {
+    let result = null, exception = null, found = false;
+    let pair = extractCallback(parameters);
+    if (!found) {
+      if (pair.callback) {
+        found = true;
+        if (pointer.current === 'callback') {
+          counter['callback']++;
+        } else {
+          counter['callback'] = 1;
+          pointer.current = 'callback';
+        }
+        pair.parameters.push(function(error, value) {
+          if (error) {
+            logOnEvent.Failure(error);
+          } else {
+            logOnEvent.Success(value);
+          }
+          return pair.callback.apply(null, arguments);
+        });
+      }
+    }
+    try {
+      logOnEvent.Request(pair.parameters);
+      result = method.apply(object, pair.parameters);
+      if (!found) {
+        if (isPromise(result)) {
+          found = true;
+          if (pointer.current === 'promise') {
+            counter['promise']++;
+          } else {
+            counter['promise'] = 1;
+            pointer.current = 'promise';
+          }
+          result = Promise.resolve(result).then(function(value) {
+            logOnEvent.Success(value, pair.parameters);
+            return value;
+          }).catch(function(error) {
+            logOnEvent.Failure(error, pair.parameters);
+            return Promise.reject(error);
+          });
+        } else {
+          logOnEvent.Success(result);
+        }
+      }
+    } catch (error) {
+      logOnEvent.Failure(error);
+      exception = error;
+    }
+
+    if (!found) {
+      if (pointer.current === 'general') {
+        counter['general']++;
+      } else {
+        counter['general'] = 1;
+        pointer.current = 'general';
+      }
+    }
+
+    if (exception) {
+      throw exception;
+    }
+
+    return result;
+  }
+
+  function _invoke(parameters) {
+    let result = undefined;
+    switch(methodType) {
+      case 'promise': {
+        result = Promise.resolve().then(function() {
+          logOnEvent.Request(parameters);
+          return method.apply(object, parameters)
+        })
+        .then(function(value) {
+          logOnEvent.Success(value, parameters);
+          return value;
+        })
+        .catch(function(error) {
+          logOnEvent.Failure(error, parameters);
+          return Promise.reject(error);
+        })
+        break;
+      }
+      case 'callback': {
+        let pair = extractCallback(parameters);
+        pair.parameters.push(function(error, value) {
+          if (error) {
+            logOnEvent.Failure(error);
+          } else {
+            logOnEvent.Success(value);
+          }
+          return pair.callback.apply(null, arguments);
+        });
+        logOnEvent.Request(parameters);
+        result = method.apply(object, pair.parameters);
+        break;
+      }
+      default: {
+        try {
+          logOnEvent.Request(parameters);
+          result = method.apply(object, parameters);
+          logOnEvent.Success(result);
+        } catch (exception) {
+          logOnEvent.Failure(exception);
+          throw exception;
+        }
+        break;
+      }
+    }
+    return result;
+  }
+
+  let result = null;
+  if (this.__state__.methodType) {
+    result = _invoke(parameters);
+  } else {
+    result = _detect(parameters);
+    let maxItem = maxOf(counter);
+    if (maxItem.value >= 5) {
+      this.__state__.methodType = maxItem.name;
+    }
+  }
+  return result;
+}
+
+function maxOf(counter) {
+  let max = -1, stableMethod = null;
+  for(let mt in counter) {
+    if (max < counter[mt]) {
+      max = counter[mt];
+      stableMethod = mt;
+    }
+  }
+  return { name: stableMethod, value: max }
+}
+
+function isPromise(p) {
+  return lodash.isObject(p) && lodash.isFunction(p.then);
+}
+
+function extractCallback(parameters) {
+  let r = { parameters };
+  r.callback = parameters.length > 0 && parameters[parameters.length - 1] || null;
+  if (typeof r.callback === 'function') {
+    r.parameters = Array.prototype.slice.call(parameters, 0, parameters.length);
+  } else {
+    delete r.callback;
+  }
+  return r;
+}
+
 function isDecorated(texture) {
   return texture && texture.enabled !== false && (
       (texture.logging && texture.logging.enabled !== false) ||
