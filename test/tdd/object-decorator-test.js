@@ -490,51 +490,38 @@ describe('tdd:devebot:core:object-decorator', function() {
       if (params.methodType === 'promise') {
         result = executor.run(parameters);
         assert.deepInclude(executor.__state__, state);
+        let flow = null;
         if (!params.output.error) {
-          return result.then(function (value) {
+          flow = result.then(function (value) {
             assert.deepEqual(value, params.output.value);
-            _verify_tracer(tracer, {
-              add: {
-                logState: {
-                  actionFlow: params.scenario,
-                  objectName: params.methodType + 'Mode',
-                  methodName: 'sampleMethod',
-                  requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-                }
-              },
-              toMessage: {
-                firstCallArgs: {
-                  text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
-                  info: 'Hello world'
-                },
-                secondCallArgs: params.secondCallArgs
-              }
-            });
           });
         } else {
-          return result.then(function(value) {
+          flow = result.then(function(value) {
             return Promise.reject();
           }).catch(function(error) {
-            _verify_tracer(tracer, {
-              add: {
-                logState: {
-                  actionFlow: params.scenario,
-                  objectName: params.methodType + 'Mode',
-                  methodName: 'sampleMethod',
-                  requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-                }
-              },
-              toMessage: {
-                firstCallArgs: {
-                  text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
-                  info: 'Hello world'
-                },
-                secondCallArgs: params.secondCallArgs
-              }
-            });
             return Promise.resolve();
           })
         }
+        flow.then(function() {
+          _verify_tracer(tracer, {
+            add: {
+              logState: {
+                actionFlow: params.scenario,
+                objectName: params.methodType + 'Mode',
+                methodName: 'sampleMethod',
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
+            },
+            toMessage: {
+              firstCallArgs: {
+                text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
+                info: 'Hello world'
+              },
+              secondCallArgs: params.secondCallArgs
+            }
+          });
+        });
+        return flow;
       }
 
       if (params.methodType === 'general') {
