@@ -332,14 +332,6 @@ function isEnabled(section) {
   return section && section.enabled !== false;
 }
 
-function pickCallback(parameters) {
-  return (parameters.length > 0) && parameters[parameters.length - 1];
-}
-
-function omitCallback(parameters) {
-  return Array.prototype.slice.call(parameters, 0, parameters.length);
-}
-
 function getTextureDef({textureStore, pluginCode, gadgetType, objectName, methodName}) {
   let patternPath = [];
   if (pluginCode) {

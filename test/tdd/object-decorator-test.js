@@ -345,7 +345,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.deepEqual(tracer.toMessage.secondCall.args[0], opts.toMessage.secondCallArgs);
     }
 
-    function _test_first_call_with_returned_promise(params) {
+    function _test_explicit_methodType(params, done) {
       var texture = {
         logging: {
           onRequest: {
@@ -375,13 +375,37 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
       }
 
-      var object = {
-        sampleMethod: sinon.stub().callsFake(function() {
-          if (params.output.error) {
-            return Promise.reject(params.output.error);
-          }
-          return Promise.resolve(params.output.value);
-        })
+      if (params.scenario === 'explicit') {
+        texture.methodType = params.methodType;
+      }
+
+      var object = {}
+      switch(params.methodType) {
+        case 'promise': {
+          object.sampleMethod = sinon.stub().callsFake(function() {
+            if (params.output.error) {
+              return Promise.reject(params.output.error);
+            }
+            return Promise.resolve(params.output.value);
+          });
+          break;
+        }
+        case 'callback': {
+          object.sampleMethod = sinon.stub().callsFake(function() {
+            let cb = arguments[arguments.length - 1];
+            cb(params.output.error, params.output.value);
+          });
+          break;
+        }
+        case 'general': {
+          object.sampleMethod = sinon.stub().callsFake(function() {
+            if (params.output.error) {
+              throw params.output.error;
+            }
+            return params.output.value;
+          });
+          break;
+        }
       }
 
       var logger = {
@@ -401,7 +425,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
       var executor = new MethodExecutor({
         object: object,
-        objectName: 'promiseMode',
+        objectName: params.methodType + 'Mode',
         method: object.sampleMethod,
         methodName: 'sampleMethod',
         texture: texture,
@@ -409,162 +433,121 @@ describe('tdd:devebot:core:object-decorator', function() {
         tracer: tracer
       });
 
-      var result = executor.run(['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}]);
-
-      assert.deepInclude(executor.__state__, {
+      var state = {
         methodType: undefined,
-        counter: { promise: 1, callback: 0, general: 0 },
-        pointer: { current: 'promise' }
-      });
+        counter: { promise: 0, callback: 0, general: 0 },
+        pointer: { current: null }
+      }
 
-      if (!params.output.error) {
-        return result.then(function (value) {
-          assert.deepEqual(value, params.output.value);
-          _verify_tracer(tracer, {
-            add: {
-              logState: {
-                objectName: 'promiseMode',
-                methodName: 'sampleMethod',
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
-            toMessage: {
-              firstCallArgs: {
-                text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
-                info: 'Hello world'
-              },
-              secondCallArgs: params.secondCallArgs
+      switch(params.scenario) {
+        case 'explicit': {
+          state.methodType = params.methodType;
+          break;
+        }
+        case 'implicit': {
+          state.counter[params.methodType] = 1;
+          state.pointer.current = params.methodType;
+        }
+      }
+
+      var result = null;
+      var parameters = ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}];
+      if (params.methodType === 'callback') {
+        return new Promise(function(onResolved, onRejected) {
+          parameters.push(function (err, value) {
+            if (params.output.error == null) {
+              assert.isNull(err);
+              assert.deepEqual(value, params.output.value);
+            } else {
+              assert.deepEqual(err, params.output.error);
+              assert.deepEqual(value, params.output.value);
             }
+            _verify_tracer(tracer, {
+              add: {
+                logState: {
+                  objectName: params.methodType + 'Mode',
+                  methodName: 'sampleMethod',
+                  requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+                }
+              },
+              toMessage: {
+                firstCallArgs: {
+                  text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
+                  info: 'Hello world'
+                },
+                secondCallArgs: params.secondCallArgs
+              }
+            });
+            assert.deepInclude(executor.__state__, state);
+            onResolved();
           });
+          result = executor.run(parameters);
+          assert.isUndefined(result);
         });
-      } else {
-        return result.then(function(value) {
-          return Promise.reject();
-        }).catch(function(error) {
-          _verify_tracer(tracer, {
-            add: {
-              logState: {
-                objectName: 'promiseMode',
-                methodName: 'sampleMethod',
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
-            toMessage: {
-              firstCallArgs: {
-                text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
-                info: 'Hello world'
+      }
+      
+      if (params.methodType === 'promise') {
+        result = executor.run(parameters);
+        assert.deepInclude(executor.__state__, state);
+        if (!params.output.error) {
+          return result.then(function (value) {
+            assert.deepEqual(value, params.output.value);
+            _verify_tracer(tracer, {
+              add: {
+                logState: {
+                  objectName: params.methodType + 'Mode',
+                  methodName: 'sampleMethod',
+                  requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+                }
               },
-              secondCallArgs: params.secondCallArgs
-            }
-          });
-          return Promise.resolve();
-        })
-      }
-    }
-
-    it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
-      _test_first_call_with_returned_promise({
-        output: {
-          error: null,
-          value: { msg: "This is a normal result" }
-        },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
-          info: { msg: "This is a normal result" }
-        }
-      });
-    });
-
-    it('invokes the wrapped method in [promise] mode if the method returns a promise (failure)', function() {
-      _test_first_call_with_returned_promise({
-        output: {
-          error: new Error('The action has been failed'),
-          value: { msg: "Anything" }
-        },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has failed',
-          info: {
-            "error_code": undefined,
-            "error_message": "The action has been failed"
-          }
-        }
-      });
-    });
-
-    function _test_first_call_with_callback_parameter(params) {
-      var texture = {
-        logging: {
-          onRequest: {
-            extractReqId: function(args, context) {
-              return args && args[1] && args[1].reqId;
-            },
-            extractInfo: function(args, context) {
-              return args[0];
-            },
-            template: "#{objectName}.#{methodName} - Request[#{requestId}] is invoked"
-          },
-          onSuccess: {
-            extractInfo: function(value, args) {
-              return value;
-            },
-            template: "#{objectName}.#{methodName} - Request[#{requestId}] has finished"
-          },
-          onFailure: {
-            extractInfo: function(error, args) {
-              return {
-                error_code: error.code,
-                error_message: error.message
+              toMessage: {
+                firstCallArgs: {
+                  text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
+                  info: 'Hello world'
+                },
+                secondCallArgs: params.secondCallArgs
               }
-            },
-            template: "#{objectName}.#{methodName} - Request[#{requestId}] has failed"
-          }
-        }
-      }
-
-      var object = {
-        sampleMethod: sinon.stub().callsFake(function() {
-          let cb = arguments[arguments.length - 1];
-          cb(params.output.error, params.output.value);
-        })
-      }
-
-      var logger = {
-        has: sinon.stub().returns(true),
-        log: sinon.stub()
-      }
-
-      var tracer = {
-        add: sinon.stub().callsFake(function(params) {
-          LogTracer.ROOT.add(params);
-          return tracer;
-        }),
-        toMessage: sinon.stub().callsFake(function(params) {
-          return LogTracer.ROOT.toMessage(params);
-        })
-      };
-
-      var executor = new MethodExecutor({
-        object: object,
-        objectName: 'callbackMode',
-        method: object.sampleMethod,
-        methodName: 'sampleMethod',
-        texture: texture,
-        logger: logger,
-        tracer: tracer
-      });
-
-      var result = executor.run(['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}, function (err, value) {
-        if (params.output.error == null) {
-          assert.isNull(err);
-          assert.deepEqual(value, params.output.value);
+            });
+          });
         } else {
-          assert.deepEqual(err, params.output.error);
-          assert.deepEqual(value, params.output.value);
+          return result.then(function(value) {
+            return Promise.reject();
+          }).catch(function(error) {
+            _verify_tracer(tracer, {
+              add: {
+                logState: {
+                  objectName: params.methodType + 'Mode',
+                  methodName: 'sampleMethod',
+                  requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+                }
+              },
+              toMessage: {
+                firstCallArgs: {
+                  text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
+                  info: 'Hello world'
+                },
+                secondCallArgs: params.secondCallArgs
+              }
+            });
+            return Promise.resolve();
+          })
         }
+      }
+
+      if (params.methodType === 'general') {
+        var result = undefined, exception = undefined;
+        try {
+          result = executor.run(parameters);
+        } catch (error) {
+          exception = error;
+        }
+
+        assert.deepInclude(executor.__state__, state);
+
         _verify_tracer(tracer, {
           add: {
             logState: {
-              objectName: 'callbackMode',
+              objectName: params.methodType + 'Mode',
               methodName: 'sampleMethod',
               requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
             }
@@ -578,18 +561,19 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         });
 
-        assert.deepInclude(executor.__state__, {
-          methodType: undefined,
-          counter: { promise: 0, callback: 1, general: 0 },
-          pointer: { current: 'callback' }
-        });
-      }]);
-
-      assert.isUndefined(result);
+        if (!params.output.error) {
+          assert.isUndefined(exception);
+          assert.deepEqual(result, params.output.value);
+        } else {
+          assert.isUndefined(result);
+        }
+      }
     }
 
-    it('invokes the wrapped method in [callback] mode if parameter includes a callback (success)', function() {
-      _test_first_call_with_callback_parameter({
+    it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
+      return _test_explicit_methodType({
+        scenario: 'implicit',
+        methodType: 'promise',
         output: {
           error: null,
           value: { msg: "This is a normal result" }
@@ -601,8 +585,10 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
-    it('invokes the wrapped method in [callback] mode if parameter includes a callback (failure)', function() {
-      _test_first_call_with_callback_parameter({
+    it('invokes the wrapped method in [promise] mode if the method returns a promise (failure)', function() {
+      return _test_explicit_methodType({
+        scenario: 'implicit',
+        methodType: 'promise',
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
@@ -617,110 +603,43 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
-    function _test_first_call_with_normal_result(params) {
-      var texture = {
-        logging: {
-          onRequest: {
-            extractReqId: function(args, context) {
-              return args && args[1] && args[1].reqId;
-            },
-            extractInfo: function(args, context) {
-              return args[0];
-            },
-            template: "#{objectName}.#{methodName} - Request[#{requestId}] is invoked"
-          },
-          onSuccess: {
-            extractInfo: function(value, args) {
-              return value;
-            },
-            template: "#{objectName}.#{methodName} - Request[#{requestId}] has finished"
-          },
-          onFailure: {
-            extractInfo: function(error, args) {
-              return {
-                error_code: error.code,
-                error_message: error.message
-              }
-            },
-            template: "#{objectName}.#{methodName} - Request[#{requestId}] has failed"
-          }
-        }
-      }
-
-      var object = {
-        sampleMethod: sinon.stub().callsFake(function() {
-          if (params.output.error) {
-            throw params.output.error;
-          }
-          return params.output.value;
-        })
-      }
-
-      var logger = {
-        has: sinon.stub().returns(true),
-        log: sinon.stub()
-      }
-
-      var tracer = {
-        add: sinon.stub().callsFake(function(params) {
-          LogTracer.ROOT.add(params);
-          return tracer;
-        }),
-        toMessage: sinon.stub().callsFake(function(params) {
-          return LogTracer.ROOT.toMessage(params);
-        })
-      };
-
-      var executor = new MethodExecutor({
-        object: object,
-        objectName: 'promiseMode',
-        method: object.sampleMethod,
-        methodName: 'sampleMethod',
-        texture: texture,
-        logger: logger,
-        tracer: tracer
-      });
-
-      var result = undefined, exception = undefined;
-      try {
-        result = executor.run(['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}]);
-      } catch (error) {
-        exception = error;
-      }
-
-      assert.deepInclude(executor.__state__, {
-        methodType: undefined,
-        counter: { promise: 0, callback: 0, general: 1 },
-        pointer: { current: 'general' }
-      });
-
-      _verify_tracer(tracer, {
-        add: {
-          logState: {
-            objectName: 'promiseMode',
-            methodName: 'sampleMethod',
-            requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-          }
+    it('invokes the wrapped method in [callback] mode if parameter includes a callback (success)', function() {
+      return _test_explicit_methodType({
+        scenario: 'implicit',
+        methodType: 'callback',
+        output: {
+          error: null,
+          value: { msg: "This is a normal result" }
         },
-        toMessage: {
-          firstCallArgs: {
-            text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
-            info: 'Hello world'
-          },
-          secondCallArgs: params.secondCallArgs
+        secondCallArgs: {
+          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
+          info: { msg: "This is a normal result" }
         }
       });
+    });
 
-      if (!params.output.error) {
-        assert.isUndefined(exception);
-        assert.deepEqual(result, params.output.value);
-      } else {
-        assert.isUndefined(result);
-      }
-    }
+    it('invokes the wrapped method in [callback] mode if parameter includes a callback (failure)', function() {
+      return _test_explicit_methodType({
+        scenario: 'implicit',
+        methodType: 'callback',
+        output: {
+          error: new Error('The action has been failed'),
+          value: { msg: "Anything" }
+        },
+        secondCallArgs: {
+          text: '#{objectName}.#{methodName} - Request[#{requestId}] has failed',
+          info: {
+            "error_code": undefined,
+            "error_message": "The action has been failed"
+          }
+        }
+      });
+    });
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (success)', function() {
-      _test_first_call_with_normal_result({
+      return _test_explicit_methodType({
+        scenario: 'implicit',
+        methodType: 'general',
         output: {
           error: null,
           value: { msg: "This is a normal result" }
@@ -733,7 +652,9 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (failure)', function() {
-      _test_first_call_with_normal_result({
+      return _test_explicit_methodType({
+        scenario: 'implicit',
+        methodType: 'general',
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
