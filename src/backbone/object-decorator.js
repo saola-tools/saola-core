@@ -112,7 +112,7 @@ function MethodExecutor(params={}) {
   const { logger:L, tracer:T } = params;
   const { texture, object, objectName, method, methodName } = params;
   let counter = { promise: 0, callback: 0, general: 0 }
-  let pointer = { current: null }
+  let pointer = { current: null, actionFlow: null }
   const logState = { objectName, methodName, requestId: null }
 
   // pre-processing logging texture
@@ -125,6 +125,9 @@ function MethodExecutor(params={}) {
     return function (data, metadata) {
       if (nodash.isFunction(onEvent.extractReqId) && eventName === 'Request') {
         logState.requestId = onEvent.extractReqId(data, metadata);
+      }
+      if (pointer.actionFlow) {
+        logState.actionFlow = pointer.actionFlow;
       }
       let msgObj = {
         text: "#{objectName}.#{methodName} - Request[#{requestId}]"
@@ -283,8 +286,10 @@ MethodExecutor.prototype.run = function(parameters) {
 
   let result = null;
   if (this.__state__.methodType) {
+    pointer.actionFlow = 'explicit';
     result = _invoke(parameters);
   } else {
+    pointer.actionFlow = 'implicit';
     result = _detect(parameters);
     let maxItem = maxOf(counter);
     if (maxItem.value >= 5) {

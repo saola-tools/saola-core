@@ -345,7 +345,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.deepEqual(tracer.toMessage.secondCall.args[0], opts.toMessage.secondCallArgs);
     }
 
-    function _test_explicit_methodType(params, done) {
+    function _test_explicit_methodType(params) {
       var texture = {
         logging: {
           onRequest: {
@@ -436,7 +436,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       var state = {
         methodType: undefined,
         counter: { promise: 0, callback: 0, general: 0 },
-        pointer: { current: null }
+        pointer: { current: null, actionFlow: params.scenario }
       }
 
       switch(params.scenario) {
@@ -465,6 +465,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             _verify_tracer(tracer, {
               add: {
                 logState: {
+                  actionFlow: params.scenario,
                   objectName: params.methodType + 'Mode',
                   methodName: 'sampleMethod',
                   requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
@@ -495,6 +496,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             _verify_tracer(tracer, {
               add: {
                 logState: {
+                  actionFlow: params.scenario,
                   objectName: params.methodType + 'Mode',
                   methodName: 'sampleMethod',
                   requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
@@ -516,6 +518,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             _verify_tracer(tracer, {
               add: {
                 logState: {
+                  actionFlow: params.scenario,
                   objectName: params.methodType + 'Mode',
                   methodName: 'sampleMethod',
                   requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
@@ -547,6 +550,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         _verify_tracer(tracer, {
           add: {
             logState: {
+              actionFlow: params.scenario,
               objectName: params.methodType + 'Mode',
               methodName: 'sampleMethod',
               requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
@@ -669,11 +673,50 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
-    it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode');
+    it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode', function() {
+      return _test_explicit_methodType({
+        scenario: 'explicit',
+        methodType: 'promise',
+        output: {
+          error: null,
+          value: { msg: "This is a normal result" }
+        },
+        secondCallArgs: {
+          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
+          info: { msg: "This is a normal result" }
+        }
+      });
+    });
 
-    it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode');
+    it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode', function() {
+      return _test_explicit_methodType({
+        scenario: 'explicit',
+        methodType: 'callback',
+        output: {
+          error: null,
+          value: { msg: "This is a normal result" }
+        },
+        secondCallArgs: {
+          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
+          info: { msg: "This is a normal result" }
+        }
+      });
+    });
 
-    it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode');
+    it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode', function() {
+      return _test_explicit_methodType({
+        scenario: 'explicit',
+        methodType: 'general',
+        output: {
+          error: null,
+          value: { msg: "This is a normal result" }
+        },
+        secondCallArgs: {
+          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
+          info: { msg: "This is a normal result" }
+        }
+      });
+    });
 
     it('auto-detecting methodType (promise) will be stable after reliable number of continual steps');
 
