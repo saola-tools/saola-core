@@ -89,77 +89,20 @@ function wrapMethod(ref, method, texture, opts) {
   if (!nodash.isFunction(method)) return method;
   let {object, objectName, methodName} = opts || {};
   object = nodash.isObject(object) ? object : null;
+  let executor = null;
   let wrapped = method;
   if (isDecorated(texture)) {
+    executor = new MethodExecutor({
+      texture: texture,
+      object: object,
+      objectName: objectName,
+      method: method,
+      methodName: methodName,
+      logger: opts.L || ref.L,
+      tracer: opts.T || ref.T
+    });
     wrapped = function() {
-      let parameters = arguments;
-      let requestId = null;
-      const L = opts.L || ref.L;
-      const T = opts.T || ref.T;
-      // pre-processing logging texture
-      if (isEnabled(texture.logging)) {
-        let onRequest = texture.logging.onRequest;
-        if (isEnabled(onRequest)) {
-          let logArgs = {objectName, methodName};
-          if (nodash.isFunction(onRequest.extractReqId)) {
-            logArgs.requestId = requestId = onRequest.extractReqId(parameters);
-          }
-          if (nodash.isFunction(onRequest.extractInfo)) {
-            logArgs.parameters = onRequest.extractInfo(parameters);
-          }
-          let tmpl = "#{objectName}.#{methodName} - #{parameters} - #{requestId}";
-          if (nodash.isString(onRequest.template)) {
-            tmpl = onRequest.template;
-          }
-          L.has('debug') && L.log('debug', T.add(logArgs).toMessage({
-            text: tmpl
-          }));
-        }
-        let onSuccess = texture.logging.onSuccess;
-        if (isEnabled(onSuccess)) {
-        }
-        let onFailure = texture.logging.onFailure;
-        if (isEnabled(onFailure)) {
-        }
-      }
-      // detecting for methodType: promise-returned, callback-based or general method
-      let result = undefined;
-      switch(texture.methodType) {
-        case 'promise': {
-          result = Promise.resolve().then(function() {
-            return method.apply(object, parameters)
-          })
-          .then(function(value) {
-            return value;
-          })
-          .catch(function(error) {
-            return Promise.reject(error);
-          })
-          break;
-        }
-        case 'callback': {
-          let withoutCallback = omitCallback(parameters);
-          let methodInPromise = Promise.promisify(method, { context: object });
-          result = methodInPromise.apply(null, withoutCallback)
-          .then(function(value) {
-            return value;
-          })
-          .catch(function(error) {
-            return Promise.reject(error);
-          })
-          .asCallback(pickCallback(parameters));
-          break;
-        }
-        default: {
-          try {
-            result = method.apply(object, parameters);
-          } catch (exception) {
-            throw exception;
-          }
-          break;
-        }
-      }
-      return result;
+      return executor.run(arguments);
     }
   }
   return wrapped;
@@ -271,7 +214,7 @@ MethodExecutor.prototype.run = function(parameters) {
       logOnEvent.Failure(error);
       exception = error;
     }
-
+    // not be callback or promise
     if (!found) {
       if (pointer.current === 'general') {
         counter['general']++;
@@ -280,11 +223,10 @@ MethodExecutor.prototype.run = function(parameters) {
         pointer.current = 'general';
       }
     }
-
+    // an error is occurred
     if (exception) {
       throw exception;
     }
-
     return result;
   }
 
@@ -335,6 +277,10 @@ MethodExecutor.prototype.run = function(parameters) {
     return result;
   }
 
+  if (!nodash.isArray(parameters)) {
+    parameters = Array.prototype.slice.call(parameters);
+  }
+
   let result = null;
   if (this.__state__.methodType) {
     result = _invoke(parameters);
@@ -364,11 +310,12 @@ function isPromise(p) {
 }
 
 function extractCallback(parameters) {
-  let r = { parameters };
+  let r = {};
   r.callback = parameters.length > 0 && parameters[parameters.length - 1] || null;
   if (typeof r.callback === 'function') {
     r.parameters = Array.prototype.slice.call(parameters, 0, parameters.length);
   } else {
+    r.parameters = parameters;
     delete r.callback;
   }
   return r;
