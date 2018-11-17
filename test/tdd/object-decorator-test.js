@@ -346,6 +346,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     }
 
     function _test_MethodExcecutor_run(params) {
+      let scenario = params;
       var texture = {
         logging: {
           onRequest: {
@@ -375,7 +376,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
       }
 
-      if (params.scenario === 'explicit') {
+      if (params.methodMode === 'explicit') {
         texture.methodType = params.methodType;
       }
 
@@ -383,26 +384,26 @@ describe('tdd:devebot:core:object-decorator', function() {
       switch(params.methodType) {
         case 'promise': {
           object.sampleMethod = sinon.stub().callsFake(function() {
-            if (params.output.error) {
-              return Promise.reject(params.output.error);
+            if (scenario.output.error) {
+              return Promise.reject(scenario.output.error);
             }
-            return Promise.resolve(params.output.value);
+            return Promise.resolve(scenario.output.value);
           });
           break;
         }
         case 'callback': {
           object.sampleMethod = sinon.stub().callsFake(function() {
             let cb = arguments[arguments.length - 1];
-            cb(params.output.error, params.output.value);
+            cb(scenario.output.error, scenario.output.value);
           });
           break;
         }
         case 'general': {
           object.sampleMethod = sinon.stub().callsFake(function() {
-            if (params.output.error) {
-              throw params.output.error;
+            if (scenario.output.error) {
+              throw scenario.output.error;
             }
-            return params.output.value;
+            return scenario.output.value;
           });
           break;
         }
@@ -436,10 +437,10 @@ describe('tdd:devebot:core:object-decorator', function() {
       var state = {
         methodType: undefined,
         counter: { promise: 0, callback: 0, general: 0 },
-        pointer: { current: null, actionFlow: params.scenario }
+        pointer: { current: null, actionFlow: params.methodMode }
       }
 
-      switch(params.scenario) {
+      switch(params.methodMode) {
         case 'explicit': {
           state.methodType = params.methodType;
           break;
@@ -450,43 +451,43 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
       }
 
-      let toMessage_secondCallArgs_text = (function(isError) {
-        if (isError) {
-          return '#{objectName}.#{methodName} - Request[#{requestId}] has failed'
-        } else {
-          return '#{objectName}.#{methodName} - Request[#{requestId}] has finished'
+      let tracerOutput = lodash.merge({
+        add: {
+          logState: {
+            actionFlow: params.methodMode,
+            objectName: params.methodType + 'Mode',
+            methodName: 'sampleMethod'
+          }
+        },
+        toMessage: {
+          firstCallArgs: {
+            text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
+          },
+          secondCallArgs: {
+            text: (function(isError) {
+              if (isError) {
+                return '#{objectName}.#{methodName} - Request[#{requestId}] has failed'
+              } else {
+                return '#{objectName}.#{methodName} - Request[#{requestId}] has finished'
+              }
+            })(scenario.output.error != null)
+          }
         }
-      })(params.output.error != null);
+      }, scenario.tracer);
 
       var result = null;
-      var parameters = lodash.clone(params.input);
+      var parameters = lodash.clone(scenario.input);
       if (params.methodType === 'callback') {
         return new Promise(function(onResolved, onRejected) {
           parameters.push(function (err, value) {
-            if (params.output.error == null) {
+            if (scenario.output.error == null) {
               assert.isNull(err);
-              assert.deepEqual(value, params.output.value);
+              assert.deepEqual(value, scenario.output.value);
             } else {
-              assert.deepEqual(err, params.output.error);
-              assert.deepEqual(value, params.output.value);
+              assert.deepEqual(err, scenario.output.error);
+              assert.deepEqual(value, scenario.output.value);
             }
-            _verify_tracer(tracer, lodash.merge({
-              add: {
-                logState: {
-                  actionFlow: params.scenario,
-                  objectName: params.methodType + 'Mode',
-                  methodName: 'sampleMethod'
-                }
-              },
-              toMessage: {
-                firstCallArgs: {
-                  text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
-                },
-                secondCallArgs: {
-                  text: toMessage_secondCallArgs_text
-                }
-              }
-            }, params.tracer));
+            _verify_tracer(tracer, tracerOutput);
             assert.deepInclude(executor.__state__, state);
             onResolved();
           });
@@ -499,9 +500,9 @@ describe('tdd:devebot:core:object-decorator', function() {
         result = executor.run(parameters);
         assert.deepInclude(executor.__state__, state);
         let flow = null;
-        if (!params.output.error) {
+        if (!scenario.output.error) {
           flow = result.then(function (value) {
-            assert.deepEqual(value, params.output.value);
+            assert.deepEqual(value, scenario.output.value);
           });
         } else {
           flow = result.then(function(value) {
@@ -511,23 +512,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           })
         }
         flow.then(function() {
-          _verify_tracer(tracer, lodash.merge({
-            add: {
-              logState: {
-                actionFlow: params.scenario,
-                objectName: params.methodType + 'Mode',
-                methodName: 'sampleMethod'
-              }
-            },
-            toMessage: {
-              firstCallArgs: {
-                text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
-              },
-              secondCallArgs: {
-                text: toMessage_secondCallArgs_text
-              }
-            }
-          }, params.tracer));
+          _verify_tracer(tracer, tracerOutput);
         });
         return flow;
       }
@@ -541,28 +526,11 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
 
         assert.deepInclude(executor.__state__, state);
+        _verify_tracer(tracer, tracerOutput);
 
-        _verify_tracer(tracer, lodash.merge({
-          add: {
-            logState: {
-              actionFlow: params.scenario,
-              objectName: params.methodType + 'Mode',
-              methodName: 'sampleMethod'
-            }
-          },
-          toMessage: {
-            firstCallArgs: {
-              text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
-            },
-            secondCallArgs: {
-              text: toMessage_secondCallArgs_text
-            }
-          }
-        }, params.tracer));
-
-        if (!params.output.error) {
+        if (!scenario.output.error) {
           assert.isUndefined(exception);
-          assert.deepEqual(result, params.output.value);
+          assert.deepEqual(result, scenario.output.value);
         } else {
           assert.isUndefined(result);
         }
@@ -571,7 +539,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'implicit',
+        methodMode: 'implicit',
         methodType: 'promise',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -598,7 +566,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (failure)', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'implicit',
+        methodMode: 'implicit',
         methodType: 'promise',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -628,7 +596,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (success)', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'implicit',
+        methodMode: 'implicit',
         methodType: 'callback',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -655,7 +623,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (failure)', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'implicit',
+        methodMode: 'implicit',
         methodType: 'callback',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -685,7 +653,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (success)', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'implicit',
+        methodMode: 'implicit',
         methodType: 'general',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -712,7 +680,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (failure)', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'implicit',
+        methodMode: 'implicit',
         methodType: 'general',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -742,7 +710,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'explicit',
+        methodMode: 'explicit',
         methodType: 'promise',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -769,7 +737,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode (error)', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'explicit',
+        methodMode: 'explicit',
         methodType: 'promise',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -799,7 +767,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'explicit',
+        methodMode: 'explicit',
         methodType: 'callback',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -826,7 +794,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode (error)', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'explicit',
+        methodMode: 'explicit',
         methodType: 'callback',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -856,7 +824,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'explicit',
+        methodMode: 'explicit',
         methodType: 'general',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -883,7 +851,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode (error)', function() {
       return _test_MethodExcecutor_run({
-        scenario: 'explicit',
+        methodMode: 'explicit',
         methodType: 'general',
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
@@ -911,7 +879,8 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
-    it('auto-detecting methodType (promise) will be stable after reliable number of continual steps');
+    it('auto-detecting methodType (promise) will be stable after reliable number of continual steps', function() {
+    });
 
     it('auto-detecting methodType (callback) will be stable after reliable number of continual steps');
 
