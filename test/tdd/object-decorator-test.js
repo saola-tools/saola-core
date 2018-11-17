@@ -345,7 +345,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.deepEqual(tracer.toMessage.secondCall.args[0], opts.toMessage.secondCallArgs);
     }
 
-    function _test_explicit_methodType(params) {
+    function _test_MethodExcecutor_run(params) {
       var texture = {
         logging: {
           onRequest: {
@@ -450,8 +450,16 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
       }
 
+      let toMessage_secondCallArgs_text = (function(isError) {
+        if (isError) {
+          return '#{objectName}.#{methodName} - Request[#{requestId}] has failed'
+        } else {
+          return '#{objectName}.#{methodName} - Request[#{requestId}] has finished'
+        }
+      })(params.output.error != null);
+
       var result = null;
-      var parameters = ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}];
+      var parameters = lodash.clone(params.input);
       if (params.methodType === 'callback') {
         return new Promise(function(onResolved, onRejected) {
           parameters.push(function (err, value) {
@@ -462,23 +470,23 @@ describe('tdd:devebot:core:object-decorator', function() {
               assert.deepEqual(err, params.output.error);
               assert.deepEqual(value, params.output.value);
             }
-            _verify_tracer(tracer, {
+            _verify_tracer(tracer, lodash.merge({
               add: {
                 logState: {
                   actionFlow: params.scenario,
                   objectName: params.methodType + 'Mode',
-                  methodName: 'sampleMethod',
-                  requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+                  methodName: 'sampleMethod'
                 }
               },
               toMessage: {
                 firstCallArgs: {
-                  text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
-                  info: 'Hello world'
+                  text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
                 },
-                secondCallArgs: params.secondCallArgs
+                secondCallArgs: {
+                  text: toMessage_secondCallArgs_text
+                }
               }
-            });
+            }, params.tracer));
             assert.deepInclude(executor.__state__, state);
             onResolved();
           });
@@ -503,23 +511,23 @@ describe('tdd:devebot:core:object-decorator', function() {
           })
         }
         flow.then(function() {
-          _verify_tracer(tracer, {
+          _verify_tracer(tracer, lodash.merge({
             add: {
               logState: {
                 actionFlow: params.scenario,
                 objectName: params.methodType + 'Mode',
-                methodName: 'sampleMethod',
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+                methodName: 'sampleMethod'
               }
             },
             toMessage: {
               firstCallArgs: {
-                text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
-                info: 'Hello world'
+                text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
               },
-              secondCallArgs: params.secondCallArgs
+              secondCallArgs: {
+                text: toMessage_secondCallArgs_text
+              }
             }
-          });
+          }, params.tracer));
         });
         return flow;
       }
@@ -534,23 +542,23 @@ describe('tdd:devebot:core:object-decorator', function() {
 
         assert.deepInclude(executor.__state__, state);
 
-        _verify_tracer(tracer, {
+        _verify_tracer(tracer, lodash.merge({
           add: {
             logState: {
               actionFlow: params.scenario,
               objectName: params.methodType + 'Mode',
-              methodName: 'sampleMethod',
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              methodName: 'sampleMethod'
             }
           },
           toMessage: {
             firstCallArgs: {
-              text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked',
-              info: 'Hello world'
+              text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
             },
-            secondCallArgs: params.secondCallArgs
+            secondCallArgs: {
+              text: toMessage_secondCallArgs_text
+            }
           }
-        });
+        }, params.tracer));
 
         if (!params.output.error) {
           assert.isUndefined(exception);
@@ -562,145 +570,253 @@ describe('tdd:devebot:core:object-decorator', function() {
     }
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
-      return _test_explicit_methodType({
+      return _test_MethodExcecutor_run({
         scenario: 'implicit',
         methodType: 'promise',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
         },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
-          info: { msg: "This is a normal result" }
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: { msg: "This is a normal result" }
+            }
+          }
         }
       });
     });
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (failure)', function() {
-      return _test_explicit_methodType({
+      return _test_MethodExcecutor_run({
         scenario: 'implicit',
         methodType: 'promise',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
         },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has failed',
-          info: {
-            "error_code": undefined,
-            "error_message": "The action has been failed"
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
           }
         }
       });
     });
 
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (success)', function() {
-      return _test_explicit_methodType({
+      return _test_MethodExcecutor_run({
         scenario: 'implicit',
         methodType: 'callback',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
         },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
-          info: { msg: "This is a normal result" }
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: { msg: "This is a normal result" }
+            }
+          }
         }
       });
     });
 
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (failure)', function() {
-      return _test_explicit_methodType({
+      return _test_MethodExcecutor_run({
         scenario: 'implicit',
         methodType: 'callback',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
         },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has failed',
-          info: {
-            "error_code": undefined,
-            "error_message": "The action has been failed"
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
           }
         }
       });
     });
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (success)', function() {
-      return _test_explicit_methodType({
+      return _test_MethodExcecutor_run({
         scenario: 'implicit',
         methodType: 'general',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
         },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
-          info: { msg: "This is a normal result" }
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: { msg: "This is a normal result" }
+            }
+          }
         }
       });
     });
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (failure)', function() {
-      return _test_explicit_methodType({
+      return _test_MethodExcecutor_run({
         scenario: 'implicit',
         methodType: 'general',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
         },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has failed',
-          info: {
-            "error_code": undefined,
-            "error_message": "The action has been failed"
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
           }
         }
       });
     });
 
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode', function() {
-      return _test_explicit_methodType({
+      return _test_MethodExcecutor_run({
         scenario: 'explicit',
         methodType: 'promise',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
         },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
-          info: { msg: "This is a normal result" }
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: { msg: "This is a normal result" }
+            }
+          }
         }
       });
     });
 
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode', function() {
-      return _test_explicit_methodType({
+      return _test_MethodExcecutor_run({
         scenario: 'explicit',
         methodType: 'callback',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
         },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
-          info: { msg: "This is a normal result" }
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: { msg: "This is a normal result" }
+            }
+          }
         }
       });
     });
 
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode', function() {
-      return _test_explicit_methodType({
+      return _test_MethodExcecutor_run({
         scenario: 'explicit',
         methodType: 'general',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
         },
-        secondCallArgs: {
-          text: '#{objectName}.#{methodName} - Request[#{requestId}] has finished',
-          info: { msg: "This is a normal result" }
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: { msg: "This is a normal result" }
+            }
+          }
         }
       });
     });
