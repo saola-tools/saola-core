@@ -293,21 +293,21 @@ MethodExecutor.prototype.run = function(parameters) {
     result = _detect(parameters);
     let maxItem = maxOf(counter);
     if (maxItem.value >= 5) {
-      this.__state__.methodType = maxItem.name;
+      this.__state__.methodType = maxItem.label;
     }
   }
   return result;
 }
 
 function maxOf(counter) {
-  let max = -1, stableMethod = null;
+  let maxValue = -1, maxLabel = null;
   for(let mt in counter) {
-    if (max < counter[mt]) {
-      max = counter[mt];
-      stableMethod = mt;
+    if (maxValue < counter[mt]) {
+      maxValue = counter[mt];
+      maxLabel = mt;
     }
   }
-  return { name: stableMethod, value: max }
+  return { label: maxLabel, value: maxValue }
 }
 
 function isPromise(p) {

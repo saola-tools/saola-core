@@ -767,6 +767,36 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
+    it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode (error)', function() {
+      return _test_MethodExcecutor_run({
+        scenario: 'explicit',
+        methodType: 'promise',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        output: {
+          error: new Error('The action has been failed'),
+          value: { msg: "Anything" }
+        },
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
+          }
+        }
+      });
+    });
+
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode', function() {
       return _test_MethodExcecutor_run({
         scenario: 'explicit',
@@ -794,6 +824,36 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
+    it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode (error)', function() {
+      return _test_MethodExcecutor_run({
+        scenario: 'explicit',
+        methodType: 'callback',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        output: {
+          error: new Error('The action has been failed'),
+          value: { msg: "Anything" }
+        },
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
+          }
+        }
+      });
+    });
+
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode', function() {
       return _test_MethodExcecutor_run({
         scenario: 'explicit',
@@ -815,6 +875,36 @@ describe('tdd:devebot:core:object-decorator', function() {
             },
             secondCallArgs: {
               info: { msg: "This is a normal result" }
+            }
+          }
+        }
+      });
+    });
+
+    it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode (error)', function() {
+      return _test_MethodExcecutor_run({
+        scenario: 'explicit',
+        methodType: 'general',
+        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        output: {
+          error: new Error('The action has been failed'),
+          value: { msg: "Anything" }
+        },
+        tracer: {
+          add: {
+            logState: {
+              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+            }
+          },
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
             }
           }
         }
