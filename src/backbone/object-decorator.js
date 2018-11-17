@@ -109,8 +109,7 @@ function wrapMethod(ref, method, texture, opts) {
 }
 
 function MethodExecutor(params={}) {
-  const { logger:L, tracer:T } = params;
-  const { texture, object, objectName, method, methodName } = params;
+  const { logger, tracer, texture, object, objectName, method, methodName } = params;
   let counter = { promise: 0, callback: 0, general: 0 }
   let pointer = { current: null, actionFlow: null }
   const logState = { objectName, methodName, requestId: null }
@@ -154,7 +153,7 @@ function MethodExecutor(params={}) {
         delete msgObj.tags;
       }
       let logLevel = onEvent.logLevel || (eventName === 'Failure' ? 'error' : 'debug');
-      L.has(logLevel) && L.log(logLevel, T.add(logState).toMessage(msgObj));
+      logger.has(logLevel) && logger.log(logLevel, tracer.add(logState).toMessage(msgObj));
     }
   }
   const CALLED_EVENTS = ['Request', 'Success', 'Failure'];
