@@ -5,7 +5,6 @@ const lodash = require('lodash');
 const path = require('path');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
-const loader = require('../utils/loader');
 const nodash = require('../utils/nodash');
 const blockRef = chores.getBlockRef(__filename);
 
@@ -109,13 +108,15 @@ function wrapMethod(ref, method, texture, opts) {
 }
 
 function MethodExecutor(params={}) {
-  const { logger, tracer, texture, object, objectName, method, methodName } = params;
+  const { logger, tracer, preciseThreshold } = params
+  const { texture, object, objectName, method, methodName } = params;
   let counter = { promise: 0, callback: 0, general: 0 }
-  let pointer = { current: null, actionFlow: null }
+  let pointer = { current: null, actionFlow: null, preciseThreshold }
   const logState = { objectName, methodName, requestId: null }
 
   // pre-processing logging texture
   let methodType = texture.methodType;
+  pointer.preciseThreshold = pointer.preciseThreshold || 5;
 
   function createListener(texture, eventName) {
     if (!isEnabled(texture.logging)) return null;
@@ -225,15 +226,12 @@ MethodExecutor.prototype.run = function(parameters) {
         pointer.current = 'general';
       }
     }
-    // an error is occurred
-    if (exception) {
-      throw exception;
-    }
-    return result;
+    // return both result & exception
+    return {result, exception};
   }
 
   function _invoke(parameters) {
-    let result = undefined;
+    let result = undefined, exception = undefined;
     switch(methodType) {
       case 'promise': {
         result = Promise.resolve().then(function() {
@@ -269,33 +267,37 @@ MethodExecutor.prototype.run = function(parameters) {
           logOnEvent.Request(parameters);
           result = method.apply(object, parameters);
           logOnEvent.Success(result);
-        } catch (exception) {
+        } catch (error) {
+          exception = error;
           logOnEvent.Failure(exception);
-          throw exception;
         }
         break;
       }
     }
-    return result;
+    return {result, exception};
   }
 
   if (!nodash.isArray(parameters)) {
     parameters = Array.prototype.slice.call(parameters);
   }
 
-  let result = null;
+  let output = null;
   if (this.__state__.methodType) {
     pointer.actionFlow = 'explicit';
-    result = _invoke(parameters);
+    output = _invoke(parameters);
   } else {
     pointer.actionFlow = 'implicit';
-    result = _detect(parameters);
+    output = _detect(parameters);
     let maxItem = maxOf(counter);
-    if (maxItem.value >= 5) {
+    if (maxItem.value >= pointer.preciseThreshold) {
       this.__state__.methodType = maxItem.label;
     }
   }
-  return result;
+  // an error is occurred
+  if (output.exception) {
+    throw output.exception;
+  }
+  return output.result;
 }
 
 function maxOf(counter) {

@@ -440,13 +440,15 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodName: 'sampleMethod',
         texture: texture,
         logger: logger,
-        tracer: tracer
+        tracer: tracer,
+        preciseThreshold: params.preciseThreshold
       });
 
       var state = {
         methodType: undefined,
         counter: { promise: 0, callback: 0, general: 0 },
-        pointer: { current: null, actionFlow: params.methodMode }
+        pointer: { current: null, actionFlow: params.methodMode,
+            preciseThreshold: params.preciseThreshold || 5 }
       }
 
       switch(params.methodMode) {
@@ -870,7 +872,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('auto-detecting methodType (promise) will be stable after reliable number of continual steps', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'general',
+        methodType: 'promise',
+        preciseThreshold: 2,
         scenarios: [{
           requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
           input: ['Message #1'],
@@ -908,13 +911,197 @@ describe('tdd:devebot:core:object-decorator', function() {
               }
             }
           }
-        }]
+        }, {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqt',
+          input: ['Message #3'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
+          },
+          tracer: {
+            add: {
+              logState: {
+                actionFlow: "explicit"
+              }
+            },
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #3'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
+              }
+            }
+          }
+        }],
+        state: {
+          methodType: 'promise',
+          counter: {
+            promise: 2
+          },
+          pointer: {
+            actionFlow: 'explicit'
+          }
+        }
       });
     });
 
-    it('auto-detecting methodType (callback) will be stable after reliable number of continual steps');
+    it('auto-detecting methodType (callback) will be stable after reliable number of continual steps', function() {
+      return _test_MethodExcecutor_run({
+        methodMode: 'implicit',
+        methodType: 'callback',
+        preciseThreshold: 2,
+        scenarios: [{
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Message #1'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #1'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
+            }
+          }
+        }, {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
+          input: ['Message #2'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #2'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
+            }
+          }
+        }, {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqt',
+          input: ['Message #3'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
+          },
+          tracer: {
+            add: {
+              logState: {
+                actionFlow: "explicit"
+              }
+            },
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #3'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
+            }
+          }
+        }],
+        state: {
+          methodType: 'callback',
+          counter: {
+            callback: 2
+          },
+          pointer: {
+            actionFlow: 'explicit'
+          }
+        }
+      });
+    });
 
-    it('auto-detecting methodType (gegeral) will be stable after reliable number of continual steps');
+    it('auto-detecting methodType (gegeral) will be stable after reliable number of continual steps', function() {
+      return _test_MethodExcecutor_run({
+        methodMode: 'implicit',
+        methodType: 'general',
+        preciseThreshold: 2,
+        scenarios: [{
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Message #1'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #1'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
+            }
+          }
+        }, {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
+          input: ['Message #2'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #2'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
+              }
+            }
+          }
+        }, {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqt',
+          input: ['Message #3'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
+          },
+          tracer: {
+            add: {
+              logState: {
+                actionFlow: "explicit"
+              }
+            },
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #3'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
+              }
+            }
+          }
+        }],
+        state: {
+          methodType: 'general',
+          counter: {
+            general: 2
+          },
+          pointer: {
+            actionFlow: 'explicit'
+          }
+        }
+      });
+    });
   });
 
   after(function() {
