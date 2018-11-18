@@ -562,11 +562,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "This is a normal result" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -592,11 +587,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "Anything" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -624,11 +614,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "This is a normal result" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -654,11 +639,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "Anything" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -687,11 +667,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "This is a normal result" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -717,11 +692,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "Anything" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -750,11 +720,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "This is a normal result" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -780,11 +745,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "Anything" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -813,11 +773,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "This is a normal result" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -843,11 +798,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "Anything" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -876,11 +826,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "This is a normal result" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -906,11 +851,6 @@ describe('tdd:devebot:core:object-decorator', function() {
             value: { msg: "Anything" }
           },
           tracer: {
-            add: {
-              logState: {
-                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-              }
-            },
             toMessage: {
               firstCallArgs: {
                 info: 'Hello world'
@@ -933,7 +873,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodType: 'general',
         scenarios: [{
           requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-          input: ['Hello world'],
+          input: ['Message #1'],
           output: {
             error: null,
             value: { msg: "This is a normal result" }
@@ -941,7 +881,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           tracer: {
             toMessage: {
               firstCallArgs: {
-                info: 'Hello world'
+                info: 'Message #1'
               },
               secondCallArgs: {
                 info: { msg: "This is a normal result" }
@@ -950,7 +890,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         }, {
           requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
-          input: ['Hello world'],
+          input: ['Message #2'],
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
@@ -958,7 +898,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           tracer: {
             toMessage: {
               firstCallArgs: {
-                info: 'Hello world'
+                info: 'Message #2'
               },
               secondCallArgs: {
                 info: {
