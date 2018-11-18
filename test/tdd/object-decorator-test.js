@@ -346,9 +346,9 @@ describe('tdd:devebot:core:object-decorator', function() {
       tracer.toMessage.resetHistory();
     }
 
-    function _test_MethodExcecutor_run(params, scenarios) {
-      if (!lodash.isArray(scenarios)) {
-        scenarios = [scenarios];
+    function _test_MethodExcecutor_run(params) {
+      if (!lodash.isArray(params.scenarios)) {
+        params.scenarios = [params.scenarios];
       }
       var texture = {
         logging: {
@@ -388,7 +388,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         case 'promise': {
           object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
             opts = opts || {};
-            let scenario = scenarios[opts.index];
+            let scenario = params.scenarios[opts.index];
             if (scenario.output.error) {
               return Promise.reject(scenario.output.error);
             }
@@ -399,7 +399,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         case 'callback': {
           object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
             opts = opts || {};
-            let scenario = scenarios[opts.index];
+            let scenario = params.scenarios[opts.index];
             let cb = arguments[arguments.length - 1];
             cb(scenario.output.error, scenario.output.value);
           });
@@ -408,7 +408,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         case 'general': {
           object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
             opts = opts || {};
-            let scenario = scenarios[opts.index];
+            let scenario = params.scenarios[opts.index];
             if (scenario.output.error) {
               throw scenario.output.error;
             }
@@ -455,12 +455,12 @@ describe('tdd:devebot:core:object-decorator', function() {
           break;
         }
         case 'implicit': {
-          state.counter[params.methodType] = scenarios.length;
+          state.counter[params.methodType] = params.scenarios.length;
           state.pointer.current = params.methodType;
         }
       }
 
-      let p = Promise.each(scenarios, function(scenario, index) {
+      let p = Promise.each(params.scenarios, function(scenario, index) {
         let tracerOutput = lodash.merge({
           add: {
             logState: {
@@ -553,26 +553,27 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'promise'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: null,
-          value: { msg: "This is a normal result" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'promise',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: { msg: "This is a normal result" }
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
             }
           }
         }
@@ -582,28 +583,29 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [promise] mode if the method returns a promise (failure)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'promise'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: new Error('The action has been failed'),
-          value: { msg: "Anything" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'promise',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: {
-                "error_code": undefined,
-                "error_message": "The action has been failed"
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
               }
             }
           }
@@ -614,26 +616,26 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (success)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'callback'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: null,
-          value: { msg: "This is a normal result" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'callback', scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: { msg: "This is a normal result" }
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
             }
           }
         }
@@ -643,28 +645,29 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (failure)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'callback'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: new Error('The action has been failed'),
-          value: { msg: "Anything" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'callback',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: {
-                "error_code": undefined,
-                "error_message": "The action has been failed"
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
               }
             }
           }
@@ -675,26 +678,27 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [general] mode if the method returns a normal result (success)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'general'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: null,
-          value: { msg: "This is a normal result" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'general',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: { msg: "This is a normal result" }
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
             }
           }
         }
@@ -704,28 +708,29 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [general] mode if the method returns a normal result (failure)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'general'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: new Error('The action has been failed'),
-          value: { msg: "Anything" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'general',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: {
-                "error_code": undefined,
-                "error_message": "The action has been failed"
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
               }
             }
           }
@@ -736,26 +741,27 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'promise'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: null,
-          value: { msg: "This is a normal result" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'promise',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: { msg: "This is a normal result" }
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
             }
           }
         }
@@ -765,28 +771,29 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode (error)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'promise'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: new Error('The action has been failed'),
-          value: { msg: "Anything" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'promise',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: {
-                "error_code": undefined,
-                "error_message": "The action has been failed"
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
               }
             }
           }
@@ -797,26 +804,27 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'callback'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: null,
-          value: { msg: "This is a normal result" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'callback',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: { msg: "This is a normal result" }
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
             }
           }
         }
@@ -826,28 +834,29 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode (error)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'callback'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: new Error('The action has been failed'),
-          value: { msg: "Anything" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'callback',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: {
-                "error_code": undefined,
-                "error_message": "The action has been failed"
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
               }
             }
           }
@@ -858,26 +867,27 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'general'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: null,
-          value: { msg: "This is a normal result" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'general',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: { msg: "This is a normal result" }
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
             }
           }
         }
@@ -887,28 +897,29 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode (error)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'general'
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: new Error('The action has been failed'),
-          value: { msg: "Anything" }
-        },
-        tracer: {
-          add: {
-            logState: {
-              requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
-            }
+        methodType: 'general',
+        scenarios: {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
           },
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
+          tracer: {
+            add: {
+              logState: {
+                requestId: 'YkMjPoSoSyOTrLyf76Mzqg'
+              }
             },
-            secondCallArgs: {
-              info: {
-                "error_code": undefined,
-                "error_message": "The action has been failed"
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
               }
             }
           }
@@ -919,45 +930,46 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('auto-detecting methodType (promise) will be stable after reliable number of continual steps', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'general'
-      }, [{
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
-        input: ['Hello world'],
-        output: {
-          error: null,
-          value: { msg: "This is a normal result" }
-        },
-        tracer: {
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
-            },
-            secondCallArgs: {
-              info: { msg: "This is a normal result" }
-            }
-          }
-        }
-      }, {
-        requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
-        input: ['Hello world'],
-        output: {
-          error: new Error('The action has been failed'),
-          value: { msg: "Anything" }
-        },
-        tracer: {
-          toMessage: {
-            firstCallArgs: {
-              info: 'Hello world'
-            },
-            secondCallArgs: {
-              info: {
-                "error_code": undefined,
-                "error_message": "The action has been failed"
+        methodType: 'general',
+        scenarios: [{
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Hello world'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
               }
             }
           }
-        }
-      }]);
+        }, {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
+          input: ['Hello world'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Hello world'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
+              }
+            }
+          }
+        }]
+      });
     });
 
     it('auto-detecting methodType (callback) will be stable after reliable number of continual steps');
