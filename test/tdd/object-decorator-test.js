@@ -345,8 +345,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.deepEqual(tracer.toMessage.secondCall.args[0], opts.toMessage.secondCallArgs);
     }
 
-    function _test_MethodExcecutor_run(params) {
-      let scenario = params;
+    function _test_MethodExcecutor_run(params, scenario) {
       var texture = {
         logging: {
           onRequest: {
@@ -383,7 +382,8 @@ describe('tdd:devebot:core:object-decorator', function() {
       var object = {}
       switch(params.methodType) {
         case 'promise': {
-          object.sampleMethod = sinon.stub().callsFake(function() {
+          object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
+            opts = opts || {};
             if (scenario.output.error) {
               return Promise.reject(scenario.output.error);
             }
@@ -392,14 +392,16 @@ describe('tdd:devebot:core:object-decorator', function() {
           break;
         }
         case 'callback': {
-          object.sampleMethod = sinon.stub().callsFake(function() {
+          object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
+            opts = opts || {};
             let cb = arguments[arguments.length - 1];
             cb(scenario.output.error, scenario.output.value);
           });
           break;
         }
         case 'general': {
-          object.sampleMethod = sinon.stub().callsFake(function() {
+          object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
+            opts = opts || {};
             if (scenario.output.error) {
               throw scenario.output.error;
             }
@@ -475,7 +477,6 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
       }, scenario.tracer);
 
-      var result = null;
       var parameters = lodash.clone(scenario.input);
       if (params.methodType === 'callback') {
         return new Promise(function(onResolved, onRejected) {
@@ -487,17 +488,17 @@ describe('tdd:devebot:core:object-decorator', function() {
               assert.deepEqual(err, scenario.output.error);
               assert.deepEqual(value, scenario.output.value);
             }
-            _verify_tracer(tracer, tracerOutput);
             assert.deepInclude(executor.__state__, state);
+            _verify_tracer(tracer, tracerOutput);
             onResolved();
           });
-          result = executor.run(parameters);
+          var result = executor.run(parameters);
           assert.isUndefined(result);
         });
       }
       
       if (params.methodType === 'promise') {
-        result = executor.run(parameters);
+        var result = executor.run(parameters);
         assert.deepInclude(executor.__state__, state);
         let flow = null;
         if (!scenario.output.error) {
@@ -524,10 +525,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         } catch (error) {
           exception = error;
         }
-
         assert.deepInclude(executor.__state__, state);
         _verify_tracer(tracer, tracerOutput);
-
         if (!scenario.output.error) {
           assert.isUndefined(exception);
           assert.deepEqual(result, scenario.output.value);
@@ -540,7 +539,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'promise',
+        methodType: 'promise'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
@@ -567,7 +567,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [promise] mode if the method returns a promise (failure)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'promise',
+        methodType: 'promise'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: new Error('The action has been failed'),
@@ -597,7 +598,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (success)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'callback',
+        methodType: 'callback'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
@@ -624,7 +626,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (failure)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'callback',
+        methodType: 'callback'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: new Error('The action has been failed'),
@@ -654,7 +657,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [general] mode if the method returns a normal result (success)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'general',
+        methodType: 'general'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
@@ -681,7 +685,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [general] mode if the method returns a normal result (failure)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'general',
+        methodType: 'general'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: new Error('The action has been failed'),
@@ -711,7 +716,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'promise',
+        methodType: 'promise'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
@@ -738,7 +744,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode (error)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'promise',
+        methodType: 'promise'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: new Error('The action has been failed'),
@@ -768,7 +775,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'callback',
+        methodType: 'callback'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
@@ -795,7 +803,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode (error)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'callback',
+        methodType: 'callback'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: new Error('The action has been failed'),
@@ -825,7 +834,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'general',
+        methodType: 'general'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: null,
@@ -852,7 +862,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode (error)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'explicit',
-        methodType: 'general',
+        methodType: 'general'
+      }, {
         input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
         output: {
           error: new Error('The action has been failed'),
@@ -879,8 +890,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
-    it('auto-detecting methodType (promise) will be stable after reliable number of continual steps', function() {
-    });
+    it('auto-detecting methodType (promise) will be stable after reliable number of continual steps');
 
     it('auto-detecting methodType (callback) will be stable after reliable number of continual steps');
 
