@@ -345,7 +345,10 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.deepEqual(tracer.toMessage.secondCall.args[0], opts.toMessage.secondCallArgs);
     }
 
-    function _test_MethodExcecutor_run(params, scenario) {
+    function _test_MethodExcecutor_run(params, scenarios) {
+      if (!lodash.isArray(scenarios)) {
+        scenarios = [scenarios];
+      }
       var texture = {
         logging: {
           onRequest: {
@@ -384,6 +387,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         case 'promise': {
           object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
             opts = opts || {};
+            let scenario = scenarios[opts.index];
             if (scenario.output.error) {
               return Promise.reject(scenario.output.error);
             }
@@ -394,6 +398,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         case 'callback': {
           object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
             opts = opts || {};
+            let scenario = scenarios[opts.index];
             let cb = arguments[arguments.length - 1];
             cb(scenario.output.error, scenario.output.value);
           });
@@ -402,6 +407,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         case 'general': {
           object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
             opts = opts || {};
+            let scenario = scenarios[opts.index];
             if (scenario.output.error) {
               throw scenario.output.error;
             }
@@ -453,87 +459,89 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
       }
 
-      let tracerOutput = lodash.merge({
-        add: {
-          logState: {
-            actionFlow: params.methodMode,
-            objectName: params.methodType + 'Mode',
-            methodName: 'sampleMethod'
-          }
-        },
-        toMessage: {
-          firstCallArgs: {
-            text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
-          },
-          secondCallArgs: {
-            text: (function(isError) {
-              if (isError) {
-                return '#{objectName}.#{methodName} - Request[#{requestId}] has failed'
-              } else {
-                return '#{objectName}.#{methodName} - Request[#{requestId}] has finished'
-              }
-            })(scenario.output.error != null)
-          }
-        }
-      }, scenario.tracer);
-
-      var parameters = lodash.clone(scenario.input);
-      if (params.methodType === 'callback') {
-        return new Promise(function(onResolved, onRejected) {
-          parameters.push(function (err, value) {
-            if (scenario.output.error == null) {
-              assert.isNull(err);
-              assert.deepEqual(value, scenario.output.value);
-            } else {
-              assert.deepEqual(err, scenario.output.error);
-              assert.deepEqual(value, scenario.output.value);
+      return Promise.each(scenarios, function(scenario, index) {
+        let tracerOutput = lodash.merge({
+          add: {
+            logState: {
+              actionFlow: params.methodMode,
+              objectName: params.methodType + 'Mode',
+              methodName: 'sampleMethod'
             }
-            assert.deepInclude(executor.__state__, state);
-            _verify_tracer(tracer, tracerOutput);
-            onResolved();
-          });
-          var result = executor.run(parameters);
-          assert.isUndefined(result);
-        });
-      }
-      
-      if (params.methodType === 'promise') {
-        var result = executor.run(parameters);
-        assert.deepInclude(executor.__state__, state);
-        let flow = null;
-        if (!scenario.output.error) {
-          flow = result.then(function (value) {
-            assert.deepEqual(value, scenario.output.value);
-          });
-        } else {
-          flow = result.then(function(value) {
-            return Promise.reject();
-          }).catch(function(error) {
-            return Promise.resolve();
-          })
-        }
-        flow.then(function() {
-          _verify_tracer(tracer, tracerOutput);
-        });
-        return flow;
-      }
+          },
+          toMessage: {
+            firstCallArgs: {
+              text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
+            },
+            secondCallArgs: {
+              text: (function(isError) {
+                if (isError) {
+                  return '#{objectName}.#{methodName} - Request[#{requestId}] has failed'
+                } else {
+                  return '#{objectName}.#{methodName} - Request[#{requestId}] has finished'
+                }
+              })(scenario.output.error != null)
+            }
+          }
+        }, scenario.tracer);
 
-      if (params.methodType === 'general') {
-        var result = undefined, exception = undefined;
-        try {
-          result = executor.run(parameters);
-        } catch (error) {
-          exception = error;
+        var parameters = lodash.clone(scenario.input);
+        parameters[1].index = index;
+
+        if (params.methodType === 'callback') {
+          return new Promise(function(onResolved, onRejected) {
+            parameters.push(function (err, value) {
+              if (scenario.output.error == null) {
+                assert.isNull(err);
+                assert.deepEqual(value, scenario.output.value);
+              } else {
+                assert.deepEqual(err, scenario.output.error);
+                assert.deepEqual(value, scenario.output.value);
+              }
+              assert.deepInclude(executor.__state__, state);
+              _verify_tracer(tracer, tracerOutput);
+              onResolved();
+            });
+            var result = executor.run(parameters);
+            assert.isUndefined(result);
+          });
         }
-        assert.deepInclude(executor.__state__, state);
-        _verify_tracer(tracer, tracerOutput);
-        if (!scenario.output.error) {
-          assert.isUndefined(exception);
-          assert.deepEqual(result, scenario.output.value);
-        } else {
-          assert.isUndefined(result);
+        if (params.methodType === 'promise') {
+          var result = executor.run(parameters);
+          assert.deepInclude(executor.__state__, state);
+          let flow = null;
+          if (!scenario.output.error) {
+            flow = result.then(function (value) {
+              assert.deepEqual(value, scenario.output.value);
+            });
+          } else {
+            flow = result.then(function(value) {
+              return Promise.reject();
+            }).catch(function(error) {
+              return Promise.resolve();
+            })
+          }
+          flow.then(function() {
+            _verify_tracer(tracer, tracerOutput);
+          });
+          return flow;
         }
-      }
+        if (params.methodType === 'general') {
+          var result = undefined, exception = undefined;
+          try {
+            result = executor.run(parameters);
+          } catch (error) {
+            exception = error;
+          }
+          assert.deepInclude(executor.__state__, state);
+          _verify_tracer(tracer, tracerOutput);
+          if (!scenario.output.error) {
+            assert.isUndefined(exception);
+            assert.deepEqual(result, scenario.output.value);
+          } else {
+            assert.isUndefined(result);
+          }
+        }
+      });
     }
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
