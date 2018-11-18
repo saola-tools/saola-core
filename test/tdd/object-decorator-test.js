@@ -484,8 +484,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         }, scenario.tracer);
 
-        var parameters = lodash.clone(scenario.input);
-        parameters[1].index = index;
+        var parameters = lodash.concat(scenario.input, [{ reqId: scenario.requestId, index }]);
 
         if (params.methodType === 'callback') {
           return new Promise(function(onResolved, onRejected) {
@@ -549,7 +548,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'implicit',
         methodType: 'promise'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
@@ -577,7 +577,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'implicit',
         methodType: 'promise'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
@@ -608,7 +609,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'implicit',
         methodType: 'callback'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
@@ -636,7 +638,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'implicit',
         methodType: 'callback'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
@@ -667,7 +670,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'implicit',
         methodType: 'general'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
@@ -695,7 +699,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'implicit',
         methodType: 'general'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
@@ -726,7 +731,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'explicit',
         methodType: 'promise'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
@@ -754,7 +760,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'explicit',
         methodType: 'promise'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
@@ -785,7 +792,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'explicit',
         methodType: 'callback'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
@@ -813,7 +821,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'explicit',
         methodType: 'callback'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
@@ -844,7 +853,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'explicit',
         methodType: 'general'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: null,
           value: { msg: "This is a normal result" }
@@ -872,7 +882,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodMode: 'explicit',
         methodType: 'general'
       }, {
-        input: ['Hello world', {reqId: 'YkMjPoSoSyOTrLyf76Mzqg'}],
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
         output: {
           error: new Error('The action has been failed'),
           value: { msg: "Anything" }
