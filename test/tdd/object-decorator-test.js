@@ -337,12 +337,13 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.deepEqual(tracer.add.firstCall.args[0], opts.add.logState);
       assert.lengthOf(tracer.add.secondCall.args, 1);
       assert.deepEqual(tracer.add.secondCall.args[0], opts.add.logState);
-      
+      tracer.add.resetHistory();
       assert.equal(tracer.toMessage.callCount, 2);
       assert.lengthOf(tracer.toMessage.firstCall.args, 1);
       assert.deepEqual(tracer.toMessage.firstCall.args[0], opts.toMessage.firstCallArgs);
       assert.lengthOf(tracer.toMessage.secondCall.args, 1);
       assert.deepEqual(tracer.toMessage.secondCall.args[0], opts.toMessage.secondCallArgs);
+      tracer.toMessage.resetHistory();
     }
 
     function _test_MethodExcecutor_run(params, scenarios) {
@@ -454,18 +455,19 @@ describe('tdd:devebot:core:object-decorator', function() {
           break;
         }
         case 'implicit': {
-          state.counter[params.methodType] = 1;
+          state.counter[params.methodType] = scenarios.length;
           state.pointer.current = params.methodType;
         }
       }
 
-      return Promise.each(scenarios, function(scenario, index) {
+      let p = Promise.each(scenarios, function(scenario, index) {
         let tracerOutput = lodash.merge({
           add: {
             logState: {
               actionFlow: params.methodMode,
               objectName: params.methodType + 'Mode',
-              methodName: 'sampleMethod'
+              methodName: 'sampleMethod',
+              requestId: scenario.requestId
             }
           },
           toMessage: {
@@ -496,7 +498,6 @@ describe('tdd:devebot:core:object-decorator', function() {
                 assert.deepEqual(err, scenario.output.error);
                 assert.deepEqual(value, scenario.output.value);
               }
-              assert.deepInclude(executor.__state__, state);
               _verify_tracer(tracer, tracerOutput);
               onResolved();
             });
@@ -506,7 +507,6 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
         if (params.methodType === 'promise') {
           var result = executor.run(parameters);
-          assert.deepInclude(executor.__state__, state);
           let flow = null;
           if (!scenario.output.error) {
             flow = result.then(function (value) {
@@ -531,7 +531,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           } catch (error) {
             exception = error;
           }
-          assert.deepInclude(executor.__state__, state);
           _verify_tracer(tracer, tracerOutput);
           if (!scenario.output.error) {
             assert.isUndefined(exception);
@@ -539,8 +538,16 @@ describe('tdd:devebot:core:object-decorator', function() {
           } else {
             assert.isUndefined(result);
           }
+          return result;
         }
       });
+
+      p = p.then(function() {
+        state = lodash.merge(state, params.state);
+        assert.deepInclude(executor.__state__, state);
+      })
+
+      return p;
     }
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
@@ -909,7 +916,49 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
-    it('auto-detecting methodType (promise) will be stable after reliable number of continual steps');
+    it('auto-detecting methodType (promise) will be stable after reliable number of continual steps', function() {
+      return _test_MethodExcecutor_run({
+        methodMode: 'implicit',
+        methodType: 'general'
+      }, [{
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+        input: ['Hello world'],
+        output: {
+          error: null,
+          value: { msg: "This is a normal result" }
+        },
+        tracer: {
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: { msg: "This is a normal result" }
+            }
+          }
+        }
+      }, {
+        requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
+        input: ['Hello world'],
+        output: {
+          error: new Error('The action has been failed'),
+          value: { msg: "Anything" }
+        },
+        tracer: {
+          toMessage: {
+            firstCallArgs: {
+              info: 'Hello world'
+            },
+            secondCallArgs: {
+              info: {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
+          }
+        }
+      }]);
+    });
 
     it('auto-detecting methodType (callback) will be stable after reliable number of continual steps');
 
