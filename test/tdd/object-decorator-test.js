@@ -383,39 +383,26 @@ describe('tdd:devebot:core:object-decorator', function() {
         texture.methodType = params.methodType;
       }
 
-      var object = {}
-      switch(params.methodType) {
-        case 'promise': {
-          object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
-            opts = opts || {};
-            let scenario = params.scenarios[opts.index];
+      var object = {
+        sampleMethod: sinon.stub().callsFake(function(data, opts) {
+          opts = opts || {};
+          let scenario = params.scenarios[opts.index];
+          let methodType = scenario.methodType || params.methodType;
+          if (methodType === 'promise') {
             if (scenario.output.error) {
               return Promise.reject(scenario.output.error);
             }
             return Promise.resolve(scenario.output.value);
-          });
-          break;
-        }
-        case 'callback': {
-          object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
-            opts = opts || {};
-            let scenario = params.scenarios[opts.index];
+          }
+          if (methodType === 'callback') {
             let cb = arguments[arguments.length - 1];
-            cb(scenario.output.error, scenario.output.value);
-          });
-          break;
-        }
-        case 'general': {
-          object.sampleMethod = sinon.stub().callsFake(function(data, opts) {
-            opts = opts || {};
-            let scenario = params.scenarios[opts.index];
-            if (scenario.output.error) {
-              throw scenario.output.error;
-            }
-            return scenario.output.value;
-          });
-          break;
-        }
+            return cb(scenario.output.error, scenario.output.value);
+          }
+          if (scenario.output.error) {
+            throw scenario.output.error;
+          }
+          return scenario.output.value;
+        })
       }
 
       var logger = {
@@ -451,18 +438,20 @@ describe('tdd:devebot:core:object-decorator', function() {
             preciseThreshold: params.preciseThreshold || 5 }
       }
 
-      switch(params.methodMode) {
-        case 'explicit': {
-          state.methodType = params.methodType;
-          break;
-        }
-        case 'implicit': {
-          state.counter[params.methodType] = params.scenarios.length;
-          state.pointer.current = params.methodType;
-        }
-      }
-
       let p = Promise.each(params.scenarios, function(scenario, index) {
+        let methodType = scenario.methodType || params.methodType;
+
+        switch(params.methodMode) {
+          case 'explicit': {
+            state.methodType = methodType;
+            break;
+          }
+          case 'implicit': {
+            state.counter[methodType]++;
+            state.pointer.current = methodType;
+          }
+        }
+
         let tracerOutput = lodash.merge({
           add: {
             logState: {
@@ -490,7 +479,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
         var parameters = lodash.concat(scenario.input, [{ reqId: scenario.requestId, index }]);
 
-        if (params.methodType === 'callback') {
+        if (methodType === 'callback') {
           return new Promise(function(onResolved, onRejected) {
             parameters.push(function (err, value) {
               if (scenario.output.error == null) {
@@ -507,7 +496,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             assert.isUndefined(result);
           });
         }
-        if (params.methodType === 'promise') {
+        if (methodType === 'promise') {
           var result = executor.run(parameters);
           let flow = null;
           if (!scenario.output.error) {
@@ -526,7 +515,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           });
           return flow;
         }
-        if (params.methodType === 'general') {
+        if (methodType === 'general') {
           var result = undefined, exception = undefined;
           try {
             result = executor.run(parameters);
@@ -1023,7 +1012,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
-    it('auto-detecting methodType (gegeral) will be stable after reliable number of continual steps', function() {
+    it('auto-detecting methodType (general) will be stable after reliable number of continual steps', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
         methodType: 'general',

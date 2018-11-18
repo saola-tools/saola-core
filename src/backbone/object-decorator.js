@@ -174,12 +174,7 @@ MethodExecutor.prototype.run = function(parameters) {
     if (!found) {
       if (pair.callback) {
         found = true;
-        if (pointer.current === 'callback') {
-          counter['callback']++;
-        } else {
-          counter['callback'] = 1;
-          pointer.current = 'callback';
-        }
+        hitMethodType(pointer, counter, 'callback');
         pair.parameters.push(function(error, value) {
           if (error) {
             logOnEvent.Failure(error);
@@ -196,12 +191,7 @@ MethodExecutor.prototype.run = function(parameters) {
       if (!found) {
         if (isPromise(result)) {
           found = true;
-          if (pointer.current === 'promise') {
-            counter['promise']++;
-          } else {
-            counter['promise'] = 1;
-            pointer.current = 'promise';
-          }
+          hitMethodType(pointer, counter, 'promise');
           result = Promise.resolve(result).then(function(value) {
             logOnEvent.Success(value, pair.parameters);
             return value;
@@ -219,12 +209,8 @@ MethodExecutor.prototype.run = function(parameters) {
     }
     // not be callback or promise
     if (!found) {
-      if (pointer.current === 'general') {
-        counter['general']++;
-      } else {
-        counter['general'] = 1;
-        pointer.current = 'general';
-      }
+      found = true;
+      hitMethodType(pointer, counter, 'general');
     }
     // return both result & exception
     return {result, exception};
@@ -298,6 +284,16 @@ MethodExecutor.prototype.run = function(parameters) {
     throw output.exception;
   }
   return output.result;
+}
+
+function hitMethodType(pointer, counter, methodType) {
+  if (pointer.current !== methodType) {
+    for(let name in counter) {
+      counter[name] = 0;
+    }
+    pointer.current = methodType;
+  }
+  counter[methodType]++;
 }
 
 function maxOf(counter) {
