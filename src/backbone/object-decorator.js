@@ -72,7 +72,8 @@ function wrapObject(ref, textureStore, object, opts) {
             methodName: name
           });
         }
-        object[name] = wrapMethod(ref, object[name], texture, {
+        object[name] = wrapMethod(ref, object[name], {
+          texture: texture,
           object: object,
           objectName: opts.objectName,
           methodName: name
@@ -83,9 +84,9 @@ function wrapObject(ref, textureStore, object, opts) {
   return object;
 }
 
-function wrapMethod(ref, method, texture, opts) {
+function wrapMethod(ref, method, opts) {
   if (!lodash.isFunction(method)) return method;
-  let {object, objectName, methodName} = opts || {};
+  let {texture, object, objectName, methodName} = opts || {};
   object = lodash.isObject(object) ? object : null;
   let executor = null;
   let wrapped = method;

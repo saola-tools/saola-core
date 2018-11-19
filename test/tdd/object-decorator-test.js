@@ -83,7 +83,8 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         }
       }
-      var wrappedMethod = wrapMethod(context, object.sampleMethod, texture, {
+      var wrappedMethod = wrapMethod(context, object.sampleMethod, {
+        texture: texture,
         object: object,
         objectName: 'sampleObject',
         methodName: 'sampleMethod'
@@ -136,7 +137,8 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         }
       };
-      var wrappedMethod = wrapMethod(context, object.sampleMethod, texture, {
+      var wrappedMethod = wrapMethod(context, object.sampleMethod, {
+        texture: texture,
         object: object,
         objectName: 'sampleObject',
         methodName: 'sampleMethod'
@@ -193,7 +195,8 @@ describe('tdd:devebot:core:object-decorator', function() {
       var wrappedMethod = wrapMethod({
         L: LogAdapter.getLogger(),
         T: LogTracer.ROOT
-      }, object.sampleMethod, texture, {
+      }, object.sampleMethod, {
+        texture: texture,
         object: object,
         objectName: 'sampleObject',
         methodName: 'sampleMethod'
