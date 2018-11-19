@@ -5,7 +5,6 @@ const lodash = require('lodash');
 const path = require('path');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
-const nodash = require('../utils/nodash');
 const blockRef = chores.getBlockRef(__filename);
 
 function ObjectDecorator(params={}) {
@@ -85,9 +84,9 @@ function wrapObject(ref, textureStore, object, opts) {
 }
 
 function wrapMethod(ref, method, texture, opts) {
-  if (!nodash.isFunction(method)) return method;
+  if (!lodash.isFunction(method)) return method;
   let {object, objectName, methodName} = opts || {};
-  object = nodash.isObject(object) ? object : null;
+  object = lodash.isObject(object) ? object : null;
   let executor = null;
   let wrapped = method;
   if (isDecorated(texture)) {
@@ -123,7 +122,7 @@ function MethodExecutor(params={}) {
     let onEvent = texture.logging['on' + eventName];
     if (!isEnabled(onEvent)) return null;
     return function (data, metadata) {
-      if (nodash.isFunction(onEvent.extractReqId) && eventName === 'Request') {
+      if (lodash.isFunction(onEvent.extractReqId) && eventName === 'Request') {
         logState.requestId = onEvent.extractReqId(data, metadata);
       }
       if (pointer.actionFlow) {
@@ -143,10 +142,10 @@ function MethodExecutor(params={}) {
           msgObj.text += ' has failed';
           break;
       }
-      if (nodash.isFunction(onEvent.extractInfo)) {
+      if (lodash.isFunction(onEvent.extractInfo)) {
         msgObj.info = onEvent.extractInfo(data, metadata);
       }
-      if (nodash.isString(onEvent.template)) {
+      if (lodash.isString(onEvent.template)) {
         msgObj.text = onEvent.template;
       }
       msgObj.tags = onEvent.tags || texture.tags;
@@ -263,7 +262,7 @@ MethodExecutor.prototype.run = function(parameters) {
     return {result, exception};
   }
 
-  if (!nodash.isArray(parameters)) {
+  if (!lodash.isArray(parameters)) {
     parameters = Array.prototype.slice.call(parameters);
   }
 
@@ -293,7 +292,7 @@ function hitMethodType(pointer, counter, methodType) {
     }
     pointer.current = methodType;
   }
-  counter[methodType]++;
+  counter[pointer.current]++;
 }
 
 function maxOf(counter) {

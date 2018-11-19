@@ -441,15 +441,17 @@ describe('tdd:devebot:core:object-decorator', function() {
       let p = Promise.each(params.scenarios, function(scenario, index) {
         let methodType = scenario.methodType || params.methodType;
 
-        switch(params.methodMode) {
-          case 'explicit': {
-            state.methodType = methodType;
-            break;
-          }
-          case 'implicit': {
-            state.counter[methodType]++;
+        if (params.methodMode === 'explicit') {
+          state.methodType = methodType;
+        }
+        if (params.methodMode === 'implicit') {
+          if (state.pointer.current !== methodType) {
+            for(var k in state.counter) {
+              state.counter[k] = 0;
+            }
             state.pointer.current = methodType;
           }
+          state.counter[state.pointer.current]++;
         }
 
         let tracerOutput = lodash.merge({
@@ -1087,6 +1089,122 @@ describe('tdd:devebot:core:object-decorator', function() {
           },
           pointer: {
             actionFlow: 'explicit'
+          }
+        }
+      });
+    });
+
+    it('methodType will be detected continuely if method is called with unstable ways', function() {
+      return _test_MethodExcecutor_run({
+        methodMode: 'implicit',
+        preciseThreshold: 3,
+        scenarios: [{
+          methodType: 'promise',
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
+          input: ['Message #1'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #1'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
+            }
+          }
+        }, {
+          methodType: 'promise',
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
+          input: ['Message #2'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #2'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
+              }
+            }
+          }
+        }, {
+          methodType: 'callback',
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqf',
+          input: ['Message #3'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #3'
+              },
+              secondCallArgs: {
+                info: { msg: "This is a normal result" }
+              }
+            }
+          }
+        }, {
+          methodType: 'callback',
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqi',
+          input: ['Message #4'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #4'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
+              }
+            }
+          }
+        }, {
+          methodType: 'promise',
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqj',
+          input: ['Message #5'],
+          output: {
+            error: new Error('The action has been failed'),
+            value: { msg: "Anything" }
+          },
+          tracer: {
+            toMessage: {
+              firstCallArgs: {
+                info: 'Message #5'
+              },
+              secondCallArgs: {
+                info: {
+                  "error_code": undefined,
+                  "error_message": "The action has been failed"
+                }
+              }
+            }
+          }
+        }],
+        state: {
+          methodType: undefined,
+          counter: {
+            promise: 1
+          },
+          pointer: {
+            actionFlow: 'implicit'
           }
         }
       });
