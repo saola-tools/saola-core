@@ -219,7 +219,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         method2: sinon.stub()
       }
       var originalBean = lodash.clone(mockedBean);
-      var wrappedBean = wrapObject(context, textureStore, originalBean, {
+      var wrappedBean = wrapObject(context, originalBean, {
+        textureStore: textureStore,
         objectName: 'originalBean'
       });
       // invoke method1() 3 times
@@ -286,7 +287,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         method2: sinon.stub()
       }
       var originalBean = lodash.clone(mockedBean);
-      var wrappedBean = wrapObject(pluginCTX, textureStore, originalBean, {
+      var wrappedBean = wrapObject(pluginCTX, originalBean, {
+        textureStore: textureStore,
         pluginCode: 'simple-plugin',
         gadgetType: 'services',
         objectName: 'originalBean'

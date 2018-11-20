@@ -16,11 +16,11 @@ function ObjectDecorator(params={}) {
   const pluginCTX = lodash.assign({moduleType: 'plugin'}, C);
 
   this.wrapBridgeDialect = function(bean, opts) {
-    return wrapObject(bridgeCTX, textureStore, bean, opts);
+    return wrapObject(bridgeCTX, bean, lodash.assign({ textureStore }, opts));
   }
 
   this.wrapPluginGadget = function(bean, opts) {
-    return wrapObject(pluginCTX, textureStore, bean, opts);
+    return wrapObject(pluginCTX, bean, lodash.assign({ textureStore }, opts));
   }
 
   let textureStore = lodash.get(params, ['textureConfig']);
@@ -53,7 +53,7 @@ ObjectDecorator.argumentSchema = {
 
 module.exports = ObjectDecorator;
 
-function wrapObject(ref, textureStore, object, opts) {
+function wrapObject(ref, object, opts) {
   ref = ref || {};
   if (lodash.isObject(object)) {
     opts = opts || {};
@@ -65,7 +65,7 @@ function wrapObject(ref, textureStore, object, opts) {
         }
         if (ref.moduleType === 'plugin') {
           texture = getTextureDef({
-            textureStore: textureStore,
+            textureStore: opts.textureStore,
             pluginCode: opts.pluginCode,
             gadgetType: opts.gadgetType,
             objectName: opts.objectName,
