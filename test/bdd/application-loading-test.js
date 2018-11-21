@@ -81,6 +81,7 @@ describe('bdd:devebot:application', function() {
         chores.toFullname("devebot", "bridgeLoader"),
         chores.toFullname("devebot", "schemaValidator"),
         chores.toFullname("devebot", "pluginLoader"),
+        chores.toFullname("devebot", "objectDecorator"),
         chores.toFullname("devebot", "sandboxManager"),
         chores.toFullname("devebot", "jobqueueBinder"),
         chores.toFullname("devebot", "processManager"),

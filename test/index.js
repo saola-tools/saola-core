@@ -118,7 +118,10 @@ var lab = module.exports = {
 
 var _initInjectedObjects = function(appName, injectedObjects) {
   injectedObjects = injectedObjects || {
+    profileNames: [],
     profileConfig: {},
+    textureNames: [],
+    textureConfig: {},
     bridgeRefs: [],
     pluginRefs: []
   };
@@ -217,7 +220,7 @@ lab.createPluginLoader = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'plugin-loader', 'name-resolver', 'schema-validator', 'logging-factory'
+    'plugin-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator'
   ]);
   return injektor.lookup('pluginLoader');
 }
@@ -251,10 +254,11 @@ lab.createRunhookManager = function(appName, injectedObjects) {
     var app = lab.getApp(appName);
     injectedObjects.appName = app.config.appName;
     injectedObjects.appInfo = app.config.appInfo;
-    injectedObjects.profileName = app.config.profile.names.join(',');
-    injectedObjects.profileConfig = app.config.profile.mixture;
-    injectedObjects.sandboxName = app.config.sandbox.names.join(',');
-    injectedObjects.sandboxConfig = app.config.sandbox.mixture;
+    lodash.forEach(['profile', 'sandbox', 'texture'], function(name) {
+      injectedObjects[name + 'Names'] = app.config[name].names;
+      injectedObjects[name + 'Name'] = app.config[name].names.join(',');
+      injectedObjects[name + 'Config'] = app.config[name].mixture;
+    })
     injectedObjects.pluginRefs = app.config.pluginRefs;
     injectedObjects.bridgeRefs = app.config.bridgeRefs;
     injectedObjects.injectedHandlers = {};
@@ -263,7 +267,7 @@ lab.createRunhookManager = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'runhook-manager', 'plugin-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'jobqueue-binder'
+    'runhook-manager', 'plugin-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator', 'jobqueue-binder'
   ]);
   return injektor.lookup('runhookManager');
 }
@@ -284,10 +288,10 @@ lab.createSandboxManager = function(appName, injectedObjects) {
     false && console.log('[%s].config: %s', appName, JSON.stringify(app.config, null, 2));
     injectedObjects.appName = app.config.appName;
     injectedObjects.appInfo = app.config.appInfo;
-    injectedObjects.profileNames = app.config.profile.names;
-    injectedObjects.profileConfig = app.config.profile.mixture;
-    injectedObjects.sandboxNames = app.config.sandbox.names;
-    injectedObjects.sandboxConfig = app.config.sandbox.mixture;
+    lodash.forEach(['profile', 'sandbox', 'texture'], function(name) {
+      injectedObjects[name + 'Names'] = app.config[name].names;
+      injectedObjects[name + 'Config'] = app.config[name].mixture;
+    })
     injectedObjects.bridgeRefs = app.config.bridgeRefs;
     injectedObjects.pluginRefs = app.config.pluginRefs;
   }
@@ -295,7 +299,7 @@ lab.createSandboxManager = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'context-manager', 'sandbox-manager', 'bridge-loader', 'plugin-loader', 'schema-validator', 'logging-factory', 'name-resolver', 'process-manager'
+    'context-manager', 'sandbox-manager', 'bridge-loader', 'plugin-loader', 'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver', 'process-manager'
   ]);
   return injektor.lookup('sandboxManager');
 }

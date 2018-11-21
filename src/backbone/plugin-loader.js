@@ -12,7 +12,7 @@ function PluginLoader(params={}) {
   let L = loggingFactory.getLogger();
   let T = loggingFactory.getTracer();
   let CTX = lodash.assign({L, T}, lodash.pick(params, [
-    'issueInspector','nameResolver', 'schemaValidator'
+    'issueInspector','nameResolver', 'schemaValidator', 'objectDecorator'
   ]));
 
   L.has('silly') && L.log('silly', T.toMessage({
@@ -77,6 +77,9 @@ PluginLoader.argumentSchema = {
       "type": "object"
     },
     "loggingFactory": {
+      "type": "object"
+    },
+    "objectDecorator": {
       "type": "object"
     },
     "schemaValidator": {

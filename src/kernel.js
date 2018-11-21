@@ -12,7 +12,8 @@ const blockRef = chores.getBlockRef(__filename);
 let CONSTRUCTORS = {};
 chores.loadServiceByNames(CONSTRUCTORS, path.join(__dirname, 'backbone'), [
   'sandbox-manager', 'schema-validator', 'script-executor', 'script-renderer',
-  'security-manager', 'bridge-loader', 'plugin-loader', 'logging-factory', 'process-manager'
+  'security-manager', 'bridge-loader', 'plugin-loader',
+  'object-decorator', 'logging-factory', 'process-manager',
 ]);
 
 function Kernel(params={}) {
