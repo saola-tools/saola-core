@@ -276,17 +276,16 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('should wrap all of public methods of a bean with empty textureStore', function() {
       var context = {
         L: LogAdapter.getLogger(),
-        T: LogTracer.ROOT,
-        moduleType: 'plugin'
+        T: LogTracer.ROOT
       };
-      var textureStore = {};
+      var textureOfBean = {};
       var mockedBean = {
         method1: sinon.stub(),
         method2: sinon.stub()
       }
       var originalBean = lodash.clone(mockedBean);
       var wrappedBean = wrapObject(context, originalBean, {
-        textureStore: textureStore,
+        textureOfBean: textureOfBean,
         objectName: 'originalBean'
       });
       // invoke method1() 3 times
@@ -303,48 +302,49 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('should wrap all of public methods of a bean', function() {
-      var pluginCTX = {
-        L: LogAdapter.getLogger(),
-        T: LogTracer.ROOT,
-        moduleType: 'plugin'
+      var logger = {
+        has: sinon.stub().returns(true),
+        log: sinon.stub()
       }
-      var textureStore = {
-        plugins: {
-          "simple-plugin": {
-            services: {
-              originalBean: {
-                method1: {
-                  methodType: 'general', // promise, callback, general
-                  logging: {
-                    enabled: true,
-                    onRequest: {
-                      enabled: true,
-                      extractReqId: function(args, context) {
-                        return args && args[1] && args[1].reqId;
-                      },
-                      extractInfo: function(args, context) {
-                        return args[0];
-                      },
-                      template: "#{objectName}.#{methodName} - #{parameters} - Request[#{requestId}]"
-                    },
-                    onSuccess: {
-                      extractInfo: function(result) {
-                        return result;
-                      },
-                      template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
-                    },
-                    onFailure: {
-                      extractInfo: function(error) {
-                        return {
-                          error_code: error.code,
-                          error_message: error.message
-                        }
-                      },
-                      template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
-                    }
-                  }
+      var tracer = {
+        add: sinon.stub().callsFake(function(params) {
+          LogTracer.ROOT.add(params);
+          return tracer;
+        }),
+        toMessage: sinon.stub().callsFake(function(params) {
+          return LogTracer.ROOT.toMessage(params);
+        })
+      }
+      var CTX = { L: logger, T: tracer }
+      var textureOfBean = {
+        method1: {
+          methodType: 'general', // promise, callback, general
+          logging: {
+            enabled: true,
+            onRequest: {
+              enabled: true,
+              extractReqId: function(args, context) {
+                return args && args[1] && args[1].reqId;
+              },
+              extractInfo: function(args, context) {
+                return args[0];
+              },
+              template: "#{objectName}.#{methodName} - #{parameters} - Request[#{requestId}]"
+            },
+            onSuccess: {
+              extractInfo: function(result) {
+                return result;
+              },
+              template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+            },
+            onFailure: {
+              extractInfo: function(error) {
+                return {
+                  error_code: error.code,
+                  error_message: error.message
                 }
-              }
+              },
+              template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
             }
           }
         }
@@ -354,10 +354,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         method2: sinon.stub()
       }
       var originalBean = lodash.clone(mockedBean);
-      var wrappedBean = wrapObject(pluginCTX, originalBean, {
-        textureStore: textureStore,
-        pluginCode: 'simple-plugin',
-        gadgetType: 'services',
+      var wrappedBean = wrapObject(CTX, originalBean, {
+        textureOfBean: textureOfBean,
         objectName: 'originalBean'
       });
       lodash.range(3).forEach(function() {
@@ -385,7 +383,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           return LogTracer.ROOT.toMessage(params);
         })
       }
-      var pluginCTX = { L: logger, T: tracer, moduleType: 'plugin' }
+      var CTX = { L: logger, T: tracer }
       var methodTexture = {
         methodType: 'general', // promise, callback, general
         logging: {
@@ -417,27 +415,17 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         }
       }
-      var textureStore = {
-        plugins: {
-          "simple-plugin": {
-            services: {
-              originalBean: {
-                level1: { method1: lodash.cloneDeep(methodTexture) },
-                level2: { sub2: { method2: lodash.cloneDeep(methodTexture) } }
-              }
-            }
-          }
-        }
+      var textureOfBean = {
+        level1: { method1: lodash.cloneDeep(methodTexture) },
+        level2: { sub2: { method2: lodash.cloneDeep(methodTexture) } }
       }
       var mockedBean = {
         level1: { method1: sinon.stub() },
         level2: { sub2: { method2: sinon.stub() } }
       }
       var originalBean = lodash.cloneDeep(mockedBean);
-      var wrappedBean = wrapObject(pluginCTX, originalBean, {
-        textureStore: textureStore,
-        pluginCode: 'simple-plugin',
-        gadgetType: 'services',
+      var wrappedBean = wrapObject(CTX, originalBean, {
+        textureOfBean: textureOfBean,
         objectName: 'originalBean'
       });
       // invokes method1() 3 times
@@ -465,36 +453,6 @@ describe('tdd:devebot:core:object-decorator', function() {
         return ('requestId' in item && item.methodName === 'method2');
       });
       assert.equal(logState_method2.length, 5 * 2);
-    });
-  });
-
-  describe('wrapPluginGadget()', function() {
-    it('should wrap all of public methods of a bean', function() {
-      var objectDecorator = lab.createObjectDecorator('fullapp', {
-        textureNames: ['default'],
-        textureConfig: {}
-      });
-      
-      var originalBean = {
-        method1: sinon.stub(),
-        method2: sinon.stub()
-      }
-      
-      var wrappedBean = objectDecorator.wrapPluginGadget(lodash.clone(originalBean), {
-        objectName: 'originalBean'
-      });
-
-      // invoke method1() 3 times
-      lodash.range(3).forEach(function() {
-        wrappedBean.method1();
-      })
-      assert.equal(originalBean.method1.callCount, 3);
-
-      // invoke method1() 2 times
-      lodash.range(2).forEach(function() {
-        wrappedBean.method2();
-      })
-      assert.equal(originalBean.method2.callCount, 2);
     });
   });
 

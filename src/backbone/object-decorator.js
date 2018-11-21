@@ -14,15 +14,29 @@ function ObjectDecorator(params={}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
   const C = lodash.assign({L, T}, lodash.pick(params, ['issueInspector', 'schemaValidator']));
-  const bridgeCTX = lodash.assign({moduleType: 'bridge'}, C);
-  const pluginCTX = lodash.assign({moduleType: 'plugin'}, C);
 
-  this.wrapBridgeDialect = function(bean, opts) {
-    return wrapConstructor(bridgeCTX, bean, lodash.assign({ textureStore }, opts));
+  this.wrapBridgeDialect = function(beanConstructor, opts) {
+    const textureOfBean = getTextureOfBridge({
+      textureStore: textureStore,
+      pluginCode: opts.pluginCode,
+      bridgeCode: opts.bridgeCode,
+      dialectName: opts.dialectName
+    });
+    return wrapConstructor(C, beanConstructor, {
+      textureOfBean, objectName: opts.dialectName
+    });
   }
 
-  this.wrapPluginGadget = function(bean, opts) {
-    return wrapConstructor(pluginCTX, bean, lodash.assign({ textureStore }, opts));
+  this.wrapPluginGadget = function(beanConstructor, opts) {
+    const textureOfBean = getTextureOfPlugin({
+      textureStore: textureStore,
+      pluginCode: opts.pluginCode,
+      gadgetType: opts.gadgetType,
+      gadgetName: opts.gadgetName
+    });
+    return wrapConstructor(C, beanConstructor, {
+      textureOfBean, objectName: opts.gadgetName
+    });
   }
 
   let textureStore = lodash.get(params, ['textureConfig']);
@@ -107,27 +121,11 @@ function wrapObject(refs, object, opts) {
       }));
       let methodPath = this.path.join('.');
       if (!cached[methodPath]) {
-        let texture = null;
-        if (refs.moduleType === 'bridge') {
-          texture = getTextureOfBridge({
-            textureStore: opts.textureStore,
-            pluginCode: opts.pluginCode,
-            bridgeCode: opts.bridgeCode,
-            dialectName: opts.dialectName,
-            fieldChain: fieldChain,
-            methodName: methodName
-          });
-        }
-        if (refs.moduleType === 'plugin') {
-          texture = getTextureOfPlugin({
-            textureStore: opts.textureStore,
-            pluginCode: opts.pluginCode,
-            gadgetType: opts.gadgetType,
-            objectName: opts.objectName,
-            fieldChain: fieldChain,
-            methodName: methodName
-          });
-        }
+        let texture = getTextureByPath({
+          textureOfBean: opts.textureOfBean,
+          fieldChain: fieldChain,
+          methodName: methodName
+        });
         cached[methodPath] = wrapMethod(refs, target, {
           texture: texture,
           object: parent,
@@ -406,7 +404,7 @@ function getTextureByPath({textureOfBean, fieldChain, methodName }) {
   return texture;
 }
 
-function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, dialectPath, fieldChain, methodName}) {
+function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, dialectPath}) {
   let rootToBean = [];
   if (lodash.isArray(dialectPath) && !lodash.isEmpty(dialectPath)) {
     rootToBean.push("bridges");
@@ -420,10 +418,10 @@ function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, 
   if (rootToBean.length > 0) {
     textureOfBean = lodash.get(textureStore, rootToBean, null);
   }
-  return getTextureByPath({ textureOfBean, fieldChain, methodName });
+  return textureOfBean;
 }
 
-function getTextureOfPlugin({textureStore, pluginCode, gadgetType, objectName, fieldChain, methodName}) {
+function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) {
   let rootToBean = [];
   if (pluginCode) {
     if (chores.isSpecialPlugin(pluginCode)) {
@@ -433,8 +431,8 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, objectName, f
     }
     if (['services', 'triggers', 'internal'].indexOf(gadgetType) >= 0) {
       rootToBean.push(gadgetType);
-      if (objectName) {
-        rootToBean.push(objectName);
+      if (gadgetName) {
+        rootToBean.push(gadgetName);
       }
     }
   }
@@ -442,5 +440,5 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, objectName, f
   if (rootToBean.length > 0) {
     textureOfBean = lodash.get(textureStore, rootToBean, null);
   }
-  return getTextureByPath({ textureOfBean, fieldChain, methodName });
+  return textureOfBean;
 }
