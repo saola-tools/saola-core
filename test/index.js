@@ -160,6 +160,16 @@ var _loadBackboneServices = function(injektor, names) {
   });
 }
 
+lab.initBackboneService = function(serviceName, injectedObjects) {
+  var bbPath = path.join(lab.getDevebotHome(), 'lib/backbone');
+  var injektor = new Injektor({ separator: chores.getSeparator() });
+  _attachInjectedObjects(injektor, injectedObjects);
+  lodash.forOwn(chores.loadServiceByNames({}, bbPath, serviceName), function(constructor, name) {
+    injektor.defineService(name, constructor, chores.injektorContext);
+  });
+  return injektor.lookup(chores.stringCamelCase(serviceName));
+}
+
 lab.getContextManager = function(appName) {
   var app = lab.getApp(appName);
   return app.runner.getSandboxService('contextManager', { scope: 'devebot' });
@@ -186,9 +196,8 @@ lab.createKernel = function(appName) {
 }
 
 lab.createBasicServices = function(appName, injectedObjects) {
-  injectedObjects = _initInjectedObjects(appName, injectedObjects);
   var injektor = new Injektor({ separator: chores.getSeparator() });
-  _attachInjectedObjects(injektor, injectedObjects);
+  _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [ 'schema-validator', 'logging-factory' ]);
   return {
     loggingFactory: injektor.lookup('loggingFactory'),
@@ -206,9 +215,8 @@ lab.createObjectDecorator = function(appName, injectedObjects) {
 }
 
 lab.createBridgeLoader = function(appName, injectedObjects) {
-  injectedObjects = _initInjectedObjects(appName, injectedObjects);
   var injektor = new Injektor({ separator: chores.getSeparator() });
-  _attachInjectedObjects(injektor, injectedObjects);
+  _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
     'bridge-loader', 'schema-validator', 'logging-factory', 'name-resolver', 'object-decorator'
   ]);
@@ -216,9 +224,8 @@ lab.createBridgeLoader = function(appName, injectedObjects) {
 }
 
 lab.createPluginLoader = function(appName, injectedObjects) {
-  injectedObjects = _initInjectedObjects(appName, injectedObjects);
   var injektor = new Injektor({ separator: chores.getSeparator() });
-  _attachInjectedObjects(injektor, injectedObjects);
+  _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
     'plugin-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator'
   ]);

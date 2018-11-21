@@ -2,9 +2,7 @@
 
 const Promise = require('bluebird');
 const lodash = require('lodash');
-const path = require('path');
 const chores = require('../utils/chores');
-const constx = require('../utils/constx');
 const nodash = require('../utils/nodash');
 const BeanProxy = require('../utils/proxy');
 const blockRef = chores.getBlockRef(__filename);

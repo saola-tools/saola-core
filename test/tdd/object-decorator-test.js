@@ -456,6 +456,174 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
   });
 
+  describe('wrapPluginGadget()', function() {
+    var logger = {
+      has: sinon.stub().returns(true),
+      log: sinon.stub()
+    }
+    var tracerStore = { add: [], toMessage: [] }
+    var tracer = {
+      add: sinon.stub().callsFake(function(params) {
+        tracerStore.add.push(lodash.cloneDeep(params));
+        LogTracer.ROOT.add(params);
+        return tracer;
+      }),
+      toMessage: sinon.stub().callsFake(function(params) {
+        return LogTracer.ROOT.toMessage(params);
+      })
+    }
+    var loggingFactory = {
+      branch: function(blockRef) { return loggingFactory },
+      getLogger: function() { return logger },
+      getTracer: function() { return tracer }
+    }
+    var issueInspector = {};
+    var schemaValidator = {};
+
+    beforeEach(function() {
+      logger.has.resetHistory();
+      logger.log.resetHistory();
+      tracer.add.resetHistory();
+      tracer.toMessage.resetHistory();
+      tracerStore.add.splice(0);
+      tracerStore.toMessage.splice(0);
+    })
+
+    it('should wrap all of methods of a plugin-gadget with empty textureStore', function() {
+      var objectDecorator = lab.initBackboneService('object-decorator', {
+        textureNames: ['default'],
+        textureConfig: {},
+        loggingFactory: loggingFactory,
+        issueInspector: issueInspector,
+        schemaValidator: schemaValidator
+      });
+      var mockedBean = {
+        method1: sinon.stub(),
+        method2: sinon.stub()
+      }
+      var MockedConstructor = function() {
+        this.method1 = mockedBean.method1
+        this.method2 = mockedBean.method2
+      }
+      var WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
+        pluginCode: 'simple-plugin',
+        gadgetType: 'services',
+        gadgetName: 'originalBean'
+      });
+      var wrappedBean = new WrappedConstructor();
+      // invoke method1() 3 times
+      lodash.range(3).forEach(function() {
+        wrappedBean.method1();
+      })
+      assert.equal(mockedBean.method1.callCount, 3);
+      // invoke method1() 2 times
+      lodash.range(2).forEach(function() {
+        wrappedBean.method2();
+      })
+      assert.equal(mockedBean.method2.callCount, 2);
+
+      //verify tracer
+      let logState_method1 = tracerStore.add.filter(item => {
+        return ('requestId' in item && item.methodName === 'method1');
+      });
+      assert.equal(logState_method1.length, 0);
+      let logState_method2 = tracerStore.add.filter(item => {
+        return ('requestId' in item && item.methodName === 'method2');
+      });
+      assert.equal(logState_method2.length, 0);
+    });
+
+    it('should wrap deep located methods of a plugin-gadget', function() {
+      var methodTexture = {
+        methodType: 'general', // promise, callback, general
+        logging: {
+          enabled: true,
+          onRequest: {
+            enabled: true,
+            extractReqId: function(args, context) {
+              return args && args[1] && args[1].reqId;
+            },
+            extractInfo: function(args, context) {
+              return args[0];
+            },
+            template: "#{objectName}.#{methodName} - #{parameters} - Request[#{requestId}]"
+          },
+          onSuccess: {
+            extractInfo: function(result) {
+              return result;
+            },
+            template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+          },
+          onFailure: {
+            extractInfo: function(error) {
+              return {
+                error_code: error.code,
+                error_message: error.message
+              }
+            },
+            template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+          }
+        }
+      }
+      var textureConfig = {
+        plugins: {
+          "simple-plugin": {
+            services: {
+              originalBean: {
+                level1: { method1: methodTexture },
+                level2: { sub2: { method2: methodTexture } }
+              }
+            }
+          }
+        }
+      }
+      var objectDecorator = lab.initBackboneService('object-decorator', {
+        textureNames: ['default'],
+        textureConfig: textureConfig,
+        loggingFactory: loggingFactory,
+        issueInspector: issueInspector,
+        schemaValidator: schemaValidator
+      });
+      var mockedBean = {
+        level1: { method1: sinon.stub() },
+        level2: { sub2: { method2: sinon.stub() } }
+      }
+      var MockedConstructor = function() {
+        this.level1 = mockedBean.level1
+        this.level2 = mockedBean.level2
+      }
+      var WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
+        pluginCode: 'simple-plugin',
+        gadgetType: 'services',
+        gadgetName: 'originalBean'
+      });
+      var wrappedBean = new WrappedConstructor();
+      // invokes method1() 3 times
+      lodash.range(3).forEach(function() {
+        wrappedBean.level1.method1('Hello world', {
+          reqId: LogConfig.getLogID()
+         });
+      });
+      assert.equal(mockedBean.level1.method1.callCount, 3);
+      // invokes method2() 5 times
+      lodash.range(5).forEach(function() {
+        wrappedBean.level2.sub2.method2('Hello world', {
+          reqId: LogConfig.getLogID()
+        });
+      });
+      assert.equal(mockedBean.level2.sub2.method2.callCount, 5);
+      //verify tracer
+      let logState_method1 = tracerStore.add.filter(item => {
+        return ('requestId' in item && item.methodName === 'method1');
+      });
+      assert.equal(logState_method1.length, 3 * 2);
+      let logState_method2 = tracerStore.add.filter(item => {
+        return ('requestId' in item && item.methodName === 'method2');
+      });
+      assert.equal(logState_method2.length, 5 * 2);
+    });
+  });
+
   describe('MethodExecutor', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
     var MethodExecutor = ObjectDecorator.__get__('MethodExecutor');
