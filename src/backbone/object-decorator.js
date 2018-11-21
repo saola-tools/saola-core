@@ -5,6 +5,8 @@ const lodash = require('lodash');
 const path = require('path');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
+const nodash = require('../utils/nodash');
+const BeanProxy = require('../utils/proxy');
 const blockRef = chores.getBlockRef(__filename);
 
 function ObjectDecorator(params={}) {
@@ -53,35 +55,75 @@ ObjectDecorator.argumentSchema = {
 
 module.exports = ObjectDecorator;
 
-function wrapObject(ref, object, opts) {
-  ref = ref || {};
-  if (lodash.isObject(object)) {
-    opts = opts || {};
-    for(let name in object) {
-      if(lodash.isFunction(object[name])) {
+function wrapObject(refs, object, opts) {
+  if (!lodash.isObject(object) || lodash.isArray(object)) {
+    return object;
+  }
+  opts = opts || {};
+  refs = refs || {};
+  let {L, T} = refs;
+  let cached = {};
+  return new BeanProxy(object, {
+    get(target, property, receiver) {
+      let parent = object;
+      if (!lodash.isEmpty(this.path)) {
+        parent = lodash.get(object, this.path);
+      }
+      let node = parent[property];
+      L.has('dunce') && L.log('dunce', T.add({
+        path: this.path, property, itemType: typeof(node)
+      }).toMessage({
+        text: '#{path} / #{property} -> #{itemType}'
+      }));
+      if (lodash.isFunction(node)) {
+        return this.nest(node);
+      }
+      if (lodash.isObject(node) && !lodash.isArray(node)) {
+        return this.nest();
+      }
+      return node;
+    },
+    apply(target, thisArg, argList) {
+      let methodName = this.path[this.path.length - 1];
+      let fieldChain = lodash.slice(this.path, 0, this.path.length - 1);
+      let parent = lodash.get(object, fieldChain);
+      L.has('dunce') && L.log('dunce', T.add({ fieldChain, methodName }).toMessage({
+        text: '#{fieldChain}.#{methodName}',
+        info: argList
+      }));
+      let methodPath = this.path.join('.');
+      if (!cached[methodPath]) {
         let texture = null;
-        if (ref.moduleType === 'bridge') {
-
+        if (refs.moduleType === 'bridge') {
+          texture = getTextureOfBridge({
+            textureStore: opts.textureStore,
+            pluginCode: opts.pluginCode,
+            bridgeCode: opts.bridgeCode,
+            dialectName: opts.dialectName,
+            fieldChain: fieldChain,
+            methodName: methodName
+          });
         }
-        if (ref.moduleType === 'plugin') {
-          texture = getTextureDef({
+        if (refs.moduleType === 'plugin') {
+          texture = getTextureOfPlugin({
             textureStore: opts.textureStore,
             pluginCode: opts.pluginCode,
             gadgetType: opts.gadgetType,
             objectName: opts.objectName,
-            methodName: name
+            fieldChain: fieldChain,
+            methodName: methodName
           });
         }
-        object[name] = wrapMethod(ref, object[name], {
+        cached[methodPath] = wrapMethod(refs, target, {
           texture: texture,
-          object: object,
+          object: parent,
           objectName: opts.objectName,
-          methodName: name
+          methodName: methodName
         });
       }
+      return cached[methodPath].apply(undefined, argList);
     }
-  }
-  return object;
+  })
 }
 
 function wrapMethod(ref, method, opts) {
@@ -334,23 +376,57 @@ function isEnabled(section) {
   return section && section.enabled !== false;
 }
 
-function getTextureDef({textureStore, pluginCode, gadgetType, objectName, methodName}) {
-  let patternPath = [];
+function getTextureByPath({textureOfBean, fieldChain, methodName }) {
+  let texture = null;
+  if (nodash.isObject(textureOfBean)) {
+    let beanToMethod = [];
+    if (nodash.isArray(fieldChain) && fieldChain.length > 0) {
+      Array.prototype.push.apply(beanToMethod, fieldChain);
+    }
+    if (methodName) {
+      beanToMethod.push(methodName);
+    }
+    texture = lodash.get(textureOfBean, beanToMethod);
+    texture = texture || textureOfBean[beanToMethod.join('.')];
+  }
+  return texture;
+}
+
+function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, dialectPath, fieldChain, methodName}) {
+  let rootToBean = [];
+  if (lodash.isArray(dialectPath) && !lodash.isEmpty(dialectPath)) {
+    rootToBean.push("bridges");
+    Array.prototype.push.apply(rootToBean, dialectPath);
+  } else {
+    if (pluginCode && bridgeCode && dialectName) {
+      rootToBean.push("bridges", bridgeCode, pluginCode, dialectName);
+    }
+  }
+  let textureOfBean = textureStore;
+  if (rootToBean.length > 0) {
+    textureOfBean = lodash.get(textureStore, rootToBean, null);
+  }
+  return getTextureByPath({ textureOfBean, fieldChain, methodName });
+}
+
+function getTextureOfPlugin({textureStore, pluginCode, gadgetType, objectName, fieldChain, methodName}) {
+  let rootToBean = [];
   if (pluginCode) {
     if (chores.isSpecialPlugin(pluginCode)) {
-      patternPath.push(pluginCode);
+      rootToBean.push(pluginCode);
     } else {
-      patternPath.push('plugins', pluginCode);
+      rootToBean.push('plugins', pluginCode);
     }
     if (['services', 'triggers', 'internal'].indexOf(gadgetType) >= 0) {
-      patternPath.push(gadgetType);
+      rootToBean.push(gadgetType);
       if (objectName) {
-        patternPath.push(objectName);
-        if (methodName) {
-          patternPath.push(methodName);
-        }
+        rootToBean.push(objectName);
       }
     }
   }
-  return lodash.get(textureStore, patternPath, {});
+  let textureOfBean = textureStore;
+  if (rootToBean.length > 0) {
+    textureOfBean = lodash.get(textureStore, rootToBean, null);
+  }
+  return getTextureByPath({ textureOfBean, fieldChain, methodName });
 }

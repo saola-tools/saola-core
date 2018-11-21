@@ -210,9 +210,19 @@ describe('tdd:devebot:core:object-decorator', function() {
   describe('wrapObject()', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
     var wrapObject = ObjectDecorator.__get__('wrapObject');
+    var wrapMethod = sinon.spy(ObjectDecorator.__get__('wrapMethod'));
+    ObjectDecorator.__set__('wrapMethod', wrapMethod);
+
+    beforeEach(function() {
+      wrapMethod.resetHistory();
+    })
 
     it('should wrap all of public methods of a bean with empty textureStore', function() {
-      var context = {};
+      var context = {
+        L: LogAdapter.getLogger(),
+        T: LogTracer.ROOT,
+        moduleType: 'plugin'
+      };
       var textureStore = {};
       var mockedBean = {
         method1: sinon.stub(),
@@ -233,6 +243,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         wrappedBean.method2();
       })
       assert.equal(mockedBean.method2.callCount, 2);
+      assert.equal(wrapMethod.callCount, Object.keys(originalBean).length);
     });
 
     it('should wrap all of public methods of a bean', function() {
@@ -247,7 +258,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             services: {
               originalBean: {
                 method1: {
-                  methodType: 'normal', // promise, callback, normal
+                  methodType: 'general', // promise, callback, general
                   logging: {
                     enabled: true,
                     onRequest: {
@@ -299,6 +310,105 @@ describe('tdd:devebot:core:object-decorator', function() {
         });
       });
       assert.equal(mockedBean.method1.callCount, 3);
+      assert.equal(wrapMethod.callCount, 1); // calls method1 only
+    });
+
+    it('should wrap deep located methods of a bean (moduleType: plugin)', function() {
+      var logger = {
+        has: sinon.stub().returns(true),
+        log: sinon.stub()
+      }
+      var tracerStore = { add: [], toMessage: [] }
+      var tracer = {
+        add: sinon.stub().callsFake(function(params) {
+          tracerStore.add.push(lodash.cloneDeep(params));
+          LogTracer.ROOT.add(params);
+          return tracer;
+        }),
+        toMessage: sinon.stub().callsFake(function(params) {
+          return LogTracer.ROOT.toMessage(params);
+        })
+      }
+      var pluginCTX = { L: logger, T: tracer, moduleType: 'plugin' }
+      var methodTexture = {
+        methodType: 'general', // promise, callback, general
+        logging: {
+          enabled: true,
+          onRequest: {
+            enabled: true,
+            extractReqId: function(args, context) {
+              return args && args[1] && args[1].reqId;
+            },
+            extractInfo: function(args, context) {
+              return args[0];
+            },
+            template: "#{objectName}.#{methodName} - #{parameters} - Request[#{requestId}]"
+          },
+          onSuccess: {
+            extractInfo: function(result) {
+              return result;
+            },
+            template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+          },
+          onFailure: {
+            extractInfo: function(error) {
+              return {
+                error_code: error.code,
+                error_message: error.message
+              }
+            },
+            template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+          }
+        }
+      }
+      var textureStore = {
+        plugins: {
+          "simple-plugin": {
+            services: {
+              originalBean: {
+                level1: { method1: lodash.cloneDeep(methodTexture) },
+                level2: { sub2: { method2: lodash.cloneDeep(methodTexture) } }
+              }
+            }
+          }
+        }
+      }
+      var mockedBean = {
+        level1: { method1: sinon.stub() },
+        level2: { sub2: { method2: sinon.stub() } }
+      }
+      var originalBean = lodash.cloneDeep(mockedBean);
+      var wrappedBean = wrapObject(pluginCTX, originalBean, {
+        textureStore: textureStore,
+        pluginCode: 'simple-plugin',
+        gadgetType: 'services',
+        objectName: 'originalBean'
+      });
+      // invokes method1() 3 times
+      lodash.range(3).forEach(function() {
+        wrappedBean.level1.method1('Hello world', {
+          reqId: LogConfig.getLogID()
+         });
+      });
+      assert.equal(mockedBean.level1.method1.callCount, 3);
+      // invokes method2() 5 times
+      lodash.range(5).forEach(function() {
+        wrappedBean.level2.sub2.method2('Hello world', {
+          reqId: LogConfig.getLogID()
+        });
+      });
+      assert.equal(mockedBean.level2.sub2.method2.callCount, 5);
+      // verify wrapMethod()
+      assert.equal(wrapMethod.callCount, 2); // calls method1 & method2
+      //verify tracer
+      let logState_method1 = tracerStore.add.filter(item => {
+        return ('requestId' in item && item.methodName === 'method1');
+      });
+      assert.equal(logState_method1.length, 3 * 2);
+      let logState_method2 = tracerStore.add.filter(item => {
+        return ('requestId' in item && item.methodName === 'method2');
+      });
+      assert.equal(logState_method2.length, 5 * 2);
     });
   });
 
