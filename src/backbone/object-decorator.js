@@ -18,11 +18,11 @@ function ObjectDecorator(params={}) {
   const pluginCTX = lodash.assign({moduleType: 'plugin'}, C);
 
   this.wrapBridgeDialect = function(bean, opts) {
-    return wrapObject(bridgeCTX, bean, lodash.assign({ textureStore }, opts));
+    return wrapConstructor(bridgeCTX, bean, lodash.assign({ textureStore }, opts));
   }
 
   this.wrapPluginGadget = function(bean, opts) {
-    return wrapObject(pluginCTX, bean, lodash.assign({ textureStore }, opts));
+    return wrapConstructor(pluginCTX, bean, lodash.assign({ textureStore }, opts));
   }
 
   let textureStore = lodash.get(params, ['textureConfig']);
@@ -54,6 +54,20 @@ ObjectDecorator.argumentSchema = {
 };
 
 module.exports = ObjectDecorator;
+
+function wrapConstructor(refs, constructor, opts) {
+  return new Proxy(constructor, {
+    construct: function(target, argumentsList, newTarget) {
+      function F() {
+        return target.apply(this, argumentsList);
+      }
+      F.prototype = target.prototype;
+      // F = target.bind.apply(target, [target].concat(argumentsList));
+      // F = Function.prototype.bind.apply(target, [target].concat(argumentsList));
+      return wrapObject(refs, new F(), opts);
+    }
+  })
+}
 
 function wrapObject(refs, object, opts) {
   if (!lodash.isObject(object) || lodash.isArray(object)) {

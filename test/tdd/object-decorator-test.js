@@ -207,6 +207,62 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
   });
 
+  describe('wrapConstructor()', function() {
+    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var wrapConstructor = ObjectDecorator.__get__('wrapConstructor');
+    var wrapObject = sinon.stub().callsFake(function(refs, object, opts) {
+      return object;
+    });
+    ObjectDecorator.__set__('wrapObject', wrapObject);
+
+    beforeEach(function() {
+      wrapObject.resetHistory();
+    })
+
+    it('should wrap a constructor properly', function() {
+      var refs = { L: {}, T: {} };
+      var opts = { textureStore: {} };
+
+      var ExampleConstructor = function () {}
+      ExampleConstructor.prototype.method1 = sinon.stub().callsFake(function(str) {
+        false && console.log(' - method1(%s)', JSON.stringify(arguments, null, 2));
+        return "My name is '" + str + "'";
+      });
+      ExampleConstructor.prototype.method2 = sinon.stub().callsFake(function(name, ids) {
+        false && console.log(' - method2(%s)', JSON.stringify(arguments, null, 2));
+        return ids;
+      });
+      ExampleConstructor.argumentSchema = { "$id": "ExampleConstructor" };
+      ExampleConstructor.referenceList = ['dependency'];
+      ExampleConstructor = sinon.spy(ExampleConstructor);
+
+      // compare wrapped constructor ~ original constructor
+      var WrappedConstructor = wrapConstructor(refs, ExampleConstructor, opts);
+      assert.notEqual(WrappedConstructor, ExampleConstructor);
+      assert.equal(WrappedConstructor.prototype, ExampleConstructor.prototype);
+      assert.equal(WrappedConstructor.argumentSchema, ExampleConstructor.argumentSchema);
+      assert.equal(WrappedConstructor.referenceList, ExampleConstructor.referenceList);
+
+      // create new instance
+      var obj = new WrappedConstructor("Example", { enabled: true });
+      assert.isFunction(obj.method1);
+      assert.isFunction(obj.method2);
+      assert.equal(obj.method1('Peter Pan'), "My name is 'Peter Pan'");
+      assert.deepEqual(obj.method2('log', [1, 2, 3], {reqId: LogConfig.getLogID()}), [1, 2, 3]);
+
+      // assert original constructor has been called
+      assert.equal(ExampleConstructor.callCount, 1);
+      assert.deepEqual(ExampleConstructor.firstCall.args, ["Example", { enabled: true }]);
+
+      // assert wrapObject has been called with correct parameters
+      assert.equal(wrapObject.callCount, 1);
+      var wrapObject_args = wrapObject.firstCall.args;
+      assert.deepEqual(wrapObject_args[0], refs);
+      assert.isTrue(wrapObject_args[1] instanceof ExampleConstructor);
+      assert.deepEqual(wrapObject_args[2], opts);
+    });
+  });
+
   describe('wrapObject()', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
     var wrapObject = ObjectDecorator.__get__('wrapObject');
