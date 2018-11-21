@@ -210,7 +210,7 @@ lab.createBridgeLoader = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'bridge-loader', 'schema-validator', 'logging-factory', 'name-resolver'
+    'bridge-loader', 'schema-validator', 'logging-factory', 'name-resolver', 'object-decorator'
   ]);
   return injektor.lookup('bridgeLoader');
 }
