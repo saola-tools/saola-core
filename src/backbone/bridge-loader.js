@@ -9,7 +9,7 @@ function BridgeLoader(params={}) {
   let loggingFactory = params.loggingFactory.branch(blockRef);
   let L = loggingFactory.getLogger();
   let T = loggingFactory.getTracer();
-  let CTX = {L, T, issueInspector: params.issueInspector, nameResolver: params.nameResolver};
+  let CTX = lodash.assign({L, T}, lodash.pick(params, ['issueInspector', 'nameResolver']));
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
