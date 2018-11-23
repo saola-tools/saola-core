@@ -1,36 +1,49 @@
+var lodash = require('lodash');
+
 module.exports = {
-  application: {
-    internal: {},
-    services: {
-      mainService: {
-        getConfig: {
-          logging: {
-            enabled: true,
-            onRequest: {
+  plugins: {
+    subPlugin1: {
+      internal: {},
+      services: {
+        sublibService: {
+          getConfig: {
+            logging: {
               enabled: true,
-              extractReqId: function(args, context) {
-
-              },
-              extractInfo: function(args, context) {
-
-              },
-              template: "#{objectName} - #{methodName} - #{methodArgs} - #{requestId}"
-            },
-            onSuccess: {
-              
-            },
-            onFailure: {
-              
-            }
-          },
-          mocking: {
-            mappings: {
-              "default": {
-                selector: function() {
-
+              onRequest: {
+                enabled: true,
+                extractReqId: function(args, context) {
+                  return args && args[0] && args[0].reqId;
                 },
-                generate: function() {
-                  
+                extractInfo: function(args, context) {
+                  return args[0];
+                },
+                template: "#{objectName} - #{methodName} - #{methodArgs} - #{requestId}"
+              },
+              onSuccess: {
+                enabled: true,
+                extractInfo: function(result) {
+                  return result;
+                },
+                template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+              },
+              onFailure: {
+                enabled: true,
+                extractInfo: function(error) {
+                  return {
+                    error_code: error.code,
+                    error_message: error.message
+                  }
+                },
+                template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+              }
+            },
+            mocking: {
+              mappings: {
+                "default": {
+                  selector: function(parameters) {
+                  },
+                  generate: function(parameters) {
+                  }
                 }
               }
             }
@@ -43,27 +56,31 @@ module.exports = {
     bridge4: {
       application: {
         instance: {
-          dialect: {
-            getConfig: {
-              enabled: true,
-              logging: {
-                enabled: true,
-                onRequest: {
-                  enabled: true,
-                  extractReqId: function(args, context) {
-    
-                  },
-                  extractInfo: function(args, context) {
-    
-                  },
-                  template: "#{objectName} - #{methodName} - #{methodArgs} - #{requestId}"
+          getConfig: {
+            logging: {
+              onRequest: {
+                extractReqId: function(args, context) {
+                  return args && args[0] && args[0].reqId;
                 },
-                onSuccess: {
-                  
+                extractInfo: function(args, context) {
+                  return lodash.omit(args[0], ['reqId']);
                 },
-                onFailure: {
-                  
-                }
+                template: "#{objectName} - #{methodName} - Request[#{requestId}]"
+              },
+              onSuccess: {
+                extractInfo: function(result) {
+                  return result;
+                },
+                template: "#{objectName}.#{methodName} - Request[#{requestId}]"
+              },
+              onFailure: {
+                extractInfo: function(error) {
+                  return {
+                    error_code: error.code,
+                    error_message: error.message
+                  }
+                },
+                template: "#{objectName}.#{methodName} - Request[#{requestId}]"
               }
             }
           }

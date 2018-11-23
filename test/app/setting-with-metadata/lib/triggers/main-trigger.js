@@ -47,4 +47,8 @@ var Service = function(params={}) {
   };
 };
 
+Service.referenceHash = {
+  "dialect": "application/bridge4#instance"
+}
+
 module.exports = Service;
