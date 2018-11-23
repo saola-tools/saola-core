@@ -83,8 +83,8 @@ function wrapConstructor(refs, constructor, opts) {
       return wrapObject(refs, new F(), opts);
     },
     apply: function(target, thisArg, argumentsList) {
-      let createdObject = target.apply(thisArg, argumentsList);
-      return wrapObject(refs, createdObject || thisArg, opts);
+      let createdObject = target.apply(thisArg, argumentsList) || thisArg;
+      return wrapObject(refs, createdObject, opts);
     }
   })
 }
@@ -139,8 +139,8 @@ function wrapObject(refs, object, opts) {
           object: parent,
           objectName: opts.objectName,
           methodName: methodName,
-          logger: opts.logger,
-          tracer: opts.tracer
+          logger: opts.logger || object.logger,
+          tracer: opts.tracer || object.tracer
         });
       }
       return cached[methodPath].apply(undefined, argList);
