@@ -554,9 +554,10 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
     }));
   }
 
+  let construktor = wrapperConstructor;
   const gadgetGroup = lodash.get(constx, [gadgetType, 'GROUP']);
   if (gadgetGroup) {
-    wrapperConstructor = objectDecorator.wrapPluginGadget(wrapperConstructor, {
+    construktor = objectDecorator.wrapPluginGadget(wrapperConstructor, {
       pluginCode: pluginCode,
       gadgetType: gadgetGroup,
       gadgetName: wrapperName
@@ -566,7 +567,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
   result[uniqueName] = {
     crateScope: pluginName,
     name: wrapperName,
-    construktor: wrapperConstructor
+    construktor: construktor
   };
 
   L.has('dunce') && L.log('dunce', T.add({

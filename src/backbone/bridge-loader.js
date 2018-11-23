@@ -308,7 +308,7 @@ let buildBridgeDialect = function(ctx, dialectOpts) {
     }
   };
 
-  dialectConstructor = objectDecorator.wrapBridgeDialect(dialectConstructor, {
+  let construktor = objectDecorator.wrapBridgeDialect(dialectConstructor, {
     pluginName: pluginName,
     bridgeCode: bridgeCode,
     dialectName: dialectName
@@ -317,7 +317,7 @@ let buildBridgeDialect = function(ctx, dialectOpts) {
   result[uniqueName] = {
     crateScope: crateScope,
     name: crateName,
-    construktor: dialectConstructor
+    construktor: construktor
   };
 
   L.has('dunce') && L.log('dunce', T.add({ dialectName }).toMessage({

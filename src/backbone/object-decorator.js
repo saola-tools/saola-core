@@ -81,6 +81,10 @@ function wrapConstructor(refs, constructor, opts) {
       // F = target.bind.apply(target, [target].concat(argumentsList));
       // F = Function.prototype.bind.apply(target, [target].concat(argumentsList));
       return wrapObject(refs, new F(), opts);
+    },
+    apply: function(target, thisArg, argumentsList) {
+      let createdObject = target.apply(thisArg, argumentsList);
+      return wrapObject(refs, createdObject || thisArg, opts);
     }
   })
 }
@@ -100,11 +104,11 @@ function wrapObject(refs, object, opts) {
         parent = lodash.get(object, this.path);
       }
       let node = parent[property];
-      L.has('dunce') && L.log('dunce', T.add({
-        path: this.path, property, itemType: typeof(node)
-      }).toMessage({
-        text: '#{path} / #{property} -> #{itemType}'
-      }));
+      // L.has('dunce') && L.log('dunce', T.add({
+      //   path: this.path, property, itemType: typeof(node)
+      // }).toMessage({
+      //   text: '#{path} / #{property} -> #{itemType}'
+      // }));
       if (lodash.isFunction(node)) {
         return this.nest(node);
       }
@@ -117,11 +121,13 @@ function wrapObject(refs, object, opts) {
       let methodName = this.path[this.path.length - 1];
       let fieldChain = lodash.slice(this.path, 0, this.path.length - 1);
       let parent = lodash.get(object, fieldChain);
-      L.has('dunce') && L.log('dunce', T.add({ fieldChain, methodName }).toMessage({
-        text: '#{fieldChain}.#{methodName}',
+      let methodPath = this.path.join('.');
+      L.has('dunce') && L.log('dunce', T.add({
+        objectName: opts.objectName, fieldChain, methodName, methodPath
+      }).toMessage({
+        text: 'Method: #{objectName}.#{methodPath} is invoked',
         info: argList
       }));
-      let methodPath = this.path.join('.');
       if (!cached[methodPath]) {
         let texture = getTextureByPath({
           textureOfBean: opts.textureOfBean,
