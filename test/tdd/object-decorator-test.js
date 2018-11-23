@@ -275,7 +275,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.deepEqual(wrapObject_args[2], opts);
     });
 
-    it.only('should wrap a constructor that will be invoked as a function', function() {
+    it('should wrap a constructor that will be invoked as a function', function() {
       var refs = { L: {}, T: {} };
       var opts = { textureStore: {} };
 
@@ -324,8 +324,13 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.equal(wrapObject.callCount, 1);
       var wrapObject_args = wrapObject.firstCall.args;
       assert.deepEqual(wrapObject_args[0], refs);
-      assert.isTrue(wrapObject_args[1] instanceof ExampleConstructor);
       assert.deepEqual(wrapObject_args[2], opts);
+
+      // verify original object
+      var wrappedObject = wrapObject_args[1];
+      assert.isTrue(wrappedObject instanceof ExampleConstructor);
+      assert.equal(wrappedObject.number, 100);
+      assert.equal(wrappedObject.string, 'Hello world');
     });
   });
 

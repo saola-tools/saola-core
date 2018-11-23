@@ -21,9 +21,9 @@ function ObjectDecorator(params={}) {
       bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, 'bridge'),
       dialectName: opts.dialectName
     });
-    return wrapConstructor(C, beanConstructor, {
+    return wrapConstructor(C, beanConstructor, lodash.assign({
       textureOfBean, objectName: opts.dialectName
-    });
+    }, lodash.pick(opts, ['logger', 'tracer'])));
   }
 
   this.wrapPluginGadget = function(beanConstructor, opts) {
@@ -33,9 +33,9 @@ function ObjectDecorator(params={}) {
       gadgetType: opts.gadgetType,
       gadgetName: opts.gadgetName
     });
-    return wrapConstructor(C, beanConstructor, {
+    return wrapConstructor(C, beanConstructor, lodash.assign({
       textureOfBean, objectName: opts.gadgetName
-    });
+    }, lodash.pick(opts, ['logger', 'tracer'])));
   }
 
   let textureStore = lodash.get(params, ['textureConfig']);
@@ -138,7 +138,9 @@ function wrapObject(refs, object, opts) {
           texture: texture,
           object: parent,
           objectName: opts.objectName,
-          methodName: methodName
+          methodName: methodName,
+          logger: opts.logger,
+          tracer: opts.tracer
         });
       }
       return cached[methodPath].apply(undefined, argList);
@@ -159,8 +161,8 @@ function wrapMethod(refs, method, opts) {
       objectName: objectName,
       method: method,
       methodName: methodName,
-      logger: opts.L || refs.L,
-      tracer: opts.T || refs.T
+      logger: opts.logger || refs.L,
+      tracer: opts.tracer || refs.T
     });
     wrapped = function() {
       return executor.run(arguments);
