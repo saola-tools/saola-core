@@ -9,6 +9,7 @@ const blockRef = chores.getBlockRef(__filename);
 
 function ObjectDecorator(params={}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
+  const nameResolver = params.nameResolver;
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
   const C = lodash.assign({L, T}, lodash.pick(params, ['issueInspector', 'schemaValidator']));
@@ -16,8 +17,8 @@ function ObjectDecorator(params={}) {
   this.wrapBridgeDialect = function(beanConstructor, opts) {
     const textureOfBean = getTextureOfBridge({
       textureStore: textureStore,
-      pluginCode: opts.pluginCode,
-      bridgeCode: opts.bridgeCode,
+      pluginCode: opts.pluginCode || nameResolver.getDefaultAliasOf(opts.pluginName, 'plugin'),
+      bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, 'bridge'),
       dialectName: opts.dialectName
     });
     return wrapConstructor(C, beanConstructor, {
@@ -28,7 +29,7 @@ function ObjectDecorator(params={}) {
   this.wrapPluginGadget = function(beanConstructor, opts) {
     const textureOfBean = getTextureOfPlugin({
       textureStore: textureStore,
-      pluginCode: opts.pluginCode,
+      pluginCode: opts.pluginCode || nameResolver.getDefaultAliasOf(opts.pluginName, 'plugin'),
       gadgetType: opts.gadgetType,
       gadgetName: opts.gadgetName
     });
@@ -48,6 +49,9 @@ ObjectDecorator.argumentSchema = {
       "type": "object"
     },
     "loggingFactory": {
+      "type": "object"
+    },
+    "nameResolver": {
       "type": "object"
     },
     "schemaValidator": {
@@ -136,7 +140,7 @@ function wrapObject(refs, object, opts) {
   })
 }
 
-function wrapMethod(ref, method, opts) {
+function wrapMethod(refs, method, opts) {
   if (!lodash.isFunction(method)) return method;
   let {texture, object, objectName, methodName} = opts || {};
   object = lodash.isObject(object) ? object : null;
@@ -149,8 +153,8 @@ function wrapMethod(ref, method, opts) {
       objectName: objectName,
       method: method,
       methodName: methodName,
-      logger: opts.L || ref.L,
-      tracer: opts.T || ref.T
+      logger: opts.L || refs.L,
+      tracer: opts.T || refs.T
     });
     wrapped = function() {
       return executor.run(arguments);

@@ -380,7 +380,7 @@ let loadGadgetEntry = function(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetF
     }));
     if (lodash.isFunction(gadgetConstructor)) {
       let gadgetName = chores.stringCamelCase(gadgetFile.replace('.js', ''));
-      lodash.defaults(gadgetMap, buildGadgetWrapper(CTX, gadgetConstructor, gadgetName, pluginRootDir));
+      lodash.defaults(gadgetMap, buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, gadgetName, pluginRootDir));
       opStatus.hasError = false;
     } else {
       L.has('dunce') && L.log('dunce', T.add({ filepath }).toMessage({
@@ -399,9 +399,9 @@ let loadGadgetEntry = function(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetF
   issueInspector.collect(opStatus);
 };
 
-let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRootDir) {
+let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperName, pluginRootDir) {
   CTX = CTX || this;
-  let {L, T, nameResolver, schemaValidator} = CTX;
+  let {L, T, nameResolver, objectDecorator, schemaValidator} = CTX;
   let result = {};
 
   if (!lodash.isFunction(gadgetConstructor)) {
@@ -552,6 +552,15 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, wrapperName, pluginRoo
     }).toMessage({
       text: ' - wrapperConstructor.argumentProperties: ${argumentProperties}'
     }));
+  }
+
+  const gadgetGroup = lodash.get(constx, [gadgetType, 'GROUP']);
+  if (gadgetGroup) {
+    wrapperConstructor = objectDecorator.wrapPluginGadget(wrapperConstructor, {
+      pluginCode: pluginCode,
+      gadgetType: gadgetGroup,
+      gadgetName: wrapperName
+    });
   }
 
   result[uniqueName] = {

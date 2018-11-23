@@ -343,11 +343,13 @@ module.exports = {
   },
   SERVICE: {
     ROOT_KEY: 'service',
-    SCRIPT_DIR: '/lib/services'
+    SCRIPT_DIR: '/lib/services',
+    GROUP: 'services'
   },
   TRIGGER: {
     ROOT_KEY: 'trigger',
-    SCRIPT_DIR: '/lib/triggers'
+    SCRIPT_DIR: '/lib/triggers',
+    GROUP: 'triggers'
   },
   WEBSOCKET: {
     STATE: {

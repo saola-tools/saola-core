@@ -166,7 +166,7 @@ let loadBridgeConstructors = function(ctx, bridgeRefs) {
 };
 
 let buildBridgeDialect = function(ctx, dialectOpts) {
-  let {L, T, issueInspector, nameResolver} = ctx;
+  let {L, T, issueInspector, nameResolver, objectDecorator} = ctx;
   let {pluginName, bridgeCode, bridgeRecord, dialectName, optType} = dialectOpts;
   let result = {};
 
@@ -307,6 +307,12 @@ let buildBridgeDialect = function(ctx, dialectOpts) {
       }
     }
   };
+
+  dialectConstructor = objectDecorator.wrapBridgeDialect(dialectConstructor, {
+    pluginName: pluginName,
+    bridgeCode: bridgeCode,
+    dialectName: dialectName
+  });
 
   result[uniqueName] = {
     crateScope: crateScope,
