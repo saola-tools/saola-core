@@ -120,7 +120,6 @@ function wrapObject(refs, object, opts) {
     apply(target, thisArg, argList) {
       let methodName = this.path[this.path.length - 1];
       let fieldChain = lodash.slice(this.path, 0, this.path.length - 1);
-      let parent = lodash.get(object, fieldChain);
       let methodPath = this.path.join('.');
       L.has('dunce') && L.log('dunce', T.add({
         objectName: opts.objectName, fieldChain, methodName, methodPath
@@ -134,10 +133,15 @@ function wrapObject(refs, object, opts) {
           fieldChain: fieldChain,
           methodName: methodName
         });
+        let owner = lodash.get(object, fieldChain);
+        let ownerName = opts.objectName;
+        if (fieldChain.length > 0) {
+          ownerName = [opts.objectName].concat(fieldChain).join('.');
+        }
         cached[methodPath] = wrapMethod(refs, target, {
           texture: texture,
-          object: parent,
-          objectName: opts.objectName,
+          object: owner,
+          objectName: ownerName,
           methodName: methodName,
           logger: opts.logger || object.logger,
           tracer: opts.tracer || object.tracer

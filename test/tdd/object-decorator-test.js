@@ -475,11 +475,18 @@ describe('tdd:devebot:core:object-decorator', function() {
       }
       var textureOfBean = {
         level1: { method1: lodash.cloneDeep(methodTexture) },
-        level2: { sub2: { method2: lodash.cloneDeep(methodTexture) } }
+        level2: { sub2: { method2: lodash.cloneDeep(methodTexture) } },
+        level3: { sub3: { bean3: { method3: lodash.cloneDeep(methodTexture) } } }
       }
       var mockedBean = {
         level1: { method1: sinon.stub() },
-        level2: { sub2: { method2: sinon.stub() } }
+        level2: { sub2: { method2: sinon.stub() } },
+        level3: { sub3: { bean3: new (function() {
+          this.rate = 1.1;
+          this.method3 = function area(total) {
+            return total * this.rate;
+          }
+        })()}}
       }
       var wrappedBean = wrapObject(CTX, mockedBean, {
         textureOfBean: textureOfBean,
@@ -499,8 +506,12 @@ describe('tdd:devebot:core:object-decorator', function() {
         });
       });
       assert.equal(mockedBean.level2.sub2.method2.callCount, 5);
+      // invokes method3() 1 times
+      lodash.range(1).forEach(function() {
+        wrappedBean.level3.sub3.bean3.method3(100);
+      });
       // verify wrapMethod()
-      assert.equal(wrapMethod.callCount, 2); // calls method1 & method2
+      assert.equal(wrapMethod.callCount, 3); // calls method1 & method2
       //verify tracer
       let logState_method1 = tracerStore.add.filter(item => {
         return ('requestId' in item && item.methodName === 'method1');
