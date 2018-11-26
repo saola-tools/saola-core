@@ -175,6 +175,54 @@ function wrapMethod(refs, method, opts) {
   return wrapped;
 }
 
+function MockingInterceptor(params) {
+  const { texture, method } = params;
+  const enabled = isEnabled(texture) && isEnabled(texture.mocking) &&
+      !lodash.isEmpty(texture.mocking.mappings);
+  let capsule;
+  Object.defineProperty(this, 'capsule', {
+    get: function() {
+      if (!enabled) return method;
+      return capsule = capsule || new Proxy(method, {
+        apply: function(target, thisArg, argumentsList) {
+          let pair = extractCallback(argumentsList);
+          let output = generate(thisArg, pair.parameters);
+          if (texture.isPromise) {
+            if (output.exception) {
+              return Promise.reject(output.exception);
+            }
+            return Promise.resolve(output.result);
+          }
+          if (pair.callback) {
+            return pair.callback.call(null, output.exception, output.result);
+          }
+          if (output.exception) {
+            throw output.exception;
+          }
+          return output.result;
+        }
+      });
+    }
+  });
+  function generate(thisArg, argumentsList) {
+    let output = {};
+    for(const name in texture.mocking.mappings) {
+      const rule = texture.mocking.mappings[name];
+      if (!lodash.isFunction(rule.selector)) continue;
+      if (!lodash.isFunction(rule.generate)) continue;
+      if (rule.selector.apply(thisArg, argumentsList)) {
+        try {
+          output.result = rule.generate.apply(thisArg, argumentsList);
+        } catch (error) {
+          output.exception = error;
+        }
+        break;
+      }
+    }
+    return output;
+  }
+}
+
 function MethodExecutor(params={}) {
   const { logger, tracer, preciseThreshold } = params
   const { texture, object, objectName, method, methodName } = params;
@@ -402,7 +450,7 @@ function isEnabled(section) {
   return section && section.enabled !== false;
 }
 
-function getTextureByPath({textureOfBean, fieldChain, methodName }) {
+function getTextureByPath({textureOfBean, fieldChain, methodName}) {
   let texture = null;
   if (nodash.isObject(textureOfBean)) {
     let beanToMethod = [];

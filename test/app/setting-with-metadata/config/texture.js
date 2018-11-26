@@ -17,14 +17,14 @@ module.exports = {
                 extractInfo: function(args, context) {
                   return args[0];
                 },
-                template: "#{objectName} - #{methodName} - #{methodArgs} - #{requestId}"
+                template: "#{objectName}.#{methodName}()/Request[#{requestId}] - begin"
               },
               onSuccess: {
                 enabled: true,
                 extractInfo: function(result) {
                   return result;
                 },
-                template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+                template: "#{objectName}.#{methodName}()/Request[#{requestId}] - completed"
               },
               onFailure: {
                 enabled: true,
@@ -34,7 +34,7 @@ module.exports = {
                     error_message: error.message
                   }
                 },
-                template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+                template: "#{objectName}.#{methodName}()/Request[#{requestId}] - failed"
               }
             },
             mocking: {

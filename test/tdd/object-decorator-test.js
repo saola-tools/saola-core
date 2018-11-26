@@ -441,7 +441,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.equal(wrapMethod.callCount, 1); // calls method1 only
     });
 
-    it('should wrap deep located methods of a bean (moduleType: plugin)', function() {
+    it('should wrap deep located methods of a bean', function() {
       var methodTexture = {
         methodType: 'general', // promise, callback, general
         logging: {
@@ -1576,6 +1576,211 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         }
       });
+    });
+  });
+
+  describe('MockingInterceptor', function() {
+    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var MockingInterceptor = ObjectDecorator.__get__('MockingInterceptor');
+
+    it('mocking will be skipped if texture.enabled is false', function() {
+      var texture = {
+        enabled: false,
+        mocking: {
+          mappings: {
+            "default": {
+              selector: sinon.stub().returns(true),
+              generate: sinon.stub().returns({})
+            }
+          }
+        }
+      };
+      var method = sinon.stub();
+      method.withArgs("Will be success").returns("Thank you");
+      method.withArgs("Will be failure").throws(new Error("Failed anyway"));
+      var mockingProxy = new MockingInterceptor({texture, method});
+      var output = mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'});
+      assert.equal(output, "Thank you");
+      assert.throw(function() {
+        return mockingProxy.capsule("Will be failure", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'})
+      }, "Failed anyway");
+      assert.equal(method.callCount, 2);
+      assert.isFalse(texture.mocking.mappings.default.selector.called);
+      assert.isFalse(texture.mocking.mappings.default.generate.called);
+    })
+
+    it('mocking will be skipped if texture.mocking.enabled is false', function() {
+      var texture = {
+        mocking: {
+          enabled: false,
+          mappings: {
+            "default": {
+              selector: sinon.stub().returns(true),
+              generate: sinon.stub().returns({})
+            }
+          }
+        }
+      };
+      var method = sinon.stub();
+      method.withArgs("Will be success").returns("Thank you");
+      method.withArgs("Will be failure").throws(new Error("Failed anyway"));
+      var mockingProxy = new MockingInterceptor({texture, method});
+      var output = mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'});
+      assert.equal(output, "Thank you");
+      assert.throw(function() {
+        return mockingProxy.capsule("Will be failure", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'})
+      }, "Failed anyway");
+      assert.equal(method.callCount, 2);
+      assert.isFalse(texture.mocking.mappings.default.selector.called);
+      assert.isFalse(texture.mocking.mappings.default.generate.called);
+    });
+
+    it('mocking will be skipped if texture.mocking.mappings not found', function() {
+      var texture = { mocking: { } };
+      var method = sinon.stub();
+      method.withArgs("Will be success").returns("Thank you");
+      method.withArgs("Will be failure").throws(new Error("Failed anyway"));
+      var mockingProxy = new MockingInterceptor({texture, method});
+      var output = mockingProxy.capsule("Will be success");
+      assert.equal(output, "Thank you");
+      assert.throw(function() {
+        return mockingProxy.capsule("Will be failure")
+      }, "Failed anyway");
+      assert.equal(method.callCount, 2);
+    });
+
+    it('mocking will be skipped if texture.mocking.mappings is empty', function() {
+      var texture = { mocking: { mappings: {} } };
+      var method = sinon.stub();
+      method.withArgs("Will be success").returns("Thank you");
+      method.withArgs("Will be failure").throws(new Error("Failed anyway"));
+      var mockingProxy = new MockingInterceptor({texture, method});
+      var output = mockingProxy.capsule("Will be success");
+      assert.equal(output, "Thank you");
+      assert.throw(function() {
+        return mockingProxy.capsule("Will be failure")
+      }, "Failed anyway");
+      assert.equal(method.callCount, 2);
+    });
+
+    it('mocking return a Promise when texture.isPromise is truthy', function() {
+      var generate = sinon.stub();
+      generate.withArgs("Will be success").returns("Action completed");
+      generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
+      var texture = {
+        isPromise: true,
+        mocking: {
+          mappings: {
+            "success": {
+              selector: sinon.stub().onFirstCall().returns(true).onSecondCall().returns(false),
+              generate: generate
+            },
+            "failure": {
+              selector: sinon.stub().onFirstCall().returns(true),
+              generate: generate
+            }
+          }
+        }
+      };
+      var method = sinon.stub();
+      var mockingProxy = new MockingInterceptor({texture, method});
+
+      var p = Promise.resolve();
+
+      p = p.then(function() {
+        var output = mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'});
+        assert.isFunction(output.then);
+        assert.isTrue(output.isFulfilled());
+        return output.then(function(result) {
+          assert.equal(result, "Action completed");
+        });
+      });
+
+      p = p.then(function() {
+        var output = mockingProxy.capsule("Will be failure", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'});
+        assert.isFunction(output.then);
+        assert.isTrue(output.isRejected());
+        return output.catch(function(error) {
+          assert.equal(error.message, "Failed anyway");
+          assert.equal(method.callCount, 0);
+          return Promise.resolve();
+        });
+      });
+
+      return p;
+    });
+
+    it('mocking push result to callback if texture.isPromise is falsy and the last argument is a callback', function() {
+      var generate = sinon.stub();
+      generate.withArgs("Will be success").returns("Action completed");
+      generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
+      var texture = {
+        mocking: {
+          mappings: {
+            "success": {
+              selector: sinon.stub().onFirstCall().returns(true).onSecondCall().returns(false),
+              generate: generate
+            },
+            "failure": {
+              selector: sinon.stub().returns(true),
+              generate: generate
+            }
+          }
+        }
+      };
+      var method = sinon.stub();
+      var mockingProxy = new MockingInterceptor({texture, method});
+
+      return Promise.all([
+        new Promise(function(onResolved, onRejected) {
+          mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'}, function(err, result) {
+            assert.isUndefined(err);
+            assert.equal(result, "Action completed");
+            onResolved();
+          });
+        }),
+        new Promise(function(onResolved, onRejected) {
+          mockingProxy.capsule("Will be failure", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'}, function(err, result) {
+            assert.equal(err.message, "Failed anyway");
+            onResolved();
+          })
+        })
+      ]).then(function() {
+        assert.equal(method.callCount, 0);
+        assert.equal(generate.callCount, 2);
+      })
+    });
+
+    it('mocking return a normal result if texture.isPromise is falsy and the last argument is NOT a callback', function() {
+      var generate = sinon.stub();
+      generate.withArgs("Will be success").returns("Action completed");
+      generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
+      var texture = {
+        mocking: {
+          mappings: {
+            "success": {
+              selector: sinon.stub().onFirstCall().returns(true).onSecondCall().returns(false),
+              generate: generate
+            },
+            "failure": {
+              selector: sinon.stub().returns(true),
+              generate: generate
+            }
+          }
+        }
+      };
+      var method = sinon.stub();
+      var mockingProxy = new MockingInterceptor({texture, method});
+
+      var output = mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'});
+      assert.equal(output, "Action completed");
+
+      assert.throw(function() {
+        return mockingProxy.capsule("Will be failure", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'})
+      }, "Failed anyway");
+
+      assert.equal(method.callCount, 0);
+      assert.equal(generate.callCount, 2);
     });
   });
 
