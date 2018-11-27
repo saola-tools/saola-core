@@ -157,20 +157,24 @@ function wrapMethod(refs, method, opts) {
   let {texture, object, objectName, methodName} = opts || {};
   object = lodash.isObject(object) ? object : null;
   let executor = null;
+  let mockingProxy = null;
   let wrapped = method;
   if (isDecorated(texture)) {
+    mockingProxy = new MockingInterceptor({
+      texture: texture,
+      method: wrapped
+    });
+    wrapped = mockingProxy.capsule;
     executor = new MethodExecutor({
       texture: texture,
       object: object,
       objectName: objectName,
-      method: method,
+      method: wrapped,
       methodName: methodName,
       logger: opts.logger || refs.L,
       tracer: opts.tracer || refs.T
     });
-    wrapped = function() {
-      return executor.run(arguments);
-    }
+    wrapped = executor.capsule;
   }
   return wrapped;
 }
@@ -279,9 +283,25 @@ function MethodExecutor(params={}) {
   });
 
   this.__state__ = { object, method, methodType, counter, pointer, logOnEvent }
+
+  let capsule;
+  Object.defineProperty(this, 'capsule', {
+    get: function() {
+      let self = this;
+      return capsule = capsule || new Proxy(method, {
+        apply: function(target, thisArg, argumentsList) {
+          return callMethod.call(self, argumentsList);
+        }
+      });
+    }
+  })
 }
 
 MethodExecutor.prototype.run = function(parameters) {
+  return callMethod.call(this, parameters);
+}
+
+function callMethod(parameters) {
   const { object, method, methodType, counter, pointer, logOnEvent } = this.__state__;
 
   function _detect(parameters) {

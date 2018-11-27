@@ -862,12 +862,12 @@ describe('tdd:devebot:core:object-decorator', function() {
               _verify_tracer(tracer, tracerOutput);
               onResolved();
             });
-            var result = executor.run(parameters);
+            var result = executor.capsule.apply(null, parameters);
             assert.isUndefined(result);
           });
         }
         if (methodType === 'promise') {
-          var result = executor.run(parameters);
+          var result = executor.capsule.apply(null, parameters);
           let flow = null;
           if (!scenario.output.error) {
             flow = result.then(function (value) {
@@ -888,7 +888,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         if (methodType === 'general') {
           var result = undefined, exception = undefined;
           try {
-            result = executor.run(parameters);
+            result = executor.capsule.apply(null, parameters);
           } catch (error) {
             exception = error;
           }
@@ -967,7 +967,8 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (success)', function() {
       return _test_MethodExcecutor_run({
         methodMode: 'implicit',
-        methodType: 'callback', scenarios: {
+        methodType: 'callback',
+        scenarios: {
           requestId: 'YkMjPoSoSyOTrLyf76Mzqg',
           input: ['Hello world'],
           output: {
