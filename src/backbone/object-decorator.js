@@ -156,7 +156,7 @@ function wrapMethod(refs, method, opts) {
   if (!lodash.isFunction(method)) return method;
   let {texture, object, objectName, methodName} = opts || {};
   object = lodash.isObject(object) ? object : null;
-  let executor = null;
+  let loggingProxy = null;
   let mockingProxy = null;
   let wrapped = method;
   if (isDecorated(texture)) {
@@ -165,7 +165,7 @@ function wrapMethod(refs, method, opts) {
       method: wrapped
     });
     wrapped = mockingProxy.capsule;
-    executor = new MethodExecutor({
+    loggingProxy = new LoggingInterceptor({
       texture: texture,
       object: object,
       objectName: objectName,
@@ -174,7 +174,7 @@ function wrapMethod(refs, method, opts) {
       logger: opts.logger || refs.L,
       tracer: opts.tracer || refs.T
     });
-    wrapped = executor.capsule;
+    wrapped = loggingProxy.capsule;
   }
   return wrapped;
 }
@@ -227,7 +227,7 @@ function MockingInterceptor(params) {
   }
 }
 
-function MethodExecutor(params={}) {
+function LoggingInterceptor(params={}) {
   const { logger, tracer, preciseThreshold } = params
   const { texture, object, objectName, method, methodName } = params;
   let counter = { promise: 0, callback: 0, general: 0 }
@@ -297,7 +297,7 @@ function MethodExecutor(params={}) {
   })
 }
 
-MethodExecutor.prototype.run = function(parameters) {
+LoggingInterceptor.prototype.run = function(parameters) {
   return callMethod.call(this, parameters);
 }
 

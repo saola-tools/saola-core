@@ -695,9 +695,9 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
   });
 
-  describe('MethodExecutor', function() {
+  describe('LoggingInterceptor', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
-    var MethodExecutor = ObjectDecorator.__get__('MethodExecutor');
+    var LoggingInterceptor = ObjectDecorator.__get__('LoggingInterceptor');
 
     function _verify_tracer(tracer, opts) {
       assert.equal(tracer.add.callCount, 2);
@@ -714,7 +714,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       tracer.toMessage.resetHistory();
     }
 
-    function _test_MethodExcecutor_run(params) {
+    function _test_LoggingInterceptor(params) {
       if (!lodash.isArray(params.scenarios)) {
         params.scenarios = [params.scenarios];
       }
@@ -788,7 +788,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         })
       };
 
-      var executor = new MethodExecutor({
+      var loggingProxy = new LoggingInterceptor({
         object: object,
         objectName: params.methodType + 'Mode',
         method: object.sampleMethod,
@@ -862,12 +862,12 @@ describe('tdd:devebot:core:object-decorator', function() {
               _verify_tracer(tracer, tracerOutput);
               onResolved();
             });
-            var result = executor.capsule.apply(null, parameters);
+            var result = loggingProxy.capsule.apply(null, parameters);
             assert.isUndefined(result);
           });
         }
         if (methodType === 'promise') {
-          var result = executor.capsule.apply(null, parameters);
+          var result = loggingProxy.capsule.apply(null, parameters);
           let flow = null;
           if (!scenario.output.error) {
             flow = result.then(function (value) {
@@ -888,7 +888,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         if (methodType === 'general') {
           var result = undefined, exception = undefined;
           try {
-            result = executor.capsule.apply(null, parameters);
+            result = loggingProxy.capsule.apply(null, parameters);
           } catch (error) {
             exception = error;
           }
@@ -905,14 +905,14 @@ describe('tdd:devebot:core:object-decorator', function() {
 
       p = p.then(function() {
         state = lodash.merge(state, params.state);
-        assert.deepInclude(executor.__state__, state);
+        assert.deepInclude(loggingProxy.__state__, state);
       })
 
       return p;
     }
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         methodType: 'promise',
         scenarios: {
@@ -937,7 +937,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (failure)', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         methodType: 'promise',
         scenarios: {
@@ -965,7 +965,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (success)', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         methodType: 'callback',
         scenarios: {
@@ -990,7 +990,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (failure)', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         methodType: 'callback',
         scenarios: {
@@ -1018,7 +1018,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (success)', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         methodType: 'general',
         scenarios: {
@@ -1043,7 +1043,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (failure)', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         methodType: 'general',
         scenarios: {
@@ -1071,7 +1071,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'explicit',
         methodType: 'promise',
         scenarios: {
@@ -1096,7 +1096,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode (error)', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'explicit',
         methodType: 'promise',
         scenarios: {
@@ -1124,7 +1124,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'explicit',
         methodType: 'callback',
         scenarios: {
@@ -1149,7 +1149,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode (error)', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'explicit',
         methodType: 'callback',
         scenarios: {
@@ -1177,7 +1177,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'explicit',
         methodType: 'general',
         scenarios: {
@@ -1202,7 +1202,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode (error)', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'explicit',
         methodType: 'general',
         scenarios: {
@@ -1230,7 +1230,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('auto-detecting methodType (promise) will be stable after reliable number of continual steps', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         methodType: 'promise',
         preciseThreshold: 2,
@@ -1310,7 +1310,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('auto-detecting methodType (callback) will be stable after reliable number of continual steps', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         methodType: 'callback',
         preciseThreshold: 2,
@@ -1384,7 +1384,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('auto-detecting methodType (general) will be stable after reliable number of continual steps', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         methodType: 'general',
         preciseThreshold: 2,
@@ -1464,7 +1464,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('methodType will be detected continuely if method is called with unstable ways', function() {
-      return _test_MethodExcecutor_run({
+      return _test_LoggingInterceptor({
         methodMode: 'implicit',
         preciseThreshold: 3,
         scenarios: [{
