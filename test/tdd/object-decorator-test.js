@@ -578,7 +578,8 @@ describe('tdd:devebot:core:object-decorator', function() {
       var WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
         pluginName: 'simple-plugin',
         gadgetType: 'services',
-        gadgetName: 'originalBean'
+        gadgetName: 'originalBean',
+        useDefaultTexture: false,
       });
       var wrappedBean = new WrappedConstructor();
       // invoke method1() 3 times
@@ -666,7 +667,8 @@ describe('tdd:devebot:core:object-decorator', function() {
       var WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
         pluginName: 'simple-plugin',
         gadgetType: 'services',
-        gadgetName: 'originalBean'
+        gadgetName: 'originalBean',
+        useDefaultTexture: false,
       });
       var wrappedBean = new WrappedConstructor();
       // invokes method1() 3 times

@@ -33,8 +33,12 @@ function ObjectDecorator(params={}) {
       gadgetType: opts.gadgetType,
       gadgetName: opts.gadgetName
     });
+    let useDefaultTexture = (['services'].indexOf(opts.gadgetType) >= 0);
+    if (opts && 'useDefaultTexture' in opts) {
+      useDefaultTexture = opts.useDefaultTexture;
+    }
     return wrapConstructor(C, beanConstructor, lodash.assign({
-      textureOfBean, objectName: opts.gadgetName
+      textureOfBean, useDefaultTexture, objectName: opts.gadgetName
     }, lodash.pick(opts, ['logger', 'tracer'])));
   }
 
@@ -133,6 +137,9 @@ function wrapObject(refs, object, opts) {
           fieldChain: fieldChain,
           methodName: methodName
         });
+        if (opts.useDefaultTexture) {
+          texture = lodash.defaultsDeep(texture, DEFAULT_TEXTURE);
+        }
         let owner = lodash.get(object, fieldChain);
         let ownerName = opts.objectName;
         if (fieldChain.length > 0) {
@@ -530,4 +537,42 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) 
     textureOfBean = lodash.get(textureStore, rootToBean, null);
   }
   return textureOfBean;
+}
+
+const DEFAULT_TEXTURE = {
+  logging: {
+    onRequest: {
+      extractReqId: function(argumentsList) {
+        let reqId = undefined;
+        if (argumentsList && argumentsList.length > 0) {
+          for(let k=(argumentsList.length-1); k>=0; k--) {
+            let o = argumentsList[k];
+            reqId = o && (o.requestId || o.reqId);
+            if (reqId) break;
+          }
+        }
+        return reqId;
+      },
+      extractInfo: function(argumentsList) {
+        return chores.extractObjectInfo(chores.argumentsToArray(argumentsList));
+      },
+      template: "Req[#{requestId}] #{objectName}.#{methodName}() #{requestType}"
+    },
+    onSuccess: {
+      extractInfo: function(result) {
+        return chores.extractObjectInfo(result);
+      },
+      template: "Req[#{requestId}] #{objectName}.#{methodName}() completed"
+    },
+    onFailure: {
+      extractInfo: function(error) {
+        return {
+          errorName: error.name,
+          errorCode: error.code,
+          errorMessage: error.message
+        }
+      },
+      template: "Req[#{requestId}] #{objectName}.#{methodName}() failed"
+    }
+  }
 }
