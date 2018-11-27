@@ -297,27 +297,23 @@ function LoggingInterceptor(params={}) {
     return createListener(texture, value);
   });
 
-  this.__state__ = { object, method, methodType, counter, pointer, logOnEvent }
+  const __state__ = { object, method, methodType, counter, pointer, logOnEvent }
+  this.__state__ = __state__;
 
   let capsule;
   Object.defineProperty(this, 'capsule', {
     get: function() {
-      let self = this;
       return capsule = capsule || new Proxy(method, {
         apply: function(target, thisArg, argumentsList) {
-          return callMethod.call(self, argumentsList);
+          return callMethod(__state__, argumentsList);
         }
       });
     }
   })
 }
 
-LoggingInterceptor.prototype.run = function(parameters) {
-  return callMethod.call(this, parameters);
-}
-
-function callMethod(parameters) {
-  const { object, method, methodType, counter, pointer, logOnEvent } = this.__state__;
+function callMethod(refs, parameters) {
+  const { object, method, methodType, counter, pointer, logOnEvent } = refs;
 
   function _detect(parameters) {
     let result = null, exception = null, found = false;
@@ -417,7 +413,7 @@ function callMethod(parameters) {
   parameters = chores.argumentsToArray(parameters);
 
   let output = null;
-  if (this.__state__.methodType) {
+  if (refs.methodType) {
     pointer.actionFlow = 'explicit';
     output = _invoke(parameters);
   } else {
@@ -425,7 +421,7 @@ function callMethod(parameters) {
     output = _detect(parameters);
     let maxItem = maxOf(counter);
     if (maxItem.value >= pointer.preciseThreshold) {
-      this.__state__.methodType = maxItem.label;
+      refs.methodType = maxItem.label;
     }
   }
   // an error is occurred

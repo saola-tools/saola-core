@@ -9,8 +9,11 @@ var Service = function(params={}) {
   var mainCfg = lodash.get(params, ['sandboxConfig'], {});
   L.has('silly') && L.log('silly', 'configuration: %s', JSON.stringify(mainCfg));
 
-  console.log('Service1 config: ', params.service1.getConfig());
-  console.log('Service2 config: ', params.service2.getConfig());
+  this.mergeConfig = function(opts) {
+    return lodash.merge({}, params.service1.getConfig(opts), params.service2.getConfig(opts));
+  }
+
+  console.log('Internal merge config: ', this.mergeConfig());
 };
 
 Service.referenceHash = {

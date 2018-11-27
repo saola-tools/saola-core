@@ -11,6 +11,10 @@ var Service = function(params={}) {
   var packageName = params.packageName || 'setting-with-metadata';
   var mainCfg = params.sandboxConfig || {};
 
+  console.log('External merge config: ', params.mainService.mergeConfig({
+    reqId: chores.getUUID()
+  }));
+
   var server = http.createServer();
 
   server.on('error', function(err) {
@@ -48,7 +52,8 @@ var Service = function(params={}) {
 };
 
 Service.referenceHash = {
-  "dialect": "application/bridge4#instance"
+  "dialect": "application/bridge4#instance",
+  "mainService": "application/mainService"
 }
 
 module.exports = Service;

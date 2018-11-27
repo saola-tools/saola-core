@@ -555,7 +555,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
   let construktor = wrapperConstructor;
   const gadgetGroup = lodash.get(constx, [gadgetType, 'GROUP']);
   if (gadgetGroup) {
-    construktor = objectDecorator.wrapPluginGadget(wrapperConstructor, {
+    construktor = objectDecorator.wrapPluginGadget(construktor, {
       pluginCode: pluginCode,
       gadgetType: gadgetGroup,
       gadgetName: wrapperName
