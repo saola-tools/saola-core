@@ -159,12 +159,14 @@ function wrapMethod(refs, method, opts) {
   let loggingProxy = null;
   let mockingProxy = null;
   let wrapped = method;
-  if (isDecorated(texture)) {
+  if (isMockingEnabled(texture)) {
     mockingProxy = new MockingInterceptor({
       texture: texture,
       method: wrapped
     });
     wrapped = mockingProxy.capsule;
+  }
+  if (isLoggingEnabled(texture)) {
     loggingProxy = new LoggingInterceptor({
       texture: texture,
       object: object,
@@ -181,8 +183,7 @@ function wrapMethod(refs, method, opts) {
 
 function MockingInterceptor(params) {
   const { texture, method } = params;
-  const enabled = isEnabled(texture) && isEnabled(texture.mocking) &&
-      !lodash.isEmpty(texture.mocking.mappings);
+  const enabled = isMockingEnabled(texture) && !lodash.isEmpty(texture.mocking.mappings);
   let capsule;
   Object.defineProperty(this, 'capsule', {
     get: function() {
@@ -239,12 +240,19 @@ function LoggingInterceptor(params={}) {
   pointer.preciseThreshold = pointer.preciseThreshold || 5;
 
   function createListener(texture, eventName) {
-    if (!isEnabled(texture.logging)) return null;
+    if (!isLoggingEnabled(texture)) return null;
     let onEvent = texture.logging['on' + eventName];
     if (!isEnabled(onEvent)) return null;
     return function (data, metadata) {
       if (lodash.isFunction(onEvent.extractReqId) && eventName === 'Request') {
-        logState.requestId = onEvent.extractReqId(data, metadata);
+        let reqId = onEvent.extractReqId(data, metadata);
+        if (reqId) {
+          logState.requestId = reqId;
+          logState.requestType = 'link';
+        } else {
+          logState.requestId = chores.getUUID();
+          logState.requestType = 'head';
+        }
       }
       if (pointer.actionFlow) {
         logState.actionFlow = pointer.actionFlow;
@@ -399,9 +407,7 @@ function callMethod(parameters) {
     return {result, exception};
   }
 
-  if (!lodash.isArray(parameters)) {
-    parameters = Array.prototype.slice.call(parameters);
-  }
+  parameters = chores.argumentsToArray(parameters);
 
   let output = null;
   if (this.__state__.methodType) {
@@ -451,7 +457,7 @@ function extractCallback(parameters) {
   let r = {};
   r.callback = parameters.length > 0 && parameters[parameters.length - 1] || null;
   if (typeof r.callback === 'function') {
-    r.parameters = Array.prototype.slice.call(parameters, 0, parameters.length);
+    r.parameters = Array.prototype.slice.call(parameters, 0, parameters.length - 1);
   } else {
     r.parameters = parameters;
     delete r.callback;
@@ -459,15 +465,16 @@ function extractCallback(parameters) {
   return r;
 }
 
-function isDecorated(texture) {
-  return texture && texture.enabled !== false && (
-      (texture.logging && texture.logging.enabled !== false) ||
-      (texture.mocking && texture.mocking.enabled !== false)
-  );
-}
-
 function isEnabled(section) {
   return section && section.enabled !== false;
+}
+
+function isLoggingEnabled(texture) {
+  return isEnabled(texture) && isEnabled(texture.logging);
+}
+
+function isMockingEnabled(texture) {
+  return isEnabled(texture) && isEnabled(texture.mocking);
 }
 
 function getTextureByPath({textureOfBean, fieldChain, methodName}) {

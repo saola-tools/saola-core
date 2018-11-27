@@ -118,4 +118,35 @@ describe('tdd:devebot:utils:chores', function() {
       assert.isUndefined(obj.a.b.d);
     });
   });
+
+  describe('extractObjectInfo()', function() {
+    it('should extract javascript scalar types correctly', function() {
+      assert.equal(chores.extractObjectInfo(undefined), 'undefined');
+      assert.equal(chores.extractObjectInfo('Hello world'), 'string');
+      assert.equal(chores.extractObjectInfo(''), 'string');
+      assert.equal(chores.extractObjectInfo(1024), 'number');
+      assert.equal(chores.extractObjectInfo(3.14), 'number');
+      assert.equal(chores.extractObjectInfo(Infinity), 'number');
+      assert.equal(chores.extractObjectInfo(NaN), 'number');
+      assert.equal(chores.extractObjectInfo(function area() {}), 'function');
+      assert.equal(chores.extractObjectInfo(true), 'boolean');
+      assert.equal(chores.extractObjectInfo(null), 'null');
+      assert.equal(chores.extractObjectInfo(Symbol()), 'symbol');
+      assert.equal(chores.extractObjectInfo(Symbol('devebot')), 'symbol');
+    });
+    it('should extract javascript object types correctly', function() {
+      assert.deepEqual(chores.extractObjectInfo([1, 'a', true, null]),
+          ['number', 'string', 'boolean', 'null']);
+      assert.deepEqual(chores.extractObjectInfo([
+        undefined, { n: 7, f: Math.floor, o: { x: 100 }, a: [ true ] }
+      ]), [
+        'undefined', { n: 'number', f: 'function', o: {}, a: []}
+      ]);
+      assert.deepEqual(chores.extractObjectInfo([
+        undefined, { n: 7, f: Math.floor, o: { x: 100 }, a: [ true ] }
+      ], { level: 3 }), [
+        'undefined', { n: 'number', f: 'function', o: {x: 'number'}, a: ['boolean']}
+      ]);
+    });
+  });
 });

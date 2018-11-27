@@ -341,4 +341,52 @@ let checkUpgradeSupported = function(label) {
   return (store.upgradeEnabled.indexOf(label) >= 0);
 }
 
+chores.argumentsToArray = function(argumentsList) {
+  if (!Array.isArray(argumentsList)) {
+    argumentsList = Array.prototype.slice.call(argumentsList);
+  };
+  return argumentsList;
+}
+
+chores.extractObjectInfo = function(data, opts) {
+  function detect(data, level=2) {
+    if (typeof level !== "number" || level < 0) level = 0;
+    let info = undefined;
+    let type = typeof(data);
+    switch(type) {
+      case "boolean":
+      case "number":
+      case "string":
+      case "symbol":
+      case "function":
+      case "undefined": {
+        info = type;
+        break;
+      }
+      case "object": {
+        if (data === null) {
+          info = "null";
+        } else if (Array.isArray(data)) {
+          info = [];
+          if (level > 0) {
+            for(let i in data) {
+              info.push(detect(data[i], level - 1));
+            }
+          }
+        } else {
+          info = {};
+          if (level > 0) {
+            for(let field in data) {
+              info[field] = detect(data[field], level - 1);
+            }
+          }
+        }
+        break;
+      }
+    }
+    return info;
+  }
+  return detect(data, opts && opts.level);
+}
+
 module.exports = chores;

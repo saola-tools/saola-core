@@ -828,7 +828,8 @@ describe('tdd:devebot:core:object-decorator', function() {
               actionFlow: params.methodMode,
               objectName: params.methodType + 'Mode',
               methodName: 'sampleMethod',
-              requestId: scenario.requestId
+              requestId: scenario.requestId,
+              requestType: scenario.requestId ? 'link' : 'head'
             }
           },
           toMessage: {
