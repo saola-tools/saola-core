@@ -323,32 +323,26 @@ function callMethod(refs, parameters) {
     let pair = proxifyCallback(argumentsList, logOnEvent, function() {
       hitMethodType(pointer, counter, 'callback');
     });
-    if (pair.callback) {
-      found = true;
-    }
     try {
       logOnEvent.Request(pair.parameters);
       result = method.apply(object, pair.parameters);
-      if (!found) {
-        if (isPromise(result)) {
-          found = true;
-          hitMethodType(pointer, counter, 'promise');
-          result = Promise.resolve(result).then(function(value) {
-            logOnEvent.Success(value, pair.parameters);
-            return value;
-          }).catch(function(error) {
-            logOnEvent.Failure(error, pair.parameters);
-            return Promise.reject(error);
-          });
-        } else {
-          logOnEvent.Success(result);
-        }
+      if (isPromise(result)) {
+        found = true;
+        hitMethodType(pointer, counter, 'promise');
+        result = Promise.resolve(result).then(function(value) {
+          logOnEvent.Success(value, pair.parameters);
+          return value;
+        }).catch(function(error) {
+          logOnEvent.Failure(error, pair.parameters);
+          return Promise.reject(error);
+        });
+      } else {
+        logOnEvent.Success(result);
       }
     } catch (error) {
-      logOnEvent.Failure(error);
       exception = error;
+      logOnEvent.Failure(exception);
     }
-    // not be callback or promise
     if (!found) {
       hitMethodType(pointer, counter, 'general');
     }
@@ -400,14 +394,6 @@ function callMethod(refs, parameters) {
     return {result, exception};
   }
 
-  function _determineMethodType() {
-    let maxItem = maxOf(counter);
-    if (maxItem.value >= pointer.preciseThreshold) {
-      return maxItem.label;
-    }
-    return null;
-  }
-
   parameters = chores.argumentsToArray(parameters);
 
   let output = null;
@@ -417,7 +403,7 @@ function callMethod(refs, parameters) {
   } else {
     pointer.actionFlow = 'implicit';
     output = _detect(parameters);
-    refs.methodType = _determineMethodType() || methodType;
+    refs.methodType = suggestMethodType(pointer, counter, methodType);
   }
   // an error is occurred
   if (output.exception) {
@@ -427,35 +413,39 @@ function callMethod(refs, parameters) {
 }
 
 function hitMethodType(pointer, counter, methodType) {
-  if (pointer.current !== methodType) {
-    for(let name in counter) {
-      counter[name] = 0;
+  if (methodType) {
+    if (methodType === 'callback') {
+      counter[methodType]++;
+    } else {
+      if (methodType !== pointer.current && pointer.current) {
+        for(let name in counter) {
+          counter[name] = 0;
+        }
+      }
+      pointer.current = methodType;
+      counter[methodType]++;
     }
-    pointer.current = methodType;
+  } else {
+    counter.total = counter.total || 0;
+    counter.total++;
   }
-  counter[pointer.current]++;
 }
 
-function hitMethodType_new(pointer, counter, methodType) {
-  if (methodType !== 'callback' && methodType !== pointer.current) {
-    for(let name in counter) {
-      if (name === 'callback') continue;
-      counter[name] = 0;
-    }
-    pointer.current = methodType;
+function suggestMethodType(pointer, counter, methodType) {
+  const threshold = pointer.preciseThreshold || 100;
+  let max = 'promise', min = 'general';
+  if (counter[max] < counter[min]) {
+    let tmp = max; max = min; min = tmp;
   }
-  counter[methodType]++;
-}
-
-function maxOf(counter) {
-  let maxValue = -1, maxLabel = null;
-  for(let mt in counter) {
-    if (maxValue < counter[mt]) {
-      maxValue = counter[mt];
-      maxLabel = mt;
+  if (counter[max] >= threshold) {
+    if (counter['callback'] / counter[max] > 0.7) {
+      return 'callback';
+    }
+    if (counter[min] === 0) {
+      return max;
     }
   }
-  return { label: maxLabel, value: maxValue }
+  return methodType;
 }
 
 function isPromise(p) {
