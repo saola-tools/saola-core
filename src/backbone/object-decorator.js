@@ -318,22 +318,13 @@ function LoggingInterceptor(params={}) {
 function callMethod(refs, parameters) {
   const { object, method, methodType, counter, pointer, logOnEvent } = refs;
 
-  function _detect(parameters) {
+  function _detect(argumentsList) {
     let result = null, exception = null, found = false;
-    let pair = extractCallback(parameters);
-    if (!found) {
-      if (pair.callback) {
-        found = true;
-        hitMethodType(pointer, counter, 'callback');
-        pair.parameters.push(function(error, value) {
-          if (error) {
-            logOnEvent.Failure(error);
-          } else {
-            logOnEvent.Success(value);
-          }
-          return pair.callback.apply(null, arguments);
-        });
-      }
+    let pair = proxifyCallback(argumentsList, logOnEvent, function() {
+      hitMethodType(pointer, counter, 'callback');
+    });
+    if (pair.callback) {
+      found = true;
     }
     try {
       logOnEvent.Request(pair.parameters);
@@ -359,49 +350,45 @@ function callMethod(refs, parameters) {
     }
     // not be callback or promise
     if (!found) {
-      found = true;
       hitMethodType(pointer, counter, 'general');
     }
     // return both result & exception
     return {result, exception};
   }
 
-  function _invoke(parameters) {
+  function _invoke(argumentsList) {
     let result = undefined, exception = undefined;
     switch(methodType) {
       case 'promise': {
         result = Promise.resolve().then(function() {
-          logOnEvent.Request(parameters);
-          return method.apply(object, parameters)
+          logOnEvent.Request(argumentsList);
+          return method.apply(object, argumentsList)
         })
         .then(function(value) {
-          logOnEvent.Success(value, parameters);
+          logOnEvent.Success(value, argumentsList);
           return value;
         })
         .catch(function(error) {
-          logOnEvent.Failure(error, parameters);
+          logOnEvent.Failure(error, argumentsList);
           return Promise.reject(error);
         })
         break;
       }
       case 'callback': {
-        let pair = extractCallback(parameters);
-        pair.parameters.push(function(error, value) {
-          if (error) {
-            logOnEvent.Failure(error);
-          } else {
-            logOnEvent.Success(value);
-          }
-          return pair.callback.apply(null, arguments);
-        });
-        logOnEvent.Request(parameters);
-        result = method.apply(object, pair.parameters);
+        try {
+          let pair = proxifyCallback(argumentsList, logOnEvent);
+          logOnEvent.Request(pair.parameters);
+          result = method.apply(object, pair.parameters);
+        } catch (error) {
+          exception = error;
+          logOnEvent.Failure(exception);
+        }
         break;
       }
       default: {
         try {
-          logOnEvent.Request(parameters);
-          result = method.apply(object, parameters);
+          logOnEvent.Request(argumentsList);
+          result = method.apply(object, argumentsList);
           logOnEvent.Success(result);
         } catch (error) {
           exception = error;
@@ -413,19 +400,24 @@ function callMethod(refs, parameters) {
     return {result, exception};
   }
 
+  function _determineMethodType() {
+    let maxItem = maxOf(counter);
+    if (maxItem.value >= pointer.preciseThreshold) {
+      return maxItem.label;
+    }
+    return null;
+  }
+
   parameters = chores.argumentsToArray(parameters);
 
   let output = null;
-  if (refs.methodType) {
+  if (methodType) {
     pointer.actionFlow = 'explicit';
     output = _invoke(parameters);
   } else {
     pointer.actionFlow = 'implicit';
     output = _detect(parameters);
-    let maxItem = maxOf(counter);
-    if (maxItem.value >= pointer.preciseThreshold) {
-      refs.methodType = maxItem.label;
-    }
+    refs.methodType = _determineMethodType() || methodType;
   }
   // an error is occurred
   if (output.exception) {
@@ -442,6 +434,17 @@ function hitMethodType(pointer, counter, methodType) {
     pointer.current = methodType;
   }
   counter[pointer.current]++;
+}
+
+function hitMethodType_new(pointer, counter, methodType) {
+  if (methodType !== 'callback' && methodType !== pointer.current) {
+    for(let name in counter) {
+      if (name === 'callback') continue;
+      counter[name] = 0;
+    }
+    pointer.current = methodType;
+  }
+  counter[methodType]++;
 }
 
 function maxOf(counter) {
@@ -469,6 +472,25 @@ function extractCallback(parameters) {
     delete r.callback;
   }
   return r;
+}
+
+function proxifyCallback(argumentsList, logOnEvent, checker) {
+  let pair = extractCallback(argumentsList);
+  if (pair.callback) {
+    pair.parameters.push(new Proxy(pair.callback, {
+      apply: function(target, thisArg, callbackArgs) {
+        (typeof checker === 'function') && checker();
+        let error = callbackArgs[0];
+        if (error) {
+          logOnEvent.Failure(error);
+        } else {
+          logOnEvent.Success.apply(logOnEvent, Array.prototype.slice.call(callbackArgs, 1));
+        }
+        return pair.callback.apply(thisArg, callbackArgs);
+      }
+    }));
+  }
+  return pair;
 }
 
 function isEnabled(section) {
