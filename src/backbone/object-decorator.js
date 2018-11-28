@@ -197,16 +197,19 @@ function MockingInterceptor(params) {
       if (!enabled) return method;
       return capsule = capsule || new Proxy(method, {
         apply: function(target, thisArg, argumentsList) {
-          let pair = extractCallback(argumentsList);
-          let output = generate(thisArg, pair.parameters);
-          if (texture.isPromise) {
+          if (texture.methodType === 'callback') {
+            let pair = extractCallback(argumentsList);
+            if (pair.callback) {
+              let output = generate(thisArg, pair.parameters);
+              return pair.callback.call(null, output.exception, output.result);
+            }
+          }
+          let output = generate(thisArg, argumentsList);
+          if (texture.methodType === 'promise') {
             if (output.exception) {
               return Promise.reject(output.exception);
             }
             return Promise.resolve(output.result);
-          }
-          if (pair.callback) {
-            return pair.callback.call(null, output.exception, output.result);
           }
           if (output.exception) {
             throw output.exception;

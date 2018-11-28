@@ -1667,12 +1667,12 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.equal(method.callCount, 2);
     });
 
-    it('mocking return a Promise when texture.isPromise is truthy', function() {
+    it('mocking return a Promise when texture.methodType is "promise', function() {
       var generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
       var texture = {
-        isPromise: true,
+        methodType: "promise",
         mocking: {
           mappings: {
             "success": {
@@ -1714,11 +1714,12 @@ describe('tdd:devebot:core:object-decorator', function() {
       return p;
     });
 
-    it('mocking push result to callback if texture.isPromise is falsy and the last argument is a callback', function() {
+    it('mocking push result to callback if texture.methodType is "callback" and the last argument is a callback', function() {
       var generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
       var texture = {
+        methodType: "callback",
         mocking: {
           mappings: {
             "success": {
@@ -1755,7 +1756,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       })
     });
 
-    it('mocking return a normal result if texture.isPromise is falsy and the last argument is NOT a callback', function() {
+    it('mocking return a normal result if texture.methodType is undefined and the last argument is NOT a callback', function() {
       var generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
