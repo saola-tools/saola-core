@@ -701,22 +701,13 @@ describe('tdd:devebot:core:object-decorator', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
     var LoggingInterceptor = ObjectDecorator.__get__('LoggingInterceptor');
 
-    function _verify_tracer(tracer, opts) {
-      assert.equal(tracer.add.callCount, 2);
-      assert.lengthOf(tracer.add.firstCall.args, 1);
-      assert.deepEqual(tracer.add.firstCall.args[0], opts.add.logState);
-      assert.lengthOf(tracer.add.secondCall.args, 1);
-      assert.deepEqual(tracer.add.secondCall.args[0], opts.add.logState);
-      tracer.add.resetHistory();
-      assert.equal(tracer.toMessage.callCount, 2);
-      assert.lengthOf(tracer.toMessage.firstCall.args, 1);
-      assert.deepEqual(tracer.toMessage.firstCall.args[0], opts.toMessage.firstCallArgs);
-      assert.lengthOf(tracer.toMessage.secondCall.args, 1);
-      assert.deepEqual(tracer.toMessage.secondCall.args[0], opts.toMessage.secondCallArgs);
-      tracer.toMessage.resetHistory();
+    function _cleanup_toMessage_Args(callArgs) {
+      return lodash.filter(callArgs, function(args){
+        return Array.isArray(args) && args.length > 0 && args[0] && args[0]['info'];
+      })
     }
 
-    function _test_LoggingInterceptor(params) {
+    function _run_LoggingInterceptor_capsule(params) {
       if (!lodash.isArray(params.scenarios)) {
         params.scenarios = [params.scenarios];
       }
@@ -748,7 +739,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         }
       }
-
       if (params.methodMode === 'explicit') {
         texture.methodType = params.methodType;
       }
@@ -790,6 +780,21 @@ describe('tdd:devebot:core:object-decorator', function() {
         })
       };
 
+      function captureTracerState() {
+        var tracerState = { add: { callArgs: [] }, toMessage: { callArgs: [] } };
+        tracerState.add.callCount = tracer.add.callCount;
+        for(var i=0; i<tracerState.add.callCount; i++) {
+          tracerState.add.callArgs.push(lodash.cloneDeep(tracer.add.getCall(i).args));
+        }
+        tracerState.toMessage.callCount = tracer.toMessage.callCount;
+        for(var i=0; i<tracerState.toMessage.callCount; i++) {
+          tracerState.toMessage.callArgs.push(lodash.cloneDeep(tracer.toMessage.getCall(i).args));
+        }
+        tracer.add.resetHistory();
+        tracer.toMessage.resetHistory();
+        return tracerState;
+      }
+
       var loggingProxy = new LoggingInterceptor({
         object: object,
         objectName: params.methodType + 'Mode',
@@ -801,121 +806,68 @@ describe('tdd:devebot:core:object-decorator', function() {
         preciseThreshold: params.preciseThreshold
       });
 
-      var state = {
-        methodType: undefined,
-        counter: { promise: 0, callback: 0, general: 0 },
-        pointer: { current: null, actionFlow: params.methodMode,
-            preciseThreshold: params.preciseThreshold || 5 }
-      }
-
-      let p = Promise.each(params.scenarios, function(scenario, index) {
+      let p = Promise.mapSeries(params.scenarios, function(scenario, index) {
+        var flowState = { index: index, scenario: scenario };
         let methodType = scenario.methodType || params.methodType;
-
-        if (params.methodMode === 'explicit') {
-          state.methodType = methodType;
-        }
-        if (params.methodMode === 'implicit') {
-          if (state.pointer.current !== methodType) {
-            for(var k in state.counter) {
-              state.counter[k] = 0;
-            }
-            state.pointer.current = methodType;
-          }
-          state.counter[state.pointer.current]++;
-        }
-
-        let tracerOutput = lodash.merge({
-          add: {
-            logState: {
-              actionFlow: params.methodMode,
-              objectName: params.methodType + 'Mode',
-              methodName: 'sampleMethod',
-              requestId: scenario.requestId,
-              requestType: scenario.requestId ? 'link' : 'head'
-            }
-          },
-          toMessage: {
-            firstCallArgs: {
-              text: '#{objectName}.#{methodName} - Request[#{requestId}] is invoked'
-            },
-            secondCallArgs: {
-              text: (function(isError) {
-                if (isError) {
-                  return '#{objectName}.#{methodName} - Request[#{requestId}] has failed'
-                } else {
-                  return '#{objectName}.#{methodName} - Request[#{requestId}] has finished'
-                }
-              })(scenario.output.error != null)
-            }
-          }
-        }, scenario.tracer);
 
         var parameters = lodash.concat(scenario.input, [{ reqId: scenario.requestId, index }]);
 
+        if (methodType === 'promise') {
+          var output = loggingProxy.capsule.apply(null, parameters);
+          flowState.result = {};
+          return output.then(function (value) {
+            flowState.result.value = lodash.cloneDeep(value);
+            return value;
+          }, function(error) {
+            flowState.result.error = error;
+            return Promise.resolve();
+          }).then(function() {
+            flowState.tracer = captureTracerState();
+            return flowState;
+          });
+        }
         if (methodType === 'callback') {
           return new Promise(function(onResolved, onRejected) {
-            parameters.push(function (err, value) {
-              if (scenario.output.error == null) {
-                assert.isNull(err);
-                assert.deepEqual(value, scenario.output.value);
+            flowState.result = {};
+            parameters.push(function (error, value) {
+              if (error) {
+                flowState.result.error = error;
               } else {
-                assert.deepEqual(err, scenario.output.error);
-                assert.deepEqual(value, scenario.output.value);
+                flowState.result.value = value;
               }
-              _verify_tracer(tracer, tracerOutput);
-              onResolved();
+              flowState.tracer = captureTracerState();
+              onResolved(flowState);
             });
-            var result = loggingProxy.capsule.apply(null, parameters);
-            assert.isUndefined(result);
+            var output = loggingProxy.capsule.apply(null, parameters);
+            assert.isUndefined(output);
           });
-        }
-        if (methodType === 'promise') {
-          var result = loggingProxy.capsule.apply(null, parameters);
-          let flow = null;
-          if (!scenario.output.error) {
-            flow = result.then(function (value) {
-              assert.deepEqual(value, scenario.output.value);
-            });
-          } else {
-            flow = result.then(function(value) {
-              return Promise.reject();
-            }).catch(function(error) {
-              return Promise.resolve();
-            })
-          }
-          flow.then(function() {
-            _verify_tracer(tracer, tracerOutput);
-          });
-          return flow;
         }
         if (methodType === 'general') {
-          var result = undefined, exception = undefined;
+          flowState.result = {};
           try {
-            result = loggingProxy.capsule.apply(null, parameters);
+            flowState.result.value = loggingProxy.capsule.apply(null, parameters);
           } catch (error) {
-            exception = error;
+            flowState.result.error = error;
           }
-          _verify_tracer(tracer, tracerOutput);
-          if (!scenario.output.error) {
-            assert.isUndefined(exception);
-            assert.deepEqual(result, scenario.output.value);
-          } else {
-            assert.isUndefined(result);
-          }
-          return result;
+          flowState.tracer = captureTracerState();
+          return flowState;
         }
-      });
+      })
 
-      p = p.then(function() {
-        state = lodash.merge(state, params.state);
-        assert.deepInclude(loggingProxy.__state__, state);
+      p = p.then(function(flowStates) {
+        return {
+          flowStates: flowStates,
+          proxyState: lodash.cloneDeep(lodash.pick(loggingProxy.__state__, [
+            'methodType', 'counter', 'pointer'
+          ]))
+        }
       })
 
       return p;
     }
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (success)', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         methodType: 'promise',
         scenarios: {
@@ -924,23 +876,62 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['value']);
+        assert.deepEqual(step.result.value, step.scenario.output.value);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "promiseMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "implicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+              "info": {
+                "msg": "This is a normal result"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": undefined,
+          "counter": {
+            "promise": 1,
+            "callback": 0,
+            "general": 0
+          },
+          "pointer": {
+            "current": "promise",
+            "actionFlow": "implicit",
+            "preciseThreshold": 5
+          }
+        });
       });
     });
 
     it('invokes the wrapped method in [promise] mode if the method returns a promise (failure)', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         methodType: 'promise',
         scenarios: {
@@ -949,26 +940,63 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['error']);
+        assert.deepEqual(step.result.error, step.scenario.output.error);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "promiseMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "implicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has failed",
+              "info": {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": undefined,
+          "counter": {
+            "promise": 1,
+            "callback": 0,
+            "general": 0
+          },
+          "pointer": {
+            "current": "promise",
+            "actionFlow": "implicit",
+            "preciseThreshold": 5
+          }
+        });
       });
     });
 
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (success)', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         methodType: 'callback',
         scenarios: {
@@ -977,23 +1005,63 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['value']);
+        assert.deepEqual(step.result.value, step.scenario.output.value);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "callbackMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "implicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+              "info": {
+                "msg": "This is a normal result"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": undefined,
+          "counter": {
+            "promise": 0,
+            "callback": 1,
+            "general": 1
+          },
+          "pointer": {
+            "current": "general",
+            "actionFlow": "implicit",
+            "preciseThreshold": 5
+          }
+        });
+        return r;
       });
     });
 
     it('invokes the wrapped method in [callback] mode if parameter includes a callback (failure)', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         methodType: 'callback',
         scenarios: {
@@ -1002,26 +1070,64 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['error']);
+        assert.deepEqual(step.result.error, step.scenario.output.error);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "callbackMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "implicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has failed",
+              "info": {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": undefined,
+          "counter": {
+            "promise": 0,
+            "callback": 1,
+            "general": 1
+          },
+          "pointer": {
+            "current": "general",
+            "actionFlow": "implicit",
+            "preciseThreshold": 5
+          }
+        });
+        return r;
       });
     });
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (success)', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         methodType: 'general',
         scenarios: {
@@ -1030,23 +1136,62 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['value']);
+        assert.deepEqual(step.result.value, step.scenario.output.value);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "generalMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "implicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+              "info": {
+                "msg": "This is a normal result"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": undefined,
+          "counter": {
+            "promise": 0,
+            "callback": 0,
+            "general": 1
+          },
+          "pointer": {
+            "current": "general",
+            "actionFlow": "implicit",
+            "preciseThreshold": 5
+          }
+        });
       });
     });
 
     it('invokes the wrapped method in [general] mode if the method returns a normal result (failure)', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         methodType: 'general',
         scenarios: {
@@ -1055,26 +1200,63 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['error']);
+        assert.deepEqual(step.result.error, step.scenario.output.error);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "generalMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "implicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has failed",
+              "info": {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": undefined,
+          "counter": {
+            "promise": 0,
+            "callback": 0,
+            "general": 1
+          },
+          "pointer": {
+            "current": "general",
+            "actionFlow": "implicit",
+            "preciseThreshold": 5
+          }
+        });
       });
     });
 
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'explicit',
         methodType: 'promise',
         scenarios: {
@@ -1083,23 +1265,62 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['value']);
+        assert.deepEqual(step.result.value, step.scenario.output.value);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "promiseMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "explicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+              "info": {
+                "msg": "This is a normal result"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": "promise",
+          "counter": {
+            "promise": 0,
+            "callback": 0,
+            "general": 0
+          },
+          "pointer": {
+            "current": null,
+            "actionFlow": "explicit",
+            "preciseThreshold": 5
+          }
+        });
       });
     });
 
     it('explicitly specified methodType (promise) will skip _detect() and call _invoke() in promise mode (error)', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'explicit',
         methodType: 'promise',
         scenarios: {
@@ -1108,26 +1329,63 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['error']);
+        assert.deepEqual(step.result.error, step.scenario.output.error);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "promiseMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "explicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has failed",
+              "info": {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": "promise",
+          "counter": {
+            "promise": 0,
+            "callback": 0,
+            "general": 0
+          },
+          "pointer": {
+            "current": null,
+            "actionFlow": "explicit",
+            "preciseThreshold": 5
+          }
+        });
       });
     });
 
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'explicit',
         methodType: 'callback',
         scenarios: {
@@ -1136,23 +1394,63 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['value']);
+        assert.deepEqual(step.result.value, step.scenario.output.value);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "callbackMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "explicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+              "info": {
+                "msg": "This is a normal result"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": "callback",
+          "counter": {
+            "promise": 0,
+            "callback": 0,
+            "general": 0
+          },
+          "pointer": {
+            "current": null,
+            "actionFlow": "explicit",
+            "preciseThreshold": 5
+          }
+        });
+        return r;
       });
     });
 
     it('explicitly specified methodType (callback) will skip _detect() and call _invoke() in callback mode (error)', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'explicit',
         methodType: 'callback',
         scenarios: {
@@ -1161,26 +1459,64 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['error']);
+        assert.deepEqual(step.result.error, step.scenario.output.error);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "callbackMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "explicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has failed",
+              "info": {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": "callback",
+          "counter": {
+            "promise": 0,
+            "callback": 0,
+            "general": 0
+          },
+          "pointer": {
+            "current": null,
+            "actionFlow": "explicit",
+            "preciseThreshold": 5
+          }
+        });
+        return r;
       });
     });
 
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'explicit',
         methodType: 'general',
         scenarios: {
@@ -1189,23 +1525,62 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['value']);
+        assert.deepEqual(step.result.value, step.scenario.output.value);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "generalMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "explicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+              "info": {
+                "msg": "This is a normal result"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": "general",
+          "counter": {
+            "promise": 0,
+            "callback": 0,
+            "general": 0
+          },
+          "pointer": {
+            "current": null,
+            "actionFlow": "explicit",
+            "preciseThreshold": 5
+          }
+        });
       });
     });
 
     it('explicitly specified methodType (general) will skip _detect() and call _invoke() in general mode (error)', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'explicit',
         methodType: 'general',
         scenarios: {
@@ -1214,26 +1589,63 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Hello world'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        var step = r.flowStates[0];
+
+        // verify result
+        assert.hasAllKeys(step.result, ['error']);
+        assert.deepEqual(step.result.error, step.scenario.output.error);
+
+        // verify tracer
+        assert.equal(step.tracer.add.callCount, 2);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+          {
+            "objectName": "generalMode",
+            "methodName": "sampleMethod",
+            "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
+            "requestType": "link",
+            "actionFlow": "explicit"
+          }
+        ]));
+        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.deepEqual(step.tracer.toMessage.callArgs, [
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+              "info": "Hello world"
+            }
+          ], [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has failed",
+              "info": {
+                "error_code": undefined,
+                "error_message": "The action has been failed"
+              }
+            }
+          ]
+        ]);
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": "general",
+          "counter": {
+            "promise": 0,
+            "callback": 0,
+            "general": 0
+          },
+          "pointer": {
+            "current": null,
+            "actionFlow": "explicit",
+            "preciseThreshold": 5
+          }
+        });
       });
     });
 
     it('auto-detecting methodType (promise) will be stable after reliable number of continual steps', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         methodType: 'promise',
         preciseThreshold: 2,
@@ -1243,16 +1655,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #1'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }, {
           requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
@@ -1260,19 +1662,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #2'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }, {
           requestId: 'YkMjPoSoSyOTrLyf76Mzqt',
@@ -1280,40 +1669,91 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            add: {
-              logState: {
-                actionFlow: "explicit"
-              }
-            },
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #3'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
+          }
+        }]
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        r.flowStates.forEach(function(step, i, total) {
+          // verify result
+          if (step.scenario.output.error == null) {
+            assert.hasAllKeys(step.result, ['value']);
+            assert.deepEqual(step.result.value, step.scenario.output.value);
+          } else {
+            assert.hasAllKeys(step.result, ['error']);
+            assert.deepEqual(step.result.error, step.scenario.output.error);
+          }
+
+          // verify tracer
+          var actionFlow = 'implicit';
+          if (i >= 2) { // preciseThreshold
+            actionFlow = 'explicit';
+          }
+          assert.equal(step.tracer.add.callCount, 2);
+          assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(step.tracer.add.callCount), [
+            {
+              "objectName": "promiseMode",
+              "methodName": "sampleMethod",
+              "requestId": step.scenario.requestId,
+              "requestType": "link",
+              "actionFlow": actionFlow
             }
+          ]));
+          assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
+          if (step.scenario.output.error == null) {
+            assert.deepEqual(step.tracer.toMessage.callArgs, [
+              [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+                  "info": step.scenario.input[0]
+                }
+              ], [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+                  "info": {
+                    "msg": "This is a normal result"
+                  }
+                }
+              ]
+            ]);
+          } else {
+            assert.deepEqual(step.tracer.toMessage.callArgs, [
+              [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+                  "info": step.scenario.input[0]
+                }
+              ], [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] has failed",
+                  "info": {
+                    "error_code": undefined,
+                    "error_message": "The action has been failed"
+                  }
+                }
+              ]
+            ]);
           }
-        }],
-        state: {
-          methodType: 'promise',
-          counter: {
-            promise: 2
+        })
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": "promise",
+          "counter": {
+            "promise": 2,
+            "callback": 0,
+            "general": 0
           },
-          pointer: {
-            actionFlow: 'explicit'
+          "pointer": {
+            "current": "promise",
+            "actionFlow": "explicit",
+            "preciseThreshold": 2
           }
-        }
+        });
+        return r;
       });
     });
 
     it('auto-detecting methodType (callback) will be stable after reliable number of continual steps', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         methodType: 'callback',
         preciseThreshold: 2,
@@ -1323,16 +1763,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #1'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }, {
           requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
@@ -1340,54 +1770,84 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #2'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }, {
-          requestId: 'YkMjPoSoSyOTrLyf76Mzqt',
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqi',
           input: ['Message #3'],
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            add: {
-              logState: {
-                actionFlow: "explicit"
-              }
-            },
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #3'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
+          }
+        }, {
+          requestId: 'YkMjPoSoSyOTrLyf76Mzqj',
+          input: ['Message #4'],
+          output: {
+            error: null,
+            value: { msg: "This is a normal result" }
+          }
+        }]
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        r.flowStates.forEach(function(step, i, total) {
+          // verify result
+          if (step.scenario.output.error == null) {
+            assert.hasAllKeys(step.result, ['value']);
+            assert.deepEqual(step.result.value, step.scenario.output.value);
+          }
+
+          // verify tracer
+          var actionFlow = 'implicit';
+          if (i >= 2) { // preciseThreshold
+            actionFlow = 'explicit';
+          }
+          assert.isTrue(2 <= step.tracer.add.callCount);
+          assert.isTrue(step.tracer.add.callCount <= 3);
+          assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(step.tracer.add.callCount), [
+            {
+              "objectName": "callbackMode",
+              "methodName": "sampleMethod",
+              "requestId": step.scenario.requestId,
+              "requestType": "link",
+              "actionFlow": actionFlow
             }
-          }
-        }],
-        state: {
-          methodType: 'callback',
-          counter: {
-            callback: 2
+          ]));
+          assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
+          assert.deepEqual(_cleanup_toMessage_Args(step.tracer.toMessage.callArgs), [
+            [
+              {
+                "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+                "info": step.scenario.input[0]
+              }
+            ], [
+              {
+                "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+                "info": {
+                  "msg": "This is a normal result"
+                }
+              }
+            ]
+          ]);
+        })
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": "callback",
+          "counter": {
+            "promise": 0,
+            "callback": 2,
+            "general": 2
           },
-          pointer: {
-            actionFlow: 'explicit'
+          "pointer": {
+            "current": "general",
+            "actionFlow": "explicit",
+            "preciseThreshold": 2
           }
-        }
+        });
+        return r;
       });
     });
 
     it('auto-detecting methodType (general) will be stable after reliable number of continual steps', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         methodType: 'general',
         preciseThreshold: 2,
@@ -1397,16 +1857,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #1'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }, {
           requestId: 'YkMjPoSoSyOTrLyf76Mzqh',
@@ -1414,19 +1864,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #2'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }, {
           requestId: 'YkMjPoSoSyOTrLyf76Mzqt',
@@ -1434,40 +1871,91 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            add: {
-              logState: {
-                actionFlow: "explicit"
-              }
-            },
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #3'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
+          }
+        }]
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        r.flowStates.forEach(function(step, i, total) {
+          // verify result
+          if (step.scenario.output.error == null) {
+            assert.hasAllKeys(step.result, ['value']);
+            assert.deepEqual(step.result.value, step.scenario.output.value);
+          } else {
+            assert.hasAllKeys(step.result, ['error']);
+            assert.deepEqual(step.result.error, step.scenario.output.error);
+          }
+
+          // verify tracer
+          var actionFlow = 'implicit';
+          if (i >= 2) { // preciseThreshold
+            actionFlow = 'explicit';
+          }
+          assert.equal(step.tracer.add.callCount, 2);
+          assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(step.tracer.add.callCount), [
+            {
+              "objectName": "generalMode",
+              "methodName": "sampleMethod",
+              "requestId": step.scenario.requestId,
+              "requestType": "link",
+              "actionFlow": actionFlow
             }
+          ]));
+          assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
+          if (step.scenario.output.error == null) {
+            assert.deepEqual(step.tracer.toMessage.callArgs, [
+              [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+                  "info": step.scenario.input[0]
+                }
+              ], [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+                  "info": {
+                    "msg": "This is a normal result"
+                  }
+                }
+              ]
+            ]);
+          } else {
+            assert.deepEqual(step.tracer.toMessage.callArgs, [
+              [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+                  "info": step.scenario.input[0]
+                }
+              ], [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] has failed",
+                  "info": {
+                    "error_code": undefined,
+                    "error_message": "The action has been failed"
+                  }
+                }
+              ]
+            ]);
           }
-        }],
-        state: {
-          methodType: 'general',
-          counter: {
-            general: 2
+        })
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": "general",
+          "counter": {
+            "promise": 0,
+            "callback": 0,
+            "general": 2
           },
-          pointer: {
-            actionFlow: 'explicit'
+          "pointer": {
+            "current": "general",
+            "actionFlow": "explicit",
+            "preciseThreshold": 2
           }
-        }
+        });
+        return r;
       });
     });
 
     it('methodType will be detected continuely if method is called with unstable ways', function() {
-      return _test_LoggingInterceptor({
+      return _run_LoggingInterceptor_capsule({
         methodMode: 'implicit',
         preciseThreshold: 3,
         scenarios: [{
@@ -1477,16 +1965,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #1'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }, {
           methodType: 'promise',
@@ -1495,19 +1973,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #2'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }, {
           methodType: 'callback',
@@ -1516,16 +1981,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: null,
             value: { msg: "This is a normal result" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #3'
-              },
-              secondCallArgs: {
-                info: { msg: "This is a normal result" }
-              }
-            }
           }
         }, {
           methodType: 'callback',
@@ -1534,19 +1989,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #4'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }, {
           methodType: 'promise',
@@ -1555,19 +1997,6 @@ describe('tdd:devebot:core:object-decorator', function() {
           output: {
             error: new Error('The action has been failed'),
             value: { msg: "Anything" }
-          },
-          tracer: {
-            toMessage: {
-              firstCallArgs: {
-                info: 'Message #5'
-              },
-              secondCallArgs: {
-                info: {
-                  "error_code": undefined,
-                  "error_message": "The action has been failed"
-                }
-              }
-            }
           }
         }],
         state: {
@@ -1579,6 +2008,81 @@ describe('tdd:devebot:core:object-decorator', function() {
             actionFlow: 'implicit'
           }
         }
+      }).then(function(r) {
+        false && console.log(JSON.stringify(r, null, 2));
+        r.flowStates.forEach(function(step, i, total) {
+          // verify result
+          if (step.scenario.output.error == null) {
+            assert.hasAllKeys(step.result, ['value']);
+            assert.deepEqual(step.result.value, step.scenario.output.value);
+          } else {
+            assert.hasAllKeys(step.result, ['error']);
+            assert.deepEqual(step.result.error, step.scenario.output.error);
+          }
+
+          // verify tracer
+          assert.isTrue(2 <= step.tracer.add.callCount);
+          assert.isTrue(step.tracer.add.callCount <= 3);
+          assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(step.tracer.add.callCount), [
+            {
+              "objectName": "undefinedMode",
+              "methodName": "sampleMethod",
+              "requestId": step.scenario.requestId,
+              "requestType": "link",
+              "actionFlow": "implicit"
+            }
+          ]));
+          assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
+          if (step.scenario.output.error == null) {
+            assert.deepEqual(_cleanup_toMessage_Args(step.tracer.toMessage.callArgs), [
+              [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+                  "info": step.scenario.input[0]
+                }
+              ], [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+                  "info": {
+                    "msg": "This is a normal result"
+                  }
+                }
+              ]
+            ]);
+          } else {
+            assert.deepEqual(_cleanup_toMessage_Args(step.tracer.toMessage.callArgs), [
+              [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] is invoked",
+                  "info": step.scenario.input[0]
+                }
+              ], [
+                {
+                  "text": "#{objectName}.#{methodName} - Request[#{requestId}] has failed",
+                  "info": {
+                    "error_code": undefined,
+                    "error_message": "The action has been failed"
+                  }
+                }
+              ]
+            ]);
+          }
+        })
+        // verify proxyState
+        assert.deepEqual(r.proxyState, {
+          "methodType": undefined,
+          "counter": {
+            "promise": 1,
+            "callback": 0,
+            "general": 0
+          },
+          "pointer": {
+            "current": "promise",
+            "actionFlow": "implicit",
+            "preciseThreshold": 3
+          }
+        });
+        return r;
       });
     });
   });
