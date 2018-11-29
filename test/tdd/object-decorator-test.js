@@ -700,6 +700,22 @@ describe('tdd:devebot:core:object-decorator', function() {
   describe('LoggingInterceptor', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
     var LoggingInterceptor = ObjectDecorator.__get__('LoggingInterceptor');
+    var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
+
+    function _captureTracerState(tracer) {
+      var tracerState = { add: { callArgs: [] }, toMessage: { callArgs: [] } };
+      tracerState.add.callCount = tracer.add.callCount;
+      for(var i=0; i<tracerState.add.callCount; i++) {
+        tracerState.add.callArgs.push(lodash.cloneDeep(tracer.add.getCall(i).args));
+      }
+      tracerState.toMessage.callCount = tracer.toMessage.callCount;
+      for(var i=0; i<tracerState.toMessage.callCount; i++) {
+        tracerState.toMessage.callArgs.push(lodash.cloneDeep(tracer.toMessage.getCall(i).args));
+      }
+      tracer.add.resetHistory();
+      tracer.toMessage.resetHistory();
+      return tracerState;
+    }
 
     function _cleanup_toMessage_Args(callArgs) {
       return lodash.filter(callArgs, function(args){
@@ -780,21 +796,6 @@ describe('tdd:devebot:core:object-decorator', function() {
         })
       };
 
-      function captureTracerState() {
-        var tracerState = { add: { callArgs: [] }, toMessage: { callArgs: [] } };
-        tracerState.add.callCount = tracer.add.callCount;
-        for(var i=0; i<tracerState.add.callCount; i++) {
-          tracerState.add.callArgs.push(lodash.cloneDeep(tracer.add.getCall(i).args));
-        }
-        tracerState.toMessage.callCount = tracer.toMessage.callCount;
-        for(var i=0; i<tracerState.toMessage.callCount; i++) {
-          tracerState.toMessage.callArgs.push(lodash.cloneDeep(tracer.toMessage.getCall(i).args));
-        }
-        tracer.add.resetHistory();
-        tracer.toMessage.resetHistory();
-        return tracerState;
-      }
-
       var loggingProxy = new LoggingInterceptor({
         object: object,
         objectName: params.methodType + 'Mode',
@@ -822,7 +823,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             flowState.result.error = error;
             return Promise.resolve();
           }).then(function() {
-            flowState.tracer = captureTracerState();
+            flowState.tracer = _captureTracerState(tracer);
             return flowState;
           });
         }
@@ -835,7 +836,7 @@ describe('tdd:devebot:core:object-decorator', function() {
               } else {
                 flowState.result.value = value;
               }
-              flowState.tracer = captureTracerState();
+              flowState.tracer = _captureTracerState(tracer);
               onResolved(flowState);
             });
             var output = loggingProxy.capsule.apply(null, parameters);
@@ -849,7 +850,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           } catch (error) {
             flowState.result.error = error;
           }
-          flowState.tracer = captureTracerState();
+          flowState.tracer = _captureTracerState(tracer);
           return flowState;
         }
       })
@@ -2084,6 +2085,79 @@ describe('tdd:devebot:core:object-decorator', function() {
         });
         return r;
       });
+    });
+
+    it('invokes the wrapped method in [general] mode if argumentsList contains a function at the last but it does not be called', function() {
+      var func = function() {}
+      func.Router = function(req, res, next) {}
+      
+      var object = {
+        sampleMethod: sinon.stub().callsFake(function() {
+          return chores.argumentsToArray(arguments);
+        })
+      }
+
+      var logger = {
+        has: sinon.stub().returns(true),
+        log: sinon.stub()
+      }
+
+      var tracer = {
+        add: sinon.stub().callsFake(function(params) {
+          LogTracer.ROOT.add(params);
+          return tracer;
+        }),
+        toMessage: sinon.stub().callsFake(function(params) {
+          return LogTracer.ROOT.toMessage(params);
+        })
+      };
+
+      var loggingProxy = new LoggingInterceptor({
+        object: object,
+        objectName: 'object',
+        method: object.sampleMethod,
+        methodName: 'sampleMethod',
+        texture: lodash.merge({}, DEFAULT_TEXTURE),
+        logger: logger,
+        tracer: tracer
+      });
+
+      var output = loggingProxy.capsule.apply(null, [
+        "Hello world", { requestId: "53b2ce29-8c37-41ce-a9d2-94f03511d4e2" }, func
+      ]);
+      var lastArg = output[output.length - 1];
+
+      assert.isFunction(lastArg);
+      assert.notEqual(lastArg, func);
+      assert.isFunction(lastArg.Router);
+      assert.equal(lastArg.Router, func.Router);
+
+      var tracerState = _captureTracerState(tracer);
+      assert.equal(tracerState.add.callCount, 2);
+      assert.deepEqual(tracerState.add.callArgs, lodash.fill(Array(2), [
+        {
+          "objectName": "object",
+          "methodName": "sampleMethod",
+          "requestId": "53b2ce29-8c37-41ce-a9d2-94f03511d4e2",
+          "requestType": "link",
+          "actionFlow": "implicit"
+        }
+      ]));
+      assert.equal(tracerState.toMessage.callCount, 2);
+      assert.deepEqual(tracerState.toMessage.callArgs, [
+        [
+          {
+            "text": "Req[#{requestId}] #{objectName}.#{methodName}() #{requestType}",
+            "info": [ "string", { "requestId": "string" }, "function" ]
+          }
+        ],
+        [
+          {
+            "text": "Req[#{requestId}] #{objectName}.#{methodName}() completed",
+            "info": [ "string", { "requestId": "string" }, "function" ]
+          }
+        ]
+      ]);
     });
   });
 
