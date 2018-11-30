@@ -140,10 +140,15 @@ function wrapObject(refs, object, opts) {
         if (opts.useDefaultTexture) {
           texture = lodash.defaultsDeep(texture, DEFAULT_TEXTURE);
         }
-        let owner = object; // owner ~ thisArg
+        let owner = thisArg;
+        if (!owner) {
+          owner = object;
+          if (fieldChain.length > 0) {
+            owner = lodash.get(object, fieldChain);
+          }
+        }
         let ownerName = opts.objectName;
         if (fieldChain.length > 0) {
-          owner = lodash.get(object, fieldChain);
           ownerName = [opts.objectName].concat(fieldChain).join('.');
         }
         cached[methodPath] = wrapMethod(refs, target, {
