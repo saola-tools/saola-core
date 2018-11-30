@@ -10,6 +10,14 @@ var Service = function(params={}) {
   L.has('silly') && L.log('silly', 'configuration: %s', JSON.stringify(mainCfg));
 
   this.mergeConfig = function(opts) {
+    try {
+      return this.internalMergeConfig(opts);
+    } catch (e) {
+      console.log('Error: ', e);
+    }
+  }
+
+  this.internalMergeConfig = function(opts) {
     return lodash.merge({}, params.service1.getConfig(opts), params.service2.getConfig(opts));
   }
 
