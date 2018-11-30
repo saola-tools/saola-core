@@ -149,4 +149,37 @@ describe('tdd:devebot:utils:chores', function() {
       ]);
     });
   });
+
+  describe('argumentsToArray()', function() {
+    it('should convert arguments to array correctly', function() {
+      var range = {};
+      function convert() {
+        return chores.argumentsToArray(arguments, range.left, range.right);
+      }
+      range.left = undefined; range.right = undefined;
+      assert.deepEqual(convert(), []);
+      assert.deepEqual(convert('Hello'), ['Hello']);
+      assert.deepEqual(convert('Hello', 1, true, {}, []), ['Hello', 1, true, {}, []]);
+      range.left = undefined; range.right = 0;
+      assert.deepEqual(convert(), []);
+      assert.deepEqual(convert('Hello'), ['Hello']);
+      assert.deepEqual(convert('Hello', 1, true, {}, []), ['Hello', 1, true, {}, []]);
+      range.left = undefined; range.right = 1;
+      assert.deepEqual(convert(), []);
+      assert.deepEqual(convert('Hello'), []);
+      assert.deepEqual(convert('Hello', 1, true, {}, []), ['Hello', 1, true, {}]);
+      range.left = 0; range.right = undefined;
+      assert.deepEqual(convert(), []);
+      assert.deepEqual(convert('Hello'), ['Hello']);
+      assert.deepEqual(convert('Hello', 1, true, {}, []), ['Hello', 1, true, {}, []]);
+      range.left = 1; range.right = undefined;
+      assert.deepEqual(convert(), []);
+      assert.deepEqual(convert('Hello'), []);
+      assert.deepEqual(convert('Hello', 1, true, {}, []), [1, true, {}, []]);
+      range.left = 2; range.right = 2;
+      assert.deepEqual(convert('Hello', 1, true, {}, []), [true]);
+      range.left = 3; range.right = 3;
+      assert.deepEqual(convert('Hello', 1, true, {}, []), []);
+    })
+  });
 });

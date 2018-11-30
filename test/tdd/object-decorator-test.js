@@ -2087,7 +2087,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
     });
 
-    it('invokes the wrapped method in [general] mode if argumentsList contains a function at the last but it does not be called', function() {
+    it('function at the end of arguments list must not be changed when auto-detecting methodType', function() {
       var func = function() {}
       func.Router = function(req, res, next) {}
       

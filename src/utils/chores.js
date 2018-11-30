@@ -341,11 +341,11 @@ let checkUpgradeSupported = function(label) {
   return (store.upgradeEnabled.indexOf(label) >= 0);
 }
 
-chores.argumentsToArray = function(argumentsList) {
-  if (!Array.isArray(argumentsList)) {
-    argumentsList = Array.prototype.slice.call(argumentsList);
+chores.argumentsToArray = function(args, l, r) {
+  if (args && ((!Array.isArray(args) && args.length >= 0) || (Array.isArray(args) && (l>=0 || r>=0)))) {
+    args = Array.prototype.slice.call(args, l || 0, args.length - (r || 0));
   };
-  return argumentsList;
+  return args;
 }
 
 chores.extractObjectInfo = function(data, opts) {
