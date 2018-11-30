@@ -336,6 +336,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
   describe('wrapObject()', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
     var wrapObject = ObjectDecorator.__get__('wrapObject');
     var wrapMethod = sinon.spy(ObjectDecorator.__get__('wrapMethod'));
     ObjectDecorator.__set__('wrapMethod', wrapMethod);
@@ -377,6 +378,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         textureOfBean: textureOfBean,
         objectName: 'originalBean'
       });
+      // verify wrapped bean
+      assert.notEqual(wrappedBean, mockedBean);
       // invoke method1() 3 times
       lodash.range(3).forEach(function() {
         wrappedBean.method1();
@@ -521,6 +524,76 @@ describe('tdd:devebot:core:object-decorator', function() {
         return ('requestId' in item && item.methodName === 'method2');
       });
       assert.equal(logState_method2.length, 5 * 2);
+    });
+
+    it('should support decorated context for nested method calls', function() {
+      var textureOfBean = {
+        start: lodash.cloneDeep(DEFAULT_TEXTURE),
+        level1: { method1: lodash.cloneDeep(DEFAULT_TEXTURE) },
+        level2: { sub2: { method2: lodash.cloneDeep(DEFAULT_TEXTURE) } },
+        level3: { sub3: { bean3: {
+          invoice: lodash.cloneDeep(DEFAULT_TEXTURE),
+          summarize: lodash.cloneDeep(DEFAULT_TEXTURE)
+        } } }
+      }
+      var mockedBean = {
+        start: function(amount, opts) {
+          return this.report(amount, opts);
+        },
+        report: function(amount, opts) {
+          return this.heading + this.level3.sub3.bean3.invoice(amount, opts);
+        },
+        heading: "Report: ",
+        level1: { method1: sinon.stub() },
+        level2: { sub2: { method2: sinon.stub() } },
+        level3: { sub3: { bean3: new (function() {
+          this.rate = 1.1;
+          this.invoice = function(amount) {
+            return "Total: " + this.summarize(amount);
+          }
+          this.summarize = function (amount) {
+            return amount * this.getRate();
+          }
+          this.getRate = function() {
+            if (0 <= this.rate && this.rate <= 1) return this.rate;
+            return 1;
+          }
+        })()}}
+      }
+      var wrappedBean = wrapObject(CTX, mockedBean, {
+        textureOfBean: textureOfBean,
+        objectName: 'originalBean'
+      });
+      // number of requests
+      var requestCount = 5;
+      // invokes start() "requestCount" times
+      var msgs = lodash.range(requestCount).map(function(i) {
+        return wrappedBean.start(100 + i);
+      });
+      assert.deepEqual(msgs, [
+        "Report: Total: 100",
+        "Report: Total: 101",
+        "Report: Total: 102",
+        "Report: Total: 103",
+        "Report: Total: 104"
+      ]);
+      // verify wrapMethod()
+      assert.equal(wrapMethod.callCount, 5); // start, report, invoice, summarize, getRate
+      //verify tracer for invoice()
+      let logState_invoice = tracerStore.add.filter(item => {
+        return ('requestId' in item && item.methodName === 'invoice');
+      });
+      assert.equal(logState_invoice.length, requestCount * 2);
+      //verify tracer for summarize()
+      let logState_summarize = tracerStore.add.filter(item => {
+        return ('requestId' in item && item.methodName === 'summarize');
+      });
+      assert.equal(logState_summarize.length, requestCount * 2);
+      //verify tracer for getRate()
+      let logState_getRate = tracerStore.add.filter(item => {
+        return ('requestId' in item && item.methodName === 'getRate');
+      });
+      assert.equal(logState_getRate.length, 0);
     });
   });
 

@@ -160,7 +160,7 @@ function wrapObject(refs, object, opts) {
           tracer: opts.tracer || object.tracer
         });
       }
-      return cached[methodPath].apply(undefined, argList);
+      return cached[methodPath].apply(thisArg, argList);
     }
   })
 }
