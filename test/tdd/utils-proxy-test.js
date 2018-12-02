@@ -169,5 +169,43 @@ describe('tdd:devebot:utils:proxy', function() {
       assert.isFunction(beanProxy.product.attrs.price.calc);
       assert.equal(beanProxy.product.attrs.price.calc(100), 108);
     });
+    it('should access hierarchical proxy-wrapped descendants correctly', function() {
+      var BeanConstructor = function() {
+        this.factor = 1.1;
+        this.calc = function(unit, amount) {
+          return this.factor * this.product.attrs.price.calc(unit, amount);
+        }
+        this.product = {
+          attrs: {
+            price: {
+              discount: 0.1,
+              tax: 0.2,
+              calc: function(unit, amount) {
+                amount = amount || 1;
+                return amount * unit * (1-this.discount) * (1+this.tax);
+              },
+              tags: ['tax', 'discount']
+            }
+          }
+        }
+      }
+      var requestTags = [];
+      var beanObject = new BeanConstructor();
+      var beanProxy = new BeanProxy(beanObject, {
+        get(target, property, receiver) {
+          let node = target[property];
+          if (lodash.isFunction(node) || lodash.isObject(node)) {
+            return this.nest(node);
+          }
+          return node;
+        },
+        apply(target, thisArg, argumentsList) {
+          requestTags.push(this.path);
+          return target.apply(thisArg, argumentsList);
+        }
+      });
+      assert.equal(lodash.round(beanProxy.calc(100, 1), 5), 118.8);
+      assert.deepEqual(requestTags, [["calc"],["product","attrs","price","calc"]]);
+    });
   });
 });
