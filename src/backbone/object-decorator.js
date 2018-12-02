@@ -103,22 +103,15 @@ function wrapObject(refs, object, opts) {
   let cached = {};
   return new BeanProxy(object, {
     get(target, property, receiver) {
-      let parent = object;
-      if (!lodash.isEmpty(this.path)) {
-        parent = lodash.get(object, this.path);
-      }
-      let node = parent[property];
-      if (lodash.isFunction(node)) {
-        return this.nest(node);
-      }
-      if (lodash.isObject(node) && !lodash.isArray(node)) {
-        return this.nest();
-      }
+      let node = target[property];
       false && L.has('dunce') && L.log('dunce', T.add({
         path: this.path, property, itemType: typeof(node)
       }).toMessage({
         text: '#{path} / #{property} -> #{itemType}'
       }));
+      if (lodash.isFunction(node) || lodash.isObject(node)) {
+        return this.nest(node);
+      }
       return node;
     },
     apply(target, thisArg, argList) {
