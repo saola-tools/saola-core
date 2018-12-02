@@ -516,10 +516,10 @@ function getTextureByPath({textureOfBean, fieldChain, methodName}) {
     if (methodName) {
       beanToMethod.push(methodName);
     }
-    texture = lodash.get(textureOfBean, beanToMethod);
-    texture = texture || textureOfBean[beanToMethod.join('.')];
+    texture = lodash.get(textureOfBean, ['methods'].concat(beanToMethod));
+    texture = texture || lodash.get(textureOfBean, ['methods', beanToMethod.join('.')]);
   }
-  return texture;
+  return propagateEnabled(texture, textureOfBean);
 }
 
 function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, dialectPath}) {

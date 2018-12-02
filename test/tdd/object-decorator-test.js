@@ -411,34 +411,36 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('should wrap all of public methods of a bean', function() {
       var textureOfBean = {
-        method1: {
-          methodType: 'general', // promise, callback, general
-          logging: {
-            enabled: true,
-            onRequest: {
+        methods: {
+          method1: {
+            methodType: 'general', // promise, callback, general
+            logging: {
               enabled: true,
-              extractReqId: function(args, context) {
-                return args && args[1] && args[1].reqId;
+              onRequest: {
+                enabled: true,
+                extractReqId: function(args, context) {
+                  return args && args[1] && args[1].reqId;
+                },
+                extractInfo: function(args, context) {
+                  return args[0];
+                },
+                template: "#{objectName}.#{methodName} - #{parameters} - Request[#{requestId}]"
               },
-              extractInfo: function(args, context) {
-                return args[0];
+              onSuccess: {
+                extractInfo: function(result) {
+                  return result;
+                },
+                template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
               },
-              template: "#{objectName}.#{methodName} - #{parameters} - Request[#{requestId}]"
-            },
-            onSuccess: {
-              extractInfo: function(result) {
-                return result;
-              },
-              template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
-            },
-            onFailure: {
-              extractInfo: function(error) {
-                return {
-                  error_code: error.code,
-                  error_message: error.message
-                }
-              },
-              template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+              onFailure: {
+                extractInfo: function(error) {
+                  return {
+                    error_code: error.code,
+                    error_message: error.message
+                  }
+                },
+                template: "#{objectName}.#{methodName} - #{output} - Request[#{requestId}]"
+              }
             }
           }
         }
@@ -493,9 +495,11 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
       }
       var textureOfBean = {
-        level1: { method1: lodash.cloneDeep(methodTexture) },
-        level2: { sub2: { method2: lodash.cloneDeep(methodTexture) } },
-        level3: { sub3: { bean3: { method3: lodash.cloneDeep(methodTexture) } } }
+        methods: {
+          level1: { method1: lodash.cloneDeep(methodTexture) },
+          level2: { sub2: { method2: lodash.cloneDeep(methodTexture) } },
+          level3: { sub3: { bean3: { method3: lodash.cloneDeep(methodTexture) } } }
+        }
       }
       var mockedBean = {
         level1: { method1: sinon.stub() },
@@ -544,13 +548,15 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('should support decorated context for nested method calls', function() {
       var textureOfBean = {
+        methods: {
         start: lodash.cloneDeep(DEFAULT_TEXTURE),
-        level1: { method1: lodash.cloneDeep(DEFAULT_TEXTURE) },
-        level2: { sub2: { method2: lodash.cloneDeep(DEFAULT_TEXTURE) } },
-        level3: { sub3: { bean3: {
-          invoice: lodash.cloneDeep(DEFAULT_TEXTURE),
-          summarize: lodash.cloneDeep(DEFAULT_TEXTURE)
-        } } }
+          level1: { method1: lodash.cloneDeep(DEFAULT_TEXTURE) },
+          level2: { sub2: { method2: lodash.cloneDeep(DEFAULT_TEXTURE) } },
+          level3: { sub3: { bean3: {
+            invoice: lodash.cloneDeep(DEFAULT_TEXTURE),
+            summarize: lodash.cloneDeep(DEFAULT_TEXTURE)
+          } } }
+        }
       }
       var mockedBean = {
         start: function(amount, opts) {
@@ -730,8 +736,10 @@ describe('tdd:devebot:core:object-decorator', function() {
           "simplePlugin": {
             services: {
               originalBean: {
-                level1: { method1: methodTexture },
-                level2: { sub2: { method2: methodTexture } }
+                methods: {
+                  level1: { method1: methodTexture },
+                  level2: { sub2: { method2: methodTexture } }
+                }
               }
             }
           }
@@ -2453,6 +2461,44 @@ describe('tdd:devebot:core:object-decorator', function() {
 
       assert.equal(method.callCount, 0);
       assert.equal(generate.callCount, 2);
+    });
+  });
+
+  describe('getTextureByPath()', function() {
+    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
+    var getTextureByPath = ObjectDecorator.__get__('getTextureByPath');
+    var textureOfBean = {
+      methods: {
+        bean: {
+          connect: DEFAULT_TEXTURE
+        },
+        getConfig: DEFAULT_TEXTURE
+      }
+    };
+
+    it('should return texture object for correct dialect descriptions', function() {
+      assert.isObject(getTextureByPath({
+        textureOfBean: lodash.assign({}, textureOfBean),
+        methodName: 'getConfig'
+      }));
+      assert.isObject(getTextureByPath({
+        textureOfBean: lodash.assign({}, textureOfBean),
+        fieldChain: ['bean'],
+        methodName: 'connect'
+      }));
+    });
+
+    it('should propagate enabled field if textureOfBean.enabled is false', function() {
+      assert.equal(getTextureByPath({
+        textureOfBean: lodash.assign({ enabled: false }, textureOfBean),
+        methodName: 'getConfig'
+      }).enabled, false);
+      assert.equal(getTextureByPath({
+        textureOfBean: lodash.assign({ enabled: false }, textureOfBean),
+        fieldChain: ['bean'],
+        methodName: 'connect'
+      }).enabled, false);
     });
   });
 
