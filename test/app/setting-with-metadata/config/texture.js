@@ -12,7 +12,7 @@ module.exports = {
                 enabled: true,
                 onRequest: {
                   enabled: true,
-                  extractReqId: function(args, context) {
+                  getRequestId: function(args, context) {
                     return args && args[0] && args[0].reqId;
                   },
                   extractInfo: function(args, context) {
@@ -62,7 +62,7 @@ module.exports = {
             getConfig: {
               logging: {
                 onRequest: {
-                  extractReqId: function(args, context) {
+                  getRequestId: function(args, context) {
                     return args && args[0] && args[0].reqId;
                   },
                   extractInfo: function(args, context) {

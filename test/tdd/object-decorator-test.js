@@ -77,7 +77,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         methodType: 'general',
         logging: {
           onRequest: {
-            extractReqId: function(args, context) {
+            getRequestId: function(args, context) {
               return args && args[1] && args[1].reqId;
             },
             extractInfo: function(args, context) {
@@ -127,7 +127,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           enabled: true,
           onRequest: {
             enabled: true,
-            extractReqId: function(args, context) {
+            getRequestId: function(args, context) {
               return args && args[1] && args[1].reqId;
             },
             extractInfo: function(args, context) {
@@ -176,7 +176,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           enabled: true,
           onRequest: {
             enabled: true,
-            extractReqId: function(args, context) {
+            getRequestId: function(args, context) {
               return args && args[1] && args[1].reqId;
             },
             extractInfo: function(args, context) {
@@ -418,7 +418,7 @@ describe('tdd:devebot:core:object-decorator', function() {
               enabled: true,
               onRequest: {
                 enabled: true,
-                extractReqId: function(args, context) {
+                getRequestId: function(args, context) {
                   return args && args[1] && args[1].reqId;
                 },
                 extractInfo: function(args, context) {
@@ -469,7 +469,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           enabled: true,
           onRequest: {
             enabled: true,
-            extractReqId: function(args, context) {
+            getRequestId: function(args, context) {
               return args && args[1] && args[1].reqId;
             },
             extractInfo: function(args, context) {
@@ -706,7 +706,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           enabled: true,
           onRequest: {
             enabled: true,
-            extractReqId: function(args, context) {
+            getRequestId: function(args, context) {
               return args && args[1] && args[1].reqId;
             },
             extractInfo: function(args, context) {
@@ -827,7 +827,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       var texture = {
         logging: {
           onRequest: {
-            extractReqId: function(args, context) {
+            getRequestId: function(args, context) {
               return args && args[1] && args[1].reqId;
             },
             extractInfo: function(args, context) {

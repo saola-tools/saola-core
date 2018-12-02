@@ -265,8 +265,8 @@ function LoggingInterceptor(params={}) {
     let onEvent = texture.logging['on' + eventName];
     if (!isEnabled(onEvent)) return null;
     return function (data, metadata) {
-      if (lodash.isFunction(onEvent.extractReqId) && eventName === 'Request') {
-        let reqId = onEvent.extractReqId(data, metadata);
+      if (lodash.isFunction(onEvent.getRequestId) && eventName === 'Request') {
+        let reqId = onEvent.getRequestId(data, metadata);
         if (reqId) {
           logState.requestId = reqId;
           logState.requestType = 'link';
@@ -573,7 +573,7 @@ function propagateEnabled(textureOfBean, textureStore) {
 const DEFAULT_TEXTURE = {
   logging: {
     onRequest: {
-      extractReqId: function(argumentsList) {
+      getRequestId: function(argumentsList) {
         let reqId = undefined;
         if (argumentsList && argumentsList.length > 0) {
           for(let k=(argumentsList.length-1); k>=0; k--) {
