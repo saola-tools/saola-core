@@ -13,27 +13,38 @@ function ObjectDecorator(params={}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
   const C = lodash.assign({L, T}, lodash.pick(params, ['issueInspector', 'schemaValidator']));
+  const textureStore = lodash.get(params, ['textureConfig']);
 
   this.wrapBridgeDialect = function(beanConstructor, opts) {
+    if (!chores.isUpgradeSupported('bean-decorator')) {
+      return beanConstructor;
+    }
     const textureOfBean = getTextureOfBridge({
       textureStore: textureStore,
       pluginCode: opts.pluginCode || nameResolver.getDefaultAliasOf(opts.pluginName, 'plugin'),
       bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, 'bridge'),
       dialectName: opts.dialectName
     });
+    let useDefaultTexture = null;
+    if (opts && 'useDefaultTexture' in opts) {
+      useDefaultTexture = opts.useDefaultTexture;
+    }
     return wrapConstructor(C, beanConstructor, lodash.assign({
-      textureOfBean, objectName: opts.dialectName
+      textureOfBean, useDefaultTexture, objectName: opts.dialectName
     }, lodash.pick(opts, ['logger', 'tracer'])));
   }
 
   this.wrapPluginGadget = function(beanConstructor, opts) {
+    if (!chores.isUpgradeSupported('bean-decorator')) {
+      return beanConstructor;
+    }
     const textureOfBean = getTextureOfPlugin({
       textureStore: textureStore,
       pluginCode: opts.pluginCode || nameResolver.getDefaultAliasOf(opts.pluginName, 'plugin'),
       gadgetType: opts.gadgetType,
       gadgetName: opts.gadgetName
     });
-    let useDefaultTexture = (['services'].indexOf(opts.gadgetType) >= 0);
+    let useDefaultTexture = (['reducers', 'services'].indexOf(opts.gadgetType) >= 0);
     if (opts && 'useDefaultTexture' in opts) {
       useDefaultTexture = opts.useDefaultTexture;
     }
@@ -41,8 +52,6 @@ function ObjectDecorator(params={}) {
       textureOfBean, useDefaultTexture, objectName: opts.gadgetName
     }, lodash.pick(opts, ['logger', 'tracer'])));
   }
-
-  let textureStore = lodash.get(params, ['textureConfig']);
 }
 
 ObjectDecorator.argumentSchema = {
@@ -535,7 +544,7 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) 
     } else {
       rootToBean.push('plugins', pluginCode);
     }
-    if (['services', 'triggers', 'internal'].indexOf(gadgetType) >= 0) {
+    if (['reducers', 'services', 'triggers'].indexOf(gadgetType) >= 0) {
       rootToBean.push(gadgetType);
       if (gadgetName) {
         rootToBean.push(gadgetName);
