@@ -2,6 +2,18 @@
 
 const toPath = require('lodash/toPath');
 
+// a list of paramer indexes that indicate that the a recieves a name at that parameter
+// this information will be used to update the path accordingly
+const nameIndexOf = {
+  get: 1,
+  set: 1,
+  has: 1,
+  defineProperty: 1,
+  deleteProperty: 1,
+  enumerate: 1,
+  getOwnPropertyDescriptor: 1,
+}
+
 // names of the traps that can be registered with ES6's Proxy object
 const trapNames = [
   'getPrototypeOf',
@@ -10,27 +22,8 @@ const trapNames = [
   'preventExtensions',
   'construct',
   'apply',
-  'ownKeys',
-  'get',
-  'set',
-  'has',
-  'enumerate',
-  'defineProperty',
-  'deleteProperty',
-  'getOwnPropertyDescriptor',
-]
-
-// a list of paramer indexes that indicate that the a recieves a key at that parameter
-// this information will be used to update the path accordingly
-const keys = {
-  get: 1,
-  set: 1,
-  has: 1,
-  enumerate: 1,
-  defineProperty: 1,
-  deleteProperty: 1,
-  getOwnPropertyDescriptor: 1,
-}
+  'ownKeys'
+].concat(Object.keys(nameIndexOf))
 
 function extractPath(options) {
   return options !== undefined && typeof options.path !== 'undefined' ? toPath(options.path) : [];
@@ -42,17 +35,17 @@ function BeanProxy(rootTarget, handler, options) {
     const context = { rootTarget, path };
     const realTraps = {};
     for (const trapName of trapNames) {
-      const keyIndex = keys[trapName], trap = handler[trapName];
-      if (typeof trap !== 'undefined') {
-        if (typeof keyIndex !== 'undefined') {
+      const nameIndex = nameIndexOf[trapName], trap = handler[trapName];
+      if (typeof trap === 'function') {
+        if (typeof nameIndex === 'number') {
           realTraps[trapName] = function () {
-            const key = arguments[keyIndex];
+            const name = arguments[nameIndex];
             // update context for this trap
             context.nest = function (nestedTarget) {
               if (nestedTarget === undefined) {
                 nestedTarget = rootTarget;
               }
-              return createProxy(nestedTarget, [].concat(path, key)); 
+              return createProxy(nestedTarget, [].concat(path, name));
             }
             return trap.apply(context, arguments);
           }
