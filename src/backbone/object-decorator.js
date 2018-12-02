@@ -85,6 +85,9 @@ ObjectDecorator.argumentSchema = {
 module.exports = ObjectDecorator;
 
 function wrapConstructor(refs, constructor, opts) {
+  if (opts && opts.textureOfBean && opts.textureOfBean.enabled === false) {
+    return constructor;
+  }
   return new Proxy(constructor, {
     construct: function(target, argumentsList, newTarget) {
       function F() {
@@ -533,7 +536,7 @@ function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, 
   if (rootToBean.length > 0) {
     textureOfBean = lodash.get(textureStore, rootToBean, null);
   }
-  return textureOfBean;
+  return propagateEnabled(textureOfBean, textureStore);
 }
 
 function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) {
@@ -554,6 +557,15 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) 
   let textureOfBean = textureStore;
   if (rootToBean.length > 0) {
     textureOfBean = lodash.get(textureStore, rootToBean, null);
+  }
+  return propagateEnabled(textureOfBean, textureStore);
+}
+
+function propagateEnabled(textureOfBean, textureStore) {
+  if (textureStore && textureStore.enabled === false) {
+    textureOfBean = lodash.defaults(textureOfBean, {
+      enabled: textureStore.enabled
+    })
   }
   return textureOfBean;
 }

@@ -7,7 +7,6 @@ var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:object-decorator');
 var assert = require('chai').assert;
-var LogAdapter = require('logolite').LogAdapter;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
@@ -222,6 +221,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
   describe('wrapConstructor()', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
     var wrapConstructor = ObjectDecorator.__get__('wrapConstructor');
     var wrapObject = sinon.stub().callsFake(function(refs, object, opts) {
       return object;
@@ -234,7 +234,23 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('should wrap a constructor that will be invoked as a constructor', function() {
       var refs = { L: {}, T: {} };
-      var opts = { textureStore: {} };
+      var ExampleConstructor = function () {}
+      ExampleConstructor.prototype.calculate = function() {}
+      ExampleConstructor.prototype.getConfig = function() {}
+      var opts = { textureOfBean: {
+        enabled: false,
+        methods: {
+          calculate: DEFAULT_TEXTURE,
+          getConfig: DEFAULT_TEXTURE
+        }
+      } };
+      var WrappedConstructor = wrapConstructor(refs, ExampleConstructor, opts);
+      assert.equal(WrappedConstructor, ExampleConstructor);
+    });
+
+    it('should wrap a constructor that will be invoked as a constructor', function() {
+      var refs = { L: {}, T: {} };
+      var opts = { textureOfBean: {} };
 
       var ExampleConstructor = function () {}
       ExampleConstructor.prototype.method1 = sinon.stub().callsFake(function(str) {
@@ -277,7 +293,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('should wrap a constructor that will be invoked as a function', function() {
       var refs = { L: {}, T: {} };
-      var opts = { textureStore: {} };
+      var opts = { textureOfBean: {} };
 
       var ExampleConstructor = function () {
         this.number = 100;
@@ -2437,6 +2453,142 @@ describe('tdd:devebot:core:object-decorator', function() {
 
       assert.equal(method.callCount, 0);
       assert.equal(generate.callCount, 2);
+    });
+  });
+
+  describe('getTextureOfBridge()', function() {
+    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
+    var getTextureOfBridge = ObjectDecorator.__get__('getTextureOfBridge');
+    var textureStore = {
+      bridges: {
+        sampleBridge: {
+          samplePlugin: {
+            instance: {
+              methods: {
+                connect: DEFAULT_TEXTURE,
+                getConfig: DEFAULT_TEXTURE
+              }
+            }
+          }
+        }
+      }
+    };
+
+    it('should return texture object for correct dialect descriptions', function() {
+      assert.isObject(getTextureOfBridge({
+        textureStore: lodash.assign({}, textureStore),
+        pluginCode: 'samplePlugin',
+        bridgeCode: 'sampleBridge',
+        dialectName: 'instance'
+      }));
+    });
+
+    it('should propagate enabled field if textureStore.enabled is false', function() {
+      assert.equal(getTextureOfBridge({
+        textureStore: lodash.assign({ enabled: false }, textureStore),
+        pluginCode: 'samplePlugin',
+        bridgeCode: 'sampleBridge',
+        dialectName: 'instance'
+      }).enabled, false);
+    });
+  });
+
+  describe('getTextureOfPlugin()', function() {
+    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
+    var getTextureOfPlugin = ObjectDecorator.__get__('getTextureOfPlugin');
+    var textureStore = {
+      application: {
+        reducers: {
+          etaReducer: {
+            methods: {
+              estimateDistance: DEFAULT_TEXTURE
+            }
+          }
+        },
+        services: {
+          pricingService: {
+            methods: {
+              calculate: DEFAULT_TEXTURE,
+              getConfig: DEFAULT_TEXTURE
+            }
+          }
+        }
+      },
+      plugins: {
+        samplePlugin: {
+          reducers: {
+            etaReducer: {
+              methods: {
+                estimateDistance: DEFAULT_TEXTURE
+              }
+            }
+          },
+          services: {
+            pricingService: {
+              methods: {
+                calculate: DEFAULT_TEXTURE,
+                getConfig: DEFAULT_TEXTURE
+              }
+            }
+          }
+        }
+      }
+    };
+
+    it('should return texture object for correct gadget descriptions', function() {
+      assert.isObject(getTextureOfPlugin({
+        textureStore: lodash.assign({}, textureStore),
+        pluginCode: 'application',
+        gadgetType: 'reducers',
+        gadgetName: 'etaReducer'
+      }));
+      assert.isObject(getTextureOfPlugin({
+        textureStore: lodash.assign({}, textureStore),
+        pluginCode: 'application',
+        gadgetType: 'services',
+        gadgetName: 'pricingService'
+      }));
+      assert.isObject(getTextureOfPlugin({
+        textureStore: lodash.assign({}, textureStore),
+        pluginCode: 'samplePlugin',
+        gadgetType: 'reducers',
+        gadgetName: 'etaReducer'
+      }));
+      assert.isObject(getTextureOfPlugin({
+        textureStore: lodash.assign({}, textureStore),
+        pluginCode: 'samplePlugin',
+        gadgetType: 'services',
+        gadgetName: 'pricingService'
+      }));
+    });
+
+    it('should propagate enabled field if textureStore.enabled is false', function() {
+      assert.equal(getTextureOfPlugin({
+        textureStore: lodash.assign({ enabled: false }, textureStore),
+        pluginCode: 'application',
+        gadgetType: 'reducers',
+        gadgetName: 'etaReducer'
+      }).enabled, false);
+      assert.equal(getTextureOfPlugin({
+        textureStore: lodash.assign({ enabled: false }, textureStore),
+        pluginCode: 'application',
+        gadgetType: 'services',
+        gadgetName: 'pricingService'
+      }).enabled, false);
+      assert.equal(getTextureOfPlugin({
+        textureStore: lodash.assign({ enabled: false }, textureStore),
+        pluginCode: 'samplePlugin',
+        gadgetType: 'reducers',
+        gadgetName: 'etaReducer'
+      }).enabled, false);
+      assert.equal(getTextureOfPlugin({
+        textureStore: lodash.assign({ enabled: false }, textureStore),
+        pluginCode: 'samplePlugin',
+        gadgetType: 'services',
+        gadgetName: 'pricingService'
+      }).enabled, false);
     });
   });
 
