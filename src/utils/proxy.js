@@ -36,30 +36,18 @@ function BeanProxy(rootTarget, handler, options) {
     const realTraps = {};
     for (const trapName of trapNames) {
       const nameIndex = nameIndexOf[trapName], trap = handler[trapName];
-      if (typeof trap === 'function') {
-        if (typeof nameIndex === 'number') {
-          realTraps[trapName] = function () {
-            const name = arguments[nameIndex];
-            // update context for this trap
-            context.nest = function (nestedTarget) {
-              if (nestedTarget === undefined) {
-                nestedTarget = rootTarget;
-              }
-              return createProxy(nestedTarget, [].concat(path, name));
+      if (isFunction(trap)) {
+        realTraps[trapName] = function () {
+          const name = isNumber(nameIndex) ? arguments[nameIndex] : null;
+          // update context for this trap
+          context.nest = function (nestedTarget) {
+            if (nestedTarget === undefined) {
+              nestedTarget = isString(name) ? rootTarget : {};
             }
-            return trap.apply(context, arguments);
+            const nestedPath = isString(name) ? [].concat(path, name) : path;
+            return createProxy(nestedTarget, nestedPath);
           }
-        } else {
-          realTraps[trapName] = function () {
-            // update context for this trap
-            context.nest = function (nestedTarget) {
-              if (nestedTarget === undefined) {
-                nestedTarget = {};
-              }
-              return createProxy(nestedTarget, path);
-            }
-            return trap.apply(context, arguments);
-          }
+          return trap.apply(context, arguments);
         }
       }
     }
@@ -69,3 +57,15 @@ function BeanProxy(rootTarget, handler, options) {
 }
 
 module.exports = BeanProxy;
+
+function isFunction(f) {
+  return (typeof f === 'function');
+}
+
+function isNumber(n) {
+  return (typeof n === 'number');
+}
+
+function isString(s) {
+  return (typeof s === 'string');
+}
