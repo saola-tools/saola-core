@@ -561,13 +561,13 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) 
   return propagateEnabled(textureOfBean, textureStore);
 }
 
-function propagateEnabled(textureOfBean, textureStore) {
-  if (textureStore && textureStore.enabled === false) {
-    textureOfBean = lodash.defaults(textureOfBean, {
-      enabled: textureStore.enabled
+function propagateEnabled(childTexture, parentTexture) {
+  if (parentTexture && parentTexture.enabled === false) {
+    childTexture = lodash.defaults(childTexture, {
+      enabled: parentTexture.enabled
     })
   }
-  return textureOfBean;
+  return childTexture;
 }
 
 const DEFAULT_TEXTURE = {
