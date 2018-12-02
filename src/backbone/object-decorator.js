@@ -108,17 +108,17 @@ function wrapObject(refs, object, opts) {
         parent = lodash.get(object, this.path);
       }
       let node = parent[property];
-      // L.has('dunce') && L.log('dunce', T.add({
-      //   path: this.path, property, itemType: typeof(node)
-      // }).toMessage({
-      //   text: '#{path} / #{property} -> #{itemType}'
-      // }));
       if (lodash.isFunction(node)) {
         return this.nest(node);
       }
       if (lodash.isObject(node) && !lodash.isArray(node)) {
         return this.nest();
       }
+      false && L.has('dunce') && L.log('dunce', T.add({
+        path: this.path, property, itemType: typeof(node)
+      }).toMessage({
+        text: '#{path} / #{property} -> #{itemType}'
+      }));
       return node;
     },
     apply(target, thisArg, argList) {
