@@ -433,5 +433,12 @@ module.exports = {
       }
     }
   },
-  UPGRADE_ENABLED: [ 'presets', 'bridge-full-ref', 'standardizing-config', 'gadget-around-log', 'bean-decorator' ]
+  UPGRADE_ENABLED: [
+    'presets',
+    'bridge-full-ref',
+    'standardizing-config',
+    'gadget-around-log',
+    'simplify-name-resolver',
+    'bean-decorator'
+  ]
 };
