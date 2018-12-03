@@ -57,31 +57,11 @@ describe('tdd:devebot:core:object-decorator', function() {
   describe('wrapMethod()', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
     var wrapMethod = ObjectDecorator.__get__('wrapMethod');
-
-    var logger = {
-      has: sinon.stub().returns(true),
-      log: sinon.stub()
-    }
-    var tracerStore = { add: [], toMessage: [] }
-    var tracer = {
-      add: sinon.stub().callsFake(function(params) {
-        tracerStore.add.push(lodash.cloneDeep(params));
-        LogTracer.ROOT.add(params);
-        return tracer;
-      }),
-      toMessage: sinon.stub().callsFake(function(params) {
-        return LogTracer.ROOT.toMessage(params);
-      })
-    }
-    var CTX = { L: logger, T: tracer }
+    var loggingFactory = new LoggingFactoryMock();
+    var CTX = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
 
     beforeEach(function() {
-      logger.has.resetHistory();
-      logger.log.resetHistory();
-      tracer.add.resetHistory();
-      tracer.toMessage.resetHistory();
-      tracerStore.add.splice(0);
-      tracerStore.toMessage.splice(0);
+      loggingFactory.resetHistory();
     })
 
     it('should wrap a method without texture correctly', function() {
@@ -386,31 +366,11 @@ describe('tdd:devebot:core:object-decorator', function() {
     var wrapObject = ObjectDecorator.__get__('wrapObject');
     var wrapMethod = sinon.spy(ObjectDecorator.__get__('wrapMethod'));
     ObjectDecorator.__set__('wrapMethod', wrapMethod);
-
-    var logger = {
-      has: sinon.stub().returns(true),
-      log: sinon.stub()
-    }
-    var tracerStore = { add: [], toMessage: [] }
-    var tracer = {
-      add: sinon.stub().callsFake(function(params) {
-        tracerStore.add.push(lodash.cloneDeep(params));
-        LogTracer.ROOT.add(params);
-        return tracer;
-      }),
-      toMessage: sinon.stub().callsFake(function(params) {
-        return LogTracer.ROOT.toMessage(params);
-      })
-    }
-    var CTX = { L: logger, T: tracer }
+    var loggingFactory = new LoggingFactoryMock();
+    var CTX = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
 
     beforeEach(function() {
-      logger.has.resetHistory();
-      logger.log.resetHistory();
-      tracer.add.resetHistory();
-      tracer.toMessage.resetHistory();
-      tracerStore.add.splice(0);
-      tracerStore.toMessage.splice(0);
+      loggingFactory.resetHistory();
       wrapMethod.resetHistory();
     })
 
@@ -566,11 +526,11 @@ describe('tdd:devebot:core:object-decorator', function() {
       // verify wrapMethod()
       assert.equal(wrapMethod.callCount, 3); // calls method1 & method2
       //verify tracer
-      let logState_method1 = tracerStore.add.filter(item => {
+      let logState_method1 = loggingFactory.getTracerStore().add.filter(item => {
         return ('requestId' in item && item.methodName === 'method1');
       });
       assert.equal(logState_method1.length, 3 * 2);
-      let logState_method2 = tracerStore.add.filter(item => {
+      let logState_method2 = loggingFactory.getTracerStore().add.filter(item => {
         return ('requestId' in item && item.methodName === 'method2');
       });
       assert.equal(logState_method2.length, 5 * 2);
@@ -632,17 +592,17 @@ describe('tdd:devebot:core:object-decorator', function() {
       // verify wrapMethod()
       assert.equal(wrapMethod.callCount, 5); // start, report, invoice, summarize, getRate
       //verify tracer for invoice()
-      let logState_invoice = tracerStore.add.filter(item => {
+      let logState_invoice = loggingFactory.getTracerStore().add.filter(item => {
         return ('requestId' in item && item.methodName === 'invoice');
       });
       assert.equal(logState_invoice.length, requestCount * 2);
       //verify tracer for summarize()
-      let logState_summarize = tracerStore.add.filter(item => {
+      let logState_summarize = loggingFactory.getTracerStore().add.filter(item => {
         return ('requestId' in item && item.methodName === 'summarize');
       });
       assert.equal(logState_summarize.length, requestCount * 2);
       //verify tracer for getRate()
-      let logState_getRate = tracerStore.add.filter(item => {
+      let logState_getRate = loggingFactory.getTracerStore().add.filter(item => {
         return ('requestId' in item && item.methodName === 'getRate');
       });
       assert.equal(logState_getRate.length, 0);
@@ -1039,20 +999,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         })
       }
 
-      var logger = {
-        has: sinon.stub().returns(true),
-        log: sinon.stub()
-      }
-
-      var tracer = {
-        add: sinon.stub().callsFake(function(params) {
-          LogTracer.ROOT.add(params);
-          return tracer;
-        }),
-        toMessage: sinon.stub().callsFake(function(params) {
-          return LogTracer.ROOT.toMessage(params);
-        })
-      };
+      var loggingFactory = new LoggingFactoryMock();
 
       var loggingProxy = new LoggingInterceptor({
         object: object,
@@ -1060,8 +1007,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         method: object.sampleMethod,
         methodName: 'sampleMethod',
         texture: texture,
-        logger: logger,
-        tracer: tracer,
+        logger: loggingFactory.getLogger(),
+        tracer: loggingFactory.getTracer(),
         preciseThreshold: params.preciseThreshold
       });
 
@@ -1081,7 +1028,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             flowState.result.error = error;
             return Promise.resolve();
           }).then(function() {
-            flowState.tracer = _captureTracerState(tracer);
+            flowState.tracer = _captureTracerState(loggingFactory.getTracer());
             return flowState;
           });
         }
@@ -1094,7 +1041,7 @@ describe('tdd:devebot:core:object-decorator', function() {
               } else {
                 flowState.result.value = value;
               }
-              flowState.tracer = _captureTracerState(tracer);
+              flowState.tracer = _captureTracerState(loggingFactory.getTracer());
               onResolved(flowState);
             });
             var output = loggingProxy.capsule.apply(null, parameters);
@@ -1108,7 +1055,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           } catch (error) {
             flowState.result.error = error;
           }
-          flowState.tracer = _captureTracerState(tracer);
+          flowState.tracer = _captureTracerState(loggingFactory.getTracer());
           return flowState;
         }
       })
@@ -2346,6 +2293,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('function at the end of arguments list must not be changed when auto-detecting methodType', function() {
+      var loggingFactory = new LoggingFactoryMock();
       var func = function() {}
       func.Router = function(req, res, next) {}
       
@@ -2355,29 +2303,14 @@ describe('tdd:devebot:core:object-decorator', function() {
         })
       }
 
-      var logger = {
-        has: sinon.stub().returns(true),
-        log: sinon.stub()
-      }
-
-      var tracer = {
-        add: sinon.stub().callsFake(function(params) {
-          LogTracer.ROOT.add(params);
-          return tracer;
-        }),
-        toMessage: sinon.stub().callsFake(function(params) {
-          return LogTracer.ROOT.toMessage(params);
-        })
-      };
-
       var loggingProxy = new LoggingInterceptor({
         object: object,
         objectName: 'object',
         method: object.sampleMethod,
         methodName: 'sampleMethod',
         texture: lodash.merge({}, DEFAULT_TEXTURE),
-        logger: logger,
-        tracer: tracer
+        logger: loggingFactory.getLogger(),
+        tracer: loggingFactory.getTracer()
       });
 
       var output = loggingProxy.capsule.apply(null, [
@@ -2390,7 +2323,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.isFunction(lastArg.Router);
       assert.equal(lastArg.Router, func.Router);
 
-      var tracerState = _captureTracerState(tracer);
+      var tracerState = _captureTracerState(loggingFactory.getTracer());
       assert.equal(tracerState.add.callCount, 2);
       assert.deepEqual(tracerState.add.callArgs, lodash.fill(Array(2), [
         {
