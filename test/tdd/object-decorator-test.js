@@ -2328,7 +2328,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       var loggingFactory = new LoggingFactoryMock();
       var func = function() {}
       func.Router = function(req, res, next) {}
-      
+
       var object = {
         sampleMethod: sinon.stub().callsFake(function() {
           return chores.argumentsToArray(arguments);
@@ -2345,9 +2345,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         tracer: loggingFactory.getTracer()
       });
 
-      var output = loggingProxy.capsule.apply(null, [
-        "Hello world", { requestId: "53b2ce29-8c37-41ce-a9d2-94f03511d4e2" }, func
-      ]);
+      var output = loggingProxy.capsule("Hello world", {requestId: "94f03511d4e2" }, func);
       var lastArg = output[output.length - 1];
 
       assert.isFunction(lastArg);
@@ -2362,7 +2360,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           "objectName": "object",
           "methodName": "sampleMethod",
           "reqContext": {},
-          "requestId": "53b2ce29-8c37-41ce-a9d2-94f03511d4e2",
+          "requestId": "94f03511d4e2",
           "requestType": "link",
           "actionFlow": "implicit"
         }
@@ -2382,6 +2380,82 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         ]
       ]);
+    });
+
+    it('getRequestId/extractInfo runs on its own context (reqContext)', function() {
+      var loggingFactory = new LoggingFactoryMock();
+
+      var timeoutMap = {
+        "Req#0": 150,
+        "Req#1": 5,
+        "Req#2": 100
+      }
+      var object = {
+        sampleMethod: sinon.stub().callsFake(function() {
+          var requestId = arguments[1].requestId;
+          var callback = arguments[2];
+          var timeout = timeoutMap[requestId] || 0;
+          setTimeout(callback, timeout);
+        })
+      }
+
+      var loggingProxy = new LoggingInterceptor({
+        object: object,
+        objectName: 'object',
+        method: object.sampleMethod,
+        methodName: 'sampleMethod',
+        texture: lodash.merge({}, DEFAULT_TEXTURE, {
+          logging: {
+            onRequest: {
+              getRequestId: function(argumentsList) {
+                let reqId = argumentsList[1].requestId;
+                this.requestId = reqId;
+                this.messageOf = argumentsList[0].replace('Msg', 'Req');
+                return reqId;
+              },
+              extractInfo: function(argumentsList) {
+                return chores.extractObjectInfo(chores.argumentsToArray(argumentsList));
+              }
+            },
+            onSuccess: {
+              extractInfo: function(value) {
+                return { requestId: this.requestId, messageOf: this.messageOf };
+              }
+            },
+            onFailure: {
+              extractInfo: function(error) {
+                return { errorName: error.name, errorMessage: error.message }
+              }
+            }
+          }
+        }),
+        logger: loggingFactory.getLogger(),
+        tracer: loggingFactory.getTracer()
+      });
+
+      var p = Promise.map(lodash.range(3), function(i) {
+        return new Promise(function(onResolved, onRejected) {
+          loggingProxy.capsule("Msg#" + i, { requestId: "Req#" + i }, function(error, value) {
+            onResolved({error, value});
+          })
+        })
+      });
+
+      p = p.then(function(results) {
+        var tracerStore = loggingFactory.getTracerStore();
+        false && console.log('toMessage: %s', JSON.stringify(tracerStore.toMessage, null, 2));
+        var toMessageState = lodash.filter(tracerStore.toMessage, function(logMsg) {
+          return logMsg && logMsg.info && logMsg.info.requestId;
+        });
+        var toMessageInfos = lodash.map(toMessageState, function(logMsg) {
+          return logMsg.info.requestId === logMsg.info.messageOf;
+        })
+        assert.lengthOf(toMessageInfos, 6);
+        assert.lengthOf(lodash.uniq(toMessageInfos), 1);
+        return results;
+      })
+
+      return p;
     });
   });
 
