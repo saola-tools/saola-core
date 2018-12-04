@@ -327,7 +327,7 @@ function LoggingInterceptor(params={}) {
   this.__state__ = __state__;
 }
 
-function callMethod(refs, parameters, logOnEvent, logState) {
+function callMethod(refs, argumentsList, logOnEvent, logState) {
   const { object, method, methodType, counter, pointer } = refs;
 
   function _detect(argumentsList) {
@@ -406,15 +406,15 @@ function callMethod(refs, parameters, logOnEvent, logState) {
     return {result, exception};
   }
 
-  parameters = chores.argumentsToArray(parameters);
+  argumentsList = chores.argumentsToArray(argumentsList);
 
   let output = null;
   if (methodType) {
     pointer.actionFlow = 'explicit';
-    output = _invoke(parameters);
+    output = _invoke(argumentsList);
   } else {
     pointer.actionFlow = 'implicit';
-    output = _detect(parameters);
+    output = _detect(argumentsList);
     refs.methodType = suggestMethodType(pointer, counter, methodType);
   }
   // an error is occurred
@@ -464,13 +464,13 @@ function isPromise(p) {
   return lodash.isObject(p) && lodash.isFunction(p.then);
 }
 
-function extractCallback(parameters) {
+function extractCallback(argumentsList) {
   let r = {};
-  r.callback = parameters.length > 0 && parameters[parameters.length - 1] || null;
+  r.callback = argumentsList.length > 0 && argumentsList[argumentsList.length - 1] || null;
   if (typeof r.callback === 'function') {
-    r.parameters = Array.prototype.slice.call(parameters, 0, parameters.length - 1);
+    r.parameters = Array.prototype.slice.call(argumentsList, 0, argumentsList.length - 1);
   } else {
-    r.parameters = parameters;
+    r.parameters = argumentsList;
     delete r.callback;
   }
   return r;
