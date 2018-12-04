@@ -265,7 +265,7 @@ function LoggingInterceptor(params={}) {
     if (!isEnabled(onEvent)) return null;
     return function (logState, data, extra) {
       if (lodash.isFunction(onEvent.getRequestId) && eventName === 'Request') {
-        let reqId = onEvent.getRequestId(data, extra);
+        let reqId = onEvent.getRequestId.call(logState.reqContext, data, extra);
         if (reqId) {
           logState.requestId = reqId;
           logState.requestType = 'link';
@@ -292,7 +292,7 @@ function LoggingInterceptor(params={}) {
           break;
       }
       if (lodash.isFunction(onEvent.extractInfo)) {
-        msgObj.info = onEvent.extractInfo(data, extra);
+        msgObj.info = onEvent.extractInfo.call(logState.reqContext, data, extra);
       }
       if (lodash.isString(onEvent.template)) {
         msgObj.text = onEvent.template;
@@ -317,7 +317,7 @@ function LoggingInterceptor(params={}) {
     get: function() {
       return capsule = capsule || new Proxy(method, {
         apply: function(target, thisArg, argumentsList) {
-          const logState = { objectName, methodName }
+          const logState = { objectName, methodName, reqContext: {} }
           return callMethod(__state__, argumentsList, logOnEvent, logState);
         }
       });
@@ -342,10 +342,10 @@ function callMethod(refs, parameters, logOnEvent, logState) {
         found = true;
         hitMethodType(pointer, counter, 'promise');
         result = Promise.resolve(result).then(function(value) {
-          logOnEvent.Success(logState, value, pair.parameters);
+          logOnEvent.Success(logState, value);
           return value;
         }).catch(function(error) {
-          logOnEvent.Failure(logState, error, pair.parameters);
+          logOnEvent.Failure(logState, error);
           return Promise.reject(error);
         });
       } else {
@@ -371,11 +371,11 @@ function callMethod(refs, parameters, logOnEvent, logState) {
           return method.apply(object, argumentsList)
         })
         .then(function(value) {
-          logOnEvent.Success(logState, value, argumentsList);
+          logOnEvent.Success(logState, value);
           return value;
         })
         .catch(function(error) {
-          logOnEvent.Failure(logState, error, argumentsList);
+          logOnEvent.Failure(logState, error);
           return Promise.reject(error);
         })
         break;

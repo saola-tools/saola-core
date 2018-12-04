@@ -1102,6 +1102,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "promiseMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit"
@@ -1166,6 +1167,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "promiseMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit"
@@ -1231,6 +1233,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "callbackMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit"
@@ -1302,6 +1305,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "callbackMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit"
@@ -1374,6 +1378,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "generalMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit"
@@ -1438,6 +1443,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "generalMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit"
@@ -1503,6 +1509,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "promiseMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit"
@@ -1567,6 +1574,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "promiseMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit"
@@ -1632,6 +1640,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "callbackMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit"
@@ -1697,6 +1706,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "callbackMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit"
@@ -1763,6 +1773,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "generalMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit"
@@ -1827,6 +1838,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           {
             "objectName": "generalMode",
             "methodName": "sampleMethod",
+            "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit"
@@ -1915,6 +1927,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             {
               "objectName": "promiseMode",
               "methodName": "sampleMethod",
+              "reqContext": {},
               "requestId": step.scenario.requestId,
               "requestType": "link",
               "actionFlow": actionFlow
@@ -2028,6 +2041,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             {
               "objectName": "callbackMode",
               "methodName": "sampleMethod",
+              "reqContext": {},
               "requestId": step.scenario.requestId,
               "requestType": "link",
               "actionFlow": actionFlow
@@ -2117,6 +2131,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             {
               "objectName": "generalMode",
               "methodName": "sampleMethod",
+              "reqContext": {},
               "requestId": step.scenario.requestId,
               "requestType": "link",
               "actionFlow": actionFlow
@@ -2249,6 +2264,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             {
               "objectName": "undefinedMode",
               "methodName": "sampleMethod",
+              "reqContext": {},
               "requestId": step.scenario.requestId,
               "requestType": "link",
               "actionFlow": "implicit"
@@ -2345,6 +2361,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         {
           "objectName": "object",
           "methodName": "sampleMethod",
+          "reqContext": {},
           "requestId": "53b2ce29-8c37-41ce-a9d2-94f03511d4e2",
           "requestType": "link",
           "actionFlow": "implicit"
