@@ -277,11 +277,21 @@ function LoggingInterceptor(params={}) {
 
   function createListener(texture, eventName) {
     if (!isLoggingEnabled(texture)) return null;
-    let onEvent = texture.logging['on' + eventName];
+    const onEventName = 'on' + eventName;
+    const onEvent = texture.logging[onEventName];
     if (!isEnabled(onEvent)) return null;
     return function (logState, data, extra) {
       if (lodash.isFunction(onEvent.getRequestId) && eventName === 'Request') {
-        let reqId = onEvent.getRequestId.call(logState.reqContext, data, extra);
+        let reqId = null;
+        if (onEvent.getRequestId === DEFAULT_TEXTURE.logging[onEventName].getRequestId) {
+          reqId = onEvent.getRequestId(data);
+        } else {
+          try {
+            reqId = onEvent.getRequestId.call(logState.reqContext, data, extra);
+          } catch (fatal) {
+            reqId = 'getRequestId-throw-an-error';
+          }
+        }
         if (reqId) {
           logState.requestId = reqId;
           logState.requestType = 'link';
@@ -308,7 +318,19 @@ function LoggingInterceptor(params={}) {
           break;
       }
       if (lodash.isFunction(onEvent.extractInfo)) {
-        msgObj.info = onEvent.extractInfo.call(logState.reqContext, data, extra);
+        if (onEvent.extractInfo === DEFAULT_TEXTURE.logging[onEventName].extractInfo) {
+          msgObj.info = onEvent.extractInfo(data);
+        } else {
+          try {
+            msgObj.info = onEvent.extractInfo.call(logState.reqContext, data, extra);
+          } catch (fatal) {
+            msgObj.info = {
+              event: onEventName,
+              errorName: fatal.name,
+              errorMessage: fatal.message
+            }
+          }
+        }
       }
       if (lodash.isString(onEvent.template)) {
         msgObj.text = onEvent.template;
