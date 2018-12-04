@@ -254,7 +254,6 @@ function LoggingInterceptor(params={}) {
   const { texture, object, objectName, method, methodName } = params;
   let counter = { promise: 0, callback: 0, general: 0 }
   let pointer = { current: null, actionFlow: null, preciseThreshold }
-  const logState = { objectName, methodName, requestId: null }
 
   // pre-processing logging texture
   let methodType = texture.methodType;
@@ -264,9 +263,9 @@ function LoggingInterceptor(params={}) {
     if (!isLoggingEnabled(texture)) return null;
     let onEvent = texture.logging['on' + eventName];
     if (!isEnabled(onEvent)) return null;
-    return function (data, metadata) {
+    return function (logState, data, extra) {
       if (lodash.isFunction(onEvent.getRequestId) && eventName === 'Request') {
-        let reqId = onEvent.getRequestId(data, metadata);
+        let reqId = onEvent.getRequestId(data, extra);
         if (reqId) {
           logState.requestId = reqId;
           logState.requestType = 'link';
@@ -293,7 +292,7 @@ function LoggingInterceptor(params={}) {
           break;
       }
       if (lodash.isFunction(onEvent.extractInfo)) {
-        msgObj.info = onEvent.extractInfo(data, metadata);
+        msgObj.info = onEvent.extractInfo(data, extra);
       }
       if (lodash.isString(onEvent.template)) {
         msgObj.text = onEvent.template;
@@ -311,48 +310,50 @@ function LoggingInterceptor(params={}) {
     return createListener(texture, value);
   });
 
-  const __state__ = { object, method, methodType, counter, pointer, logOnEvent }
-  this.__state__ = __state__;
+  const __state__ = { object, method, methodType, counter, pointer }
 
   let capsule;
   Object.defineProperty(this, 'capsule', {
     get: function() {
       return capsule = capsule || new Proxy(method, {
         apply: function(target, thisArg, argumentsList) {
-          return callMethod(__state__, argumentsList);
+          const logState = { objectName, methodName }
+          return callMethod(__state__, argumentsList, logOnEvent, logState);
         }
       });
     }
   })
+
+  this.__state__ = __state__;
 }
 
-function callMethod(refs, parameters) {
-  const { object, method, methodType, counter, pointer, logOnEvent } = refs;
+function callMethod(refs, parameters, logOnEvent, logState) {
+  const { object, method, methodType, counter, pointer } = refs;
 
   function _detect(argumentsList) {
     let result = null, exception = null, found = false;
-    let pair = proxifyCallback(argumentsList, logOnEvent, function() {
+    let pair = proxifyCallback(argumentsList, logOnEvent, logState, function() {
       hitMethodType(pointer, counter, 'callback');
     });
     try {
-      logOnEvent.Request(pair.parameters);
+      logOnEvent.Request(logState, pair.parameters);
       result = method.apply(object, pair.parameters);
       if (isPromise(result)) {
         found = true;
         hitMethodType(pointer, counter, 'promise');
         result = Promise.resolve(result).then(function(value) {
-          logOnEvent.Success(value, pair.parameters);
+          logOnEvent.Success(logState, value, pair.parameters);
           return value;
         }).catch(function(error) {
-          logOnEvent.Failure(error, pair.parameters);
+          logOnEvent.Failure(logState, error, pair.parameters);
           return Promise.reject(error);
         });
       } else {
-        logOnEvent.Success(result);
+        logOnEvent.Success(logState, result);
       }
     } catch (error) {
       exception = error;
-      logOnEvent.Failure(exception);
+      logOnEvent.Failure(logState, exception);
     }
     if (!found) {
       hitMethodType(pointer, counter, 'general');
@@ -366,38 +367,38 @@ function callMethod(refs, parameters) {
     switch(methodType) {
       case 'promise': {
         result = Promise.resolve().then(function() {
-          logOnEvent.Request(argumentsList);
+          logOnEvent.Request(logState, argumentsList);
           return method.apply(object, argumentsList)
         })
         .then(function(value) {
-          logOnEvent.Success(value, argumentsList);
+          logOnEvent.Success(logState, value, argumentsList);
           return value;
         })
         .catch(function(error) {
-          logOnEvent.Failure(error, argumentsList);
+          logOnEvent.Failure(logState, error, argumentsList);
           return Promise.reject(error);
         })
         break;
       }
       case 'callback': {
         try {
-          let pair = proxifyCallback(argumentsList, logOnEvent);
-          logOnEvent.Request(pair.parameters);
+          let pair = proxifyCallback(argumentsList, logOnEvent, logState);
+          logOnEvent.Request(logState, pair.parameters);
           result = method.apply(object, pair.parameters);
         } catch (error) {
           exception = error;
-          logOnEvent.Failure(exception);
+          logOnEvent.Failure(logState, exception);
         }
         break;
       }
       default: {
         try {
-          logOnEvent.Request(argumentsList);
+          logOnEvent.Request(logState, argumentsList);
           result = method.apply(object, argumentsList);
-          logOnEvent.Success(result);
+          logOnEvent.Success(logState, result);
         } catch (error) {
           exception = error;
-          logOnEvent.Failure(exception);
+          logOnEvent.Failure(logState, exception);
         }
         break;
       }
@@ -475,7 +476,7 @@ function extractCallback(parameters) {
   return r;
 }
 
-function proxifyCallback(argumentsList, logOnEvent, checker) {
+function proxifyCallback(argumentsList, logOnEvent, logState, checker) {
   let pair = extractCallback(argumentsList);
   if (pair.callback) {
     pair.parameters.push(new Proxy(pair.callback, {
@@ -483,9 +484,9 @@ function proxifyCallback(argumentsList, logOnEvent, checker) {
         (typeof checker === 'function') && checker();
         let error = callbackArgs[0];
         if (error) {
-          logOnEvent.Failure(error);
+          logOnEvent.Failure(logState, error);
         } else {
-          logOnEvent.Success.apply(logOnEvent, Array.prototype.slice.call(callbackArgs, 1));
+          logOnEvent.Success(logState, ...Array.prototype.slice.call(callbackArgs, 1));
         }
         return pair.callback.apply(thisArg, callbackArgs);
       }

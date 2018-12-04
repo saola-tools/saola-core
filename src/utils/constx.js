@@ -438,7 +438,7 @@ module.exports = {
     'bridge-full-ref',
     'standardizing-config',
     'gadget-around-log',
-    'simplify-name-resolver',
+    //'simplify-name-resolver',
     'bean-decorator'
   ]
 };

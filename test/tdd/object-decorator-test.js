@@ -41,6 +41,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         return tracer;
       }),
       toMessage: sinon.stub().callsFake(function(params) {
+        tracerStore.toMessage.push(lodash.cloneDeep(params));
         return LogTracer.ROOT.toMessage(params);
       })
     }
@@ -49,7 +50,8 @@ describe('tdd:devebot:core:object-decorator', function() {
   before(function() {
     envmask.setup({
       LOGOLITE_ALWAYS_ENABLED: 'all',
-      // LOGOLITE_ALWAYS_MUTED: 'all'
+      // LOGOLITE_ALWAYS_MUTED: 'all',
+      NODE_ENV: 'test'
     });
     LogConfig.reset();
   });
@@ -1041,11 +1043,13 @@ describe('tdd:devebot:core:object-decorator', function() {
               } else {
                 flowState.result.value = value;
               }
-              flowState.tracer = _captureTracerState(loggingFactory.getTracer());
               onResolved(flowState);
             });
             var output = loggingProxy.capsule.apply(null, parameters);
             assert.isUndefined(output);
+          }).then(function(flowState) {
+            flowState.tracer = _captureTracerState(loggingFactory.getTracer());
+            return flowState;
           });
         }
         if (methodType === 'general') {
@@ -1222,8 +1226,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         assert.deepEqual(step.result.value, step.scenario.output.value);
 
         // verify tracer
-        assert.equal(step.tracer.add.callCount, 2);
-        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+        assert.equal(step.tracer.add.callCount, 3);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(step.tracer.add.callCount), [
           {
             "objectName": "callbackMode",
             "methodName": "sampleMethod",
@@ -1232,7 +1236,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "actionFlow": "implicit"
           }
         ]));
-        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.equal(step.tracer.toMessage.callCount, 3);
         assert.deepEqual(step.tracer.toMessage.callArgs, [
           [
             {
@@ -1245,6 +1249,12 @@ describe('tdd:devebot:core:object-decorator', function() {
               "info": {
                 "msg": "This is a normal result"
               }
+            }
+          ],
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+              "info": undefined
             }
           ]
         ]);
@@ -1287,8 +1297,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         assert.deepEqual(step.result.error, step.scenario.output.error);
 
         // verify tracer
-        assert.equal(step.tracer.add.callCount, 2);
-        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(2), [
+        assert.equal(step.tracer.add.callCount, 3);
+        assert.deepEqual(step.tracer.add.callArgs, lodash.fill(Array(step.tracer.add.callCount), [
           {
             "objectName": "callbackMode",
             "methodName": "sampleMethod",
@@ -1297,7 +1307,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "actionFlow": "implicit"
           }
         ]));
-        assert.equal(step.tracer.toMessage.callCount, 2);
+        assert.equal(step.tracer.toMessage.callCount, 3);
         assert.deepEqual(step.tracer.toMessage.callArgs, [
           [
             {
@@ -1311,6 +1321,12 @@ describe('tdd:devebot:core:object-decorator', function() {
                 "error_code": undefined,
                 "error_message": "The action has been failed"
               }
+            }
+          ],
+          [
+            {
+              "text": "#{objectName}.#{methodName} - Request[#{requestId}] has finished",
+              "info": undefined
             }
           ]
         ]);
