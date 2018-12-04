@@ -638,6 +638,7 @@ const DEFAULT_TEXTURE = {
     },
     onFailure: {
       extractInfo: function(error) {
+        error = error || { code: 'null' };
         return {
           errorName: error.name,
           errorCode: error.code,

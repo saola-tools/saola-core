@@ -2458,6 +2458,186 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
   });
 
+  describe('LoggingInterceptor', function() {
+    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var LoggingInterceptor = ObjectDecorator.__get__('LoggingInterceptor');
+    var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
+
+    var loggingFactory = new LoggingFactoryMock();
+
+    var object = {
+      sampleMethod: sinon.stub().callsFake(function() {
+        var opts = arguments[1];
+        var output = { message: arguments[0], requestId: opts.requestId };
+        switch(opts.methodType) {
+          case 'promise':
+            return Promise.resolve(output);
+          case 'callback':
+            var callback = arguments[2];
+            return callback(null, output);
+          case 'general':
+            return output;
+        }
+      })
+    }
+
+    var loggingProxy = new LoggingInterceptor({
+      object: object,
+      objectName: 'object',
+      method: object.sampleMethod,
+      methodName: 'sampleMethod',
+      texture: lodash.merge({}, DEFAULT_TEXTURE, {
+        logging: {
+          onRequest: {
+            getRequestId: function(argumentsList) {
+              let obj = null;
+              return obj.requestId;
+            },
+            extractInfo: function(argumentsList) {
+              return Object.keys(argumentsList[1000]);
+            }
+          },
+          onSuccess: {
+            extractInfo: function(value) {
+              return chores.extractObjectInfo(valua);
+            }
+          },
+          onFailure: {
+            extractInfo: function(error) {
+              return { errorName: error.name, errorMessage: error.message }
+            }
+          }
+        }
+      }),
+      logger: loggingFactory.getLogger(),
+      tracer: loggingFactory.getTracer()
+    });
+
+    function _extractLogInfo(tracerStore) {
+      return {
+        add: tracerStore.add.map(arg => lodash.pick(arg, ['requestId'])),
+        toMessage: tracerStore.toMessage.map(arg => lodash.pick(arg, ['info']))
+      }
+    }
+
+    it('wrap getRequestId/extractInfo invocations inside try-catch blocks: promise', function() {
+      // methodType: promise
+      return loggingProxy.capsule("Hello world", {
+        requestId: "94f03511d4e1",
+        methodType: "promise"
+      }).then(function(result) {
+        var tracerStore = loggingFactory.getTracerStore();
+        false && console.log(JSON.stringify(tracerStore, null, 2));
+        assert.deepEqual(_extractLogInfo(tracerStore), {
+          add: [
+            {
+              "requestId": "getRequestId-throw-an-error"
+            },
+            {
+              "requestId": "getRequestId-throw-an-error"
+            }
+          ],
+          toMessage: [
+            {
+              "info": {
+                "event": "onRequest",
+                "errorName": "TypeError",
+                "errorMessage": "Cannot convert undefined or null to object"
+              }
+            },
+            {
+              "info": {
+                "event": "onSuccess",
+                "errorName": "ReferenceError",
+                "errorMessage": "valua is not defined"
+              }
+            }
+          ]
+        });
+        loggingFactory.resetHistory();
+      });
+    });
+
+    it('wrap getRequestId/extractInfo invocations inside try-catch blocks: callback', function() {
+      // methodType: callback
+      return new Promise(function(onResolved, onRejected) {
+        loggingProxy.capsule("Hello world", {
+          requestId: "94f03511d4e2",
+          methodType: "callback"
+        }, function callback(error, result) {
+          var tracerStore = loggingFactory.getTracerStore();
+          false && console.log(JSON.stringify(tracerStore, null, 2));
+          assert.deepEqual(_extractLogInfo(tracerStore), {
+            add: [
+              {
+                "requestId": "getRequestId-throw-an-error"
+              },
+              {
+                "requestId": "getRequestId-throw-an-error"
+              }
+            ],
+            toMessage: [
+              {
+                "info": {
+                  "event": "onRequest",
+                  "errorName": "TypeError",
+                  "errorMessage": "Cannot convert undefined or null to object"
+                }
+              },
+              {
+                "info": {
+                  "event": "onSuccess",
+                  "errorName": "ReferenceError",
+                  "errorMessage": "valua is not defined"
+                }
+              }
+            ]
+          });
+          onResolved();
+        });
+      }).finally(function() {
+        loggingFactory.resetHistory();
+      });
+    });
+
+    it('wrap getRequestId/extractInfo invocations inside try-catch blocks: general', function() {
+      // methodType: general
+      var out_general = loggingProxy.capsule("Hello world", {
+        requestId: "94f03511d4e3",
+        methodType: "general"
+      });
+      var tracerStore = loggingFactory.getTracerStore();
+      false && console.log(JSON.stringify(tracerStore, null, 2));
+      assert.deepEqual(_extractLogInfo(tracerStore), {
+        add: [
+          {
+            "requestId": "getRequestId-throw-an-error"
+          },
+          {
+            "requestId": "getRequestId-throw-an-error"
+          }
+        ],
+        toMessage: [
+          {
+            "info": {
+              "event": "onRequest",
+              "errorName": "TypeError",
+              "errorMessage": "Cannot convert undefined or null to object"
+            }
+          },
+          {
+            "info": {
+              "event": "onSuccess",
+              "errorName": "ReferenceError",
+              "errorMessage": "valua is not defined"
+            }
+          }
+        ]
+      });
+      loggingFactory.resetHistory();
+    });
+  });
+
   describe('MockingInterceptor', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
     var MockingInterceptor = ObjectDecorator.__get__('MockingInterceptor');
