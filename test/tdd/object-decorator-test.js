@@ -5,6 +5,7 @@ var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
+var errors = require(lab.getDevebotModule('utils/errors'));
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:object-decorator');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
@@ -2659,6 +2660,86 @@ describe('tdd:devebot:core:object-decorator', function() {
       assert.throw(function() {
         return mockingProxy.capsule("Will be failure", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'})
       }, "Failed anyway");
+
+      assert.equal(method.callCount, 0);
+      assert.equal(generate.callCount, 2);
+    });
+
+    it('unmatched mocking request will invoke the target method if [unmatched] is undefined', function() {
+      var generate = sinon.stub();
+      generate.withArgs("Will be success").returns("Action completed");
+      generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
+      var texture = {
+        mocking: {
+          mappings: {
+            "matched#1": {
+              selector: sinon.stub()
+                  .onFirstCall().returns(true)
+                  .onSecondCall().returns(false)
+                  .onThirdCall().returns(false),
+              generate: generate
+            },
+            "matched#2": {
+              selector: sinon.stub()
+                  .onFirstCall().returns(true)
+                  .onSecondCall().returns(false),
+              generate: generate
+            }
+          }
+        }
+      };
+      var method = sinon.stub().returns("From original method");
+      var mockingProxy = new MockingInterceptor({texture, method});
+
+      var out_1 = mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'});
+      assert.equal(out_1, "Action completed");
+
+      var out_2 = mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqh'});
+      assert.equal(out_2, "Action completed");
+
+      var out_3 = mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqh'});
+      assert.equal(out_3, "From original method");
+
+      assert.equal(method.callCount, 1);
+      assert.equal(generate.callCount, 2);
+    });
+
+    it('unmatched mocking request will throw MockNotFoundError if [unmatched] is exception', function() {
+      var generate = sinon.stub();
+      generate.withArgs("Will be success").returns("Action completed");
+      generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
+      var texture = {
+        mocking: {
+          mappings: {
+            "matched#1": {
+              selector: sinon.stub()
+                  .onFirstCall().returns(true)
+                  .onSecondCall().returns(false)
+                  .onThirdCall().returns(false),
+              generate: generate
+            },
+            "matched#2": {
+              selector: sinon.stub()
+                  .onFirstCall().returns(true)
+                  .onSecondCall().returns(false),
+              generate: generate
+            }
+          },
+          unmatched: "exception"
+        }
+      };
+      var method = sinon.stub();
+      var mockingProxy = new MockingInterceptor({texture, method});
+
+      var out_1 = mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqg'});
+      assert.equal(out_1, "Action completed");
+
+      var out_2 = mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqh'});
+      assert.equal(out_2, "Action completed");
+
+      assert.throw(function() {
+        return mockingProxy.capsule("Will be success", { requestId: 'YkMjPoSoSyOTrLyf76Mzqi'})
+      }, errors.assertConstructor("MockNotFoundError"), "All of selectors are unmatched");
 
       assert.equal(method.callCount, 0);
       assert.equal(generate.callCount, 2);

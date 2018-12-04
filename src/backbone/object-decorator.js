@@ -4,6 +4,7 @@ const Promise = require('bluebird');
 const lodash = require('lodash');
 const chores = require('../utils/chores');
 const nodash = require('../utils/nodash');
+const errors = require('../utils/errors');
 const BeanProxy = require('../utils/proxy');
 const blockRef = chores.getBlockRef(__filename);
 
@@ -211,11 +212,14 @@ function MockingInterceptor(params) {
           if (texture.methodType === 'callback') {
             let pair = extractCallback(argumentsList);
             if (pair.callback) {
-              let output = generate(thisArg, pair.parameters);
+              let output = callMock(thisArg, pair.parameters);
+              if (output.spread) {
+                return pair.callback.apply(null, [output.exception].concat(output.spread));
+              }
               return pair.callback.call(null, output.exception, output.result);
             }
           }
-          let output = generate(thisArg, argumentsList);
+          let output = callMock(thisArg, argumentsList);
           if (texture.methodType === 'promise') {
             if (output.exception) {
               return Promise.reject(output.exception);
@@ -230,19 +234,31 @@ function MockingInterceptor(params) {
       });
     }
   });
-  function generate(thisArg, argumentsList) {
+  function callMock(thisArg, argumentsList) {
     let output = {};
+    let generate = null;
     for(const name in texture.mocking.mappings) {
       const rule = texture.mocking.mappings[name];
       if (!lodash.isFunction(rule.selector)) continue;
       if (!lodash.isFunction(rule.generate)) continue;
       if (rule.selector.apply(thisArg, argumentsList)) {
-        try {
-          output.result = rule.generate.apply(thisArg, argumentsList);
-        } catch (error) {
-          output.exception = error;
-        }
+        generate = rule.generate;
         break;
+      }
+    }
+    if (generate === null) {
+      if (texture.mocking.unmatched === 'exception') {
+        let MockNotFoundError = errors.assertConstructor('MockNotFoundError');
+        output.exception = new MockNotFoundError('All of selectors are unmatched');
+      } else {
+        generate = method;
+      }
+    }
+    if (generate) {
+      try {
+        output.result = generate.apply(thisArg, argumentsList);
+      } catch (error) {
+        output.exception = error;
       }
     }
     return output;
