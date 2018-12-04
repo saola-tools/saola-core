@@ -362,7 +362,9 @@ function LoggingInterceptor(params={}) {
     }
   })
 
-  this.__state__ = __state__;
+  this.getState = function() {
+    return lodash.cloneDeep(lodash.pick(__state__, [ 'methodType', 'counter', 'pointer' ]));
+  }
 }
 
 function callMethod(refs, argumentsList, logOnEvent, logState) {

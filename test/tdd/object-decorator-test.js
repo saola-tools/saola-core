@@ -1068,9 +1068,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       p = p.then(function(flowStates) {
         return {
           flowStates: flowStates,
-          proxyState: lodash.cloneDeep(lodash.pick(loggingProxy.__state__, [
-            'methodType', 'counter', 'pointer'
-          ]))
+          proxyState: loggingProxy.getState()
         }
       })
 
