@@ -30,6 +30,14 @@ describe('tdd:devebot:utils:errors', function() {
     });
   });
 
+  describe('assertConstructor()', function() {
+    it('assertConstructor() create only one constructor for each Error', function() {
+      assert.equal(errors.assertConstructor('Error1'), errors.assertConstructor('Error1'));
+      assert.notEqual(errors.assertConstructor('Error2'), errors.assertConstructor('Error1'));
+      assert.equal(errors.assertConstructor('Error2'), errors.assertConstructor('Error2'));
+    });
+  });
+
   describe('createConstructor()', function() {
     var MyError = errors.createConstructor('MyError');
 
@@ -99,5 +107,4 @@ describe('tdd:devebot:utils:errors', function() {
       });
     });
   });
-
 });

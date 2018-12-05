@@ -2526,6 +2526,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         requestId: "94f03511d4e1",
         methodType: "promise"
       }).then(function(result) {
+        assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e1" });
         var tracerStore = loggingFactory.getTracerStore();
         false && console.log(JSON.stringify(tracerStore, null, 2));
         assert.deepEqual(_extractLogInfo(tracerStore), {
@@ -2565,6 +2566,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           requestId: "94f03511d4e2",
           methodType: "callback"
         }, function callback(error, result) {
+          assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e2" });
           var tracerStore = loggingFactory.getTracerStore();
           false && console.log(JSON.stringify(tracerStore, null, 2));
           assert.deepEqual(_extractLogInfo(tracerStore), {
@@ -2602,10 +2604,11 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('wrap getRequestId/extractInfo invocations inside try-catch blocks: general', function() {
       // methodType: general
-      var out_general = loggingProxy.capsule("Hello world", {
+      var result = loggingProxy.capsule("Hello world", {
         requestId: "94f03511d4e3",
         methodType: "general"
       });
+      assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e3" });
       var tracerStore = loggingFactory.getTracerStore();
       false && console.log(JSON.stringify(tracerStore, null, 2));
       assert.deepEqual(_extractLogInfo(tracerStore), {
@@ -2947,6 +2950,11 @@ describe('tdd:devebot:core:object-decorator', function() {
         fieldChain: ['bean'],
         methodName: 'connect'
       }));
+      assert.deepEqual(getTextureByPath({
+        textureOfBean: lodash.assign({}, textureOfBean),
+        fieldChain: ['bean'],
+        methodName: 'connect'
+      }), DEFAULT_TEXTURE);
     });
 
     it('should propagate enabled field if textureOfBean.enabled is false', function() {

@@ -1,5 +1,6 @@
 'use strict';
 
+const assert = require('assert');
 const Promise = require('bluebird');
 const lodash = require('lodash');
 const chores = require('../utils/chores');
@@ -7,6 +8,8 @@ const nodash = require('../utils/nodash');
 const errors = require('../utils/errors');
 const BeanProxy = require('../utils/proxy');
 const blockRef = chores.getBlockRef(__filename);
+
+const NOOP = function() {}
 
 function ObjectDecorator(params={}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
@@ -271,15 +274,19 @@ function LoggingInterceptor(params={}) {
   let counter = { promise: 0, callback: 0, general: 0 }
   let pointer = { current: null, actionFlow: null, preciseThreshold }
 
+  assert.ok(lodash.isObject(logger));
+  assert.ok(lodash.isObject(tracer));
+  assert.ok(lodash.isObject(texture));
+  assert.ok(lodash.isFunction(method));
+
   // pre-processing logging texture
   let methodType = texture.methodType;
   pointer.preciseThreshold = pointer.preciseThreshold || 5;
 
   function createListener(texture, eventName) {
-    if (!isLoggingEnabled(texture)) return null;
     const onEventName = 'on' + eventName;
-    const onEvent = texture.logging[onEventName];
-    if (!isEnabled(onEvent)) return null;
+    const onEvent = texture.logging && texture.logging[onEventName];
+    if (!isEnabled(onEvent)) return NOOP;
     return function (logState, data, extra) {
       if (lodash.isFunction(onEvent.getRequestId) && eventName === 'Request') {
         let reqId = null;
@@ -620,7 +627,7 @@ const DEFAULT_TEXTURE = {
           for(let k=(argumentsList.length-1); k>=0; k--) {
             let o = argumentsList[k];
             reqId = o && (o.requestId || o.reqId);
-            if (reqId) break;
+            if (typeof reqId === 'string') break;
           }
         }
         return reqId;
