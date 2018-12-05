@@ -36,11 +36,16 @@ describe.skip('tdd:devebot:core:config-constraints', function() {
         port: 17700 + idx
       }
     }),
-    bridges: _.map(bridgePkgs, (pkg) => { return { name: pkg.name, path: pkg.builder.homedir } })
+    bridges: _.map(bridgePkgs, (pkg) => {
+      return {
+        name: pkg.name,
+        path: pkg.builder.homedir
+      }
+    })
   });
 
-  console.log('Home: %s', appDemo.homedir);
-  console.log('Stats: %s', JSON.stringify(appDemo.stats(), null, 2));
+  // console.log('Home: %s', appDemo.homedir);
+  // console.log('Stats: %s', JSON.stringify(appDemo.stats(), null, 2));
 
   var app, flow;
 
@@ -57,7 +62,7 @@ describe.skip('tdd:devebot:core:config-constraints', function() {
     flow.asCallback(done);
   })
 
-  this.afterEach(function(done) {
+  afterEach(function(done) {
     app.server.stop().asCallback(done);
   })
 

@@ -212,33 +212,53 @@ function MockingInterceptor(params) {
       if (!enabled) return method;
       return capsule = capsule || new Proxy(method, {
         apply: function(target, thisArg, argumentsList) {
-          if (texture.methodType === 'callback') {
-            let pair = extractCallback(argumentsList);
-            if (pair.callback) {
-              let output = callMock(thisArg, pair.parameters);
-              if (output.spread) {
-                return pair.callback.apply(null, [output.exception].concat(output.spread));
+          let output = {};
+          let generate = getGenerator(texture, thisArg, argumentsList);
+          if (generate) {
+            try {
+              output.result = generate.apply(thisArg, argumentsList);
+            } catch (error) {
+              output.exception = error;
+            }
+            if (texture.methodType === 'callback') {
+              let pair = extractCallback(argumentsList);
+              if (pair.callback) {
+                return pair.callback.apply(null, [output.exception].concat(output.result));
               }
-              return pair.callback.call(null, output.exception, output.result);
             }
-          }
-          let output = callMock(thisArg, argumentsList);
-          if (texture.methodType === 'promise') {
+            if (texture.methodType === 'promise') {
+              if (output.exception) {
+                return Promise.reject(output.exception);
+              }
+              return Promise.resolve(output.result);
+            }
             if (output.exception) {
-              return Promise.reject(output.exception);
+              throw output.exception;
             }
-            return Promise.resolve(output.result);
+            return output.result;
+          } else {
+            if (texture.mocking.unmatched === 'exception') {
+              let MockNotFoundError = errors.assertConstructor('MockNotFoundError');
+              output.exception = new MockNotFoundError('All of selectors are unmatched');
+              if (texture.methodType === 'promise') {
+                return Promise.reject(output.exception);
+              }
+              if (texture.methodType === 'callback') {
+                let pair = extractCallback(argumentsList);
+                if (pair.callback) {
+                  return pair.callback(output.exception);
+                }
+              }
+              throw output.exception;
+            } else {
+              return method.apply(thisArg, argumentsList);
+            }
           }
-          if (output.exception) {
-            throw output.exception;
-          }
-          return output.result;
         }
       });
     }
   });
-  function callMock(thisArg, argumentsList) {
-    let output = {};
+  function getGenerator(texture, thisArg, argumentsList) {
     let generate = null;
     for(const name in texture.mocking.mappings) {
       const rule = texture.mocking.mappings[name];
@@ -249,22 +269,7 @@ function MockingInterceptor(params) {
         break;
       }
     }
-    if (generate === null) {
-      if (texture.mocking.unmatched === 'exception') {
-        let MockNotFoundError = errors.assertConstructor('MockNotFoundError');
-        output.exception = new MockNotFoundError('All of selectors are unmatched');
-      } else {
-        generate = method;
-      }
-    }
-    if (generate) {
-      try {
-        output.result = generate.apply(thisArg, argumentsList);
-      } catch (error) {
-        output.exception = error;
-      }
-    }
-    return output;
+    return generate;
   }
 }
 
