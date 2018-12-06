@@ -4,7 +4,7 @@ var lab = require('..');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
-var loader = Devebot.require('loader');
+var chores = Devebot.require('chores');
 var pinbug = Devebot.require('pinbug')('tdd:devebot:utils:proxy');
 var assert = require('chai').assert;
 var BeanProxy = require(lab.getDevebotModule('utils/proxy'));
@@ -257,6 +257,104 @@ describe('tdd:devebot:utils:proxy', function() {
         ["product","attrs","price","getInstance"],
         ["product","attrs","price","getInstance","calc"],
       ]);
+    });
+  });
+
+  describe('BeanProxy ~ with lodash', function() {
+    var BeanConstructor = function() {
+      this.factor = 1.1;
+      this.calc = function(unit, amount) {
+        return this.factor * this.product.attrs.price.getInstance().calc(unit, amount);
+      }
+      this.product = {
+        attrs: {
+          price: {
+            getInstance: function() {
+              return {
+                instance: {
+                  discount: 0.1,
+                  tax: 0.2,
+                  calc: function(unit, amount) {
+                    amount = amount || 1;
+                    return amount * unit * (1-this.discount) * (1+this.tax);
+                  },
+                  tags: ['tax', 'discount']
+                }
+              }
+            }
+          },
+          units: [
+            { label: 'USD', rate: 22150 },
+            { label: 'EUR', rate: 28450 }
+          ]
+        }
+      }
+    }
+    var beanObject = new BeanConstructor();
+    var beanProxy = new BeanProxy(beanObject, {
+      get(target, property, receiver) {
+        let node = target[property];
+        if (lodash.isFunction(node) || lodash.isObject(node)) {
+          return this.nest(node);
+        }
+        return node;
+      },
+      apply(target, thisArg, argumentsList) {
+        let node = target.apply(thisArg, argumentsList);
+        if (lodash.isFunction(node) || lodash.isObject(node)) {
+          return this.nest(node);
+        }
+        return node;
+      }
+    });
+    var safeProxy = new BeanProxy(beanObject, {
+      get(target, property, receiver) {
+        let node = target[property];
+        if (chores.isOwnOrInheritedProperty(target, property)) {
+          if (lodash.isFunction(node) || lodash.isObject(node)) {
+            return this.nest(node);
+          }
+        }
+        return node;
+      },
+      apply(target, thisArg, argumentsList) {
+        let node = target.apply(thisArg, argumentsList);
+        if (lodash.isFunction(node) || lodash.isObject(node)) {
+          return this.nest(node);
+        }
+        return node;
+      }
+    });
+
+    /*
+    devebot/node_modules/lodash/lodash.js:6400
+          proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+                                                    ^
+    TypeError: 'get' on proxy: property 'prototype' is a read-only and non-configurable
+    data property on the proxy target but the proxy did not return its actual value
+    (expected '#<Object>' but got '[object Object]')
+    at isPrototype (/devebot/node_modules/lodash/lodash.js:6400:53)
+    */
+    it('should not conflict with lodash collection methods (merge, assign, defaults) - object', function() {
+      assert.throw(function() {
+        lodash.merge({}, beanProxy.product.attrs.price.getInstance());
+      }, TypeError);
+      assert.doesNotThrow(function() {
+        lodash.merge({}, safeProxy.product.attrs.price.getInstance());
+      });
+    });
+
+    it('should not conflict with lodash collection methods (merge, assign, defaults) - array', function() {
+      assert.throw(function() {
+        var rates = lodash.map(beanProxy.product.attrs.units, function(unit) {
+          return lodash.assign({}, unit);
+        });
+      }, TypeError);
+      assert.doesNotThrow(function() {
+        var rates = lodash.map(safeProxy.product.attrs.units, function(unit) {
+          return lodash.assign({}, unit);
+        });
+      });
     });
   });
 });
