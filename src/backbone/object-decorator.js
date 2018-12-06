@@ -119,14 +119,16 @@ function wrapObject(refs, object, opts) {
   let cached = {};
   return new BeanProxy(object, {
     get(target, property, receiver) {
-      let node = target[property];
+      const node = Reflect.get(target, property, receiver);
       false && L.has('dunce') && L.log('dunce', T.add({
         path: this.path, property, itemType: typeof(node)
       }).toMessage({
         text: '#{path} / #{property} -> #{itemType}'
       }));
-      if (lodash.isFunction(node) || lodash.isObject(node)) {
-        return this.nest(node);
+      if (target.hasOwnProperty(property)) {
+        if (lodash.isFunction(node) || lodash.isObject(node)) {
+          return this.nest(node);
+        }
       }
       return node;
     },
@@ -169,7 +171,11 @@ function wrapObject(refs, object, opts) {
           tracer: opts.tracer || object.tracer
         });
       }
-      return cached[methodPath].apply(thisArg, argList);
+      let node = cached[methodPath].apply(thisArg, argList);
+      if (lodash.isFunction(node) || lodash.isObject(node)) {
+        return this.nest(node);
+      }
+      return node;
     }
   })
 }

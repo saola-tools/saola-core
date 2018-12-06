@@ -207,5 +207,56 @@ describe('tdd:devebot:utils:proxy', function() {
       assert.equal(lodash.round(beanProxy.calc(100, 1), 5), 118.8);
       assert.deepEqual(requestTags, [["calc"],["product","attrs","price","calc"]]);
     });
+    it('should access hierarchical descendants that contain a sequence of method calls', function() {
+      var BeanConstructor = function() {
+        this.factor = 1.1;
+        this.calc = function(unit, amount) {
+          return this.factor * this.product.attrs.price.getInstance().calc(unit, amount);
+        }
+        this.product = {
+          attrs: {
+            price: {
+              getInstance: function() {
+                return {
+                  discount: 0.1,
+                  tax: 0.2,
+                  calc: function(unit, amount) {
+                    amount = amount || 1;
+                    return amount * unit * (1-this.discount) * (1+this.tax);
+                  },
+                  tags: ['tax', 'discount']
+                }
+              }
+            }
+          }
+        }
+      }
+      var requestTags = [];
+      var beanObject = new BeanConstructor();
+      var beanProxy = new BeanProxy(beanObject, {
+        get(target, property, receiver) {
+          let node = target[property];
+          if (lodash.isFunction(node) || lodash.isObject(node)) {
+            return this.nest(node);
+          }
+          return node;
+        },
+        apply(target, thisArg, argumentsList) {
+          requestTags.push(this.path);
+          let node = target.apply(thisArg, argumentsList);
+          if (lodash.isFunction(node) || lodash.isObject(node)) {
+            return this.nest(node);
+          }
+          return node;
+        }
+      });
+      assert.equal(lodash.round(beanProxy.calc(100, 1), 5), 118.8);
+      false && console.log(JSON.stringify(requestTags));
+      assert.deepEqual(requestTags, [
+        ["calc"],
+        ["product","attrs","price","getInstance"],
+        ["product","attrs","price","getInstance","calc"],
+      ]);
+    });
   });
 });

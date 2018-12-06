@@ -10,18 +10,25 @@ var Service = function(params={}) {
   L.has('silly') && L.log('silly', 'configuration: %s', JSON.stringify(mainCfg));
 
   this.mergeConfig = function(opts) {
+    this.forLogOnly(opts).submethod(opts);
     try {
-      return this.internalMergeConfig(opts);
+      return this.internalMergeConfig("How are you?", opts);
     } catch (e) {
       console.log('Error: ', e);
     }
   }
 
-  this.internalMergeConfig = function(opts) {
+  this.forLogOnly = function() {
+    return {
+      submethod: function(opts) {}
+    }
+  }
+
+  this.internalMergeConfig = function(name, opts) {
     return lodash.merge({}, params.service1.getConfig(opts), params.service2.getConfig(opts));
   }
 
-  console.log('Internal merge config: ', this.mergeConfig());
+  console.log('Internal context (without LoggingProxy): ', this.mergeConfig());
 };
 
 Service.referenceHash = {
