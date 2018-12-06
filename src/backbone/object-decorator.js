@@ -48,7 +48,7 @@ function ObjectDecorator(params={}) {
       gadgetType: opts.gadgetType,
       gadgetName: opts.gadgetName
     });
-    let useDefaultTexture = (['reducers', 'services'].indexOf(opts.gadgetType) >= 0);
+    let useDefaultTexture = (['services'].indexOf(opts.gadgetType) >= 0);
     if (opts && 'useDefaultTexture' in opts) {
       useDefaultTexture = opts.useDefaultTexture;
     }
@@ -172,8 +172,10 @@ function wrapObject(refs, object, opts) {
         });
       }
       let node = cached[methodPath].apply(thisArg, argList);
-      if (lodash.isFunction(node) || lodash.isObject(node)) {
-        return this.nest(node);
+      if (!isPromise(node)) {
+        if (lodash.isFunction(node) || lodash.isObject(node)) {
+          return this.nest(node);
+        }
       }
       return node;
     }
@@ -619,7 +621,7 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) 
     } else {
       rootToBean.push('plugins', pluginCode);
     }
-    if (['reducers', 'services', 'triggers'].indexOf(gadgetType) >= 0) {
+    if (gadgetType) {
       rootToBean.push(gadgetType);
       if (gadgetName) {
         rootToBean.push(gadgetName);
