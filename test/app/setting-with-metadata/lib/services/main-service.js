@@ -10,7 +10,8 @@ var Service = function(params={}) {
   L.has('silly') && L.log('silly', 'configuration: %s', JSON.stringify(mainCfg));
 
   this.mergeConfig = function(opts) {
-    this.forLogOnly(opts).submethod(opts);
+    var connect = this.forLogOnly(opts);
+    connect.submethod(opts);
     try {
       return this.internalMergeConfig("How are you?", opts);
     } catch (e) {

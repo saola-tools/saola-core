@@ -190,7 +190,12 @@ function wrapMethod(refs, method, opts) {
   if (isMockingEnabled(texture)) {
     mockingProxy = new MockingInterceptor({
       texture: texture,
-      method: wrapped
+      object: object,
+      objectName: objectName,
+      method: wrapped,
+      methodName: methodName,
+      logger: opts.logger || refs.L,
+      tracer: opts.tracer || refs.T
     });
     wrapped = mockingProxy.capsule;
   }
@@ -210,7 +215,7 @@ function wrapMethod(refs, method, opts) {
 }
 
 function MockingInterceptor(params) {
-  const { texture, method } = params;
+  const { logger, tracer, texture, method, methodName, object, objectName } = params;
   const enabled = isMockingEnabled(texture) && !lodash.isEmpty(texture.mocking.mappings);
   let capsule;
   Object.defineProperty(this, 'capsule', {
@@ -225,6 +230,14 @@ function MockingInterceptor(params) {
               output.result = generate.apply(thisArg, argumentsList);
             } catch (error) {
               output.exception = error;
+            }
+            if (logger && tracer) {
+              const requestId = detectRequestId(argumentsList);
+              logger.has('info') && logger.log('info', tracer.add({
+                objectName, methodName, requestId
+              }).toMessage({
+                text: 'Req[#{requestId}] #{objectName}.#{methodName} has been mocked'
+              }));
             }
             if (texture.methodType === 'callback') {
               let pair = extractCallback(argumentsList);
@@ -629,20 +642,22 @@ function propagateEnabled(childTexture, parentTexture) {
   return childTexture;
 }
 
+function detectRequestId(argumentsList) {
+  let reqId = undefined;
+  if (argumentsList && argumentsList.length > 0) {
+    for(let k=(argumentsList.length-1); k>=0; k--) {
+      let o = argumentsList[k];
+      reqId = o && (o.requestId || o.reqId);
+      if (typeof reqId === 'string') break;
+    }
+  }
+  return reqId;
+}
+
 const DEFAULT_TEXTURE = {
   logging: {
     onRequest: {
-      getRequestId: function(argumentsList) {
-        let reqId = undefined;
-        if (argumentsList && argumentsList.length > 0) {
-          for(let k=(argumentsList.length-1); k>=0; k--) {
-            let o = argumentsList[k];
-            reqId = o && (o.requestId || o.reqId);
-            if (typeof reqId === 'string') break;
-          }
-        }
-        return reqId;
-      },
+      getRequestId: detectRequestId,
       extractInfo: function(argumentsList) {
         return chores.extractObjectInfo(chores.argumentsToArray(argumentsList));
       },
