@@ -13,13 +13,13 @@ const nameIndexOf = {
 }
 
 const trapNames = [
+  'apply',
+  'construct',
   'getPrototypeOf',
   'setPrototypeOf',
   'isExtensible',
   'preventExtensions',
-  'construct',
-  'apply',
-  'ownKeys'
+  'ownKeys',
 ].concat(Object.keys(nameIndexOf))
 
 function BeanProxy(rootTarget, handler, options) {
