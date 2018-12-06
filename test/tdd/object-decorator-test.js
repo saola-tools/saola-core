@@ -3106,6 +3106,28 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
   });
 
+  describe('detectRequestId()', function() {
+    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var detectRequestId = ObjectDecorator.__get__('detectRequestId');
+    it('should keep safety with any kind of arguments', function() {
+      assert.doesNotThrow(function() {
+        detectRequestId();
+        detectRequestId(undefined);
+        detectRequestId(null);
+        detectRequestId([]);
+        detectRequestId([null, 1, true, [], {}, function() {}]);
+      }, Error);
+      var reqId = (function() {
+        return detectRequestId(arguments);
+      })(
+        { a: {}, b: null, c: function() {}, d: [], e: {} },
+        { requestId: "YkMjPoSoSyOTrLyf76Mzqt" },
+        function() {}
+      );
+      assert.equal(reqId, "YkMjPoSoSyOTrLyf76Mzqt");
+    });
+  });
+
   after(function() {
     LogTracer.clearInterceptors();
     envmask.reset();

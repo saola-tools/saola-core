@@ -125,7 +125,7 @@ function wrapObject(refs, object, opts) {
       }).toMessage({
         text: '#{path} / #{property} -> #{itemType}'
       }));
-      if (target.hasOwnProperty(property)) {
+      if (chores.isOwnOrInheritedProperty(target, property)) {
         if (lodash.isFunction(node) || lodash.isObject(node)) {
           return this.nest(node);
         }

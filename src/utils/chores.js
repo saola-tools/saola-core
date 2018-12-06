@@ -56,6 +56,13 @@ chores.loadPackageInfo = function(pkgRootPath) {
   }
 };
 
+chores.isOwnOrInheritedProperty = function(object, property) {
+  for(let propName in object) {
+    if (propName === property) return true;
+  }
+  return object.hasOwnProperty(property);
+}
+
 chores.pickProperty = function(propName, containers, propDefault) {
   if (!lodash.isString(propName) || !lodash.isArray(containers)) return null;
   for(let i=0; i<containers.length; i++) {
@@ -388,5 +395,7 @@ chores.extractObjectInfo = function(data, opts) {
   }
   return detect(data, opts && opts.level);
 }
+
+
 
 module.exports = chores;
