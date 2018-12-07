@@ -89,7 +89,8 @@ ObjectDecorator.argumentSchema = {
 module.exports = ObjectDecorator;
 
 function wrapConstructor(refs, constructor, opts) {
-  if (opts && opts.textureOfBean && opts.textureOfBean.enabled === false) {
+  opts = opts || {};
+  if (!opts.textureOfBean || opts.textureOfBean.enabled === false) {
     return constructor;
   }
   return new Proxy(constructor, {
@@ -162,7 +163,8 @@ function wrapObject(refs, object, opts) {
         if (fieldChain.length > 0) {
           ownerName = [opts.objectName].concat(fieldChain).join('.');
         }
-        cached[methodPath] = wrapMethod(refs, target, {
+        cached[methodPath] = {};
+        cached[methodPath].method = wrapMethod(refs, target, {
           texture: texture,
           object: owner,
           objectName: ownerName,
@@ -170,9 +172,10 @@ function wrapObject(refs, object, opts) {
           logger: opts.logger || object.logger,
           tracer: opts.tracer || object.tracer
         });
+        cached[methodPath].spread = isProxyRecursive(texture);
       }
-      let node = cached[methodPath].apply(thisArg, argList);
-      if (!isPromise(node)) {
+      let node = cached[methodPath].method.apply(thisArg, argList);
+      if (cached[methodPath].spread && !isPromise(node)) {
         if (lodash.isFunction(node) || lodash.isObject(node)) {
           return this.nest(node);
         }
@@ -637,9 +640,9 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) 
 
 function propagateEnabled(childTexture, parentTexture) {
   if (parentTexture && parentTexture.enabled === false) {
-    childTexture = lodash.defaults(childTexture, {
-      enabled: parentTexture.enabled
-    })
+    if (childTexture && childTexture.enabled == undefined) {
+      childTexture.enabled = parentTexture.enabled;
+    }
   }
   return childTexture;
 }
@@ -654,6 +657,15 @@ function detectRequestId(argumentsList) {
     }
   }
   return reqId;
+}
+
+function isProxyRecursive(texture) {
+  if (!texture) return false;
+  const fields = ['recursive', 'spread', 'outspread', 'nested'];
+  for(const i in fields) {
+    if (texture[fields[i]]) return true;
+  }
+  return false;
 }
 
 const DEFAULT_TEXTURE = {

@@ -50,7 +50,8 @@ module.exports = {
                 },
                 template: "Request[#{requestId}](#{objectName}.#{methodName}) - failed"
               }
-            }
+            },
+            recursive: true
           }
         }
       }
