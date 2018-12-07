@@ -542,7 +542,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('should support decorated context for nested method calls', function() {
       var textureOfBean = {
         methods: {
-        start: lodash.cloneDeep(DEFAULT_TEXTURE),
+          start: lodash.cloneDeep(DEFAULT_TEXTURE),
           level1: { method1: lodash.cloneDeep(DEFAULT_TEXTURE) },
           level2: { sub2: { method2: lodash.cloneDeep(DEFAULT_TEXTURE) } },
           level3: { sub3: { bean3: {
@@ -594,6 +594,120 @@ describe('tdd:devebot:core:object-decorator', function() {
       ]);
       // verify wrapMethod()
       assert.equal(wrapMethod.callCount, 5); // start, report, invoice, summarize, getRate
+      //verify tracer for invoice()
+      let logState_invoice = loggingFactory.getTracerStore().add.filter(item => {
+        return ('requestId' in item && item.methodName === 'invoice');
+      });
+      assert.equal(logState_invoice.length, requestCount * 2);
+      //verify tracer for summarize()
+      let logState_summarize = loggingFactory.getTracerStore().add.filter(item => {
+        return ('requestId' in item && item.methodName === 'summarize');
+      });
+      assert.equal(logState_summarize.length, requestCount * 2);
+      //verify tracer for getRate()
+      let logState_getRate = loggingFactory.getTracerStore().add.filter(item => {
+        return ('requestId' in item && item.methodName === 'getRate');
+      });
+      assert.equal(logState_getRate.length, 0);
+    });
+
+    function createWrappedBean(textureOpts) {
+      var textureOfBean = {
+        methods: {
+          start: lodash.cloneDeep(DEFAULT_TEXTURE),
+          parent: { child: { getBean: lodash.assign(textureOpts, DEFAULT_TEXTURE) } },
+          "parent.child.getBean.invoice": lodash.cloneDeep(DEFAULT_TEXTURE),
+          "parent.child.getBean.summarize": lodash.cloneDeep(DEFAULT_TEXTURE)
+        }
+      }
+      var mockedBean = {
+        start: function(amount, opts) {
+          return this.parent.child.getBean().invoice(amount, opts);
+        },
+        parent: { child: { getBean: function() {
+          return new (function() {
+            this.invoice = function(amount) {
+              return "Total: " + this.summarize(amount);
+            }
+            this.summarize = function (amount) {
+              return amount * this.getRate();
+            }
+            this.getRate = function() {
+              if (0 <= this.rate && this.rate <= 1) return this.rate;
+              return 1;
+            }
+            this.rate = 1.1;
+          })()
+        } } }
+      }
+      var wrappedBean = wrapObject(CTX, mockedBean, {
+        textureOfBean: textureOfBean,
+        objectName: 'originalBean'
+      });
+      return wrappedBean;
+    }
+
+    it('should not decorate the returned object of methods calls if recursive is undefined', function() {
+      // number of requests
+      const requestCount = 5;
+      const wrappedBean = createWrappedBean({});
+      // invokes start() "requestCount" times
+      const msgs = lodash.range(requestCount).map(function(i) {
+        return wrappedBean.start(100 + i);
+      });
+      assert.deepEqual(msgs, [
+        "Total: 100",
+        "Total: 101",
+        "Total: 102",
+        "Total: 103",
+        "Total: 104"
+      ]);
+      // verify wrapMethod()
+      assert.equal(wrapMethod.callCount, 2); // start, getBean only
+      //verify tracer for getBean()
+      let logState_getBean = loggingFactory.getTracerStore().add.filter(item => {
+        return ('requestId' in item && item.methodName === 'getBean');
+      });
+      assert.equal(logState_getBean.length, requestCount * 2);
+      //verify tracer for invoice()
+      let logState_invoice = loggingFactory.getTracerStore().add.filter(item => {
+        return ('requestId' in item && item.methodName === 'invoice');
+      });
+      assert.equal(logState_invoice.length, 0);
+      //verify tracer for summarize()
+      let logState_summarize = loggingFactory.getTracerStore().add.filter(item => {
+        return ('requestId' in item && item.methodName === 'summarize');
+      });
+      assert.equal(logState_summarize.length, 0);
+      //verify tracer for getRate()
+      let logState_getRate = loggingFactory.getTracerStore().add.filter(item => {
+        return ('requestId' in item && item.methodName === 'getRate');
+      });
+      assert.equal(logState_getRate.length, 0);
+    });
+
+    it('support decorating the returned object of methods calls (recursive: true)', function() {
+      // number of requests
+      const requestCount = 5;
+      const wrappedBean = createWrappedBean({recursive: true});
+      // invokes start() "requestCount" times
+      const msgs = lodash.range(requestCount).map(function(i) {
+        return wrappedBean.start(100 + i);
+      });
+      assert.deepEqual(msgs, [
+        "Total: 100",
+        "Total: 101",
+        "Total: 102",
+        "Total: 103",
+        "Total: 104"
+      ]);
+      // verify wrapMethod()
+      assert.equal(wrapMethod.callCount, 5); // start, getBean, invoice, summarize, getRate
+      //verify tracer for getBean()
+      let logState_getBean = loggingFactory.getTracerStore().add.filter(item => {
+        return ('requestId' in item && item.methodName === 'getBean');
+      });
+      assert.equal(logState_getBean.length, requestCount * 2);
       //verify tracer for invoice()
       let logState_invoice = loggingFactory.getTracerStore().add.filter(item => {
         return ('requestId' in item && item.methodName === 'invoice');
@@ -2939,6 +3053,34 @@ describe('tdd:devebot:core:object-decorator', function() {
         getConfig: DEFAULT_TEXTURE
       }
     };
+
+    it('should do nothing if extracted texture is undefined', function() {
+      assert.isUndefined(getTextureByPath({
+        textureOfBean: {
+          enabled: false,
+          methods: {
+            bean: { connect: DEFAULT_TEXTURE }
+          }
+        },
+        methodName: 'unmanaged'
+      }));
+    });
+
+    it('should do nothing if extracted texture is null', function() {
+      assert.isNull(getTextureByPath({
+        textureOfBean: {
+          enabled: false,
+          methods: {
+            bean: {
+              connect: DEFAULT_TEXTURE,
+              unmanaged: null
+            }
+          }
+        },
+        fieldChain: ['bean'],
+        methodName: 'unmanaged'
+      }));
+    });
 
     it('should return texture object for correct dialect descriptions', function() {
       assert.isObject(getTextureByPath({

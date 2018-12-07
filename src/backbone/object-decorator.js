@@ -594,7 +594,7 @@ function getTextureByPath({textureOfBean, fieldChain, methodName}) {
       beanToMethod.push(methodName);
     }
     texture = lodash.get(textureOfBean, ['methods'].concat(beanToMethod));
-    texture = texture || lodash.get(textureOfBean, ['methods', beanToMethod.join('.')]);
+    texture = texture || lodash.get(textureOfBean, ['methods', beanToMethod.join('.')], texture);
   }
   return propagateEnabled(texture, textureOfBean);
 }
