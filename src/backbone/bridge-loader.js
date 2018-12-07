@@ -1,6 +1,7 @@
 'use strict';
 
 const lodash = require('lodash');
+const util = require('util');
 const loader = require('../utils/loader');
 const chores = require('../utils/chores');
 const blockRef = chores.getBlockRef(__filename);
@@ -284,7 +285,7 @@ let buildBridgeDialect = function(ctx, dialectOpts) {
     issueInspector.collect(opStatus);
   }
 
-  dialectConstructor.prototype = Object.create(bridgeConstructor.prototype);
+  util.inherits(dialectConstructor, bridgeConstructor);
 
   dialectConstructor.argumentSchema = {
     "$id": uniqueName,

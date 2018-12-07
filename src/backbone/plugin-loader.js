@@ -2,6 +2,7 @@
 
 const lodash = require('lodash');
 const path = require('path');
+const util = require('util');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
 const loader = require('../utils/loader');
@@ -498,7 +499,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
     }
   }
 
-  wrapperConstructor.prototype = Object.create(gadgetConstructor.prototype);
+  util.inherits(wrapperConstructor, gadgetConstructor);
 
   let wrappedArgumentFields = ["sandboxName", "sandboxConfig", "profileName", "profileConfig", "loggingFactory"];
 
