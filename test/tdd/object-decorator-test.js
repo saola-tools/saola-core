@@ -1045,7 +1045,11 @@ describe('tdd:devebot:core:object-decorator', function() {
       }
       tracerState.toMessage.callCount = tracer.toMessage.callCount;
       for(var i=0; i<tracerState.toMessage.callCount; i++) {
-        tracerState.toMessage.callArgs.push(lodash.cloneDeep(tracer.toMessage.getCall(i).args));
+        let toMessageArgs = lodash.cloneDeep(tracer.toMessage.getCall(i).args);
+        if (lodash.isArray(toMessageArgs) && toMessageArgs.length > 1 && toMessageArgs[1] == 'direct') {
+          toMessageArgs.splice(1);
+        }
+        tracerState.toMessage.callArgs.push(toMessageArgs);
       }
       tracer.add.resetHistory();
       tracer.toMessage.resetHistory();

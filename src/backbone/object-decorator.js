@@ -6,10 +6,12 @@ const lodash = require('lodash');
 const chores = require('../utils/chores');
 const nodash = require('../utils/nodash');
 const errors = require('../utils/errors');
+const getenv = require('../utils/getenv');
 const BeanProxy = require('../utils/proxy');
 const blockRef = chores.getBlockRef(__filename);
 
 const NOOP = function() {}
+const MODE = getenv(['DEVEBOT_NODE_ENV', 'NODE_ENV']) === 'test' ? null : 'direct';
 
 function ObjectDecorator(params={}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
@@ -242,7 +244,7 @@ function MockingInterceptor(params) {
                 objectName, methodName, requestId
               }).toMessage({
                 text: 'Req[#{requestId}] #{objectName}.#{methodName} has been mocked'
-              }));
+              }, MODE));
             }
             if (texture.methodType === 'callback') {
               let pair = extractCallback(argumentsList);
@@ -376,7 +378,7 @@ function LoggingInterceptor(params={}) {
         delete msgObj.tags;
       }
       let logLevel = onEvent.logLevel || (eventName === 'Failure' ? 'error' : 'debug');
-      logger.has(logLevel) && logger.log(logLevel, tracer.add(logState).toMessage(msgObj));
+      logger.has(logLevel) && logger.log(logLevel, tracer.add(logState).toMessage(msgObj, MODE));
     }
   }
   const CALLED_EVENTS = ['Request', 'Success', 'Failure'];
