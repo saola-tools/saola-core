@@ -557,7 +557,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
   const gadgetGroup = lodash.get(constx, [gadgetType, 'GROUP']);
   if (['reducers', 'services'].indexOf(gadgetGroup) >= 0) {
     construktor = objectDecorator.wrapPluginGadget(construktor, {
-      pluginCode: pluginCode,
+      pluginName: pluginName,
       gadgetType: gadgetGroup,
       gadgetName: wrapperName
     });

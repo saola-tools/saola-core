@@ -31,12 +31,17 @@ function ObjectDecorator(params={}) {
       bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, 'bridge'),
       dialectName: opts.dialectName
     });
+    const fullObjectName = getBridgeFullname({
+      pluginName: opts.pluginName || nameResolver.getOriginalNameOf(opts.pluginCode, 'plugin'),
+      bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, 'bridge'),
+      dialectName: opts.dialectName
+    });
     let useDefaultTexture = null;
     if (opts && 'useDefaultTexture' in opts) {
       useDefaultTexture = opts.useDefaultTexture;
     }
     return wrapConstructor(C, beanConstructor, lodash.assign({
-      textureOfBean, useDefaultTexture, objectName: opts.dialectName
+      textureOfBean, useDefaultTexture, objectName: fullObjectName
     }, lodash.pick(opts, ['logger', 'tracer'])));
   }
 
@@ -50,12 +55,16 @@ function ObjectDecorator(params={}) {
       gadgetType: opts.gadgetType,
       gadgetName: opts.gadgetName
     });
+    const fullObjectName = getPluginFullname({
+      pluginName: opts.pluginName || nameResolver.getOriginalNameOf(opts.pluginCode, 'plugin'),
+      gadgetName: opts.gadgetName
+    });
     let useDefaultTexture = (['services'].indexOf(opts.gadgetType) >= 0);
     if (opts && 'useDefaultTexture' in opts) {
       useDefaultTexture = opts.useDefaultTexture;
     }
     return wrapConstructor(C, beanConstructor, lodash.assign({
-      textureOfBean, useDefaultTexture, objectName: opts.gadgetName
+      textureOfBean, useDefaultTexture, objectName: fullObjectName
     }, lodash.pick(opts, ['logger', 'tracer'])));
   }
 }
@@ -601,6 +610,10 @@ function getTextureByPath({textureOfBean, fieldChain, methodName}) {
   return propagateEnabled(texture, textureOfBean);
 }
 
+function getBridgeFullname({pluginName, bridgeCode, dialectName}) {
+  return pluginName + chores.getSeparator() + bridgeCode + '#' + dialectName;
+}
+
 function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, dialectPath}) {
   let rootToBean = [];
   if (lodash.isArray(dialectPath) && !lodash.isEmpty(dialectPath)) {
@@ -616,6 +629,10 @@ function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, 
     textureOfBean = lodash.get(textureStore, rootToBean, null);
   }
   return propagateEnabled(textureOfBean, textureStore);
+}
+
+function getPluginFullname({pluginName, gadgetType, gadgetName}) {
+  return pluginName + chores.getSeparator() + gadgetName;
 }
 
 function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) {
