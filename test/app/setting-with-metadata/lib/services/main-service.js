@@ -29,6 +29,8 @@ var Service = function(params={}) {
     return lodash.merge({},
       params.service1.getConfig(opts),
       params.service2.getConfig(opts),
+      params.trigger1.getConfig(opts),
+      params.trigger2.getConfig(opts),
       params.instance4.getConfig(opts));
   }
 
@@ -38,6 +40,8 @@ var Service = function(params={}) {
 Service.referenceHash = {
   "service1": "sub-plugin1/sublibService",
   "service2": "sub-plugin2/sublibService",
+  "trigger1": "sub-plugin1/sublibTrigger",
+  "trigger2": "sub-plugin2/sublibTrigger",
   "instance4": "application/bridge4#instance"
 }
 

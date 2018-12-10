@@ -59,7 +59,7 @@ function ObjectDecorator(params={}) {
       pluginName: opts.pluginName || nameResolver.getOriginalNameOf(opts.pluginCode, 'plugin'),
       gadgetName: opts.gadgetName
     });
-    let useDefaultTexture = (['services'].indexOf(opts.gadgetType) >= 0);
+    let useDefaultTexture = (['services', 'triggers'].indexOf(opts.gadgetType) >= 0);
     if (opts && 'useDefaultTexture' in opts) {
       useDefaultTexture = opts.useDefaultTexture;
     }
@@ -160,7 +160,7 @@ function wrapObject(refs, object, opts) {
           fieldChain: fieldChain,
           methodName: methodName
         });
-        if (opts.useDefaultTexture) {
+        if (lodash.isObject(texture) && opts.useDefaultTexture) {
           texture = lodash.defaultsDeep(texture, DEFAULT_TEXTURE);
         }
         let owner = thisArg;
