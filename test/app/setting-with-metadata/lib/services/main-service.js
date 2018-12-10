@@ -26,7 +26,10 @@ var Service = function(params={}) {
   }
 
   this.internalMergeConfig = function(name, opts) {
-    return lodash.merge({}, params.service1.getConfig(opts), params.service2.getConfig(opts));
+    return lodash.merge({},
+      params.service1.getConfig(opts),
+      params.service2.getConfig(opts),
+      params.instance4.getConfig(opts));
   }
 
   console.log('Internal context (without LoggingProxy): ', this.mergeConfig());
@@ -34,7 +37,8 @@ var Service = function(params={}) {
 
 Service.referenceHash = {
   "service1": "sub-plugin1/sublibService",
-  "service2": "sub-plugin2/sublibService"
+  "service2": "sub-plugin2/sublibService",
+  "instance4": "application/bridge4#instance"
 }
 
 module.exports = Service;
