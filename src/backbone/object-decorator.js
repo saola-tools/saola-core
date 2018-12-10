@@ -36,13 +36,9 @@ function ObjectDecorator(params={}) {
       bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, 'bridge'),
       dialectName: opts.dialectName
     });
-    let useDefaultTexture = null;
-    if (opts && 'useDefaultTexture' in opts) {
-      useDefaultTexture = opts.useDefaultTexture;
-    }
     return wrapConstructor(C, beanConstructor, lodash.assign({
-      textureOfBean, useDefaultTexture, objectName: fullObjectName
-    }, lodash.pick(opts, ['logger', 'tracer'])));
+      textureOfBean, objectName: fullObjectName
+    }, lodash.pick(opts, ['logger', 'tracer', 'supportAllMethods', 'useDefaultTexture'])));
   }
 
   this.wrapPluginGadget = function(beanConstructor, opts) {
@@ -59,12 +55,16 @@ function ObjectDecorator(params={}) {
       pluginName: opts.pluginName || nameResolver.getOriginalNameOf(opts.pluginCode, 'plugin'),
       gadgetName: opts.gadgetName
     });
+    let supportAllMethods = (['services'].indexOf(opts.gadgetType) >= 0);
+    if (opts && 'supportAllMethods' in opts) {
+      supportAllMethods = opts.supportAllMethods;
+    }
     let useDefaultTexture = (['services', 'triggers'].indexOf(opts.gadgetType) >= 0);
     if (opts && 'useDefaultTexture' in opts) {
       useDefaultTexture = opts.useDefaultTexture;
     }
     return wrapConstructor(C, beanConstructor, lodash.assign({
-      textureOfBean, useDefaultTexture, objectName: fullObjectName
+      textureOfBean, supportAllMethods, useDefaultTexture, objectName: fullObjectName
     }, lodash.pick(opts, ['logger', 'tracer'])));
   }
 }
@@ -160,6 +160,12 @@ function wrapObject(refs, object, opts) {
           fieldChain: fieldChain,
           methodName: methodName
         });
+        let supportAllMethods = chores.getFirstDefinedValue(
+          opts.textureOfBean && opts.textureOfBean.supportAllMethods,
+          opts.supportAllMethods);
+        if (supportAllMethods) {
+          texture = texture || {}
+        }
         if (lodash.isObject(texture)) {
           let useDefaultTexture = chores.getFirstDefinedValue(
             texture.useDefaultTexture,
