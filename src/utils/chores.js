@@ -56,6 +56,15 @@ chores.loadPackageInfo = function(pkgRootPath) {
   }
 };
 
+chores.getFirstDefinedValue = function() {
+  let val = undefined;
+  for(let i=0; i<arguments.length; i++) {
+    val = arguments[i];
+    if (val !== undefined && val !== null) break;
+  }
+  return val;
+}
+
 chores.isOwnOrInheritedProperty = function(object, property) {
   for(let propName in object) {
     if (propName === property) return true;

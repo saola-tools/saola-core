@@ -160,8 +160,14 @@ function wrapObject(refs, object, opts) {
           fieldChain: fieldChain,
           methodName: methodName
         });
-        if (lodash.isObject(texture) && opts.useDefaultTexture) {
-          texture = lodash.defaultsDeep(texture, DEFAULT_TEXTURE);
+        if (lodash.isObject(texture)) {
+          let useDefaultTexture = chores.getFirstDefinedValue(
+            texture.useDefaultTexture,
+            opts.textureOfBean && opts.textureOfBean.useDefaultTexture,
+            opts.useDefaultTexture);
+          if (useDefaultTexture) {
+            texture = lodash.defaultsDeep(texture, DEFAULT_TEXTURE);
+          }
         }
         let owner = thisArg;
         if (!owner) {
