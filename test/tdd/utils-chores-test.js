@@ -17,7 +17,7 @@ var LogTracer = require('logolite').LogTracer;
 
 describe('tdd:devebot:utils:chores', function() {
   describe('loadServiceByNames()', function() {
-    var serviceFolder = path.join(__dirname, '../lib/testcode/services');
+    var serviceFolder = lab.getLibHome('testcode/services');
     var serviceNames = ['service1', 'service2'];
     it('should load service modules by names', function() {
       var serviceMap = {};

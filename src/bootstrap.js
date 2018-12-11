@@ -503,4 +503,17 @@ function loadPackageJson(pkgRootPath) {
   }
 }
 
+function loadManifest(pkgRootPath) {
+  let manifest = null;
+  try {
+    manifest = require(pkgRootPath).manifest;
+    if (!manifest) {
+      manifest = require(path.join(pkgRootPath, '/manifest.js'));
+    }
+  } catch (err) {
+    manifest = null;
+  }
+  return manifest;
+}
+
 module.exports = global[constx.FRAMEWORK.NAME] = global[FRAMEWORK_CAPNAME] = bootstrap;

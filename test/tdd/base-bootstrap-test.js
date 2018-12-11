@@ -112,12 +112,12 @@ describe('tdd:devebot:base:bootstrap', function() {
   });
 
   describe('locatePackage()', function() {
-    var bootstrap = rewire(path.join(lab.getDevebotHome(), 'lib/bootstrap'));
+    var bootstrap = rewire(lab.getDevebotModule('bootstrap'));
     var locatePackage = bootstrap.__get__('locatePackage');
     assert.isFunction(locatePackage);
 
     it('locate a valid package successfully', function() {
-      var providedPkg = path.join(__dirname, '../app/locating-package-json');
+      var providedPkg = lab.getAppHome('locating-package-json');
       var detectedPkg = locatePackage({}, {
         name: 'locating-package-json',
         path: providedPkg
@@ -1057,6 +1057,24 @@ describe('tdd:devebot:base:bootstrap', function() {
             }
         });
       }
+    });
+  });
+
+  describe('loadManifest()', function() {
+    var bootstrap = rewire(lab.getDevebotModule('bootstrap'));
+    var loadManifest = bootstrap.__get__('loadManifest');
+    assert.isFunction(loadManifest);
+
+    it('load manifest of modules properly', function() {
+      var manifest = loadManifest(lab.getAppHome('setting-with-metadata'));
+      assert.isObject(lodash.get(manifest, ['sandbox', 'migration']));
+      assert.isObject(lodash.get(manifest, ['sandbox', 'validation', 'schema']));
+      assert.isFunction(lodash.get(manifest, ['sandbox', 'validation', 'checkConstraints']));
+    });
+
+    it('return null if manifest not found', function() {
+      var manifest = loadManifest(lab.getAppHome('plugin-reference-alias'));
+      assert.isNull(manifest);
     });
   });
 
