@@ -118,6 +118,8 @@ var lab = module.exports = {
 
 var _initInjectedObjects = function(appName, injectedObjects) {
   injectedObjects = injectedObjects || {
+    appName: appName,
+    appInfo: {},
     profileNames: [],
     profileConfig: {},
     textureNames: [],
@@ -127,6 +129,8 @@ var _initInjectedObjects = function(appName, injectedObjects) {
   };
   if (appName) {
     var app = lab.getApp(appName);
+    injectedObjects.appName = app.config.appName || injectedObjects.appName;
+    injectedObjects.appInfo = app.config.appInfo || injectedObjects.appInfo;
     injectedObjects.profileConfig = app.config.profile || {
       logger: {
         transports: {

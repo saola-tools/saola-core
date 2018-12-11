@@ -20,6 +20,7 @@ function ObjectDecorator(params={}) {
   const T = loggingFactory.getTracer();
   const C = lodash.assign({L, T}, lodash.pick(params, ['issueInspector', 'schemaValidator']));
   const textureStore = lodash.get(params, ['textureConfig']);
+  const streamId = undefined;
 
   this.wrapBridgeDialect = function(beanConstructor, opts) {
     if (!chores.isUpgradeSupported('bean-decorator')) {
@@ -37,7 +38,7 @@ function ObjectDecorator(params={}) {
       dialectName: opts.dialectName
     });
     return wrapConstructor(C, beanConstructor, lodash.assign({
-      textureOfBean, objectName: fullObjectName
+      textureOfBean, objectName: fullObjectName, streamId
     }, lodash.pick(opts, ['logger', 'tracer', 'supportAllMethods', 'useDefaultTexture'])));
   }
 
@@ -64,7 +65,7 @@ function ObjectDecorator(params={}) {
       useDefaultTexture = opts.useDefaultTexture;
     }
     return wrapConstructor(C, beanConstructor, lodash.assign({
-      textureOfBean, supportAllMethods, useDefaultTexture, objectName: fullObjectName
+      textureOfBean, supportAllMethods, useDefaultTexture, objectName: fullObjectName, streamId
     }, lodash.pick(opts, ['logger', 'tracer'])));
   }
 }
@@ -73,6 +74,9 @@ ObjectDecorator.argumentSchema = {
   "$id": "objectDecorator",
   "type": "object",
   "properties": {
+    "appInfo": {
+      "type": "object"
+    },
     "issueInspector": {
       "type": "object"
     },
@@ -192,6 +196,7 @@ function wrapObject(refs, object, opts) {
           object: owner,
           objectName: ownerName,
           methodName: methodName,
+          streamId: opts.streamId,
           logger: opts.logger || object.logger,
           tracer: opts.tracer || object.tracer
         });
@@ -210,7 +215,7 @@ function wrapObject(refs, object, opts) {
 
 function wrapMethod(refs, method, opts) {
   if (!lodash.isFunction(method)) return method;
-  let {texture, object, objectName, methodName} = opts || {};
+  let {texture, object, objectName, methodName, streamId} = opts || {};
   object = lodash.isObject(object) ? object : null;
   let loggingProxy = null;
   let mockingProxy = null;
@@ -234,6 +239,7 @@ function wrapMethod(refs, method, opts) {
       objectName: objectName,
       method: wrapped,
       methodName: methodName,
+      streamId: streamId,
       logger: opts.logger || refs.L,
       tracer: opts.tracer || refs.T
     });
@@ -322,7 +328,7 @@ function MockingInterceptor(params) {
 
 function LoggingInterceptor(params={}) {
   const { logger, tracer, preciseThreshold } = params
-  const { texture, object, objectName, method, methodName } = params;
+  const { texture, object, objectName, method, methodName, streamId } = params;
   let counter = { promise: 0, callback: 0, general: 0 }
   let pointer = { current: null, actionFlow: null, preciseThreshold }
 
@@ -340,6 +346,7 @@ function LoggingInterceptor(params={}) {
     const onEvent = texture.logging && texture.logging[onEventName];
     if (!isEnabled(onEvent)) return NOOP;
     return function (logState, data, extra) {
+      // determine the requestId
       if (lodash.isFunction(onEvent.getRequestId) && eventName === 'Request') {
         let reqId = null;
         if (onEvent.getRequestId === DEFAULT_TEXTURE.logging[onEventName].getRequestId) {
@@ -359,6 +366,9 @@ function LoggingInterceptor(params={}) {
           logState.requestType = 'head';
         }
       }
+      // determine the flow identifier (version, revision, instanceId)
+      logState.streamId = logState.streamId || tracer.get('instanceId');
+      // determine the action type (i.e. explicit or implicit)
       if (pointer.actionFlow) {
         logState.actionFlow = pointer.actionFlow;
       }
@@ -414,7 +424,7 @@ function LoggingInterceptor(params={}) {
     get: function() {
       return capsule = capsule || new Proxy(method, {
         apply: function(target, thisArg, argumentsList) {
-          const logState = { objectName, methodName, reqContext: {} }
+          const logState = { streamId, objectName, methodName, reqContext: {} }
           return callMethod(__state__, argumentsList, logOnEvent, logState);
         }
       });
@@ -727,3 +737,17 @@ const DEFAULT_TEXTURE = {
     }
   }
 }
+
+const DEFAULT_TEXTURE_WITH_STREAM_ID = lodash.defaultsDeep({
+  logging: {
+    onRequest: {
+      template: "Req[#{requestId}/#{streamId}] #{objectName}.#{methodName}() #{requestType}"
+    },
+    onSuccess: {
+      template: "Req[#{requestId}/#{streamId}] #{objectName}.#{methodName}() completed"
+    },
+    onFailure: {
+      template: "Req[#{requestId}/#{streamId}] #{objectName}.#{methodName}() failed"
+    }
+  }
+}, DEFAULT_TEXTURE);

@@ -17,7 +17,8 @@ var sinon = require('sinon');
 describe('tdd:devebot:core:object-decorator', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  function LoggingFactoryMock() {
+  function LoggingFactoryMock(params) {
+    params = params || {};
     this.branch = function(blockRef) { return this }
     this.getLogger = function() { return logger }
     this.getTracer = function() { return tracer }
@@ -44,7 +45,13 @@ describe('tdd:devebot:core:object-decorator', function() {
       toMessage: sinon.stub().callsFake(function(params) {
         tracerStore.toMessage.push(lodash.cloneDeep(params));
         return LogTracer.ROOT.toMessage(params);
-      })
+      }),
+      get: function(key) {
+        if (key === 'instanceId' && 'instanceId' in params) {
+          return params['instanceId'];
+        }
+        return LogTracer.ROOT.get(key);
+      }
     }
   }
 
@@ -738,6 +745,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('should wrap all of methods of a bridge-dialect with empty textureStore', function() {
       var objectDecorator = lab.initBackboneService('object-decorator', {
+        appInfo: {},
         textureNames: ['default'],
         textureConfig: {},
         loggingFactory: loggingFactory,
@@ -830,6 +838,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
       }
       var objectDecorator = lab.initBackboneService('object-decorator', {
+        appInfo: {},
         textureNames: ['default'],
         textureConfig: textureConfig,
         loggingFactory: loggingFactory,
@@ -891,6 +900,7 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('should wrap all of methods of a plugin-gadget with empty textureStore', function() {
       var objectDecorator = lab.initBackboneService('object-decorator', {
+        appInfo: {},
         textureNames: ['default'],
         textureConfig: {},
         loggingFactory: loggingFactory,
@@ -983,6 +993,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         }
       }
       var objectDecorator = lab.initBackboneService('object-decorator', {
+        appInfo: {},
         textureNames: ['default'],
         textureConfig: textureConfig,
         loggingFactory: loggingFactory,
@@ -1120,7 +1131,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         })
       }
 
-      var loggingFactory = new LoggingFactoryMock();
+      var loggingFactory = new LoggingFactoryMock({ instanceId: "NS3Csx_9RTC6NBI9HXVv0Q" });
 
       var loggingProxy = new LoggingInterceptor({
         object: object,
@@ -1222,7 +1233,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "implicit"
+            "actionFlow": "implicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1287,7 +1299,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "implicit"
+            "actionFlow": "implicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1353,7 +1366,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "implicit"
+            "actionFlow": "implicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 3);
@@ -1425,7 +1439,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "implicit"
+            "actionFlow": "implicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 3);
@@ -1498,7 +1513,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "implicit"
+            "actionFlow": "implicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1563,7 +1579,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "implicit"
+            "actionFlow": "implicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1629,7 +1646,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "explicit"
+            "actionFlow": "explicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1694,7 +1712,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "explicit"
+            "actionFlow": "explicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1760,7 +1779,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "explicit"
+            "actionFlow": "explicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1826,7 +1846,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "explicit"
+            "actionFlow": "explicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1893,7 +1914,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "explicit"
+            "actionFlow": "explicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1958,7 +1980,8 @@ describe('tdd:devebot:core:object-decorator', function() {
             "reqContext": {},
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
-            "actionFlow": "explicit"
+            "actionFlow": "explicit",
+            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -2047,7 +2070,8 @@ describe('tdd:devebot:core:object-decorator', function() {
               "reqContext": {},
               "requestId": step.scenario.requestId,
               "requestType": "link",
-              "actionFlow": actionFlow
+              "actionFlow": actionFlow,
+              "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
             }
           ]));
           assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
@@ -2161,7 +2185,8 @@ describe('tdd:devebot:core:object-decorator', function() {
               "reqContext": {},
               "requestId": step.scenario.requestId,
               "requestType": "link",
-              "actionFlow": actionFlow
+              "actionFlow": actionFlow,
+              "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
             }
           ]));
           assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
@@ -2251,7 +2276,8 @@ describe('tdd:devebot:core:object-decorator', function() {
               "reqContext": {},
               "requestId": step.scenario.requestId,
               "requestType": "link",
-              "actionFlow": actionFlow
+              "actionFlow": actionFlow,
+              "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
             }
           ]));
           assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
@@ -2384,7 +2410,8 @@ describe('tdd:devebot:core:object-decorator', function() {
               "reqContext": {},
               "requestId": step.scenario.requestId,
               "requestType": "link",
-              "actionFlow": "implicit"
+              "actionFlow": "implicit",
+              "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
             }
           ]));
           assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
@@ -2442,7 +2469,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('function at the end of arguments list must not be changed when auto-detecting methodType', function() {
-      var loggingFactory = new LoggingFactoryMock();
+      var loggingFactory = new LoggingFactoryMock({ instanceId: 'X25Xv2HNQPyeD22SyjuCiw' });
       var func = function() {}
       func.Router = function(req, res, next) {}
 
@@ -2479,7 +2506,8 @@ describe('tdd:devebot:core:object-decorator', function() {
           "reqContext": {},
           "requestId": "94f03511d4e2",
           "requestType": "link",
-          "actionFlow": "implicit"
+          "actionFlow": "implicit",
+          "streamId": "X25Xv2HNQPyeD22SyjuCiw"
         }
       ]));
       assert.equal(tracerState.toMessage.callCount, 2);
