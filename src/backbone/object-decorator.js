@@ -19,8 +19,10 @@ function ObjectDecorator(params={}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
   const C = lodash.assign({L, T}, lodash.pick(params, ['issueInspector', 'schemaValidator']));
+  const decoratorCfg = lodash.get(params, ['profileConfig', 'decorator'], {});
   const textureStore = lodash.get(params, ['textureConfig']);
-  const streamId = undefined;
+  const instanceId = T.get('instanceId');
+  const streamId = extractStreamId(decoratorCfg.logging, params.appInfo, instanceId);
 
   this.wrapBridgeDialect = function(beanConstructor, opts) {
     if (!chores.isUpgradeSupported('bean-decorator')) {
@@ -89,11 +91,8 @@ ObjectDecorator.argumentSchema = {
     "schemaValidator": {
       "type": "object"
     },
-    "textureNames": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+    "profileConfig": {
+      "type": "object"
     },
     "textureConfig": {
       "type": "object"
@@ -176,7 +175,8 @@ function wrapObject(refs, object, opts) {
             opts.textureOfBean && opts.textureOfBean.useDefaultTexture,
             opts.useDefaultTexture);
           if (useDefaultTexture) {
-            texture = lodash.defaultsDeep(texture, DEFAULT_TEXTURE);
+            const SELECTED = opts.streamId ? DEFAULT_TEXTURE_WITH_STREAM_ID : DEFAULT_TEXTURE;
+            texture = lodash.defaultsDeep(texture, SELECTED);
           }
         }
         let owner = thisArg;
@@ -366,8 +366,6 @@ function LoggingInterceptor(params={}) {
           logState.requestType = 'head';
         }
       }
-      // determine the flow identifier (version, revision, instanceId)
-      logState.streamId = logState.streamId || tracer.get('instanceId');
       // determine the action type (i.e. explicit or implicit)
       if (pointer.actionFlow) {
         logState.actionFlow = pointer.actionFlow;
@@ -707,6 +705,24 @@ function isProxyRecursive(texture) {
     if (texture[fields[i]]) return true;
   }
   return false;
+}
+
+function extractStreamId(logging, appInfo, instanceId) {
+  if (lodash.isObject(logging)) {
+    if (logging.enabled === false) {
+      return undefined;
+    }
+    if (lodash.isString(logging.streamIdExpression)) {
+      return chores.formatTemplate(logging.streamIdExpression, appInfo);
+    }
+    if (lodash.isFunction(logging.streamIdExtractor)) {
+      let streamId = logging.streamIdExtractor(lodash.pick(appInfo, [
+        'name', 'version', 'framework.name', 'framework.version'
+      ]), instanceId);
+      if (lodash.isString(streamId)) return streamId;
+    }
+  }
+  return instanceId;
 }
 
 const DEFAULT_TEXTURE = {

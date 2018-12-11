@@ -746,7 +746,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('should wrap all of methods of a bridge-dialect with empty textureStore', function() {
       var objectDecorator = lab.initBackboneService('object-decorator', {
         appInfo: {},
-        textureNames: ['default'],
+        profileConfig: {},
         textureConfig: {},
         loggingFactory: loggingFactory,
         nameResolver: nameResolver,
@@ -839,7 +839,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       }
       var objectDecorator = lab.initBackboneService('object-decorator', {
         appInfo: {},
-        textureNames: ['default'],
+        profileConfig: {},
         textureConfig: textureConfig,
         loggingFactory: loggingFactory,
         nameResolver: nameResolver,
@@ -901,7 +901,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     it('should wrap all of methods of a plugin-gadget with empty textureStore', function() {
       var objectDecorator = lab.initBackboneService('object-decorator', {
         appInfo: {},
-        textureNames: ['default'],
+        profileConfig: {},
         textureConfig: {},
         loggingFactory: loggingFactory,
         nameResolver: nameResolver,
@@ -994,7 +994,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       }
       var objectDecorator = lab.initBackboneService('object-decorator', {
         appInfo: {},
-        textureNames: ['default'],
+        profileConfig: {},
         textureConfig: textureConfig,
         loggingFactory: loggingFactory,
         nameResolver: nameResolver,
@@ -1234,7 +1234,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1300,7 +1300,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1367,7 +1367,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 3);
@@ -1440,7 +1440,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 3);
@@ -1514,7 +1514,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1580,7 +1580,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "implicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1647,7 +1647,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1713,7 +1713,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1780,7 +1780,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1847,7 +1847,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1915,7 +1915,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -1981,7 +1981,7 @@ describe('tdd:devebot:core:object-decorator', function() {
             "requestId": "YkMjPoSoSyOTrLyf76Mzqg",
             "requestType": "link",
             "actionFlow": "explicit",
-            "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+            "streamId": undefined
           }
         ]));
         assert.equal(step.tracer.toMessage.callCount, 2);
@@ -2071,7 +2071,7 @@ describe('tdd:devebot:core:object-decorator', function() {
               "requestId": step.scenario.requestId,
               "requestType": "link",
               "actionFlow": actionFlow,
-              "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+              "streamId": undefined
             }
           ]));
           assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
@@ -2186,7 +2186,7 @@ describe('tdd:devebot:core:object-decorator', function() {
               "requestId": step.scenario.requestId,
               "requestType": "link",
               "actionFlow": actionFlow,
-              "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+              "streamId": undefined
             }
           ]));
           assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
@@ -2277,7 +2277,7 @@ describe('tdd:devebot:core:object-decorator', function() {
               "requestId": step.scenario.requestId,
               "requestType": "link",
               "actionFlow": actionFlow,
-              "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+              "streamId": undefined
             }
           ]));
           assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
@@ -2411,7 +2411,7 @@ describe('tdd:devebot:core:object-decorator', function() {
               "requestId": step.scenario.requestId,
               "requestType": "link",
               "actionFlow": "implicit",
-              "streamId": "NS3Csx_9RTC6NBI9HXVv0Q"
+              "streamId": undefined
             }
           ]));
           assert.equal(step.tracer.toMessage.callCount, step.tracer.add.callCount);
@@ -2507,7 +2507,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           "requestId": "94f03511d4e2",
           "requestType": "link",
           "actionFlow": "implicit",
-          "streamId": "X25Xv2HNQPyeD22SyjuCiw"
+          "streamId": undefined
         }
       ]));
       assert.equal(tracerState.toMessage.callCount, 2);

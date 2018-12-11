@@ -7,6 +7,7 @@ const os = require('os');
 const path = require('path');
 const util = require('util');
 const uuidv4 = require('logolite/uuidv4');
+const format = require('logolite/lib/format');
 const Validator = require('schemato').Validator;
 const constx = require('./constx');
 const loader = require('./loader');
@@ -45,6 +46,10 @@ chores.buildError = function(errorName) {
 
 chores.getUUID = function() {
   return uuidv4();
+}
+
+chores.formatTemplate = function(tmpl, data) {
+  return format(tmpl, data);
 }
 
 chores.loadPackageInfo = function(pkgRootPath) {

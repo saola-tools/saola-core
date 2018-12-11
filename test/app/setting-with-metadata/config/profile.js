@@ -6,6 +6,13 @@ module.exports = {
       enabled: false
     }
   },
+  decorator: {
+    logging: {
+      streamIdExtractor: function(appInfo, instanceId) {
+        return instanceId + '@' + appInfo.version;
+      }
+    }
+  },
   logger: {
     transports: {
       console: {
