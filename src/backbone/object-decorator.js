@@ -371,7 +371,7 @@ function LoggingInterceptor(params={}) {
         logState.actionFlow = pointer.actionFlow;
       }
       let msgObj = {
-        text: "#{objectName}.#{methodName} - Request[#{requestId}]"
+        text: "Req[#{requestId}] #{objectName}.#{methodName}"
       }
       switch (eventName) {
         case 'Request':
@@ -716,10 +716,14 @@ function extractStreamId(logging, appInfo, instanceId) {
       return chores.formatTemplate(logging.streamIdExpression, appInfo);
     }
     if (lodash.isFunction(logging.streamIdExtractor)) {
-      let streamId = logging.streamIdExtractor(lodash.pick(appInfo, [
-        'name', 'version', 'framework.name', 'framework.version'
-      ]), instanceId);
-      if (lodash.isString(streamId)) return streamId;
+      try {
+        let streamId = logging.streamIdExtractor(lodash.pick(appInfo, [
+          'name', 'version', 'framework.name', 'framework.version'
+        ]), instanceId);
+        if (lodash.isString(streamId)) return streamId;
+      } catch (fatal) {
+        // return 'streamIdExtractor-throw-an-error';
+      }
     }
   }
   return instanceId;

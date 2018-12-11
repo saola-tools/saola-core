@@ -3423,6 +3423,78 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
   });
 
+  describe('extractStreamId()', function() {
+    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var extractStreamId = ObjectDecorator.__get__('extractStreamId');
+    var appInfo = {
+      name: 'example',
+      version: '0.1.1',
+      framework: {
+        name: 'devebot',
+        version: '0.2.8'
+      }
+    }
+
+    it('return undefined if decorator configuration is not enable', function() {
+      assert.isUndefined(extractStreamId({enabled: false}, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'));
+    });
+
+    it('streamIdExpression will generate a correct streamId', function() {
+      assert.equal(extractStreamId({
+        streamIdExpression: '#{name}@#{version}'
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'example@0.1.1');
+    });
+
+    it('should keep safety with an unsafe streamIdExtractor', function() {
+      var streamId;
+      assert.doesNotThrow(function() {
+        streamId = extractStreamId({
+          streamIdExtractor: function() {
+            var obj;
+            return obj.streamId;
+          }
+        }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt');
+      }, Error);
+      assert.equal(streamId, 'YkMjPoSoSyOTrLyf76Mzqt');
+    });
+
+    it('unstring returned value of streamIdExtractor will be skipped', function() {
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return true
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return 1024
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return {}
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return null
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return undefined
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+    });
+
+    it('streamIdExtractor will generate a correct streamId', function() {
+      assert.equal(extractStreamId({
+        streamIdExtractor: function(appInfo, instanceId) {
+          return instanceId + '@' + appInfo.version
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt@0.1.1');
+    });
+  });
+
   after(function() {
     LogTracer.clearInterceptors();
     envmask.reset();
