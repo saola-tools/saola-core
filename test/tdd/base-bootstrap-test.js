@@ -1088,6 +1088,7 @@ var replaceLibPath = function(p, context) {
     }
   }
   output = output.replace(/^\/devebot\/devebot/g, '/devebot');
+  output = output.replace(/^\/devebot-[0-9].*/g, '/devebot'); // folder /devebot-0.2.1
   return output;
 }
 
