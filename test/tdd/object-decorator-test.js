@@ -731,6 +731,68 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
       assert.equal(logState_getRate.length, 0);
     });
+
+    it('should support logging templates that contain the streamId', function() {
+      var loggingFactory = new LoggingFactoryMock();
+      function _extractLogInfo(tracerStore) {
+        return {
+          add: tracerStore.add.map(arg => lodash.pick(arg, ['requestId', 'streamId'])),
+          toMessage: tracerStore.toMessage.map(arg => lodash.pick(arg, ['text'])),
+        }
+      }
+      var textureOfBean = {}
+      var mockedBean = {
+        method1: sinon.stub(),
+        method2: sinon.stub(),
+      }
+      var wrappedBean = wrapObject(CTX, mockedBean, {
+        logger: loggingFactory.getLogger(),
+        tracer: loggingFactory.getTracer(),
+        textureOfBean: textureOfBean,
+        supportAllMethods: true,
+        useDefaultTexture: true,
+        objectName: 'originalBean',
+        streamId: "AtEBb0vPQIWzmLVDGP7zyg@0.1.0"
+      });
+      wrappedBean.method1("Hello world!", { requestId: "HJbTk3z4TFiBcNbG6SCycg" });
+      wrappedBean.method2("How are you?", { requestId: "sad2rAQ0TX-C55idWsAMrw" });
+      var tracerStore = loggingFactory.getTracerStore();
+      false && console.log(JSON.stringify(tracerStore, null, 2));
+      assert.deepEqual(_extractLogInfo(tracerStore), {
+        "add": [
+          {
+            "requestId": "HJbTk3z4TFiBcNbG6SCycg",
+            "streamId": "AtEBb0vPQIWzmLVDGP7zyg@0.1.0"
+          },
+          {
+            "requestId": "HJbTk3z4TFiBcNbG6SCycg",
+            "streamId": "AtEBb0vPQIWzmLVDGP7zyg@0.1.0"
+          },
+          {
+            "requestId": "sad2rAQ0TX-C55idWsAMrw",
+            "streamId": "AtEBb0vPQIWzmLVDGP7zyg@0.1.0"
+          },
+          {
+            "requestId": "sad2rAQ0TX-C55idWsAMrw",
+            "streamId": "AtEBb0vPQIWzmLVDGP7zyg@0.1.0"
+          }
+        ],
+        "toMessage": [
+          {
+            "text": "Req[#{requestId}/#{streamId}] #{objectName}.#{methodName}() #{requestType}"
+          },
+          {
+            "text": "Req[#{requestId}/#{streamId}] #{objectName}.#{methodName}() completed"
+          },
+          {
+            "text": "Req[#{requestId}/#{streamId}] #{objectName}.#{methodName}() #{requestType}"
+          },
+          {
+            "text": "Req[#{requestId}/#{streamId}] #{objectName}.#{methodName}() completed"
+          }
+        ]
+      });
+    })
   });
 
   describe('wrapBridgeDialect()', function() {
@@ -2602,6 +2664,65 @@ describe('tdd:devebot:core:object-decorator', function() {
 
       return p;
     });
+
+    it('defined streamId must be propagated to logState object', function() {
+      var loggingFactory = new LoggingFactoryMock();
+
+      var object = {
+        sampleMethod: sinon.stub().callsFake(function() {
+          var opts = arguments[1];
+          var output = { message: arguments[0], requestId: opts.requestId };
+          switch(opts.methodType) {
+            case 'promise':
+              return Promise.resolve(output);
+            case 'callback':
+              var callback = arguments[2];
+              return callback(null, output);
+            case 'general':
+              return output;
+          }
+        })
+      }
+
+      var loggingProxy = new LoggingInterceptor({
+        object: object,
+        objectName: 'object',
+        method: object.sampleMethod,
+        methodName: 'sampleMethod',
+        texture: lodash.merge({}, DEFAULT_TEXTURE),
+        logger: loggingFactory.getLogger(),
+        tracer: loggingFactory.getTracer(),
+        streamId: "AtEBb0vPQIWzmLVDGP7zyg@0.1.0"
+      });
+
+      function _extractLogInfo(tracerStore) {
+        return {
+          add: tracerStore.add.map(arg => lodash.pick(arg, ['requestId', 'streamId'])),
+        }
+      }
+
+      return loggingProxy.capsule("Hello world", {
+        requestId: "94f03511d4e1",
+        methodType: "promise"
+      }).then(function(result) {
+        assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e1" });
+        var tracerStore = loggingFactory.getTracerStore();
+        false && console.log(JSON.stringify(tracerStore, null, 2));
+        assert.deepEqual(_extractLogInfo(tracerStore), {
+          add: [
+            {
+              "requestId": "94f03511d4e1",
+              "streamId": "AtEBb0vPQIWzmLVDGP7zyg@0.1.0"
+            },
+            {
+              "requestId": "94f03511d4e1",
+              "streamId": "AtEBb0vPQIWzmLVDGP7zyg@0.1.0"
+            }
+          ]
+        });
+        loggingFactory.resetHistory();
+      });
+    });
   });
 
   describe('LoggingInterceptor', function() {
@@ -3299,6 +3420,78 @@ describe('tdd:devebot:core:object-decorator', function() {
         function() {}
       );
       assert.equal(reqId, "YkMjPoSoSyOTrLyf76Mzqt");
+    });
+  });
+
+  describe('extractStreamId()', function() {
+    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var extractStreamId = ObjectDecorator.__get__('extractStreamId');
+    var appInfo = {
+      name: 'example',
+      version: '0.1.1',
+      framework: {
+        name: 'devebot',
+        version: '0.2.8'
+      }
+    }
+
+    it('return undefined if decorator configuration is not enable', function() {
+      assert.isUndefined(extractStreamId({enabled: false}, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'));
+    });
+
+    it('streamIdExpression will generate a correct streamId', function() {
+      assert.equal(extractStreamId({
+        streamIdExpression: '#{name}@#{version}'
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'example@0.1.1');
+    });
+
+    it('should keep safety with an unsafe streamIdExtractor', function() {
+      var streamId;
+      assert.doesNotThrow(function() {
+        streamId = extractStreamId({
+          streamIdExtractor: function() {
+            var obj;
+            return obj.streamId;
+          }
+        }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt');
+      }, Error);
+      assert.equal(streamId, 'YkMjPoSoSyOTrLyf76Mzqt');
+    });
+
+    it('unstring returned value of streamIdExtractor will be skipped', function() {
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return true
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return 1024
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return {}
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return null
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+      assert.equal(extractStreamId({
+        streamIdExtractor: function() {
+          return undefined
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt');
+    });
+
+    it('streamIdExtractor will generate a correct streamId', function() {
+      assert.equal(extractStreamId({
+        streamIdExtractor: function(appInfo, instanceId) {
+          return instanceId + '@' + appInfo.version
+        }
+      }, appInfo, 'YkMjPoSoSyOTrLyf76Mzqt'), 'YkMjPoSoSyOTrLyf76Mzqt@0.1.1');
     });
   });
 
