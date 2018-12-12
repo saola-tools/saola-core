@@ -88,11 +88,11 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   }));
   const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME];
 
-  let transCTX = { L, T, nameResolver, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
+  let transCTX = { L, T, issueInspector, nameResolver, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
 
   if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
     let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
-    transCTX = { L, T, pluginAliasMap, bridgeAliasMap, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
+    transCTX = { L, T, issueInspector, pluginAliasMap, bridgeAliasMap, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
   }
 
   let libRefs = lodash.values(pluginRefs);
@@ -140,56 +140,6 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     text: ' + included names: ${includedNames}'
   }));
 
-  function loadApplicationConfig(configType, configDir) {
-    if (configDir) {
-      L.has('dunce') && L.log('dunce', T.add({ configType, configDir }).toMessage({
-        text: ' + load the "${configType}" configuration in "${configDir}"'
-      }));
-      let configFiles = chores.filterFiles(configDir, '.*\.js');
-      let configInfos = lodash.map(configFiles, function(file) {
-        if (false) {
-          return file.replace('.js', '').split(/_(.+)/).filter(function(sub) {
-            return sub.length > 0;
-          });
-        }
-        return file.replace('.js', '').replace(/[_]/,'&').split('&');
-      });
-      L.has('dunce') && L.log('dunce', T.add({ configInfos }).toMessage({
-        text: ' - parsing configFiles result: ${configInfos}'
-      }));
-
-      L.has('dunce') && L.log('dunce', T.add({ configType }).toMessage({
-        text: ' - load the application default config of "${configType}"'
-      }));
-      for(let i in ALIASES_OF[configType]) {
-        let defaultFile = path.join(configDir, ALIASES_OF[configType][i] + '.js');
-        if (chores.fileExists(defaultFile)) {
-          config[configType]['expanse'] = transformConfig(transCTX, configType, loadConfigFile(ctx, defaultFile), 'application');
-          break;
-        }
-      }
-      config[configType]['default'] = lodash.defaultsDeep({}, config[configType]['expanse'], config[configType]['default']);
-
-      L.has('dunce') && L.log('dunce', T.add({ configType }).toMessage({
-        text: ' - load the application customized config of "${configType}"'
-      }));
-      let expanseNames = filterConfigBy(ctx, configInfos, includedNames, configType, ALIASES_OF);
-      L.has('dunce') && L.log('dunce', T.add({ expanseNames }).toMessage({
-        text: ' + expanded names: ${expanseNames}'
-      }));
-      config[configType]['expanse'] = config[configType]['expanse'] || {};
-      config[configType]['expanse'] = lodash.reduce(expanseNames, function(accum, expanseItem) {
-        let configFile = path.join(configDir, expanseItem.join('_') + '.js');
-        let configObj = lodash.defaultsDeep(transformConfig(transCTX, configType, loadConfigFile(ctx, configFile), 'application'), accum);
-        if (configObj.disabled) return accum;
-        config[configType]['names'].push(expanseItem[1]);
-        return configObj;
-      }, config[configType]['expanse']);
-      config[configType]['mixture'] = config[configType]['mixture'] || {};
-      config[configType]['mixture'] = lodash.defaultsDeep(config[configType]['expanse'], config[configType]['mixture'], config[configType]['default']);
-    }
-  }
-
   CONFIG_TYPES.forEach(function(configType) {
     config[configType] = config[configType] || {};
 
@@ -218,9 +168,9 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     config[configType]['names'] = ['default'];
     config[configType]['mixture'] = {};
 
-    loadApplicationConfig(configType, defaultConfigDir);
+    loadApplicationConfig(transCTX, config, ALIASES_OF, includedNames, configType, defaultConfigDir);
     if (externalConfigDir != defaultConfigDir) {
-      loadApplicationConfig(configType, externalConfigDir);
+      loadApplicationConfig(transCTX, config, ALIASES_OF, includedNames, configType, externalConfigDir);
     }
 
     L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
@@ -245,6 +195,57 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   issueInspector.barrier({ invoker: blockRef, footmark: 'config-file-loading' });
 
   return config;
+}
+
+function loadApplicationConfig(ctx, config, ALIASES_OF, includedNames, configType, configDir) {
+  let {L, T} = ctx;
+  if (configDir) {
+    L.has('dunce') && L.log('dunce', T.add({ configType, configDir }).toMessage({
+      text: ' + load the "${configType}" configuration in "${configDir}"'
+    }));
+    let configFiles = chores.filterFiles(configDir, '.*\.js');
+    let configInfos = lodash.map(configFiles, function(file) {
+      if (false) {
+        return file.replace('.js', '').split(/_(.+)/).filter(function(sub) {
+          return sub.length > 0;
+        });
+      }
+      return file.replace('.js', '').replace(/[_]/,'&').split('&');
+    });
+    L.has('dunce') && L.log('dunce', T.add({ configInfos }).toMessage({
+      text: ' - parsing configFiles result: ${configInfos}'
+    }));
+
+    L.has('dunce') && L.log('dunce', T.add({ configType }).toMessage({
+      text: ' - load the application default config of "${configType}"'
+    }));
+    for(let i in ALIASES_OF[configType]) {
+      let defaultFile = path.join(configDir, ALIASES_OF[configType][i] + '.js');
+      if (chores.fileExists(defaultFile)) {
+        config[configType]['expanse'] = transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), 'application');
+        break;
+      }
+    }
+    config[configType]['default'] = lodash.defaultsDeep({}, config[configType]['expanse'], config[configType]['default']);
+
+    L.has('dunce') && L.log('dunce', T.add({ configType }).toMessage({
+      text: ' - load the application customized config of "${configType}"'
+    }));
+    let expanseNames = filterConfigBy(ctx, configInfos, includedNames, configType, ALIASES_OF);
+    L.has('dunce') && L.log('dunce', T.add({ expanseNames }).toMessage({
+      text: ' + expanded names: ${expanseNames}'
+    }));
+    config[configType]['expanse'] = config[configType]['expanse'] || {};
+    config[configType]['expanse'] = lodash.reduce(expanseNames, function(accum, expanseItem) {
+      let configFile = path.join(configDir, expanseItem.join('_') + '.js');
+      let configObj = lodash.defaultsDeep(transformConfig(ctx, configType, loadConfigFile(ctx, configFile), 'application'), accum);
+      if (configObj.disabled) return accum;
+      config[configType]['names'].push(expanseItem[1]);
+      return configObj;
+    }, config[configType]['expanse']);
+    config[configType]['mixture'] = config[configType]['mixture'] || {};
+    config[configType]['mixture'] = lodash.defaultsDeep(config[configType]['expanse'], config[configType]['mixture'], config[configType]['default']);
+  }
 }
 
 let loadConfigFile = function(ctx, configFile) {
