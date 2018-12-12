@@ -81,42 +81,20 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     text: ' - configType aliases mapping: ${aliasesOf}'
   }));
 
-  let transCTX = { L, T, issueInspector, nameResolver, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
+  let transCTX = { L, T, issueInspector, nameResolver };
   if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
     let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
-    transCTX = { L, T, issueInspector, pluginAliasMap, bridgeAliasMap, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
+    transCTX = { L, T, issueInspector, pluginAliasMap, bridgeAliasMap };
   }
-
-  let libRefs = lodash.values(pluginRefs);
-  if (devebotRef) {
-    libRefs.push(devebotRef);
-  }
-
-  let appRootDir = null;
-  if (appRef && lodash.isString(appRef.path)) {
-    appRootDir = appRef.path;
-  };
 
   let config = {};
-
-  let defaultConfigDir = appRootDir ? path.join(appRootDir, CONFIG_SUBDIR) : null;
-  L.has('silly') && L.log('silly', T.add({ configDir: defaultConfigDir }).toMessage({
-    tags: [ blockRef, 'config-dir', 'internal-config-dir' ],
-    text: ' - internal configDir: ${configDir}'
-  }));
-
-  let externalConfigDir = resolveConfigDir(ctx, appName, appRootDir, customDir, customEnv);
-  L.has('silly') && L.log('silly', T.add({ configDir: externalConfigDir }).toMessage({
-    tags: [ blockRef, 'config-dir', 'external-config-dir' ],
-    text: ' - external configDir: ${configDir}'
-  }));
 
   let includedNames = buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName);
   L.has('dunce') && L.log('dunce', T.add({ includedNames }).toMessage({
     text: ' + included names: ${includedNames}'
   }));
 
-  loadConfigOfModules(transCTX, config, ALIASES_OF, includedNames, libRefs, defaultConfigDir, externalConfigDir);
+  loadConfigOfModules(transCTX, config, ALIASES_OF, includedNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
 
   lodash.forEach([CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME], function(configType) {
     if (chores.isUpgradeSupported('standardizing-config')) {
@@ -173,8 +151,28 @@ function buildConfigTileNames(ctx, appOptions, profileName, sandboxName, texture
   return includedNames;
 }
 
-function loadConfigOfModules(ctx, config, ALIASES_OF, includedNames, libRefs, defaultConfigDir, externalConfigDir) {
+function loadConfigOfModules(ctx, config, ALIASES_OF, includedNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
   let {L, T} = ctx;
+
+  let libRefs = lodash.values(pluginRefs);
+  if (devebotRef) {
+    libRefs.push(devebotRef);
+  }
+
+  let appRootDir = appRef && lodash.isString(appRef.path) ? appRef.path : null;
+
+  let defaultConfigDir = appRootDir ? path.join(appRootDir, CONFIG_SUBDIR) : null;
+  L.has('silly') && L.log('silly', T.add({ configDir: defaultConfigDir }).toMessage({
+    tags: [ blockRef, 'config-dir', 'internal-config-dir' ],
+    text: ' - internal configDir: ${configDir}'
+  }));
+
+  let externalConfigDir = resolveConfigDir(ctx, appName, appRootDir, customDir, customEnv);
+  L.has('silly') && L.log('silly', T.add({ configDir: externalConfigDir }).toMessage({
+    tags: [ blockRef, 'config-dir', 'external-config-dir' ],
+    text: ' - external configDir: ${configDir}'
+  }));
+
   CONFIG_TYPES.forEach(function(configType) {
     config[configType] = config[configType] || {};
 
@@ -340,7 +338,7 @@ let standardizeNames = function(ctx, cfgLabels) {
 }
 
 let transformConfig = function(ctx, configType, configData, moduleType, moduleName, modulePresets) {
-  let { L, T, nameResolver, CONFIG_SANDBOX_NAME } = ctx || this;
+  let { L, T, nameResolver } = ctx || this;
   if (configType === CONFIG_SANDBOX_NAME) {
     configData = convertPreciseConfig(ctx, configData, moduleType, moduleName, modulePresets);
     if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
