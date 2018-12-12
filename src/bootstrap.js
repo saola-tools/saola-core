@@ -61,6 +61,12 @@ function appLoader(params={}) {
     appRef = appRef || {};
     appRef.presets = lodash.cloneDeep(params.presets);
   }
+  if (appRef && lodash.isString(appRef.path)) {
+    appRef.manifest = loadManifest(appRef.path);
+    if (!chores.isUpgradeSupported('manifest')) {
+      delete appRef.manifest;
+    }
+  }
 
   let devebotRef = {
     type: 'framework',
@@ -68,8 +74,16 @@ function appLoader(params={}) {
     path: topRootPath
   };
 
-  lodash.forOwn(params.pluginRefs, function(ref) { ref.type = 'plugin' });
-  lodash.forOwn(params.bridgeRefs, function(ref) { ref.type = 'bridge' });
+  lodash.forOwn(params.pluginRefs, function(ref) {
+    ref.type = 'plugin';
+    if (!chores.isUpgradeSupported('manifest')) return;
+    ref.manifest = loadManifest(ref.path);
+  });
+  lodash.forOwn(params.bridgeRefs, function(ref) {
+    ref.type = 'bridge';
+    if (!chores.isUpgradeSupported('manifest')) return;
+    ref.manifest = loadManifest(ref.path);
+  });
 
   // declare user-defined environment variables
   let currentEnvNames = envbox.getEnvNames();

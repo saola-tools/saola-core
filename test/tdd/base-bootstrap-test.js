@@ -774,14 +774,15 @@ describe('tdd:devebot:base:bootstrap', function() {
         "framework": lab.getFrameworkInfo()
       });
       // verify bridgeRefs
-      assert.sameDeepMembers(cfg.bridgeRefs, [
+      var expectedBridgeRefs = [
         {
           "type": "bridge",
           "name": "bridge3",
           "path": "/test/lib/bridge3",
           "code": "bridge3",
           "codeInCamel": "bridge3",
-          "nameInCamel": "bridge3"
+          "nameInCamel": "bridge3",
+          "manifest": null,
         },
         {
           "type": "bridge",
@@ -789,7 +790,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/lib/bridge4",
           "code": "bridge4",
           "codeInCamel": "bridge4",
-          "nameInCamel": "bridge4"
+          "nameInCamel": "bridge4",
+          "manifest": null,
         },
         {
           "type": "bridge",
@@ -797,7 +799,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/lib/devebot-co-connector1",
           "code": "connector1",
           "codeInCamel": "connector1",
-          "nameInCamel": "devebotCoConnector1"
+          "nameInCamel": "devebotCoConnector1",
+          "manifest": null,
         },
         {
           "type": "bridge",
@@ -805,7 +808,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/lib/devebot-co-connector2",
           "code": "connector2",
           "codeInCamel": "connector2",
-          "nameInCamel": "devebotCoConnector2"
+          "nameInCamel": "devebotCoConnector2",
+          "manifest": null,
         },
         {
           "type": "bridge",
@@ -813,7 +817,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/lib/bridge1",
           "code": "bridge1",
           "codeInCamel": "bridge1",
-          "nameInCamel": "bridge1"
+          "nameInCamel": "bridge1",
+          "manifest": null,
         },
         {
           "type": "bridge",
@@ -821,15 +826,23 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/test/lib/bridge2",
           "code": "bridge2",
           "codeInCamel": "bridge2",
-          "nameInCamel": "bridge2"
+          "nameInCamel": "bridge2",
+          "manifest": null,
         }
-      ]);
+      ];
+      if (!chores.isUpgradeSupported('manifest')) {
+        expectedBridgeRefs = lodash.map(expectedBridgeRefs, function(ref) {
+          return lodash.omit(ref, ["manifest"]);
+        })
+      }
+      assert.sameDeepMembers(cfg.bridgeRefs, expectedBridgeRefs);
       // verify pluginRefs
       var expectedPluginRefs = [
         {
           "type": "application",
           "name": "fullapp",
-          "path": "/test/app/fullapp"
+          "path": "/test/app/fullapp",
+          "manifest": null,
         },
         {
           "type": "plugin",
@@ -846,7 +859,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           ],
           "code": "sub-plugin1",
           "codeInCamel": "subPlugin1",
-          "nameInCamel": "subPlugin1"
+          "nameInCamel": "subPlugin1",
+          "manifest": null,
         },
         {
           "type": "plugin",
@@ -863,7 +877,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           ],
           "code": "sub-plugin2",
           "codeInCamel": "subPlugin2",
-          "nameInCamel": "subPlugin2"
+          "nameInCamel": "subPlugin2",
+          "manifest": null,
         },
         {
           "type": "plugin",
@@ -879,7 +894,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           "pluginDepends": [],
           "code": "plugin1",
           "codeInCamel": "plugin1",
-          "nameInCamel": "plugin1"
+          "nameInCamel": "plugin1",
+          "manifest": null,
         },
         {
           "type": "plugin",
@@ -895,7 +911,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           "pluginDepends": [],
           "code": "plugin2",
           "codeInCamel": "plugin2",
-          "nameInCamel": "plugin2"
+          "nameInCamel": "plugin2",
+          "manifest": null,
         },
         {
           "type": "plugin",
@@ -906,18 +923,24 @@ describe('tdd:devebot:base:bootstrap', function() {
           "pluginDepends": [],
           "code": "plugin3",
           "codeInCamel": "plugin3",
-          "nameInCamel": "plugin3"
+          "nameInCamel": "plugin3",
+          "manifest": null,
         },
         {
           "type": "framework",
           "name": "devebot",
-          "path": "/devebot"
+          "path": "/devebot",
         }
       ];
       if (!chores.isUpgradeSupported('presets')) {
         expectedPluginRefs = lodash.map(expectedPluginRefs, function(item) {
           return lodash.omit(item, ["presets", "bridgeDepends", "pluginDepends"]);
         });
+      }
+      if (!chores.isUpgradeSupported('manifest')) {
+        expectedPluginRefs = lodash.map(expectedPluginRefs, function(ref) {
+          return lodash.omit(ref, ["manifest"]);
+        })
       }
       assert.sameDeepMembers(cfg.pluginRefs, expectedPluginRefs);
     });
