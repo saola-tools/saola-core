@@ -16,6 +16,7 @@ const CONFIG_VAR_NAMES = [ 'PROFILE',  'SANDBOX',  'TEXTURE', 'CONFIG_DIR', 'CON
 const CONFIG_PROFILE_NAME = 'profile';
 const CONFIG_SANDBOX_NAME = 'sandbox';
 const CONFIG_TEXTURE_NAME = 'texture';
+const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME];
 const RELOADING_FORCED = true;
 
 function ConfigLoader(params={}) {
@@ -86,7 +87,6 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     tags: [ blockRef, 'config-dir', 'aliases-of' ],
     text: ' - configType aliases mapping: ${aliasesOf}'
   }));
-  const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME];
 
   let transCTX = { L, T, issueInspector, nameResolver, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
 
@@ -140,41 +140,7 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     text: ' + included names: ${includedNames}'
   }));
 
-  CONFIG_TYPES.forEach(function(configType) {
-    config[configType] = config[configType] || {};
-
-    L.has('dunce') && L.log('dunce', T.toMessage({
-      text: ' + load the default config from plugins & framework'
-    }));
-    lodash.forEach(libRefs, function(libRef) {
-      if (libRef.presets && chores.isUpgradeSupported('presets')) {
-        L.has('dunce') && L.log('dunce', T.add(libRef).toMessage({
-          text: ' - Presets of ${type}[${name}]: ${presets}'
-        }));
-      }
-      let libRootDir = libRef.path;
-      let libType = libRef.type || 'plugin';
-      let libName = libRef.name;
-      for(let i in ALIASES_OF[configType]) {
-        let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, ALIASES_OF[configType][i] + '.js');
-        if (chores.fileExists(defaultFile)) {
-          config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
-              transformConfig(transCTX, configType, loadConfigFile(ctx, defaultFile), libType, libName, libRef.presets));
-          break;
-        }
-      }
-    });
-
-    config[configType]['names'] = ['default'];
-    config[configType]['mixture'] = {};
-
-    loadApplicationConfig(transCTX, config, ALIASES_OF, includedNames, configType, defaultConfigDir);
-    if (externalConfigDir != defaultConfigDir) {
-      loadApplicationConfig(transCTX, config, ALIASES_OF, includedNames, configType, externalConfigDir);
-    }
-
-    L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
-  });
+  loadConfigOfModules(transCTX, config, ALIASES_OF, includedNames, libRefs, defaultConfigDir, externalConfigDir);
 
   lodash.forEach([CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME], function(configType) {
     if (chores.isUpgradeSupported('standardizing-config')) {
@@ -195,6 +161,45 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   issueInspector.barrier({ invoker: blockRef, footmark: 'config-file-loading' });
 
   return config;
+}
+
+function loadConfigOfModules(ctx, config, ALIASES_OF, includedNames, libRefs, defaultConfigDir, externalConfigDir) {
+  let {L, T} = ctx;
+  CONFIG_TYPES.forEach(function(configType) {
+    config[configType] = config[configType] || {};
+
+    L.has('dunce') && L.log('dunce', T.toMessage({
+      text: ' + load the default config from plugins & framework'
+    }));
+    lodash.forEach(libRefs, function(libRef) {
+      if (libRef.presets && chores.isUpgradeSupported('presets')) {
+        L.has('dunce') && L.log('dunce', T.add(libRef).toMessage({
+          text: ' - Presets of ${type}[${name}]: ${presets}'
+        }));
+      }
+      let libRootDir = libRef.path;
+      let libType = libRef.type || 'plugin';
+      let libName = libRef.name;
+      for(let i in ALIASES_OF[configType]) {
+        let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, ALIASES_OF[configType][i] + '.js');
+        if (chores.fileExists(defaultFile)) {
+          config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
+              transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libType, libName, libRef.presets));
+          break;
+        }
+      }
+    });
+
+    config[configType]['names'] = ['default'];
+    config[configType]['mixture'] = {};
+
+    loadApplicationConfig(ctx, config, ALIASES_OF, includedNames, configType, defaultConfigDir);
+    if (externalConfigDir != defaultConfigDir) {
+      loadApplicationConfig(ctx, config, ALIASES_OF, includedNames, configType, externalConfigDir);
+    }
+
+    L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
+  });
 }
 
 function loadApplicationConfig(ctx, config, ALIASES_OF, includedNames, configType, configDir) {
