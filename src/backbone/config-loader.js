@@ -73,8 +73,8 @@ let readVariable = function(ctx, appLabel, varName) {
 let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
   let { L, T, issueInspector, stateInspector, nameResolver } = ctx || this;
 
-  const ALIASES_OF = buildConfigTypeAliases();
-  L.has('silly') && L.log('silly', T.add({ aliasesOf: ALIASES_OF }).toMessage({
+  const aliasesOf = buildConfigTypeAliases();
+  L.has('silly') && L.log('silly', T.add({ aliasesOf }).toMessage({
     tags: [ blockRef, 'config-dir', 'aliases-of' ],
     text: ' - configType aliases mapping: ${aliasesOf}'
   }));
@@ -87,12 +87,12 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
 
   let config = {};
 
-  let includedNames = buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName);
-  L.has('dunce') && L.log('dunce', T.add({ includedNames }).toMessage({
-    text: ' + included names: ${includedNames}'
+  let tileNames = buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName);
+  L.has('dunce') && L.log('dunce', T.add({ tileNames }).toMessage({
+    text: ' + included names: ${tileNames}'
   }));
 
-  loadConfigOfModules(localCTX, config, ALIASES_OF, includedNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
+  loadConfigOfModules(localCTX, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
 
   lodash.forEach([CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME], function(configType) {
     if (chores.isUpgradeSupported('standardizing-config')) {
@@ -129,27 +129,27 @@ function buildConfigTypeAliases() {
 function buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName) {
   appOptions = appOptions || {};
 
-  let includedNames = {};
-  includedNames[CONFIG_PROFILE_NAME] = standardizeNames(ctx, profileName);
-  includedNames[CONFIG_SANDBOX_NAME] = standardizeNames(ctx, sandboxName);
-  includedNames[CONFIG_TEXTURE_NAME] = standardizeNames(ctx, textureName);
+  let tileNames = {};
+  tileNames[CONFIG_PROFILE_NAME] = standardizeNames(ctx, profileName);
+  tileNames[CONFIG_SANDBOX_NAME] = standardizeNames(ctx, sandboxName);
+  tileNames[CONFIG_TEXTURE_NAME] = standardizeNames(ctx, textureName);
 
   let appProfiles = standardizeNames(ctx, appOptions.privateProfile || appOptions.privateProfiles);
-  includedNames[CONFIG_PROFILE_NAME] = lodash.concat(
-    lodash.difference(includedNames[CONFIG_PROFILE_NAME], appProfiles), appProfiles);
+  tileNames[CONFIG_PROFILE_NAME] = lodash.concat(
+    lodash.difference(tileNames[CONFIG_PROFILE_NAME], appProfiles), appProfiles);
 
   let appSandboxes = standardizeNames(ctx, appOptions.privateSandbox || appOptions.privateSandboxes);
-  includedNames[CONFIG_SANDBOX_NAME] = lodash.concat(
-    lodash.difference(includedNames[CONFIG_SANDBOX_NAME], appSandboxes), appSandboxes);
+  tileNames[CONFIG_SANDBOX_NAME] = lodash.concat(
+    lodash.difference(tileNames[CONFIG_SANDBOX_NAME], appSandboxes), appSandboxes);
 
   let appTextures = standardizeNames(ctx, appOptions.privateTexture || appOptions.privateTextures);
-  includedNames[CONFIG_TEXTURE_NAME] = lodash.concat(
-    lodash.difference(includedNames[CONFIG_TEXTURE_NAME], appTextures), appTextures);
+  tileNames[CONFIG_TEXTURE_NAME] = lodash.concat(
+    lodash.difference(tileNames[CONFIG_TEXTURE_NAME], appTextures), appTextures);
 
-  return includedNames;
+  return tileNames;
 }
 
-function loadConfigOfModules(ctx, config, ALIASES_OF, includedNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
+function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
   let {L, T} = ctx;
 
   let libRefs = lodash.values(pluginRefs);
@@ -186,8 +186,8 @@ function loadConfigOfModules(ctx, config, ALIASES_OF, includedNames, appName, ap
       let libRootDir = libRef.path;
       let libType = libRef.type || 'plugin';
       let libName = libRef.name;
-      for(let i in ALIASES_OF[configType]) {
-        let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, ALIASES_OF[configType][i] + '.js');
+      for(let i in aliasesOf[configType]) {
+        let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, aliasesOf[configType][i] + '.js');
         if (chores.fileExists(defaultFile)) {
           config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
               transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libType, libName, libRef.presets));
@@ -199,16 +199,16 @@ function loadConfigOfModules(ctx, config, ALIASES_OF, includedNames, appName, ap
     config[configType]['names'] = ['default'];
     config[configType]['mixture'] = {};
 
-    loadApplicationConfig(ctx, config, ALIASES_OF, includedNames, configType, defaultConfigDir);
+    loadApplicationConfig(ctx, config, aliasesOf, tileNames, configType, defaultConfigDir);
     if (externalConfigDir != defaultConfigDir) {
-      loadApplicationConfig(ctx, config, ALIASES_OF, includedNames, configType, externalConfigDir);
+      loadApplicationConfig(ctx, config, aliasesOf, tileNames, configType, externalConfigDir);
     }
 
     L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
   });
 }
 
-function loadApplicationConfig(ctx, config, ALIASES_OF, includedNames, configType, configDir) {
+function loadApplicationConfig(ctx, config, aliasesOf, tileNames, configType, configDir) {
   let {L, T} = ctx;
   if (configDir) {
     L.has('dunce') && L.log('dunce', T.add({ configType, configDir }).toMessage({
@@ -230,8 +230,8 @@ function loadApplicationConfig(ctx, config, ALIASES_OF, includedNames, configTyp
     L.has('dunce') && L.log('dunce', T.add({ configType }).toMessage({
       text: ' - load the application default config of "${configType}"'
     }));
-    for(let i in ALIASES_OF[configType]) {
-      let defaultFile = path.join(configDir, ALIASES_OF[configType][i] + '.js');
+    for(let i in aliasesOf[configType]) {
+      let defaultFile = path.join(configDir, aliasesOf[configType][i] + '.js');
       if (chores.fileExists(defaultFile)) {
         config[configType]['expanse'] = transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), 'application');
         break;
@@ -242,7 +242,7 @@ function loadApplicationConfig(ctx, config, ALIASES_OF, includedNames, configTyp
     L.has('dunce') && L.log('dunce', T.add({ configType }).toMessage({
       text: ' - load the application customized config of "${configType}"'
     }));
-    let expanseNames = filterConfigBy(ctx, configInfos, includedNames, configType, ALIASES_OF);
+    let expanseNames = filterConfigBy(ctx, configInfos, tileNames, configType, aliasesOf);
     L.has('dunce') && L.log('dunce', T.add({ expanseNames }).toMessage({
       text: ' + expanded names: ${expanseNames}'
     }));
