@@ -74,22 +74,14 @@ let readVariable = function(ctx, appLabel, varName) {
 
 let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
   let { L, T, issueInspector, stateInspector, nameResolver } = ctx || this;
-  appOptions = appOptions || {};
 
-  const ALIASES_OF = {};
-  ALIASES_OF[CONFIG_PROFILE_NAME] = lodash.clone(envbox.getEnv('CONFIG_PROFILE_ALIASES'));
-  ALIASES_OF[CONFIG_PROFILE_NAME].unshift(CONFIG_PROFILE_NAME);
-  ALIASES_OF[CONFIG_SANDBOX_NAME] = lodash.clone(envbox.getEnv('CONFIG_SANDBOX_ALIASES'));
-  ALIASES_OF[CONFIG_SANDBOX_NAME].unshift(CONFIG_SANDBOX_NAME);
-  ALIASES_OF[CONFIG_TEXTURE_NAME] = lodash.clone(envbox.getEnv('CONFIG_TEXTURE_ALIASES'));
-  ALIASES_OF[CONFIG_TEXTURE_NAME].unshift(CONFIG_TEXTURE_NAME);
+  const ALIASES_OF = buildConfigTypeAliases();
   L.has('silly') && L.log('silly', T.add({ aliasesOf: ALIASES_OF }).toMessage({
     tags: [ blockRef, 'config-dir', 'aliases-of' ],
     text: ' - configType aliases mapping: ${aliasesOf}'
   }));
 
   let transCTX = { L, T, issueInspector, nameResolver, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
-
   if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
     let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
     transCTX = { L, T, issueInspector, pluginAliasMap, bridgeAliasMap, CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME };
@@ -119,23 +111,7 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     text: ' - external configDir: ${configDir}'
   }));
 
-  let includedNames = {};
-  includedNames[CONFIG_PROFILE_NAME] = standardizeNames(ctx, profileName);
-  includedNames[CONFIG_SANDBOX_NAME] = standardizeNames(ctx, sandboxName);
-  includedNames[CONFIG_TEXTURE_NAME] = standardizeNames(ctx, textureName);
-
-  let appProfiles = standardizeNames(ctx, appOptions.privateProfile || appOptions.privateProfiles);
-  includedNames[CONFIG_PROFILE_NAME] = lodash.concat(
-    lodash.difference(includedNames[CONFIG_PROFILE_NAME], appProfiles), appProfiles);
-
-  let appSandboxes = standardizeNames(ctx, appOptions.privateSandbox || appOptions.privateSandboxes);
-  includedNames[CONFIG_SANDBOX_NAME] = lodash.concat(
-    lodash.difference(includedNames[CONFIG_SANDBOX_NAME], appSandboxes), appSandboxes);
-
-  let appTextures = standardizeNames(ctx, appOptions.privateTexture || appOptions.privateTextures);
-  includedNames[CONFIG_TEXTURE_NAME] = lodash.concat(
-    lodash.difference(includedNames[CONFIG_TEXTURE_NAME], appTextures), appTextures);
-
+  let includedNames = buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName);
   L.has('dunce') && L.log('dunce', T.add({ includedNames }).toMessage({
     text: ' + included names: ${includedNames}'
   }));
@@ -161,6 +137,40 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
   issueInspector.barrier({ invoker: blockRef, footmark: 'config-file-loading' });
 
   return config;
+}
+
+function buildConfigTypeAliases() {
+  const ALIASES_OF = {};
+  ALIASES_OF[CONFIG_PROFILE_NAME] = lodash.clone(envbox.getEnv('CONFIG_PROFILE_ALIASES'));
+  ALIASES_OF[CONFIG_PROFILE_NAME].unshift(CONFIG_PROFILE_NAME);
+  ALIASES_OF[CONFIG_SANDBOX_NAME] = lodash.clone(envbox.getEnv('CONFIG_SANDBOX_ALIASES'));
+  ALIASES_OF[CONFIG_SANDBOX_NAME].unshift(CONFIG_SANDBOX_NAME);
+  ALIASES_OF[CONFIG_TEXTURE_NAME] = lodash.clone(envbox.getEnv('CONFIG_TEXTURE_ALIASES'));
+  ALIASES_OF[CONFIG_TEXTURE_NAME].unshift(CONFIG_TEXTURE_NAME);
+  return ALIASES_OF;
+}
+
+function buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName) {
+  appOptions = appOptions || {};
+
+  let includedNames = {};
+  includedNames[CONFIG_PROFILE_NAME] = standardizeNames(ctx, profileName);
+  includedNames[CONFIG_SANDBOX_NAME] = standardizeNames(ctx, sandboxName);
+  includedNames[CONFIG_TEXTURE_NAME] = standardizeNames(ctx, textureName);
+
+  let appProfiles = standardizeNames(ctx, appOptions.privateProfile || appOptions.privateProfiles);
+  includedNames[CONFIG_PROFILE_NAME] = lodash.concat(
+    lodash.difference(includedNames[CONFIG_PROFILE_NAME], appProfiles), appProfiles);
+
+  let appSandboxes = standardizeNames(ctx, appOptions.privateSandbox || appOptions.privateSandboxes);
+  includedNames[CONFIG_SANDBOX_NAME] = lodash.concat(
+    lodash.difference(includedNames[CONFIG_SANDBOX_NAME], appSandboxes), appSandboxes);
+
+  let appTextures = standardizeNames(ctx, appOptions.privateTexture || appOptions.privateTextures);
+  includedNames[CONFIG_TEXTURE_NAME] = lodash.concat(
+    lodash.difference(includedNames[CONFIG_TEXTURE_NAME], appTextures), appTextures);
+
+  return includedNames;
 }
 
 function loadConfigOfModules(ctx, config, ALIASES_OF, includedNames, libRefs, defaultConfigDir, externalConfigDir) {
