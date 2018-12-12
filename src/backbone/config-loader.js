@@ -33,8 +33,6 @@ function ConfigLoader(params={}) {
     text: ' + Config of application (${appName}) is loaded in name: ${label}'
   }));
 
-  appOptions = appOptions || {};
-
   this.load = function() {
     return loadConfig.bind(null, CTX, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs)
         .apply(null, CONFIG_VAR_NAMES.map(readVariable.bind(null, CTX, label)));
@@ -81,10 +79,10 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     text: ' - configType aliases mapping: ${aliasesOf}'
   }));
 
-  let transCTX = { L, T, issueInspector, nameResolver };
+  let localCTX = ctx;
   if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
     let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
-    transCTX = { L, T, issueInspector, pluginAliasMap, bridgeAliasMap };
+    localCTX = { L, T, issueInspector, stateInspector, pluginAliasMap, bridgeAliasMap };
   }
 
   let config = {};
@@ -94,7 +92,7 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     text: ' + included names: ${includedNames}'
   }));
 
-  loadConfigOfModules(transCTX, config, ALIASES_OF, includedNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
+  loadConfigOfModules(localCTX, config, ALIASES_OF, includedNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
 
   lodash.forEach([CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME], function(configType) {
     if (chores.isUpgradeSupported('standardizing-config')) {

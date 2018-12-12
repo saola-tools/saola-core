@@ -62,7 +62,7 @@ describe('tdd:devebot:core:config-loader', function() {
 
   var libRefs = [].concat(lodash.values(pluginRefs), devebotRef);
 
-  describe('default configuration (without profile & sandbox)', function() {
+  describe('ConfigLoader.load(): default configuration (without profile & sandbox)', function() {
     it('load configuration of nothing (empty loader)', function() {
       // appName: null, appOptions: null, appRootDir: null, libRootDirs: null
       var cfgLoader = new ConfigLoader({issueInspector, stateInspector, nameResolver});
@@ -140,7 +140,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('standardizing loaded configuration data', function() {
+  describe('transformConfig(): standardizing loaded configuration data', function() {
     var NameResolver = rewire(lab.getDevebotModule('backbone/name-resolver'));
     var extractAliasNames = NameResolver.__get__('extractAliasNames');
     var buildAbsoluteAliasMap = NameResolver.__get__('buildAbsoluteAliasMap');
@@ -370,7 +370,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('customize configDir and mixture', function() {
+  describe('ConfigLoader.load(): customize configDir and mixture', function() {
     before(function() {
       envmask.setup({
         NODE_ENV: 'test',
@@ -423,7 +423,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('private sandbox configurations', function() {
+  describe('ConfigLoader.load(): private sandbox configurations', function() {
     before(function() {
       envmask.setup({
         NODE_ENV: 'test',
@@ -768,7 +768,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('bridge configure transformation', function() {
+  describe('convertPreciseConfig(): bridge configure transformation', function() {
     before(function() {
       envmask.setup({
         NODE_ENV: 'test',
@@ -954,7 +954,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('change PROFILE/SANDBOX labels', function() {
+  describe('ConfigLoader.load(): change PROFILE/SANDBOX labels', function() {
     before(function() {
       envmask.setup({
         NODE_ENV: 'test',
