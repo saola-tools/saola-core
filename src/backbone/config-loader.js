@@ -49,22 +49,22 @@ module.exports = ConfigLoader;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
 
 let readVariable = function(ctx, appLabel, varName) {
-  let { L, T } = ctx || this;
-  let varLabels = [
+  const { L, T } = ctx || this;
+  const labels = [
     util.format('%s_%s', appLabel, varName),
     util.format('%s_%s', 'DEVEBOT', varName),
     util.format('NODE_%s_%s', appLabel, varName),
     util.format('NODE_%s_%s', 'DEVEBOT', varName)
   ];
-  let value, varLabel;
-  for(const varLabel of varLabels) {
-    value = envbox.getEnv(varLabel);
-    L.has('dunce') && L.log('dunce', T.add({ label: varLabel, value }).toMessage({
+  let value, label;
+  for(label of labels) {
+    value = envbox.getEnv(label);
+    L.has('dunce') && L.log('dunce', T.add({ label, value }).toMessage({
       text: ' - Get value of ${label}: ${value}'
     }));
     if (value) break;
   }
-  L.has('dunce') && L.log('dunce', T.add({ label: varLabels[0], value }).toMessage({
+  L.has('dunce') && L.log('dunce', T.add({ label: labels[0], value }).toMessage({
     text: ' - Final value of ${label}: ${value}'
   }));
   return value;
