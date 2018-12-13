@@ -78,20 +78,14 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     text: ' - configType aliases mapping: ${aliasesOf}'
   }));
 
-  let localCTX = ctx;
-  if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
-    let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
-    localCTX = { L, T, issueInspector, stateInspector, pluginAliasMap, bridgeAliasMap };
-  }
+  const config = {};
 
-  let config = {};
-
-  let tileNames = buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName);
+  const tileNames = buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName);
   L.has('dunce') && L.log('dunce', T.add({ tileNames }).toMessage({
     text: ' + included names: ${tileNames}'
   }));
 
-  loadConfigOfModules(localCTX, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
+  loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
 
   lodash.forEach([CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME], function(configType) {
     if (chores.isUpgradeSupported('standardizing-config')) {
@@ -196,16 +190,16 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
     config[configType]['names'] = ['default'];
     config[configType]['mixture'] = {};
 
-    loadApplicationConfig(ctx, config, aliasesOf, tileNames, appRef, configType, defaultConfigDir);
+    loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType, defaultConfigDir);
     if (externalConfigDir != defaultConfigDir) {
-      loadApplicationConfig(ctx, config, aliasesOf, tileNames, appRef, configType, externalConfigDir);
+      loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType, externalConfigDir);
     }
 
     L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
   });
 }
 
-function loadApplicationConfig(ctx, config, aliasesOf, tileNames, appRef, configType, configDir) {
+function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType, configDir) {
   const { L, T } = ctx;
   if (configDir) {
     L.has('dunce') && L.log('dunce', T.add({ configType, configDir }).toMessage({
@@ -340,7 +334,7 @@ let transformConfig = function(ctx, configType, configData, moduleRef) {
       configData = applyAliasMap(ctx, configData, nameResolver.getOriginalNameOf);
     } else {
       // @Deprecated
-      let {pluginAliasMap, bridgeAliasMap} = ctx;
+      let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
       configData = doAliasMap(ctx, configData, pluginAliasMap, bridgeAliasMap);
     }
   }
