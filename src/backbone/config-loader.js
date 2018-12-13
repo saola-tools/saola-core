@@ -89,11 +89,10 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
 
   lodash.forEach([CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME], function(configType) {
     if (chores.isUpgradeSupported('standardizing-config')) {
-      if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
-        applyAliasMap(ctx, config[configType].default, nameResolver.getDefaultAliasOf);
-        applyAliasMap(ctx, config[configType].expanse, nameResolver.getDefaultAliasOf);
-        applyAliasMap(ctx, config[configType].mixture, nameResolver.getDefaultAliasOf);
-      } else {
+      applyAliasMap(ctx, config[configType].default, nameResolver.getDefaultAliasOf);
+      applyAliasMap(ctx, config[configType].expanse, nameResolver.getDefaultAliasOf);
+      applyAliasMap(ctx, config[configType].mixture, nameResolver.getDefaultAliasOf);
+      if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
         let {plugin: pluginReverseMap, bridge: bridgeReverseMap} = nameResolver.getRelativeAliasMap();
         doAliasMap(ctx, config[configType].default, pluginReverseMap, bridgeReverseMap);
         doAliasMap(ctx, config[configType].expanse, pluginReverseMap, bridgeReverseMap);
@@ -330,10 +329,8 @@ let transformConfig = function(ctx, configType, configData, moduleRef) {
   let { L, T, nameResolver } = ctx || this;
   if (configType === CONFIG_SANDBOX_NAME) {
     configData = convertPreciseConfig(ctx, configData, moduleRef.type, moduleRef.name, moduleRef.presets);
-    if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
-      configData = applyAliasMap(ctx, configData, nameResolver.getOriginalNameOf);
-    } else {
-      // @Deprecated
+    configData = applyAliasMap(ctx, configData, nameResolver.getOriginalNameOf);
+    if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
       let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
       configData = doAliasMap(ctx, configData, pluginAliasMap, bridgeAliasMap);
     }
@@ -421,6 +418,10 @@ let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
 
 let doAliasMap = null;
 if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
+  const applyAliasMap_Ref = applyAliasMap;
+  applyAliasMap = function(ctx, configData) {
+    return configData;
+  }
   doAliasMap = function(ctx, preciseConfig, pluginAliasMap, bridgeAliasMap) {
     function nameTransformer(name, type) {
       switch(type) {
@@ -431,6 +432,6 @@ if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
       }
       return name;
     }
-    return applyAliasMap(ctx, preciseConfig, nameTransformer);
+    return applyAliasMap_Ref(ctx, preciseConfig, nameTransformer);
   }
 }
