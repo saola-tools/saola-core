@@ -372,21 +372,18 @@ describe('tdd:devebot:core:config-loader', function() {
         }
       }, CTX), 'sandbox', originalCfg, 'plugin', 'cfg-example', {});
 
-      doAliasMap = doAliasMap || function(ctx, preciseConfig, pluginAliasMap, bridgeAliasMap) {
-        return applyAliasMap(ctx, preciseConfig, function nameTransformer(name, type) {
-          switch(type) {
-            case 'plugin':
-              return pluginAliasMap[name] || name;
-            case 'bridge':
-              return bridgeAliasMap[name] || name;
-          }
-          return name;
-        });
+      var relativeAliasMap = {
+        plugin: buildRelativeAliasMap(pluginRefs),
+        bridge: buildRelativeAliasMap(bridgeRefs),
       }
-
-      var relativeCfg = doAliasMap(CTX, absoluteCfg,
-          buildRelativeAliasMap(pluginRefs),
-          buildRelativeAliasMap(bridgeRefs));
+      var relativeCfg = null;
+      if (doAliasMap) {
+        relativeCfg = doAliasMap(CTX, absoluteCfg, relativeAliasMap.plugin, relativeAliasMap.bridge);
+      } else {
+        relativeCfg = applyAliasMap(CTX, absoluteCfg, function(name, type) {
+          return relativeAliasMap[type][name];
+        })
+      }
 
       false && console.log(JSON.stringify(relativeCfg, null, 2));
       assert.deepInclude(relativeCfg, expectedCfg);
