@@ -146,15 +146,11 @@ describe('tdd:devebot:core:config-loader', function() {
     var buildAbsoluteAliasMap = NameResolver.__get__('buildAbsoluteAliasMap');
     var buildRelativeAliasMap = NameResolver.__get__('buildRelativeAliasMap');
     var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var applyAliasMap = ConfigLoader.__get__('applyAliasMap');
     var doAliasMap = ConfigLoader.__get__('doAliasMap');
     var transformConfig = ConfigLoader.__get__('transformConfig');
 
     it('should transform relative names into default full names', function() {
-      if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
-        this.skip();
-        return;
-      }
-
       if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) {
         this.skip();
         return;
@@ -226,33 +222,37 @@ describe('tdd:devebot:core:config-loader', function() {
         }
       };
 
+      var absoluteAliasMap = {
+        plugin: buildAbsoluteAliasMap(extractAliasNames(CTX, 'plugin', {
+          "path/to/devebot-dp-wrapper1": {
+            name: "devebot-dp-wrapper1"
+          },
+          "path/to/devebot-dp-wrapper2": {
+            name: "devebot-dp-wrapper2"
+          }
+        })),
+        bridge: buildAbsoluteAliasMap(extractAliasNames(CTX, 'bridge', {
+          "path/to/bridge-kebab-case1": {
+            name: "bridge-kebab-case1"
+          },
+          "path/to/bridge-kebab-case2": {
+            name: "bridge-kebab-case2"
+          },
+          "path/to/devebot-co-connector1": {
+            name: "devebot-co-connector1"
+          },
+          "path/to/devebot-co-connector2": {
+            name: "devebot-co-connector2"
+          }
+        })),
+      }
       var convertedCfg = transformConfig(lodash.assign({
         nameResolver: {
           getAbsoluteAliasMap: function() {
-            return {
-              plugin: buildAbsoluteAliasMap(extractAliasNames(CTX, 'plugin', {
-                "path/to/devebot-dp-wrapper1": {
-                  name: "devebot-dp-wrapper1"
-                },
-                "path/to/devebot-dp-wrapper2": {
-                  name: "devebot-dp-wrapper2"
-                }
-              })),
-              bridge: buildAbsoluteAliasMap(extractAliasNames(CTX, 'bridge', {
-                "path/to/bridge-kebab-case1": {
-                  name: "bridge-kebab-case1"
-                },
-                "path/to/bridge-kebab-case2": {
-                  name: "bridge-kebab-case2"
-                },
-                "path/to/devebot-co-connector1": {
-                  name: "devebot-co-connector1"
-                },
-                "path/to/devebot-co-connector2": {
-                  name: "devebot-co-connector2"
-                }
-              }))
-            }
+            return absoluteAliasMap;
+          },
+          getOriginalNameOf: function (name, type) {
+            return absoluteAliasMap[type][name] || name;
           }
         }
       }, CTX), 'sandbox', originalCfg, 'plugin', 'cfg-example', {});
@@ -262,11 +262,6 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('should transform absolute names into relative names', function() {
-      if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
-        this.skip();
-        return;
-      }
-
       if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) {
         this.skip();
         return;
@@ -362,16 +357,32 @@ describe('tdd:devebot:core:config-loader', function() {
         }
       });
 
+      var absoluteAliasMap = {
+        plugin: buildAbsoluteAliasMap(pluginRefs),
+        bridge: buildAbsoluteAliasMap(bridgeRefs),
+      }
       var absoluteCfg = transformConfig(lodash.assign({
         nameResolver: {
           getAbsoluteAliasMap: function() {
-            return {
-              plugin: buildAbsoluteAliasMap(pluginRefs),
-              bridge: buildAbsoluteAliasMap(bridgeRefs),
-            }
+            return absoluteAliasMap;
+          },
+          getOriginalNameOf: function (name, type) {
+            return absoluteAliasMap[type][name] || name;
           }
         }
       }, CTX), 'sandbox', originalCfg, 'plugin', 'cfg-example', {});
+
+      doAliasMap = doAliasMap || function(ctx, preciseConfig, pluginAliasMap, bridgeAliasMap) {
+        return applyAliasMap(ctx, preciseConfig, function nameTransformer(name, type) {
+          switch(type) {
+            case 'plugin':
+              return pluginAliasMap[name] || name;
+            case 'bridge':
+              return bridgeAliasMap[name] || name;
+          }
+          return name;
+        });
+      }
 
       var relativeCfg = doAliasMap(CTX, absoluteCfg,
           buildRelativeAliasMap(pluginRefs),
