@@ -410,6 +410,4 @@ chores.extractObjectInfo = function(data, opts) {
   return detect(data, opts && opts.level);
 }
 
-
-
 module.exports = chores;

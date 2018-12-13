@@ -20,13 +20,12 @@ const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_N
 const RELOADING_FORCED = true;
 
 function ConfigLoader(params={}) {
-  let {appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver} = params;
-  let loggingWrapper = new LoggingWrapper(blockRef);
-  let L = loggingWrapper.getLogger();
-  let T = loggingWrapper.getTracer();
-  let CTX = { L, T, issueInspector, stateInspector, nameResolver };
-
-  let label = chores.stringLabelCase(appName);
+  const {appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver} = params;
+  const loggingWrapper = new LoggingWrapper(blockRef);
+  const L = loggingWrapper.getLogger();
+  const T = loggingWrapper.getTracer();
+  const CTX = { L, T, issueInspector, stateInspector, nameResolver };
+  const label = chores.stringLabelCase(appName);
 
   L.has('silly') && L.log('silly', T.add({ appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, label }).toMessage({
     tags: [ blockRef, 'constructor-begin' ],
@@ -49,29 +48,29 @@ module.exports = ConfigLoader;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
 
 let readVariable = function(ctx, appLabel, varName) {
-  let { L, T } = ctx || this;
-  let varLabels = [
+  const { L, T } = ctx || this;
+  const labels = [
     util.format('%s_%s', appLabel, varName),
     util.format('%s_%s', 'DEVEBOT', varName),
     util.format('NODE_%s_%s', appLabel, varName),
     util.format('NODE_%s_%s', 'DEVEBOT', varName)
   ];
-  let value, varLabel;
-  for(const varLabel of varLabels) {
-    value = envbox.getEnv(varLabel);
-    L.has('dunce') && L.log('dunce', T.add({ label: varLabel, value }).toMessage({
+  let value, label;
+  for(label of labels) {
+    value = envbox.getEnv(label);
+    L.has('dunce') && L.log('dunce', T.add({ label, value }).toMessage({
       text: ' - Get value of ${label}: ${value}'
     }));
     if (value) break;
   }
-  L.has('dunce') && L.log('dunce', T.add({ label: varLabels[0], value }).toMessage({
+  L.has('dunce') && L.log('dunce', T.add({ label: labels[0], value }).toMessage({
     text: ' - Final value of ${label}: ${value}'
   }));
   return value;
 }
 
 let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
-  let { L, T, issueInspector, stateInspector, nameResolver } = ctx || this;
+  const { L, T, issueInspector, stateInspector, nameResolver } = ctx || this;
 
   const aliasesOf = buildConfigTypeAliases();
   L.has('silly') && L.log('silly', T.add({ aliasesOf }).toMessage({
@@ -79,20 +78,14 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
     text: ' - configType aliases mapping: ${aliasesOf}'
   }));
 
-  let localCTX = ctx;
-  if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
-    let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
-    localCTX = { L, T, issueInspector, stateInspector, pluginAliasMap, bridgeAliasMap };
-  }
+  const config = {};
 
-  let config = {};
-
-  let tileNames = buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName);
+  const tileNames = buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName);
   L.has('dunce') && L.log('dunce', T.add({ tileNames }).toMessage({
     text: ' + included names: ${tileNames}'
   }));
 
-  loadConfigOfModules(localCTX, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
+  loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
 
   lodash.forEach([CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME], function(configType) {
     if (chores.isUpgradeSupported('standardizing-config')) {
@@ -150,7 +143,7 @@ function buildConfigTileNames(ctx, appOptions, profileName, sandboxName, texture
 }
 
 function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
-  let {L, T} = ctx;
+  const { L, T } = ctx;
 
   let libRefs = lodash.values(pluginRefs);
   if (devebotRef) {
@@ -184,13 +177,11 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
         }));
       }
       let libRootDir = libRef.path;
-      let libType = libRef.type || 'plugin';
-      let libName = libRef.name;
       for(let i in aliasesOf[configType]) {
         let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, aliasesOf[configType][i] + '.js');
         if (chores.fileExists(defaultFile)) {
           config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
-              transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libType, libName, libRef.presets));
+              transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libRef));
           break;
         }
       }
@@ -199,17 +190,17 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
     config[configType]['names'] = ['default'];
     config[configType]['mixture'] = {};
 
-    loadApplicationConfig(ctx, config, aliasesOf, tileNames, configType, defaultConfigDir);
+    loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType, defaultConfigDir);
     if (externalConfigDir != defaultConfigDir) {
-      loadApplicationConfig(ctx, config, aliasesOf, tileNames, configType, externalConfigDir);
+      loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType, externalConfigDir);
     }
 
     L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
   });
 }
 
-function loadApplicationConfig(ctx, config, aliasesOf, tileNames, configType, configDir) {
-  let {L, T} = ctx;
+function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType, configDir) {
+  const { L, T } = ctx;
   if (configDir) {
     L.has('dunce') && L.log('dunce', T.add({ configType, configDir }).toMessage({
       text: ' + load the "${configType}" configuration in "${configDir}"'
@@ -233,7 +224,7 @@ function loadApplicationConfig(ctx, config, aliasesOf, tileNames, configType, co
     for(let i in aliasesOf[configType]) {
       let defaultFile = path.join(configDir, aliasesOf[configType][i] + '.js');
       if (chores.fileExists(defaultFile)) {
-        config[configType]['expanse'] = transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), 'application');
+        config[configType]['expanse'] = transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), appRef);
         break;
       }
     }
@@ -249,7 +240,7 @@ function loadApplicationConfig(ctx, config, aliasesOf, tileNames, configType, co
     config[configType]['expanse'] = config[configType]['expanse'] || {};
     config[configType]['expanse'] = lodash.reduce(expanseNames, function(accum, expanseItem) {
       let configFile = path.join(configDir, expanseItem.join('_') + '.js');
-      let configObj = lodash.defaultsDeep(transformConfig(ctx, configType, loadConfigFile(ctx, configFile), 'application'), accum);
+      let configObj = lodash.defaultsDeep(transformConfig(ctx, configType, loadConfigFile(ctx, configFile), appRef), accum);
       if (configObj.disabled) return accum;
       config[configType]['names'].push(expanseItem[1]);
       return configObj;
@@ -335,15 +326,15 @@ let standardizeNames = function(ctx, cfgLabels) {
   return cfgLabels;
 }
 
-let transformConfig = function(ctx, configType, configData, moduleType, moduleName, modulePresets) {
+let transformConfig = function(ctx, configType, configData, moduleRef) {
   let { L, T, nameResolver } = ctx || this;
   if (configType === CONFIG_SANDBOX_NAME) {
-    configData = convertPreciseConfig(ctx, configData, moduleType, moduleName, modulePresets);
+    configData = convertPreciseConfig(ctx, configData, moduleRef.type, moduleRef.name, moduleRef.presets);
     if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
       configData = applyAliasMap(ctx, configData, nameResolver.getOriginalNameOf);
     } else {
       // @Deprecated
-      let {pluginAliasMap, bridgeAliasMap} = ctx;
+      let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
       configData = doAliasMap(ctx, configData, pluginAliasMap, bridgeAliasMap);
     }
   }
@@ -351,7 +342,7 @@ let transformConfig = function(ctx, configType, configData, moduleType, moduleNa
 }
 
 let convertPreciseConfig = function(ctx, preciseConfig, moduleType, moduleName, modulePresets) {
-  let { L, T } = ctx || this;
+  const { L, T } = ctx;
   if (lodash.isEmpty(preciseConfig) || !lodash.isObject(preciseConfig)) {
     return preciseConfig;
   }
@@ -392,7 +383,7 @@ let convertPreciseConfig = function(ctx, preciseConfig, moduleType, moduleName, 
 }
 
 let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
-  let { L, T } = ctx || this;
+  const { L, T } = ctx;
   if (chores.isUpgradeSupported(['standardizing-config'])) {
     if (preciseConfig && lodash.isObject(preciseConfig.plugins)) {
       let oldPlugins = preciseConfig.plugins;

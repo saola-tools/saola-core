@@ -227,28 +227,34 @@ describe('tdd:devebot:core:config-loader', function() {
       };
 
       var convertedCfg = transformConfig(lodash.assign({
-        pluginAliasMap: buildAbsoluteAliasMap(extractAliasNames(CTX, 'plugin', {
-          "path/to/devebot-dp-wrapper1": {
-            name: "devebot-dp-wrapper1"
-          },
-          "path/to/devebot-dp-wrapper2": {
-            name: "devebot-dp-wrapper2"
+        nameResolver: {
+          getAbsoluteAliasMap: function() {
+            return {
+              plugin: buildAbsoluteAliasMap(extractAliasNames(CTX, 'plugin', {
+                "path/to/devebot-dp-wrapper1": {
+                  name: "devebot-dp-wrapper1"
+                },
+                "path/to/devebot-dp-wrapper2": {
+                  name: "devebot-dp-wrapper2"
+                }
+              })),
+              bridge: buildAbsoluteAliasMap(extractAliasNames(CTX, 'bridge', {
+                "path/to/bridge-kebab-case1": {
+                  name: "bridge-kebab-case1"
+                },
+                "path/to/bridge-kebab-case2": {
+                  name: "bridge-kebab-case2"
+                },
+                "path/to/devebot-co-connector1": {
+                  name: "devebot-co-connector1"
+                },
+                "path/to/devebot-co-connector2": {
+                  name: "devebot-co-connector2"
+                }
+              }))
+            }
           }
-        })),
-        bridgeAliasMap: buildAbsoluteAliasMap(extractAliasNames(CTX, 'bridge', {
-          "path/to/bridge-kebab-case1": {
-            name: "bridge-kebab-case1"
-          },
-          "path/to/bridge-kebab-case2": {
-            name: "bridge-kebab-case2"
-          },
-          "path/to/devebot-co-connector1": {
-            name: "devebot-co-connector1"
-          },
-          "path/to/devebot-co-connector2": {
-            name: "devebot-co-connector2"
-          }
-        }))
+        }
       }, CTX), 'sandbox', originalCfg, 'plugin', 'cfg-example', {});
 
       false && console.log(JSON.stringify(convertedCfg, null, 2));
@@ -357,8 +363,14 @@ describe('tdd:devebot:core:config-loader', function() {
       });
 
       var absoluteCfg = transformConfig(lodash.assign({
-        pluginAliasMap: buildAbsoluteAliasMap(pluginRefs),
-        bridgeAliasMap: buildAbsoluteAliasMap(bridgeRefs)
+        nameResolver: {
+          getAbsoluteAliasMap: function() {
+            return {
+              plugin: buildAbsoluteAliasMap(pluginRefs),
+              bridge: buildAbsoluteAliasMap(bridgeRefs),
+            }
+          }
+        }
       }, CTX), 'sandbox', originalCfg, 'plugin', 'cfg-example', {});
 
       var relativeCfg = doAliasMap(CTX, absoluteCfg,
