@@ -3,6 +3,7 @@
 const lodash = require('lodash');
 const util = require('util');
 const path = require('path');
+const semver = require('semver');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
 const loader = require('../utils/loader');
@@ -17,6 +18,7 @@ const CONFIG_PROFILE_NAME = 'profile';
 const CONFIG_SANDBOX_NAME = 'sandbox';
 const CONFIG_TEXTURE_NAME = 'texture';
 const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME];
+const CONFIG_METADATA_BLOCK = '__metadata__';
 const RELOADING_FORCED = true;
 
 function ConfigLoader(params={}) {
@@ -323,6 +325,65 @@ let standardizeNames = function(ctx, cfgLabels) {
   cfgLabels = lodash.map(cfgLabels, lodash.trim);
   cfgLabels = lodash.filter(cfgLabels, lodash.negate(lodash.isEmpty));
   return cfgLabels;
+}
+
+let migrateConfig = function(ctx, configType, configData, crateInfo, bridgeMigration, pluginMigration) {
+  configData = transformConfig(ctx, configType, configData, crateInfo);
+  for(let bridgeName in configData.bridges) {
+    const bridgePath = ["bridges"].concat(bridgeName);
+    const bridgeNode = configData.bridges[bridgeName] || {};
+    for(let pluginName in bridgeNode) {
+      const pluginPath = bridgePath.concat(pluginName);
+      const pluginNode = bridgeNode[pluginName] || {};
+      for(let dialectName in pluginNode) {
+        const dialectNode = pluginNode[dialectName];
+        const dialectPath = pluginPath.concat(dialectName);
+        migrateConfigBlock(ctx, configData, dialectPath, bridgeMigration[bridgeName], "bridge");
+      }
+    }
+  }
+  for(let pluginName in configData.plugins) {
+    migrateConfigBlock(ctx, configData, ["plugins", pluginName], pluginMigration[pluginName], "plugin");
+  }
+  return configData;
+}
+
+let migrateConfigBlock = function(ctx, configData, configPath, migrationBlock, moduleType) {
+  const configBlock = lodash.get(configData, configPath);
+  if (migrationBlock) {
+    const toVersion = migrationBlock.version;
+    if (toVersion) {
+      const myVersion = getConfigBlockVersion(ctx, configBlock);
+      if (myVersion && semver.lt(myVersion, toVersion)) {
+        const manifestPath = ['manifest'];
+        if (moduleType === 'plugin') {
+          manifestPath.push(CONFIG_SANDBOX_NAME);
+        }
+        applyManifest(ctx, configData, configPath, myVersion, toVersion, lodash.get(migrationBlock, manifestPath));
+      }
+    }
+  }
+}
+
+let applyManifest = function(ctx, configData, configPath, oldVersion, newVersion, manifest) {
+  if (manifest && manifest.migration) {
+    lodash.forOwn(manifest.migration, function(rule, ruleName) {
+      if (oldVersion === rule.from && newVersion === rule.to && lodash.isFunction(rule.transform)) {
+        let configBlock = lodash.omit(lodash.get(configData, configPath), [CONFIG_METADATA_BLOCK]);
+        if (lodash.isObject(configBlock) && !lodash.isEmpty(configBlock)) {
+          configBlock = rule.transform(configBlock);
+        }
+        if (lodash.isObject(configBlock) && !lodash.isEmpty(configBlock)) {
+          lodash.set(configData, configPath, configBlock);
+        }
+        lodash.set(configData, configPath.concat([CONFIG_METADATA_BLOCK, 'version']), newVersion);
+      }
+    })
+  }
+}
+
+let getConfigBlockVersion = function(ctx, configBlock) {
+  return lodash.get(configBlock, [CONFIG_METADATA_BLOCK, 'version']);
 }
 
 let transformConfig = function(ctx, configType, configData, moduleRef) {

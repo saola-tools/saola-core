@@ -5,7 +5,6 @@ var Devebot = lab.getDevebot();
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
-var debugx = Devebot.require('pinbug')('tdd:devebot:core:config-loader');
 var assert = require('chai').assert;
 var path = require('path');
 var ConfigLoader = require(lab.getDevebotModule('backbone/config-loader'));
@@ -15,6 +14,7 @@ var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
 var envbox = require(lab.getDevebotModule('utils/envbox'));
 var rewire = require('rewire');
+var sinon = require('sinon');
 
 describe('tdd:devebot:core:config-loader', function() {
 
@@ -387,6 +387,244 @@ describe('tdd:devebot:core:config-loader', function() {
 
       false && console.log(JSON.stringify(relativeCfg, null, 2));
       assert.deepInclude(relativeCfg, expectedCfg);
+    });
+  });
+
+  describe('migrateConfig(): upgrade the old configuration to current version', function() {
+    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var migrateConfig = ConfigLoader.__get__('migrateConfig');
+    var transformConfig = sinon.stub();
+    ConfigLoader.__set__('transformConfig', transformConfig);
+
+    var nameResolver = lab.getNameResolver(['simple-plugin'], ['simple-bridge']);
+    var loggingFactory = lab.createLoggingFactoryMock();
+    var L = loggingFactory.getLogger();
+    var T = loggingFactory.getTracer();
+
+    var moduleInfo = { name: 'example', type: 'application', presets: {} }
+
+    beforeEach(function() {
+      loggingFactory.resetHistory();
+      transformConfig.reset();
+    })
+
+    it('do nothing if manifests is empty or not found', function() {
+      var configType = 'sandbox';
+      var configData = {};
+      transformConfig.callsFake(function() {
+        return configData;
+      });
+      var result = migrateConfig({L, T, nameResolver}, configType, configData, moduleInfo);
+      assert.deepEqual(result, configData);
+    });
+
+    it('upgrade the configuration based on manifests', function() {
+      transformConfig.callsFake(function() {
+        return configData;
+      });
+      var configType = 'sandbox';
+      var configData = {
+        plugins: {
+          "subPlugin1": {
+            host: "localhost",
+            port: 17721,
+            "__metadata__": {
+              "version": "0.1.0"
+            },
+          },
+          "subPlugin2": {
+            host: "localhost",
+            port: 17722,
+            "__metadata__": {
+              "version": "0.1.0"
+            },
+          },
+        },
+        bridges: {
+          "bridge1": {
+            "subPlugin1": {
+              "connector": {
+                "refName": "subPlugin1/bridge1#connector",
+                "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.0"
+                }
+              }
+            }
+          },
+          "bridge2": {
+            "subPlugin2": {
+              "connector": {
+                "refName": "subPlugin2/bridge2#connector",
+                "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.1"
+                }
+              }
+            }
+          },
+          "bridge4": {
+            "application": {
+              "instance": {
+                "refName": "application/bridge4#instance",
+                "refPath": "sandbox -> bridges -> bridge4 -> application -> instance",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.2"
+                }
+              }
+            }
+          },
+        }
+      };
+      var pluginMigration = {
+        "subPlugin1": {
+          "version": "0.1.1",
+          "manifest": {
+            "sandbox": {
+              "migration": {
+                "0.1.0_0.1.1": {
+                  "from": "0.1.0",
+                  "to": "0.1.1",
+                  "transform": function(source) {
+                    return {
+                      "httpserver": source
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "subPlugin2": {
+          "version": "0.1.2",
+          "manifest": {
+            "sandbox": {
+              "migration": {
+                "0.1.0_0.1.2": {
+                  "from": "0.1.0",
+                  "to": "0.1.2",
+                  "transform": function(source) {
+                    return {
+                      "webservice": source
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+      }
+      var bridgeTransformer = function(source) {
+        return {
+          name: source.refName,
+          path: source.refPath
+        }
+      }
+      var bridgeMigration = {
+        "bridge1": {
+          "version": "0.1.1",
+          "manifest": {
+            "migration": {
+              "latest": {
+                "from": "0.1.0",
+                "to": "0.1.1",
+                "transform": bridgeTransformer
+              }
+            }
+          }
+        },
+        "bridge2": {
+          "version": "0.1.2",
+          "manifest": {
+            "migration": {
+              "latest": {
+                "from": "0.1.1",
+                "to": "0.1.2",
+                "transform": bridgeTransformer
+              }
+            }
+          }
+        },
+        "bridge4": {
+          "version": "0.1.4",
+          "manifest": {
+            "migration": {
+              "latest": {
+                "from": "0.1.2",
+                "to": "0.1.4",
+                "transform": bridgeTransformer
+              }
+            }
+          }
+        },
+      }
+
+      var result = migrateConfig({L, T, nameResolver}, configType, configData, moduleInfo, bridgeMigration, pluginMigration);
+
+      false && console.log('migrateConfig(): %s', JSON.stringify(result, null, 2));
+
+      var expected = {
+        plugins: {
+          "subPlugin1": {
+            "httpserver": {
+              host: "localhost",
+              port: 17721,
+            },
+            "__metadata__": {
+              "version": "0.1.1"
+            },
+          },
+          "subPlugin2": {
+            "webservice": {
+              host: "localhost",
+              port: 17722,
+            },
+            "__metadata__": {
+              "version": "0.1.2"
+            },
+          },
+        },
+        bridges: {
+          "bridge1": {
+            "subPlugin1": {
+              "connector": {
+                "name": "subPlugin1/bridge1#connector",
+                "path": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
+                "__metadata__": {
+                  "version": "0.1.1"
+                }
+              }
+            }
+          },
+          "bridge2": {
+            "subPlugin2": {
+              "connector": {
+                "name": "subPlugin2/bridge2#connector",
+                "path": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
+                "__metadata__": {
+                  "version": "0.1.2"
+                }
+              }
+            }
+          },
+          "bridge4": {
+            "application": {
+              "instance": {
+                "name": "application/bridge4#instance",
+                "path": "sandbox -> bridges -> bridge4 -> application -> instance",
+                "__metadata__": {
+                  "version": "0.1.4"
+                }
+              }
+            }
+          },
+        }
+      }
+
+      assert.deepEqual(result, expected);
     });
   });
 
