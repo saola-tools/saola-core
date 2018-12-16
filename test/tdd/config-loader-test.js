@@ -390,12 +390,9 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('migrateConfig(): upgrade the old configuration to current version', function() {
+  describe.only('migrateConfig(): upgrade the old configuration to current version', function() {
     var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
     var migrateConfig = ConfigLoader.__get__('migrateConfig');
-    var transformConfig = sinon.stub();
-    ConfigLoader.__set__('transformConfig', transformConfig);
-
     var nameResolver = lab.getNameResolver(['simple-plugin'], ['simple-bridge']);
     var loggingFactory = lab.createLoggingFactoryMock();
     var L = loggingFactory.getLogger();
@@ -405,23 +402,106 @@ describe('tdd:devebot:core:config-loader', function() {
 
     beforeEach(function() {
       loggingFactory.resetHistory();
-      transformConfig.reset();
     })
 
     it('do nothing if manifests is empty or not found', function() {
       var configType = 'sandbox';
       var configData = {};
-      transformConfig.callsFake(function() {
-        return configData;
-      });
       var result = migrateConfig({L, T, nameResolver}, configType, configData, moduleInfo);
       assert.deepEqual(result, configData);
     });
 
-    it('upgrade the configuration based on manifests', function() {
-      transformConfig.callsFake(function() {
-        return configData;
+    it('keep configData unchange if metadata not found', function() {
+      var configType = 'sandbox';
+      var configData = {
+        plugins: {
+          "subPlugin1": {
+            host: "localhost",
+            port: 17721,
+          },
+        },
+        bridges: {
+          "bridge1": {
+            "subPlugin1": {
+              "connector": {
+                "refName": "subPlugin1/bridge1#connector",
+                "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
+                "refType": "dialect",
+              }
+            }
+          },
+        }
+      };
+      var pluginTransform = sinon.stub().callsFake(function(source) {
+        return { "httpserver": source }
       });
+      var pluginMigration = {
+        "subPlugin1": {
+          "version": "0.1.1",
+          "manifest": {
+            "sandbox": {
+              "migration": {
+                "0.1.0_0.1.1": {
+                  "from": "0.1.0",
+                  "to": "0.1.1",
+                  "transform": pluginTransform
+                }
+              }
+            }
+          }
+        },
+      }
+      var bridgeTransform = sinon.stub().callsFake(function(source) {
+        return {
+          name: source.refName,
+          path: source.refPath
+        }
+      });
+      var bridgeMigration = {
+        "bridge1": {
+          "version": "0.1.1",
+          "manifest": {
+            "migration": {
+              "latest": {
+                "from": "0.1.0",
+                "to": "0.1.1",
+                "transform": bridgeTransform
+              }
+            }
+          }
+        },
+      }
+
+      var result = migrateConfig({L, T, nameResolver}, configType, configData, moduleInfo, bridgeMigration, pluginMigration);
+
+      false && console.log('migrateConfig(): %s', JSON.stringify(result, null, 2));
+
+      var expected = {
+        plugins: {
+          "subPlugin1": {
+            host: "localhost",
+            port: 17721,
+          },
+        },
+        bridges: {
+          "bridge1": {
+            "subPlugin1": {
+              "connector": {
+                "refName": "subPlugin1/bridge1#connector",
+                "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
+                "refType": "dialect",
+              }
+            }
+          },
+        }
+      }
+
+      assert.deepEqual(result, expected);
+      assert.isFalse(pluginTransform.called);
+      assert.isFalse(bridgeTransform.called);
+    });
+
+    it('upgrade the configuration based on manifests', function() {
       var configType = 'sandbox';
       var configData = {
         plugins: {
