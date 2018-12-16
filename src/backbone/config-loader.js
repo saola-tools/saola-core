@@ -182,7 +182,7 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
         let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, aliasesOf[configType][i] + '.js');
         if (chores.fileExists(defaultFile)) {
           config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
-              transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libRef));
+              standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libRef));
           break;
         }
       }
@@ -225,7 +225,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType,
     for(let i in aliasesOf[configType]) {
       let defaultFile = path.join(configDir, aliasesOf[configType][i] + '.js');
       if (chores.fileExists(defaultFile)) {
-        config[configType]['expanse'] = transformConfig(ctx, configType, loadConfigFile(ctx, defaultFile), appRef);
+        config[configType]['expanse'] = standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), appRef);
         break;
       }
     }
@@ -241,7 +241,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType,
     config[configType]['expanse'] = config[configType]['expanse'] || {};
     config[configType]['expanse'] = lodash.reduce(expanseNames, function(accum, expanseItem) {
       let configFile = path.join(configDir, expanseItem.join('_') + '.js');
-      let configObj = lodash.defaultsDeep(transformConfig(ctx, configType, loadConfigFile(ctx, configFile), appRef), accum);
+      let configObj = lodash.defaultsDeep(standardizeConfig(ctx, configType, loadConfigFile(ctx, configFile), appRef), accum);
       if (configObj.disabled) return accum;
       config[configType]['names'].push(expanseItem[1]);
       return configObj;
@@ -327,23 +327,34 @@ let standardizeNames = function(ctx, cfgLabels) {
   return cfgLabels;
 }
 
-let migrateConfig = function(ctx, configType, configData, crateInfo, bridgeMigration, pluginMigration) {
+let standardizeConfig = function(ctx, configType, configData, crateInfo, bridgeMigration, pluginMigration) {
   configData = transformConfig(ctx, configType, configData, crateInfo);
-  for(let bridgeName in configData.bridges) {
-    const bridgePath = ["bridges"].concat(bridgeName);
-    const bridgeNode = configData.bridges[bridgeName] || {};
-    for(let pluginName in bridgeNode) {
-      const pluginPath = bridgePath.concat(pluginName);
-      const pluginNode = bridgeNode[pluginName] || {};
-      for(let dialectName in pluginNode) {
-        const dialectNode = pluginNode[dialectName];
-        const dialectPath = pluginPath.concat(dialectName);
-        migrateConfigBlock(ctx, configData, dialectPath, bridgeMigration[bridgeName], "bridge");
+  configData = migrateConfig(ctx, configType, configData, crateInfo, bridgeMigration, pluginMigration);
+  return configData;
+}
+
+let migrateConfig = function(ctx, configType, configData, crateInfo, bridgeMigration, pluginMigration) {
+  if (configType !== CONFIG_SANDBOX_NAME) {
+    return configData;
+  }
+  if (bridgeMigration) {
+    for(let bridgeName in configData.bridges) {
+      const bridgePath = ["bridges"].concat(bridgeName);
+      const bridgeNode = configData.bridges[bridgeName] || {};
+      for(let pluginName in bridgeNode) {
+        const pluginPath = bridgePath.concat(pluginName);
+        const pluginNode = bridgeNode[pluginName] || {};
+        for(let dialectName in pluginNode) {
+          const dialectPath = pluginPath.concat(dialectName);
+          migrateConfigBlock(ctx, configData, dialectPath, bridgeMigration[bridgeName], "bridge");
+        }
       }
     }
   }
-  for(let pluginName in configData.plugins) {
-    migrateConfigBlock(ctx, configData, ["plugins", pluginName], pluginMigration[pluginName], "plugin");
+  if (pluginMigration) {
+    for(let pluginName in configData.plugins) {
+      migrateConfigBlock(ctx, configData, ["plugins", pluginName], pluginMigration[pluginName], "plugin");
+    }
   }
   return configData;
 }
