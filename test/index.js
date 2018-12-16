@@ -7,10 +7,13 @@ var debugx = require('../lib/utils/pinbug')('devebot:test:lab');
 var NameResolver = require('../lib/backbone/name-resolver');
 var issueInspector = require('../lib/backbone/issue-inspector').instance;
 var stateInspector = require('../lib/backbone/state-inspector').instance;
+var LogConfig = require('logolite').LogConfig;
+var LogTracer = require('logolite').LogTracer;
 var lodash = require('lodash');
 var path = require('path');
 var Injektor = require('injektor');
 var freshy = require('freshy');
+var sinon = require('sinon');
 
 // EventEmitter memory leak detecting
 var max = 12;
@@ -313,6 +316,48 @@ lab.createSandboxManager = function(appName, injectedObjects) {
     'context-manager', 'sandbox-manager', 'bridge-loader', 'plugin-loader', 'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver', 'process-manager'
   ]);
   return injektor.lookup('sandboxManager');
+}
+
+function LoggingFactoryMock(params) {
+  params = params || {};
+  this.branch = function(blockRef) { return this }
+  this.getLogger = function() { return logger }
+  this.getTracer = function() { return tracer }
+  this.getTracerStore = function() { return tracerStore }
+  this.resetHistory = function() {
+    logger.has.resetHistory();
+    logger.log.resetHistory();
+    tracer.add.resetHistory();
+    tracer.toMessage.resetHistory();
+    tracerStore.add.splice(0);
+    tracerStore.toMessage.splice(0);
+  }
+  var logger = {
+    has: sinon.stub().returns(true),
+    log: sinon.stub()
+  }
+  var tracerStore = { add: [], toMessage: [] }
+  var tracer = {
+    add: sinon.stub().callsFake(function(params) {
+      tracerStore.add.push(lodash.cloneDeep(params));
+      LogTracer.ROOT.add(params);
+      return tracer;
+    }),
+    toMessage: sinon.stub().callsFake(function(params) {
+      tracerStore.toMessage.push(lodash.cloneDeep(params));
+      return LogTracer.ROOT.toMessage(params);
+    }),
+    get: function(key) {
+      if (key === 'instanceId' && 'instanceId' in params) {
+        return params['instanceId'];
+      }
+      return LogTracer.ROOT.get(key);
+    }
+  }
+}
+
+lab.createLoggingFactoryMock = function(params) {
+  return new LoggingFactoryMock(params);
 }
 
 lab.isUpgradeSupported = function(features) {

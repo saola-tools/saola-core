@@ -17,48 +17,10 @@ var sinon = require('sinon');
 describe('tdd:devebot:core:object-decorator', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  function LoggingFactoryMock(params) {
-    params = params || {};
-    this.branch = function(blockRef) { return this }
-    this.getLogger = function() { return logger }
-    this.getTracer = function() { return tracer }
-    this.getTracerStore = function() { return tracerStore }
-    this.resetHistory = function() {
-      logger.has.resetHistory();
-      logger.log.resetHistory();
-      tracer.add.resetHistory();
-      tracer.toMessage.resetHistory();
-      tracerStore.add.splice(0);
-      tracerStore.toMessage.splice(0);
-    }
-    var logger = {
-      has: sinon.stub().returns(true),
-      log: sinon.stub()
-    }
-    var tracerStore = { add: [], toMessage: [] }
-    var tracer = {
-      add: sinon.stub().callsFake(function(params) {
-        tracerStore.add.push(lodash.cloneDeep(params));
-        LogTracer.ROOT.add(params);
-        return tracer;
-      }),
-      toMessage: sinon.stub().callsFake(function(params) {
-        tracerStore.toMessage.push(lodash.cloneDeep(params));
-        return LogTracer.ROOT.toMessage(params);
-      }),
-      get: function(key) {
-        if (key === 'instanceId' && 'instanceId' in params) {
-          return params['instanceId'];
-        }
-        return LogTracer.ROOT.get(key);
-      }
-    }
-  }
-
   before(function() {
     envmask.setup({
       LOGOLITE_ALWAYS_ENABLED: 'all',
-      // LOGOLITE_ALWAYS_MUTED: 'all',
+      LOGOLITE_ALWAYS_MUTED: 'all',
       NODE_ENV: 'test'
     });
     LogConfig.reset();
@@ -67,7 +29,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   describe('wrapMethod()', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
     var wrapMethod = ObjectDecorator.__get__('wrapMethod');
-    var loggingFactory = new LoggingFactoryMock();
+    var loggingFactory = lab.createLoggingFactoryMock();
     var CTX = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
 
     beforeEach(function() {
@@ -376,7 +338,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     var wrapObject = ObjectDecorator.__get__('wrapObject');
     var wrapMethod = sinon.spy(ObjectDecorator.__get__('wrapMethod'));
     ObjectDecorator.__set__('wrapMethod', wrapMethod);
-    var loggingFactory = new LoggingFactoryMock();
+    var loggingFactory = lab.createLoggingFactoryMock();
     var CTX = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
 
     beforeEach(function() {
@@ -733,7 +695,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('should support logging templates that contain the streamId', function() {
-      var loggingFactory = new LoggingFactoryMock();
+      var loggingFactory = lab.createLoggingFactoryMock();
       function _extractLogInfo(tracerStore) {
         return {
           add: tracerStore.add.map(arg => lodash.pick(arg, ['requestId', 'streamId'])),
@@ -796,7 +758,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('wrapBridgeDialect()', function() {
-    var loggingFactory = new LoggingFactoryMock();
+    var loggingFactory = lab.createLoggingFactoryMock();
     var nameResolver = lab.getNameResolver(['simple-plugin'], ['simple-bridge']);
     var issueInspector = {};
     var schemaValidator = {};
@@ -951,7 +913,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('wrapPluginGadget()', function() {
-    var loggingFactory = new LoggingFactoryMock();
+    var loggingFactory = lab.createLoggingFactoryMock();
     var nameResolver = lab.getNameResolver(['simple-plugin'], []);
     var issueInspector = {};
     var schemaValidator = {};
@@ -1193,7 +1155,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         })
       }
 
-      var loggingFactory = new LoggingFactoryMock({ instanceId: "NS3Csx_9RTC6NBI9HXVv0Q" });
+      var loggingFactory = lab.createLoggingFactoryMock({ instanceId: "NS3Csx_9RTC6NBI9HXVv0Q" });
 
       var loggingProxy = new LoggingInterceptor({
         object: object,
@@ -2531,7 +2493,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('function at the end of arguments list must not be changed when auto-detecting methodType', function() {
-      var loggingFactory = new LoggingFactoryMock({ instanceId: 'X25Xv2HNQPyeD22SyjuCiw' });
+      var loggingFactory = lab.createLoggingFactoryMock({ instanceId: 'X25Xv2HNQPyeD22SyjuCiw' });
       var func = function() {}
       func.Router = function(req, res, next) {}
 
@@ -2590,7 +2552,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('getRequestId/extractInfo runs on its own context (reqContext)', function() {
-      var loggingFactory = new LoggingFactoryMock();
+      var loggingFactory = lab.createLoggingFactoryMock();
 
       var timeoutMap = {
         "Req#0": 150,
@@ -2666,7 +2628,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
 
     it('defined streamId must be propagated to logState object', function() {
-      var loggingFactory = new LoggingFactoryMock();
+      var loggingFactory = lab.createLoggingFactoryMock();
 
       var object = {
         sampleMethod: sinon.stub().callsFake(function() {
@@ -2730,7 +2692,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     var LoggingInterceptor = ObjectDecorator.__get__('LoggingInterceptor');
     var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
 
-    var loggingFactory = new LoggingFactoryMock();
+    var loggingFactory = lab.createLoggingFactoryMock();
 
     var object = {
       sampleMethod: sinon.stub().callsFake(function() {
