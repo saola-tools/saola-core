@@ -411,7 +411,7 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.deepEqual(result, configData);
     });
 
-    it('keep configData unchange if metadata not found', function() {
+    it('keep configData unchange if __metadata__ not found', function() {
       var configType = 'sandbox';
       var configData = {
         plugins: {
@@ -559,6 +559,12 @@ describe('tdd:devebot:core:config-loader', function() {
           },
         }
       };
+      var subPlugin1Transform = sinon.stub().callsFake(function(source) {
+        return { "httpserver": source }
+      });
+      var subPlugin2Transform = sinon.stub().callsFake(function(source) {
+        return { "webservice": source }
+      });
       var pluginMigration = {
         "subPlugin1": {
           "version": "0.1.1",
@@ -568,11 +574,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "0.1.0_0.1.1": {
                   "from": "0.1.0",
                   "to": "0.1.1",
-                  "transform": function(source) {
-                    return {
-                      "httpserver": source
-                    }
-                  }
+                  "transform": subPlugin1Transform
                 }
               }
             }
@@ -586,23 +588,19 @@ describe('tdd:devebot:core:config-loader', function() {
                 "0.1.0_0.1.2": {
                   "from": "0.1.0",
                   "to": "0.1.2",
-                  "transform": function(source) {
-                    return {
-                      "webservice": source
-                    }
-                  }
+                  "transform": subPlugin2Transform
                 }
               }
             }
           }
         },
       }
-      var bridgeTransformer = function(source) {
+      var bridgeTransformer = sinon.stub().callsFake(function(source) {
         return {
           name: source.refName,
           path: source.refPath
         }
-      }
+      });
       var bridgeMigration = {
         "bridge1": {
           "version": "0.1.1",
@@ -705,6 +703,9 @@ describe('tdd:devebot:core:config-loader', function() {
       }
 
       assert.deepEqual(result, expected);
+      assert.isTrue(subPlugin1Transform.calledOnce);
+      assert.isTrue(subPlugin2Transform.calledOnce);
+      assert.equal(bridgeTransformer.callCount, 3);
     });
   });
 
