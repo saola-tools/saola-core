@@ -506,9 +506,9 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('migrateConfig(): upgrade the old configuration to current version', function() {
+  describe('modernizeConfig(): upgrade the old configuration to current version', function() {
     var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
-    var migrateConfig = ConfigLoader.__get__('migrateConfig');
+    var modernizeConfig = ConfigLoader.__get__('modernizeConfig');
     var nameResolver = lab.getNameResolver(['simple-plugin'], ['simple-bridge']);
     var loggingFactory = lab.createLoggingFactoryMock();
     var L = loggingFactory.getLogger();
@@ -523,7 +523,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('do nothing if manifests is empty or not found', function() {
       var configType = 'sandbox';
       var configData = {};
-      var result = migrateConfig({L, T, nameResolver}, configType, configData, moduleInfo);
+      var result = modernizeConfig({L, T, nameResolver}, configType, configData, moduleInfo);
       assert.deepEqual(result, configData);
     });
 
@@ -551,7 +551,7 @@ describe('tdd:devebot:core:config-loader', function() {
       var pluginTransform = sinon.stub().callsFake(function(source) {
         return { "httpserver": source }
       });
-      var pluginMigration = {
+      var pluginManifests = {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
@@ -573,7 +573,7 @@ describe('tdd:devebot:core:config-loader', function() {
           path: source.refPath
         }
       });
-      var bridgeMigration = {
+      var bridgeManifests = {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
@@ -588,9 +588,9 @@ describe('tdd:devebot:core:config-loader', function() {
         },
       }
 
-      var result = migrateConfig({L, T, nameResolver}, configType, configData, moduleInfo, bridgeMigration, pluginMigration);
+      var result = modernizeConfig({L, T, nameResolver}, configType, configData, moduleInfo, bridgeManifests, pluginManifests);
 
-      false && console.log('migrateConfig(): %s', JSON.stringify(result, null, 2));
+      false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 
       var expected = {
         plugins: {
@@ -681,7 +681,7 @@ describe('tdd:devebot:core:config-loader', function() {
       var subPlugin2Transform = sinon.stub().callsFake(function(source) {
         return { "webservice": source }
       });
-      var pluginMigration = {
+      var pluginManifests = {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
@@ -717,7 +717,7 @@ describe('tdd:devebot:core:config-loader', function() {
           path: source.refPath
         }
       });
-      var bridgeMigration = {
+      var bridgeManifests = {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
@@ -756,9 +756,9 @@ describe('tdd:devebot:core:config-loader', function() {
         },
       }
 
-      var result = migrateConfig({L, T, nameResolver}, configType, configData, moduleInfo, bridgeMigration, pluginMigration);
+      var result = modernizeConfig({L, T, nameResolver}, configType, configData, moduleInfo, bridgeManifests, pluginManifests);
 
-      false && console.log('migrateConfig(): %s', JSON.stringify(result, null, 2));
+      false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 
       var expected = {
         plugins: {

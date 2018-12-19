@@ -151,10 +151,10 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
     libRefs.push(devebotRef);
   }
 
-  let bridgeMigration = extractConfigManifest(ctx, bridgeRefs, 'bridge');
-  let pluginMigration = extractConfigManifest(ctx, pluginRefs, 'plugin');
+  let bridgeManifests = extractConfigManifest(ctx, bridgeRefs, 'bridge');
+  let pluginManifests = extractConfigManifest(ctx, pluginRefs, 'plugin');
   if (!chores.isUpgradeSupported('manifest')) {
-    bridgeMigration = pluginMigration = undefined;
+    bridgeManifests = pluginManifests = undefined;
   }
 
   let appRootDir = appRef && lodash.isString(appRef.path) ? appRef.path : null;
@@ -188,7 +188,7 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
         let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, aliasesOf[configType][i] + '.js');
         if (chores.fileExists(defaultFile)) {
           config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
-              standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libRef, bridgeMigration, pluginMigration));
+              standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libRef, bridgeManifests, pluginManifests));
           break;
         }
       }
@@ -197,9 +197,9 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
     config[configType]['names'] = ['default'];
     config[configType]['mixture'] = {};
 
-    loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeMigration, pluginMigration, configType, defaultConfigDir);
+    loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManifests, pluginManifests, configType, defaultConfigDir);
     if (externalConfigDir != defaultConfigDir) {
-      loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeMigration, pluginMigration, configType, externalConfigDir);
+      loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManifests, pluginManifests, configType, externalConfigDir);
     }
 
     L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
@@ -216,7 +216,7 @@ function extractConfigManifest(ctx, moduleRefs, moduleType) {
   return configManifest;
 }
 
-function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeMigration, pluginMigration, configType, configDir) {
+function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManifests, pluginManifests, configType, configDir) {
   const { L, T } = ctx;
   if (configDir) {
     L.has('dunce') && L.log('dunce', T.add({ configType, configDir }).toMessage({
@@ -241,7 +241,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeMigra
     for(let i in aliasesOf[configType]) {
       let defaultFile = path.join(configDir, aliasesOf[configType][i] + '.js');
       if (chores.fileExists(defaultFile)) {
-        config[configType]['expanse'] = standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), appRef, bridgeMigration, pluginMigration);
+        config[configType]['expanse'] = standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), appRef, bridgeManifests, pluginManifests);
         break;
       }
     }
@@ -257,7 +257,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeMigra
     config[configType]['expanse'] = config[configType]['expanse'] || {};
     config[configType]['expanse'] = lodash.reduce(expanseNames, function(accum, expanseItem) {
       let configFile = path.join(configDir, expanseItem.join('_') + '.js');
-      let configObj = lodash.defaultsDeep(standardizeConfig(ctx, configType, loadConfigFile(ctx, configFile), appRef, bridgeMigration, pluginMigration), accum);
+      let configObj = lodash.defaultsDeep(standardizeConfig(ctx, configType, loadConfigFile(ctx, configFile), appRef, bridgeManifests, pluginManifests), accum);
       if (configObj.disabled) return accum;
       config[configType]['names'].push(expanseItem[1]);
       return configObj;
@@ -343,17 +343,17 @@ let standardizeNames = function(ctx, cfgLabels) {
   return cfgLabels;
 }
 
-let standardizeConfig = function(ctx, configType, configData, crateInfo, bridgeMigration, pluginMigration) {
+let standardizeConfig = function(ctx, configType, configData, crateInfo, bridgeManifests, pluginManifests) {
   configData = transformConfig(ctx, configType, configData, crateInfo);
-  configData = migrateConfig(ctx, configType, configData, crateInfo, bridgeMigration, pluginMigration);
+  configData = modernizeConfig(ctx, configType, configData, crateInfo, bridgeManifests, pluginManifests);
   return configData;
 }
 
-let migrateConfig = function(ctx, configType, configData, crateInfo, bridgeMigration, pluginMigration) {
+let modernizeConfig = function(ctx, configType, configData, crateInfo, bridgeManifests, pluginManifests) {
   if (configType !== CONFIG_SANDBOX_NAME) {
     return configData;
   }
-  if (bridgeMigration) {
+  if (bridgeManifests) {
     for(let bridgeName in configData.bridges) {
       const bridgePath = ["bridges"].concat(bridgeName);
       const bridgeNode = configData.bridges[bridgeName] || {};
@@ -362,23 +362,23 @@ let migrateConfig = function(ctx, configType, configData, crateInfo, bridgeMigra
         const pluginNode = bridgeNode[pluginName] || {};
         for(let dialectName in pluginNode) {
           const dialectPath = pluginPath.concat(dialectName);
-          migrateConfigBlock(ctx, configData, dialectPath, bridgeMigration[bridgeName], "bridge");
+          modernizeConfigBlock(ctx, configData, dialectPath, bridgeManifests[bridgeName], "bridge");
         }
       }
     }
   }
-  if (pluginMigration) {
+  if (pluginManifests) {
     for(let pluginName in configData.plugins) {
-      migrateConfigBlock(ctx, configData, ["plugins", pluginName], pluginMigration[pluginName], "plugin");
+      modernizeConfigBlock(ctx, configData, ["plugins", pluginName], pluginManifests[pluginName], "plugin");
     }
   }
   return configData;
 }
 
-let migrateConfigBlock = function(ctx, configData, configPath, migrationBlock, moduleType) {
+let modernizeConfigBlock = function(ctx, configData, configPath, manifestBlock, moduleType) {
   const configBlock = lodash.get(configData, configPath);
-  if (migrationBlock) {
-    const toVersion = migrationBlock.version;
+  if (manifestBlock) {
+    const toVersion = manifestBlock.version;
     if (toVersion) {
       const myVersion = getConfigBlockVersion(ctx, configBlock);
       if (myVersion && semver.lt(myVersion, toVersion)) {
@@ -386,7 +386,7 @@ let migrateConfigBlock = function(ctx, configData, configPath, migrationBlock, m
         if (moduleType === 'plugin') {
           manifestPath.push(CONFIG_SANDBOX_NAME);
         }
-        applyManifest(ctx, configData, configPath, myVersion, toVersion, lodash.get(migrationBlock, manifestPath));
+        applyManifest(ctx, configData, configPath, myVersion, toVersion, lodash.get(manifestBlock, manifestPath));
       }
     }
   }
