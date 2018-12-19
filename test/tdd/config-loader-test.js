@@ -390,7 +390,123 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe.only('migrateConfig(): upgrade the old configuration to current version', function() {
+  describe('extractConfigManifest()', function() {
+    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var extractConfigManifest = ConfigLoader.__get__('extractConfigManifest');
+    var nameResolver = lab.getNameResolver(['sub-plugin1', 'sub-plugin2'], ['sub-bridge1', 'sub-bridge2', 'devebot-co-vps']);
+    var ctx = { nameResolver: nameResolver }
+
+    it('return empty configManifest map if the moduleRef is empty or null', function() {
+      assert.deepEqual(extractConfigManifest(ctx, null, 'bridge'), {});
+      assert.deepEqual(extractConfigManifest(ctx, {}, 'bridge'), {});
+      assert.deepEqual(extractConfigManifest(ctx, null, 'plugin'), {});
+      assert.deepEqual(extractConfigManifest(ctx, {}, 'plugin'), {});
+    });
+
+    it('return the correct configManifest with normal bridgeRefs', function() {
+      var bridgeRefs = {
+        "/test/lib/sub-bridge1": {
+          "name": "sub-bridge1",
+          "path": "/test/lib/sub-bridge1",
+          "version": "0.1.1",
+          "manifest": {
+            "something": "sub-bridge1"
+          },
+        },
+        "/test/lib/sub-bridge2": {
+          "name": "sub-bridge2",
+          "path": "/test/lib/sub-bridge2",
+          "version": "0.1.2",
+          "manifest": {
+            "something": "sub-bridge2"
+          },
+        },
+        "/test/lib/devebot-co-vps": {
+          "name": "devebot-co-vps",
+          "path": "/test/lib/devebot-co-vps",
+          "version": "0.1.3",
+          "manifest": {
+            "something": "devebot-co-vps"
+          },
+        }
+      }
+      var expected = {
+        "subBridge1": {
+          "version": "0.1.1",
+          "manifest": {
+            "something": "sub-bridge1"
+          },
+        },
+        "subBridge2": {
+          "version": "0.1.2",
+          "manifest": {
+            "something": "sub-bridge2"
+          },
+        },
+        "vps": {
+          "version": "0.1.3",
+          "manifest": {
+            "something": "devebot-co-vps"
+          },
+        },
+      }
+      assert.deepEqual(extractConfigManifest(ctx, bridgeRefs, 'bridge'), expected);
+    });
+
+    it('return the correct configManifest with normal pluginRefs', function() {
+      var pluginRefs = {
+        "/test/lib/sub-plugin1": {
+          "name": "sub-plugin1",
+          "path": "/test/lib/sub-plugin1",
+          "presets": {
+            "configTags": "bridge[dialect-bridge]"
+          },
+          "bridgeDepends": [
+            "bridge1",
+            "bridge2"
+          ],
+          "pluginDepends": [],
+          "version": "0.1.1",
+          "manifest": {
+            "something": "sub-plugin1"
+          },
+        },
+        "/test/lib/sub-plugin2": {
+          "name": "sub-plugin2",
+          "path": "/test/lib/sub-plugin2",
+          "presets": {
+            "configTags": "bridge[dialect-bridge]"
+          },
+          "bridgeDepends": [
+            "bridge1",
+            "bridge2"
+          ],
+          "pluginDepends": [],
+          "version": "0.1.2",
+          "manifest": {
+            "something": "sub-plugin2"
+          },
+        }
+      }
+      var expected = {
+        "subPlugin1": {
+          "version": "0.1.1",
+          "manifest": {
+            "something": "sub-plugin1"
+          },
+        },
+        "subPlugin2": {
+          "version": "0.1.2",
+          "manifest": {
+            "something": "sub-plugin2"
+          },
+        },
+      }
+      assert.deepEqual(extractConfigManifest(ctx, pluginRefs, 'plugin'), expected);
+    });
+  });
+
+  describe('migrateConfig(): upgrade the old configuration to current version', function() {
     var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
     var migrateConfig = ConfigLoader.__get__('migrateConfig');
     var nameResolver = lab.getNameResolver(['simple-plugin'], ['simple-bridge']);

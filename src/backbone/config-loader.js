@@ -144,11 +144,17 @@ function buildConfigTileNames(ctx, appOptions, profileName, sandboxName, texture
 }
 
 function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
-  const { L, T } = ctx;
+  const { L, T, nameResolver } = ctx;
 
   let libRefs = lodash.values(pluginRefs);
   if (devebotRef) {
     libRefs.push(devebotRef);
+  }
+
+  let bridgeMigration = extractConfigManifest(ctx, bridgeRefs, 'bridge');
+  let pluginMigration = extractConfigManifest(ctx, pluginRefs, 'plugin');
+  if (!chores.isUpgradeSupported('manifest')) {
+    bridgeMigration = pluginMigration = undefined;
   }
 
   let appRootDir = appRef && lodash.isString(appRef.path) ? appRef.path : null;
@@ -182,7 +188,7 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
         let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, aliasesOf[configType][i] + '.js');
         if (chores.fileExists(defaultFile)) {
           config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
-              standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libRef));
+              standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libRef, bridgeMigration, pluginMigration));
           break;
         }
       }
@@ -191,16 +197,26 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
     config[configType]['names'] = ['default'];
     config[configType]['mixture'] = {};
 
-    loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType, defaultConfigDir);
+    loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeMigration, pluginMigration, configType, defaultConfigDir);
     if (externalConfigDir != defaultConfigDir) {
-      loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType, externalConfigDir);
+      loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeMigration, pluginMigration, configType, externalConfigDir);
     }
 
     L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
   });
 }
 
-function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType, configDir) {
+function extractConfigManifest(ctx, moduleRefs, moduleType) {
+  const { nameResolver } = ctx;
+  let configManifest = {};
+  lodash.forOwn(moduleRefs, function(moduleRef) {
+    const moduleName = nameResolver.getDefaultAliasOf(moduleRef.name, moduleType);
+    configManifest[moduleName] = lodash.pick(moduleRef, ['version', 'manifest']);
+  });
+  return configManifest;
+}
+
+function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeMigration, pluginMigration, configType, configDir) {
   const { L, T } = ctx;
   if (configDir) {
     L.has('dunce') && L.log('dunce', T.add({ configType, configDir }).toMessage({
@@ -225,7 +241,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType,
     for(let i in aliasesOf[configType]) {
       let defaultFile = path.join(configDir, aliasesOf[configType][i] + '.js');
       if (chores.fileExists(defaultFile)) {
-        config[configType]['expanse'] = standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), appRef);
+        config[configType]['expanse'] = standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), appRef, bridgeMigration, pluginMigration);
         break;
       }
     }
@@ -241,7 +257,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, configType,
     config[configType]['expanse'] = config[configType]['expanse'] || {};
     config[configType]['expanse'] = lodash.reduce(expanseNames, function(accum, expanseItem) {
       let configFile = path.join(configDir, expanseItem.join('_') + '.js');
-      let configObj = lodash.defaultsDeep(standardizeConfig(ctx, configType, loadConfigFile(ctx, configFile), appRef), accum);
+      let configObj = lodash.defaultsDeep(standardizeConfig(ctx, configType, loadConfigFile(ctx, configFile), appRef, bridgeMigration, pluginMigration), accum);
       if (configObj.disabled) return accum;
       config[configType]['names'].push(expanseItem[1]);
       return configObj;
@@ -397,10 +413,10 @@ let getConfigBlockVersion = function(ctx, configBlock) {
   return lodash.get(configBlock, [CONFIG_METADATA_BLOCK, 'version']);
 }
 
-let transformConfig = function(ctx, configType, configData, moduleRef) {
+let transformConfig = function(ctx, configType, configData, crateInfo) {
   let { L, T, nameResolver } = ctx || this;
   if (configType === CONFIG_SANDBOX_NAME) {
-    configData = convertPreciseConfig(ctx, configData, moduleRef.type, moduleRef.name, moduleRef.presets);
+    configData = convertPreciseConfig(ctx, configData, crateInfo.type, crateInfo.name, crateInfo.presets);
     configData = applyAliasMap(ctx, configData, nameResolver.getOriginalNameOf);
     if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
       let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
