@@ -156,53 +156,6 @@ let extractBridgeSchema = function(ref, nameResolver, bridgeRefs, bridgeMetadata
   return bridgeSchema;
 }
 
-//-----------------------------------------------------------------------------
-
-const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
-
-let extractPluginSchema = function(ref, nameResolver, pluginRefs, pluginMetadata, pluginSchema) {
-  pluginSchema = pluginSchema || {};
-  pluginSchema.profile = pluginSchema.profile || {};
-  pluginSchema.sandbox = pluginSchema.sandbox || {};
-  lodash.forOwn(pluginMetadata, function(metainf, key) {
-    let def = metainf && metainf.default || {};
-    if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
-      if (chores.isSpecialPlugin(def.pluginCode)) {
-        pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
-      } else {
-        pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
-        pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
-      }
-    }
-  });
-  return enrichPluginSchema(ref, nameResolver, pluginRefs, pluginSchema);
-}
-
-let enrichPluginSchema = function(ref, nameResolver, pluginRefs, pluginSchema) {
-  let { L, T } = ref;
-  lodash.forEach(pluginRefs, function(pluginRef) {
-    let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
-    if (!chores.isUpgradeSupported('improving-name-resolver')) {
-      pluginCode = nameResolver.getDefaultAlias(pluginRef);
-    }
-    // apply 'schemaValidation' option from presets for plugins
-    if (pluginRef.presets && pluginRef.presets.schemaValidation === false) {
-      if (!chores.isSpecialPlugin(pluginCode)) {
-        lodash.forEach(['profile', 'sandbox'], function(configType) {
-          lodash.set(pluginSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
-        });
-      }
-    }
-    // apply 'pluginDepends' & 'bridgeDepends' to pluginSchema
-    lodash.forEach(['bridgeDepends', 'pluginDepends'], function(depType) {
-      if (lodash.isArray(pluginRef[depType])) {
-        lodash.set(pluginSchema, ['sandbox', 'plugins', pluginCode, depType], pluginRef[depType]);
-      }
-    });
-  });
-  return pluginSchema;
-}
-
 let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
   let { L, T, schemaValidator } = ref;
   result = result || [];
@@ -256,6 +209,53 @@ let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
   }
 
   return result;
+}
+
+//-----------------------------------------------------------------------------
+
+const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
+
+let extractPluginSchema = function(ref, nameResolver, pluginRefs, pluginMetadata, pluginSchema) {
+  pluginSchema = pluginSchema || {};
+  pluginSchema.profile = pluginSchema.profile || {};
+  pluginSchema.sandbox = pluginSchema.sandbox || {};
+  lodash.forOwn(pluginMetadata, function(metainf, key) {
+    let def = metainf && metainf.default || {};
+    if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
+      if (chores.isSpecialPlugin(def.pluginCode)) {
+        pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+      } else {
+        pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
+        pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+      }
+    }
+  });
+  return enrichPluginSchema(ref, nameResolver, pluginRefs, pluginSchema);
+}
+
+let enrichPluginSchema = function(ref, nameResolver, pluginRefs, pluginSchema) {
+  let { L, T } = ref;
+  lodash.forEach(pluginRefs, function(pluginRef) {
+    let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
+    if (!chores.isUpgradeSupported('improving-name-resolver')) {
+      pluginCode = nameResolver.getDefaultAlias(pluginRef);
+    }
+    // apply 'schemaValidation' option from presets for plugins
+    if (pluginRef.presets && pluginRef.presets.schemaValidation === false) {
+      if (!chores.isSpecialPlugin(pluginCode)) {
+        lodash.forEach(['profile', 'sandbox'], function(configType) {
+          lodash.set(pluginSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
+        });
+      }
+    }
+    // apply 'pluginDepends' & 'bridgeDepends' to pluginSchema
+    lodash.forEach(['bridgeDepends', 'pluginDepends'], function(depType) {
+      if (lodash.isArray(pluginRef[depType])) {
+        lodash.set(pluginSchema, ['sandbox', 'plugins', pluginCode, depType], pluginRef[depType]);
+      }
+    });
+  });
+  return pluginSchema;
 }
 
 let validatePluginConfig = function(ref, pluginConfig, pluginSchema, result) {
