@@ -63,7 +63,7 @@ function appLoader(params={}) {
   }
   if (appRef && lodash.isString(appRef.path)) {
     appRef.manifest = loadManifest(appRef.path);
-    if (!chores.isUpgradeSupported('manifest')) {
+    if (!chores.isUpgradeSupported('manifest-refiner')) {
       delete appRef.manifest;
     }
   }
@@ -76,12 +76,12 @@ function appLoader(params={}) {
 
   lodash.forOwn(params.pluginRefs, function(ref) {
     ref.type = 'plugin';
-    if (!chores.isUpgradeSupported('manifest')) return;
+    if (!chores.isUpgradeSupported('manifest-refiner')) return;
     ref.manifest = loadManifest(ref.path);
   });
   lodash.forOwn(params.bridgeRefs, function(ref) {
     ref.type = 'bridge';
-    if (!chores.isUpgradeSupported('manifest')) return;
+    if (!chores.isUpgradeSupported('manifest-refiner')) return;
     ref.manifest = loadManifest(ref.path);
   });
 

@@ -830,7 +830,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "manifest": null,
         }
       ];
-      if (!chores.isUpgradeSupported('manifest')) {
+      if (!chores.isUpgradeSupported('manifest-refiner')) {
         expectedBridgeRefs = lodash.map(expectedBridgeRefs, function(ref) {
           return lodash.omit(ref, ["manifest"]);
         })
@@ -937,7 +937,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           return lodash.omit(item, ["presets", "bridgeDepends", "pluginDepends"]);
         });
       }
-      if (!chores.isUpgradeSupported('manifest')) {
+      if (!chores.isUpgradeSupported('manifest-refiner')) {
         expectedPluginRefs = lodash.map(expectedPluginRefs, function(ref) {
           return lodash.omit(ref, ["manifest"]);
         })

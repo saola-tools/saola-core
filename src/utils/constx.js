@@ -439,6 +439,9 @@ module.exports = {
     'standardizing-config',
     'gadget-around-log',
     //'simplify-name-resolver',
-    'bean-decorator'
+    //'improving-name-resolver',
+    'bean-decorator',
+    'metadata-refiner',
+    'manifest-refiner',
   ]
 };

@@ -153,7 +153,7 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
 
   let bridgeManifests = extractConfigManifest(ctx, bridgeRefs, 'bridge');
   let pluginManifests = extractConfigManifest(ctx, pluginRefs, 'plugin');
-  if (!chores.isUpgradeSupported('manifest')) {
+  if (!chores.isUpgradeSupported('manifest-refiner')) {
     bridgeManifests = pluginManifests = undefined;
   }
 
