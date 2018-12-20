@@ -66,20 +66,11 @@ function Kernel(params={}) {
       text: " - bridge's metadata: ${metadata}"
     }));
 
-    // apply 'schemaValidation' option from presets for bridges
-    lodash.forEach(configObject.bridgeRefs, function(bridgeRef) {
-      let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
-      if (!chores.isUpgradeSupported('improving-name-resolver')) {
-        bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
-      }
-      if (bridgeRef.presets && bridgeRef.presets.schemaValidation === false) {
-        lodash.set(bridgeMetadata, [bridgeCode, 'metadata', 'enabled'], false);
-      }
-    });
+    let bridgeSchema = extractBridgeSchema(CTX, nameResolver, configObject.bridgeRefs, bridgeMetadata);
 
     let bridgeConfig = lodash.get(configObject, ['sandbox', 'mixture', 'bridges'], {});
 
-    validateBridgeConfig(CTX, bridgeConfig, bridgeMetadata, result);
+    validateBridgeConfig(CTX, bridgeConfig, bridgeSchema, result);
 
     // validate plugin's configures
     let pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
@@ -147,6 +138,25 @@ function Kernel(params={}) {
 }
 
 module.exports = Kernel;
+
+//-----------------------------------------------------------------------------
+
+let extractBridgeSchema = function(ref, nameResolver, bridgeRefs, bridgeMetadata, bridgeSchema) {
+  bridgeSchema = lodash.assign(bridgeSchema, bridgeMetadata);
+  // apply 'schemaValidation' option from presets for bridges
+  lodash.forEach(bridgeRefs, function(bridgeRef) {
+    let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
+    if (!chores.isUpgradeSupported('improving-name-resolver')) {
+      bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
+    }
+    if (bridgeRef.presets && bridgeRef.presets.schemaValidation === false) {
+      lodash.set(bridgeSchema, [bridgeCode, 'enabled'], false);
+    }
+  });
+  return bridgeSchema;
+}
+
+//-----------------------------------------------------------------------------
 
 const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
@@ -221,11 +231,10 @@ let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
     for(let dialectName in bridgeConfig) {
       let dialectMap = bridgeConfig[dialectName] || {};
       for(let bridgeCode in dialectMap) {
-        let bridgeMetadata = lodash.get(bridgeSchema, [bridgeCode, 'metadata'], null) || {};
-        let dialectSchema = lodash.get(bridgeMetadata, ['schema'], null);
-        if (bridgeMetadata.enabled === false || lodash.isNull(dialectSchema)) continue;
+        let bridgeMetadata = lodash.get(bridgeSchema, [bridgeCode], {});
+        if (bridgeMetadata.enabled === false || !lodash.isObject(bridgeMetadata.schema)) continue;
         let dialectConfig = dialectMap[bridgeCode] || {};
-        let r = schemaValidator.validate(dialectConfig, dialectSchema);
+        let r = schemaValidator.validate(dialectConfig, bridgeMetadata.schema);
         result.push(customizeBridgeResult(r, bridgeCode, '*', dialectName));
       }
     }
@@ -234,14 +243,13 @@ let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
 
   for(let bridgeCode in bridgeConfig) {
     let bridgeMap = bridgeConfig[bridgeCode] || {};
-    let bridgeMetadata = lodash.get(bridgeSchema, [bridgeCode, 'metadata'], null) || {};
-    let dialectSchema = lodash.get(bridgeMetadata, ['schema'], null);
-    if (bridgeMetadata.enabled === false || lodash.isNull(dialectSchema)) continue;
+    let bridgeMetadata = lodash.get(bridgeSchema, [bridgeCode], {});
+    if (bridgeMetadata.enabled === false || !lodash.isObject(bridgeMetadata.schema)) continue;
     for(let pluginName in bridgeMap) {
       let pluginMap = bridgeMap[pluginName] || {};
       for(let dialectName in pluginMap) {
         let dialectConfig = pluginMap[dialectName] || {};
-        let r = schemaValidator.validate(dialectConfig, dialectSchema);
+        let r = schemaValidator.validate(dialectConfig, bridgeMetadata.schema);
         result.push(customizeBridgeResult(r, bridgeCode, pluginName, dialectName));
       }
     }

@@ -792,59 +792,51 @@ describe('tdd:devebot:base:kernel', function() {
         }
       }, {
         "bridge1": {
-          "name": "bridge1",
-          "metadata": null
+          "name": "bridge1"
         },
         "bridge2": {
-          "name": "bridge2",
-          "metadata": null
+          "name": "bridge2"
         },
         "bridge3": {
-          "name": "bridge3",
-          "metadata": null
+          "name": "bridge3"
         },
         "bridge4": {
-          "name": "bridge4",
-          "metadata": null
+          "name": "bridge4"
         },
         "connector1": {
           "name": "devebot-co-connector1",
-          "metadata": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "host": {
-                  "type": "string"
-                },
-                "port": {
-                  "type": "number"
-                },
-                "verbose": {
-                  "type": "boolean"
-                }
+          "schema": {
+            "type": "object",
+            "properties": {
+              "host": {
+                "type": "string"
               },
-              "required": [
-                "host",
-                "port"
-              ]
-            }
+              "port": {
+                "type": "number"
+              },
+              "verbose": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "host",
+              "port"
+            ]
           }
         },
         "connector2": {
           "name": "devebot-co-connector2",
-          "metadata": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "params": {
-                  "type": "object"
-                },
-                "handler": {}
+          "schema": {
+            "type": "object",
+            "properties": {
+              "params": {
+                "type": "object"
               },
-              "required": [
-                "params"
-              ]
-            }
+              "handler": {}
+            },
+            "required": [
+              "params"
+            ]
           }
         }
       }, result);

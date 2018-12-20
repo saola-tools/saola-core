@@ -53,59 +53,51 @@ describe('tdd:devebot:core:bridge-loader', function() {
       false && console.log('metadataMap: %s', JSON.stringify(metadataMap, null, 2));
       assert.deepInclude(metadataMap, {
         "bridge1": {
-          "name": "bridge1",
-          "metadata": null
+          "name": "bridge1"
         },
         "bridge2": {
-          "name": "bridge2",
-          "metadata": null
+          "name": "bridge2"
         },
         "bridge3": {
-          "name": "bridge3",
-          "metadata": null
+          "name": "bridge3"
         },
         "bridge4": {
-          "name": "bridge4",
-          "metadata": null
+          "name": "bridge4"
         },
         "connector1": {
           "name": "devebot-co-connector1",
-          "metadata": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "refPath": {
-                  "type": "string"
-                },
-                "refType": {
-                  "type": "string"
-                },
-                "refName": {
-                  "type": "string"
-                }
+          "schema": {
+            "type": "object",
+            "properties": {
+              "refPath": {
+                "type": "string"
               },
-              "required": ["refName", "refType"]
-            }
+              "refType": {
+                "type": "string"
+              },
+              "refName": {
+                "type": "string"
+              }
+            },
+            "required": ["refName", "refType"]
           }
         },
         "connector2": {
           "name": "devebot-co-connector2",
-          "metadata": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "refPath": {
-                  "type": "string"
-                },
-                "refType": {
-                  "type": "string"
-                },
-                "refName": {
-                  "type": "string"
-                }
+          "schema": {
+            "type": "object",
+            "properties": {
+              "refPath": {
+                "type": "string"
               },
-              "required": ["refName", "refType"]
-            }
+              "refType": {
+                "type": "string"
+              },
+              "refName": {
+                "type": "string"
+              }
+            },
+            "required": ["refName", "refType"]
           }
         }
       });
