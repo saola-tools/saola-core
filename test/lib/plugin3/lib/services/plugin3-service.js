@@ -4,7 +4,6 @@ var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 
 var Service = function(params) {
-  var self = this;
   params = params || {};
 
   var L = params.loggingFactory.getLogger();

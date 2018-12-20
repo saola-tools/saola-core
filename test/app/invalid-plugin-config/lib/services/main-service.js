@@ -8,7 +8,6 @@ var Service = function(params) {
   debugx.enabled && debugx(' + constructor begin ...');
 
   params = params || {};
-  var self = this;
 
   var L = params.loggingFactory.getLogger();
   var T = params.loggingFactory.getTracer();

@@ -8,7 +8,6 @@ const LoggingWrapper = require('./logging-wrapper');
 const blockRef = chores.getBlockRef(__filename);
 
 function IssueInspector(params={}) {
-  let self = this;
   let loggingWrapper = new LoggingWrapper(blockRef);
   let L = loggingWrapper.getLogger();
   let T = loggingWrapper.getTracer();

@@ -5,7 +5,6 @@ const chores = require('../utils/chores');
 const blockRef = chores.getBlockRef(__filename);
 
 function SchemaValidator(params={}) {
-  let self = this;
   let loggingFactory = params.loggingFactory.branch(blockRef);
   let L = loggingFactory.getLogger();
   let T = loggingFactory.getTracer();
@@ -16,7 +15,7 @@ function SchemaValidator(params={}) {
     text: ' + constructor start ...'
   }));
 
-  self.validate = function(object, schema) {
+  this.validate = function(object, schema) {
     validator = validator || chores.getValidator();
     let result = validator.validate(object, schema);
     if (typeof result.ok === 'boolean') {

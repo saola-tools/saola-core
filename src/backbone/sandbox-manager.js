@@ -13,7 +13,6 @@ const blockRef = chores.getBlockRef(__filename);
 const DEFAULT_SERVICES = [ 'jobqueue-binder' ];
 
 function SandboxManager(params={}) {
-  let self = this;
   let issueInspector = params.issueInspector;
   let loggingFactory = params.loggingFactory.branch(blockRef);
   let L = loggingFactory.getLogger();
@@ -188,47 +187,47 @@ function SandboxManager(params={}) {
 
   sandboxInjektor.registerObject('runhookManager', runhookManager, chores.injektorContext);
 
-  self.getRunhookManager = function() {
+  this.getRunhookManager = function() {
     return runhookManager;
   }
 
-  self.getSandboxService = function(serviceName, context) {
+  this.getSandboxService = function(serviceName, context) {
     return sandboxInjektor.lookup(serviceName, context);
   };
 
-  self.getBridgeDialectNames = function() {
+  this.getBridgeDialectNames = function() {
     return sandboxInjektor.lookup('bridgeDialectNames', chores.injektorContext);
   };
 
-  self.getPluginServiceNames = function() {
+  this.getPluginServiceNames = function() {
     return sandboxInjektor.lookup('pluginServiceNames', chores.injektorContext);
   };
 
-  self.getPluginTriggerNames = function() {
+  this.getPluginTriggerNames = function() {
     return sandboxInjektor.lookup('pluginTriggerNames', chores.injektorContext);
   };
 
-  self.startTriggers = function(triggerNames) {
+  this.startTriggers = function(triggerNames) {
     L.has('silly') && L.log('silly', T.toMessage({
       tags: [ blockRef, 'trigger', 'start' ],
       text: ' - Start triggers'
     }));
-    return self.eachTriggers(function(trigger) {
+    return this.eachTriggers(function(trigger) {
       return trigger.start();
     }, triggerNames, { actionName: 'start' });
   };
 
-  self.stopTriggers = function(triggerNames) {
+  this.stopTriggers = function(triggerNames) {
     L.has('silly') && L.log('silly', T.toMessage({
       tags: [ blockRef, 'trigger', 'stop' ],
       text: ' - Stop triggers'
     }));
-    return self.eachTriggers(function(trigger) {
+    return this.eachTriggers(function(trigger) {
       return trigger.stop();
     }, triggerNames, { actionName: 'stop' });
   };
 
-  self.eachTriggers = function(iteratee, triggerNames, options) {
+  this.eachTriggers = function(iteratee, triggerNames, options) {
     if (!lodash.isFunction(iteratee)) return;
     if (lodash.isString(triggerNames)) triggerNames = [triggerNames];
     if (triggerNames && !lodash.isArray(triggerNames)) return;
@@ -255,11 +254,12 @@ function SandboxManager(params={}) {
     return Promise.mapSeries(triggers, iteratee);
   };
 
-  self.getServiceInfo = function() {
+  this.getServiceInfo = function() {
     return {};
   };
 
-  self.getServiceHelp = function() {
+  this.getServiceHelp = function() {
+    let self = this;
     let blocks = [];
 
     blocks.push({

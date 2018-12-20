@@ -5,7 +5,6 @@ var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 
 var Service = function(params) {
-  var self = this;
   params = params || {};
 
   var packageName = params.packageName || 'plugin-invalid-trigger';

@@ -6,7 +6,6 @@ const constx = require('../utils/constx');
 const blockRef = chores.getBlockRef(__filename);
 
 function JobqueueBinder(params={}) {
-  let self = this;
   let loggingFactory = params.loggingFactory.branch(blockRef);
   let L = loggingFactory.getLogger();
   let T = loggingFactory.getTracer();

@@ -8,7 +8,6 @@ var http = require('http');
 var util = require('util');
 
 var Service = function(params) {
-  var self = this;
   params = params || {};
 
   debugx.enabled && debugx(' + constructor begin ...');
@@ -28,14 +27,14 @@ var Service = function(params) {
     res.end(util.format('%s webserver', packageName));
   });
 
-  self.getServer = function() {
+  this.getServer = function() {
     return server;
   };
 
   var configHost = lodash.get(pluginCfg, 'host', '0.0.0.0');
   var configPort = lodash.get(pluginCfg, 'port', 8080);
 
-  self.start = function() {
+  this.start = function() {
     return new Promise(function(resolved, rejected) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
@@ -47,7 +46,7 @@ var Service = function(params) {
     });
   };
 
-  self.stop = function() {
+  this.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
         chores.isVerboseForced(packageName, pluginCfg) &&

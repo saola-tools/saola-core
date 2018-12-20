@@ -25,6 +25,12 @@ describe('tdd:devebot:core:bridge-loader', function() {
   });
 
   describe('loadMetadata()', function() {
+    before(function() {
+      if (!chores.isUpgradeSupported('metadata-refiner')) {
+        this.skip();
+        return;
+      }
+    });
     it("load bridge's metadata from empty application", function() {
       var bridgeLoader = lab.createBridgeLoader();
       var metadataMap = {};

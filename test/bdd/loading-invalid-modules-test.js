@@ -125,13 +125,21 @@ describe('bdd:devebot:loading-invalid-modules', function() {
           'totalOfErrors', 'errors'
         ]);
         // BridgeLoader.loadMetadata() & BridgeLoader.loadDialects()
-        assert.equal(errorSummary.totalOfErrors, 2);
+        var expectedTotalOfErrors = 2;
+        if (!chores.isUpgradeSupported('metadata-refiner')) {
+          expectedTotalOfErrors = 1;
+        }
+        assert.equal(errorSummary.totalOfErrors, expectedTotalOfErrors);
       } else {
         console.log('errorSummary: %s', JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
       var totalOfExit = unhook();
-      assert.equal(totalOfExit, 2);
+      var expectedTotalOfExits = 2;
+      if (!chores.isUpgradeSupported('metadata-refiner')) {
+        expectedTotalOfExits = 1;
+      }
+      assert.equal(totalOfExit, expectedTotalOfExits);
     });
 
     it('loading invalid-bridge-dialect will be failed', function() {

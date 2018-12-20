@@ -51,66 +51,68 @@ function Kernel(params={}) {
     injektor.defineService(serviceName, constructor, chores.injektorContext);
   });
 
-  let schemaValidator = injektor.lookup('schemaValidator', chores.injektorContext);
-  let result = [];
-  let CTX = {L, T, nameResolver, schemaValidator};
+  if (chores.isUpgradeSupported('metadata-refiner')) {
+    let schemaValidator = injektor.lookup('schemaValidator', chores.injektorContext);
+    let result = [];
+    let CTX = {L, T, nameResolver, schemaValidator};
 
-  // validate bridge's configures
-  let bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
-  let bridgeMetadata = {};
-  bridgeLoader.loadMetadata(bridgeMetadata);
+    // validate bridge's configures
+    let bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
+    let bridgeMetadata = {};
+    bridgeLoader.loadMetadata(bridgeMetadata);
 
-  L.has('silly') && L.log('silly', T.add({ metadata: bridgeMetadata }).toMessage({
-    tags: [ blockRef, 'bridge-config-schema-input' ],
-    text: " - bridge's metadata: ${metadata}"
-  }));
+    L.has('silly') && L.log('silly', T.add({ metadata: bridgeMetadata }).toMessage({
+      tags: [ blockRef, 'bridge-config-schema-input' ],
+      text: " - bridge's metadata: ${metadata}"
+    }));
 
-  // apply 'schemaValidation' option from presets for bridges
-  lodash.forEach(configObject.bridgeRefs, function(bridgeRef) {
-    let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
-    if (!chores.isUpgradeSupported('improving-name-resolver')) {
-      bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
+    // apply 'schemaValidation' option from presets for bridges
+    lodash.forEach(configObject.bridgeRefs, function(bridgeRef) {
+      let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
+      if (!chores.isUpgradeSupported('improving-name-resolver')) {
+        bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
+      }
+      if (bridgeRef.presets && bridgeRef.presets.schemaValidation === false) {
+        lodash.set(bridgeMetadata, [bridgeCode, 'metadata', 'enabled'], false);
+      }
+    });
+
+    let bridgeConfig = lodash.get(configObject, ['sandbox', 'mixture', 'bridges'], {});
+
+    validateBridgeConfig(CTX, bridgeConfig, bridgeMetadata, result);
+
+    // validate plugin's configures
+    let pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
+    let pluginMetadata = {};
+    pluginLoader.loadMetadata(pluginMetadata);
+
+    L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
+      tags: [ blockRef, 'plugin-config-schema-input' ],
+      text: " - plugin's metadata: ${metadata}"
+    }));
+
+    let pluginSchema = extractPluginSchema(CTX, nameResolver, configObject.pluginRefs, pluginMetadata);
+
+    let pluginConfig = {
+      profile: lodash.get(configObject, ['profile', 'mixture'], {}),
+      sandbox: lodash.pick(lodash.get(configObject, ['sandbox', 'mixture'], {}), ['application', 'plugins'])
     }
-    if (bridgeRef.presets && bridgeRef.presets.schemaValidation === false) {
-      lodash.set(bridgeMetadata, [bridgeCode, 'metadata', 'enabled'], false);
-    }
-  });
 
-  let bridgeConfig = lodash.get(configObject, ['sandbox', 'mixture', 'bridges'], {});
+    L.has('silly') && L.log('silly', T.add({ pluginConfig, pluginSchema }).toMessage({
+      tags: [ blockRef, 'validate-plugin-config-by-schema' ],
+      text: ' - Synchronize the structure of configuration data and schemas'
+    }));
 
-  validateBridgeConfig(CTX, bridgeConfig, bridgeMetadata, result);
+    validatePluginConfig(CTX, pluginConfig, pluginSchema, result);
 
-  // validate plugin's configures
-  let pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
-  let pluginMetadata = {};
-  pluginLoader.loadMetadata(pluginMetadata);
+    // summarize validating result
+    L.has('silly') && L.log('silly', T.add({ result }).toMessage({
+      tags: [ blockRef, 'validating-config-by-schema-result' ],
+      text: ' - Validating sandbox configuration using schemas'
+    }));
 
-  L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
-    tags: [ blockRef, 'plugin-config-schema-input' ],
-    text: " - plugin's metadata: ${metadata}"
-  }));
-
-  let pluginSchema = extractPluginSchema(CTX, nameResolver, configObject.pluginRefs, pluginMetadata);
-
-  let pluginConfig = {
-    profile: lodash.get(configObject, ['profile', 'mixture'], {}),
-    sandbox: lodash.pick(lodash.get(configObject, ['sandbox', 'mixture'], {}), ['application', 'plugins'])
+    issueInspector.collect(result).barrier({ invoker: blockRef, footmark: 'metadata-validating' });
   }
-
-  L.has('silly') && L.log('silly', T.add({ pluginConfig, pluginSchema }).toMessage({
-    tags: [ blockRef, 'validate-plugin-config-by-schema' ],
-    text: ' - Synchronize the structure of configuration data and schemas'
-  }));
-
-  validatePluginConfig(CTX, pluginConfig, pluginSchema, result);
-
-  // summarize validating result
-  L.has('silly') && L.log('silly', T.add({ result }).toMessage({
-    tags: [ blockRef, 'validating-config-by-schema-result' ],
-    text: ' - Validating sandbox configuration using schemas'
-  }));
-
-  issueInspector.collect(result).barrier({ invoker: blockRef, footmark: 'metadata-validating' });
 
   // initialize plugins, bridges, sandboxManager
   let sandboxManager = injektor.lookup('sandboxManager', chores.injektorContext);

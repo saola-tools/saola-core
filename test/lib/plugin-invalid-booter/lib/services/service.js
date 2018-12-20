@@ -7,7 +7,6 @@ var lodash = Devebot.require('lodash');
 const MODULE_NAME = 'plugin-invalid-booter/trigger';
 
 var Service = function(params) {
-  var self = this;
   params = params || {};
 
   var packageName = params.packageName || 'plugin-invalid-booter';

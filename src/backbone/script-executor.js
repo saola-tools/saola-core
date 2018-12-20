@@ -6,7 +6,6 @@ const chores = require('../utils/chores');
 const blockRef = chores.getBlockRef(__filename);
 
 function ScriptExecutor(params={}) {
-  let self = this;
   let loggingFactory = params.loggingFactory.branch(blockRef);
   let L = loggingFactory.getLogger();
   let T = loggingFactory.getTracer();
@@ -30,7 +29,7 @@ function ScriptExecutor(params={}) {
     return command;
   }
 
-  self.executeCommand = function(command, outlet) {
+  this.executeCommand = function(command, outlet) {
     try {
       command = resolveCommand(command);
     } catch(error) {

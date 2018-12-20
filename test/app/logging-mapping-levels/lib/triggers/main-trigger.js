@@ -7,7 +7,6 @@ var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
 
 var Service = function(params={}) {
-  var self = this;
   var packageName = params.packageName || 'fullapp';
   var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
 
@@ -22,14 +21,14 @@ var Service = function(params={}) {
     res.end('fullapp webserver');
   });
 
-  self.getServer = function() {
+  this.getServer = function() {
     return server;
   };
 
   var configHost = lodash.get(mainCfg, 'host', '0.0.0.0');
   var configPort = lodash.get(mainCfg, 'port', 8080);
 
-  self.start = function() {
+  this.start = function() {
     return new Promise(function(resolved, rejected) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
@@ -41,7 +40,7 @@ var Service = function(params={}) {
     });
   };
 
-  self.stop = function() {
+  this.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
         chores.isVerboseForced(packageName, mainCfg) &&

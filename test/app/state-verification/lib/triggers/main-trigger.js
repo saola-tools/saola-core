@@ -7,15 +7,13 @@ var http = require('http');
 var util = require('util');
 
 var Service = function(params={}) {
-  var self = this;
-
   var L = params.loggingFactory.getLogger();
   var T = params.loggingFactory.getTracer();
   var packageName = params.packageName || 'state-verification';
   var blockRef = params.componentId;
   var mainCfg = lodash.get(params, ['sandboxConfig'], {});
 
-  self.getConfig = function() {
+  this.getConfig = function() {
     return lodash.cloneDeep(mainCfg);
   }
 
@@ -33,14 +31,14 @@ var Service = function(params={}) {
     res.end(util.format('%s webserver', packageName));
   });
 
-  self.getServer = function() {
+  this.getServer = function() {
     return server;
   };
 
   var configHost = lodash.get(mainCfg, 'host', '0.0.0.0');
   var configPort = lodash.get(mainCfg, 'port', 8080);
 
-  self.start = function() {
+  this.start = function() {
     return new Promise(function(resolved, rejected) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
@@ -52,7 +50,7 @@ var Service = function(params={}) {
     });
   };
 
-  self.stop = function() {
+  this.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
         chores.isVerboseForced(packageName, mainCfg) &&

@@ -5,7 +5,6 @@ var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 
 var Service = function(params={}) {
-  var self = this;
   var L = params.loggingFactory.getLogger();
   var T = params.loggingFactory.getTracer();
   var blockRef = params.componentId;
@@ -19,7 +18,7 @@ var Service = function(params={}) {
     text: ' - configuration: {pluginCfg}'
   }));
 
-  self.getConfig = function() {
+  this.getConfig = function() {
     return lodash.cloneDeep(mainCfg);
   }
 };

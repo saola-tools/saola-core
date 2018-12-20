@@ -7,8 +7,6 @@ var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainService');
 
 var Service = function(params={}) {
-  var self = this;
-
   var L = params.loggingFactory.getLogger();
   var T = params.loggingFactory.getTracer();
 

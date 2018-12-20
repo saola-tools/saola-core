@@ -9,7 +9,6 @@ const nodash = require('../utils/nodash');
 const blockRef = chores.getBlockRef(__filename);
 
 function ScriptRenderer(params={}) {
-  let self = this;
   let loggingFactory = params.loggingFactory.branch(blockRef);
   let L = loggingFactory.getLogger();
   let T = loggingFactory.getTracer();
@@ -24,7 +23,7 @@ function ScriptRenderer(params={}) {
     tracer: T
   }, lodash.pick(params, ['schemaValidator']));
 
-  self.createOutlet = function(opts) {
+  this.createOutlet = function(opts) {
     return new WebSocketOutlet(lodash.assign({}, defaultOpts, opts));
   }
 
@@ -35,13 +34,12 @@ function ScriptRenderer(params={}) {
 }
 
 function AbstractOutlet(params) {
-  let self = this;
-
-  self._send = function(message) {
+  this._send = function(message) {
     assert.fail('_send() method must be overriden');
   }
 
-  self.render = function(state, output) {
+  this.render = function(state, output) {
+    let self = this;
     switch(state) {
       case 'error':
       self._send(JSON.stringify({

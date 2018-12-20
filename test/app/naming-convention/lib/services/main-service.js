@@ -7,8 +7,6 @@ var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainService');
 
 var Service = function(params) {
   params = params || {};
-  var self = this;
-
   var L = params.loggingFactory.getLogger();
   var T = params.loggingFactory.getTracer();
 
@@ -17,7 +15,7 @@ var Service = function(params) {
   var mainCfg = lodash.get(params, ['sandboxConfig'], {});
   debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));
 
-  self.getConfig = function() {
+  this.getConfig = function() {
     return lodash.cloneDeep(mainCfg);
   }
 

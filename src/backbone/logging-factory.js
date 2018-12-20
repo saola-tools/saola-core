@@ -73,9 +73,8 @@ function LoggingFactory(args={}) {
     }
   };
 
-  let self = this;
-
   this.branch = function(sectorName, sectorId) {
+    let self = this;
     return new LoggingFactory({
       root: args.root,
       parent: self,

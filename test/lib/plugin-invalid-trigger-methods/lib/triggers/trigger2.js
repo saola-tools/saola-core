@@ -6,7 +6,6 @@ var lodash = Devebot.require('lodash');
 var http = require('http');
 
 var Service = function(params) {
-  var self = this;
   params = params || {};
 
   var packageName = params.packageName || 'plugin-invalid-trigger-methods';
@@ -38,14 +37,14 @@ var Service = function(params) {
     res.end('plugin-invalid-trigger webserver');
   });
 
-  self.getServer = function() {
+  this.getServer = function() {
     return server;
   };
 
   var configHost = lodash.get(pluginCfg, 'host', '0.0.0.0');
   var configPort = lodash.get(pluginCfg, 'port', 8080);
 
-  self.stop = function() {
+  this.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
         chores.isVerboseForced(params.packageName, pluginCfg) &&

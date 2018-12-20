@@ -15,7 +15,6 @@ const blockRef = chores.getBlockRef(__filename);
  * @param {Object} params.runhook - The parameters that sent to Runhooks
  */
 function RunhookManager(params={}) {
-  let self = this;
   let loggingFactory = params.loggingFactory.branch(blockRef);
   let L = loggingFactory.getLogger();
   let T = loggingFactory.getTracer();
@@ -97,7 +96,7 @@ function RunhookManager(params={}) {
     return routineStore.lookup(fn[0]);
   }
 
-  self.getDefinitions = function(defs) {
+  this.getDefinitions = function(defs) {
     defs = defs || [];
     lodash.forOwn(getRunhooks(), function(value, key) {
       defs.push(lodash.assign({
@@ -108,15 +107,16 @@ function RunhookManager(params={}) {
     return defs;
   };
 
-  self.getRunhook = function(command) {
+  this.getRunhook = function(command) {
     return getRunhook(command);
   }
 
-  self.isAvailable = function(command) {
+  this.isAvailable = function(command) {
     return lodash.isFunction(getRunhook(command).handler);
   };
 
-  self.execute = function(command, context) {
+  this.execute = function(command, context) {
+    let self = this;
     context = context || {};
     command = command || {};
     command.requestId = command.requestId || T.getLogID();
@@ -247,7 +247,7 @@ function RunhookManager(params={}) {
     return promize;
   };
 
-  self.process = function(command, context) {
+  this.process = function(command, context) {
     context = context || {};
     command = command || {};
     command.requestId = command.requestId || T.getLogID();
@@ -281,7 +281,7 @@ function RunhookManager(params={}) {
     }
   };
 
-  self.createProgressMeter = function(args) {
+  this.createProgressMeter = function(args) {
     if (args && lodash.isFunction(args.progress)) {
       return {
         update: function(completed, total, extra) {

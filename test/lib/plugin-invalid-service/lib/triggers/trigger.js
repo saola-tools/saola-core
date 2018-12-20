@@ -6,7 +6,6 @@ var lodash = Devebot.require('lodash');
 var http = require('http');
 
 var Service = function(params) {
-  var self = this;
   params = params || {};
 
   var packageName = params.packageName || 'plugin-invalid-service';
@@ -38,14 +37,14 @@ var Service = function(params) {
     res.end('plugin-invalid-service webserver');
   });
 
-  self.getServer = function() {
+  this.getServer = function() {
     return server;
   };
 
   var configHost = lodash.get(pluginCfg, 'host', '0.0.0.0');
   var configPort = lodash.get(pluginCfg, 'port', 8080);
 
-  self.start = function() {
+  this.start = function() {
     return new Promise(function(resolved, rejected) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
@@ -57,7 +56,7 @@ var Service = function(params) {
     });
   };
 
-  self.stop = function() {
+  this.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
         chores.isVerboseForced(packageName, pluginCfg) &&

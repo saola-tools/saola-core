@@ -11,8 +11,6 @@ var Service = function(params) {
 
   params = params || {};
 
-  var self = this;
-
   var logger = params.loggingFactory.getLogger();
 
   var pluginName = params.packageName;
@@ -24,14 +22,14 @@ var Service = function(params) {
     debugx.enabled && debugx('Server Error: %s', JSON.stringify(err));
   });
 
-  self.getServer = function() {
+  this.getServer = function() {
     return server;
   };
 
   var configHost = lodash.get(mainCfg, 'host', '0.0.0.0');
   var configPort = lodash.get(mainCfg, 'port', 8080);
 
-  self.start = function() {
+  this.start = function() {
     return new Promise(function(resolved, rejected) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
@@ -43,7 +41,7 @@ var Service = function(params) {
     });
   };
 
-  self.stop = function() {
+  this.stop = function() {
     return new Promise(function(resolved, rejected) {
       server.close(function () {
         chores.isVerboseForced('invalid-plugin-trigger', mainCfg) &&

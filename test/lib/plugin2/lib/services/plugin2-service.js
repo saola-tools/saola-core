@@ -6,7 +6,6 @@ var lodash = Devebot.require('lodash');
 var Service = function(params) {
   params = params || {};
 
-  var self = this;
   var L = params.loggingFactory.getLogger();
   var T = params.loggingFactory.getTracer();
 

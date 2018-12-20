@@ -350,6 +350,12 @@ describe('tdd:devebot:core:plugin-loader', function() {
   });
 
   describe('loadMetadata()', function() {
+    before(function() {
+      if (!chores.isUpgradeSupported('metadata-refiner')) {
+        this.skip();
+        return;
+      }
+    });
     it('load schemas from empty application', function() {
       var pluginLoader = lab.createPluginLoader();
       var metadataMap = {};

@@ -9,7 +9,6 @@ const constx = require('../utils/constx');
 const blockRef = chores.getBlockRef(__filename);
 
 function SecurityManager(params={}) {
-  let self = this;
   let loggingFactory = params.loggingFactory.branch(blockRef);
   let L = loggingFactory.getLogger();
   let T = loggingFactory.getTracer();
@@ -22,7 +21,7 @@ function SecurityManager(params={}) {
 
   let authenCfg = lodash.get(params, ['profileConfig', constx.FRAMEWORK.NAME, 'authen'], {});
 
-  self.authenticate = function(tokens) {
+  this.authenticate = function(tokens) {
     let output = Promise.resolve({ result: true });
 
     L.has('silly') && L.log('silly', T.add({

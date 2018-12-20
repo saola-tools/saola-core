@@ -31,6 +31,13 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('extractPluginSchema()', function() {
+    before(function() {
+      if (!chores.isUpgradeSupported('metadata-refiner')) {
+        this.skip();
+        return;
+      }
+    });
+
     var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
     var extractPluginSchema = rewiredKernel.__get__('extractPluginSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
@@ -406,6 +413,13 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('validatePluginConfig()', function() {
+    before(function() {
+      if (!chores.isUpgradeSupported('metadata-refiner')) {
+        this.skip();
+        return;
+      }
+    });
+
     var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
     var checkSandboxConstraintsOfCrates = rewiredKernel.__get__('checkSandboxConstraintsOfCrates');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
@@ -676,6 +690,13 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('validateBridgeConfig()', function() {
+    before(function() {
+      if (!chores.isUpgradeSupported('metadata-refiner')) {
+        this.skip();
+        return;
+      }
+    });
+
     var validateBridgeConfig = rewire(lab.getDevebotModule('kernel')).__get__('validateBridgeConfig');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
@@ -847,6 +868,13 @@ describe('tdd:devebot:base:kernel', function() {
   })
 
   describe('validate config/schemas', function() {
+    before(function() {
+      if (!chores.isUpgradeSupported('metadata-refiner')) {
+        this.skip();
+        return;
+      }
+    });
+
     var loggingStore = {};
 
     before(function() {
