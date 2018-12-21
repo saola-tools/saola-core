@@ -43,10 +43,10 @@ describe('tdd:devebot:base:kernel', function() {
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
-    var C = {L, T, schemaValidator};
 
     it("should extract plugin metadata and enrich with dependencies (empty dependencies)", function() {
       var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
+      var C = {L, T, schemaValidator, nameResolver};
       // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
       var pluginMetadata = {
         "devebot-dp-wrapper1/sandbox": {
@@ -113,7 +113,7 @@ describe('tdd:devebot:base:kernel', function() {
         }
       ];
 
-      var pluginSchema = extractPluginSchema(C, nameResolver, pluginRefs, pluginMetadata);
+      var pluginSchema = extractPluginSchema(C, pluginRefs, pluginMetadata);
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
       assert.deepEqual(pluginSchema, {
         "profile": {},
@@ -162,6 +162,7 @@ describe('tdd:devebot:base:kernel', function() {
       ], [
         "bridge1", "bridge2", "bridge3"
       ]);
+      var C = {L, T, schemaValidator, nameResolver};
       var pluginMetadata = {
         "application/sandbox": {
           "default": {
@@ -406,7 +407,7 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       };
-      var pluginSchema = extractPluginSchema(C, nameResolver, pluginRefs, pluginMetadata);
+      var pluginSchema = extractPluginSchema(C, pluginRefs, pluginMetadata);
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
       assert.deepEqual(pluginSchema, expectedPluginSchema);
     });

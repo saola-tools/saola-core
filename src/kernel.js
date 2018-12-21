@@ -64,7 +64,7 @@ function Kernel(params={}) {
       text: " - bridge's metadata: ${metadata}"
     }));
 
-    let bridgeSchema = extractBridgeSchema(CTX, nameResolver, configObject.bridgeRefs, bridgeMetadata);
+    let bridgeSchema = extractBridgeSchema(CTX, configObject.bridgeRefs, bridgeMetadata);
 
     let bridgeConfig = lodash.get(configObject, ['sandbox', 'mixture', 'bridges'], {});
 
@@ -78,7 +78,7 @@ function Kernel(params={}) {
       text: " - plugin's metadata: ${metadata}"
     }));
 
-    let pluginSchema = extractPluginSchema(CTX, nameResolver, configObject.pluginRefs, pluginMetadata);
+    let pluginSchema = extractPluginSchema(CTX, configObject.pluginRefs, pluginMetadata);
 
     let pluginConfig = {
       profile: lodash.get(configObject, ['profile', 'mixture'], {}),
@@ -137,7 +137,8 @@ module.exports = Kernel;
 
 //-----------------------------------------------------------------------------
 
-let extractBridgeSchema = function(ref, nameResolver, bridgeRefs, bridgeMetadata, bridgeSchema) {
+let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
+  const { nameResolver } = ref;
   bridgeSchema = lodash.assign(bridgeSchema, bridgeMetadata);
   // apply 'schemaValidation' option from presets for bridges
   lodash.forEach(bridgeRefs, function(bridgeRef) {
@@ -211,7 +212,7 @@ let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
 
 const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
-let extractPluginSchema = function(ref, nameResolver, pluginRefs, pluginMetadata, pluginSchema) {
+let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema) {
   pluginSchema = pluginSchema || {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
@@ -226,11 +227,11 @@ let extractPluginSchema = function(ref, nameResolver, pluginRefs, pluginMetadata
       }
     }
   });
-  return enrichPluginSchema(ref, nameResolver, pluginRefs, pluginSchema);
+  return enrichPluginSchema(ref, pluginRefs, pluginSchema);
 }
 
-let enrichPluginSchema = function(ref, nameResolver, pluginRefs, pluginSchema) {
-  let { L, T } = ref;
+let enrichPluginSchema = function(ref, pluginRefs, pluginSchema) {
+  let { L, T, nameResolver } = ref;
   lodash.forEach(pluginRefs, function(pluginRef) {
     let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
     if (!chores.isUpgradeSupported('improving-name-resolver')) {
