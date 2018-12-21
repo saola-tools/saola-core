@@ -392,7 +392,15 @@ let modernizeConfigBlock = function(ctx, configData, configPath, manifestBlock, 
   }
 }
 
+let getConfigBlockVersion = function(ctx, configBlock) {
+  return lodash.get(configBlock, [CONFIG_METADATA_BLOCK, 'version']);
+}
+
 let applyManifest = function(ctx, configData, configPath, oldVersion, newVersion, manifest) {
+  applyManifestMigration(ctx, configData, configPath, oldVersion, newVersion, manifest);
+}
+
+let applyManifestMigration = function(ctx, configData, configPath, oldVersion, newVersion, manifest) {
   if (manifest && manifest.migration) {
     lodash.forOwn(manifest.migration, function(rule, ruleName) {
       if (oldVersion === rule.from && newVersion === rule.to && lodash.isFunction(rule.transform)) {
@@ -407,10 +415,6 @@ let applyManifest = function(ctx, configData, configPath, oldVersion, newVersion
       }
     })
   }
-}
-
-let getConfigBlockVersion = function(ctx, configBlock) {
-  return lodash.get(configBlock, [CONFIG_METADATA_BLOCK, 'version']);
 }
 
 let transformConfig = function(ctx, configType, configData, crateInfo) {

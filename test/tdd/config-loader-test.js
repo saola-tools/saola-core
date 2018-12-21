@@ -60,86 +60,6 @@ describe('tdd:devebot:core:config-loader', function() {
     bridgeRefs: lodash.values(bridgeRefs)
   });
 
-  var libRefs = [].concat(lodash.values(pluginRefs), devebotRef);
-
-  describe('ConfigLoader.load(): default configuration (without profile & sandbox)', function() {
-    it('load configuration of nothing (empty loader)', function() {
-      // appName: null, appOptions: null, appRootDir: null, libRootDirs: null
-      var cfgLoader = new ConfigLoader({issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
-      assert.deepEqual(config, {
-        "profile": {
-          "mixture": {},
-          "names": [ "default" ]
-        },
-        "sandbox": {
-          "mixture": {},
-          "names": [ "default" ]
-        },
-        "texture": {
-          "mixture": {},
-          "names": [ "default" ]
-        }
-      });
-    });
-
-    it('load configuration of empty application', function() {
-      // appName: empty-app, appOptions: null, appRootDir: null, libRootDirs: [...]
-      var cfgLoader = new ConfigLoader({appName: 'empty-app', devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
-
-      // Profile configuration
-      assert.deepEqual(lodash.get(config,"profile.names"), ["default"]);
-      assert.deepEqual(lodash.get(config,"profile.default"),
-        lodash.defaultsDeep(
-          loader(path.join(lab.getLibCfgDir('plugin1'), 'profile.js')),
-          loader(path.join(lab.getLibCfgDir('plugin2'), 'profile.js')),
-          loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
-          {}));
-      assert.deepEqual(lodash.get(config,"profile.mixture"), {});
-
-      // Sandbox configuration
-      assert.deepEqual(lodash.get(config,"sandbox.names"), ["default"]);
-      assert.deepEqual(lodash.get(config,"sandbox.default"),
-        lodash.defaultsDeep(
-          loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
-          loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
-          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
-          {}));
-      assert.deepEqual(lodash.get(config,"sandbox.mixture"), {});
-    });
-
-    it('load application configuration (without options)', function() {
-      var cfgLoader = new ConfigLoader({appName: 'app', appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
-
-      // Profile configuration
-      assert.deepEqual(lodash.get(config,"profile.default"),
-        lodash.defaultsDeep(
-          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'profile.js')),
-          loader(path.join(lab.getLibCfgDir('plugin1'), 'profile.js')),
-          loader(path.join(lab.getLibCfgDir('plugin2'), 'profile.js')),
-          loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
-          {}));
-      assert.deepEqual(lodash.get(config,"profile.mixture"),
-          lodash.get(config,"profile.default"));
-
-      // Sandbox configuration
-      assert.deepEqual(lodash.get(config,"sandbox.default"),
-        lodash.defaultsDeep(
-          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox.js')),
-          loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
-          loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
-          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
-          {}));
-      assert.deepEqual(lodash.get(config,"sandbox.mixture"),
-          lodash.get(config,"sandbox.default"));
-    });
-  });
-
   describe('transformConfig(): standardizing loaded configuration data', function() {
     var NameResolver = rewire(lab.getDevebotModule('backbone/name-resolver'));
     var extractAliasNames = NameResolver.__get__('extractAliasNames');
@@ -822,6 +742,84 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.isTrue(subPlugin1Transform.calledOnce);
       assert.isTrue(subPlugin2Transform.calledOnce);
       assert.equal(bridgeTransformer.callCount, 3);
+    });
+  });
+
+  describe('ConfigLoader.load(): default configuration (without profile & sandbox)', function() {
+    it('load configuration of nothing (empty loader)', function() {
+      // appName: null, appOptions: null, appRootDir: null, libRootDirs: null
+      var cfgLoader = new ConfigLoader({issueInspector, stateInspector, nameResolver});
+      var config = cfgLoader.load();
+      false && console.log(JSON.stringify(config, null, 2));
+      assert.deepEqual(config, {
+        "profile": {
+          "mixture": {},
+          "names": [ "default" ]
+        },
+        "sandbox": {
+          "mixture": {},
+          "names": [ "default" ]
+        },
+        "texture": {
+          "mixture": {},
+          "names": [ "default" ]
+        }
+      });
+    });
+
+    it('load configuration of empty application', function() {
+      // appName: empty-app, appOptions: null, appRootDir: null, libRootDirs: [...]
+      var cfgLoader = new ConfigLoader({appName: 'empty-app', devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      var config = cfgLoader.load();
+      false && console.log(JSON.stringify(config, null, 2));
+
+      // Profile configuration
+      assert.deepEqual(lodash.get(config,"profile.names"), ["default"]);
+      assert.deepEqual(lodash.get(config,"profile.default"),
+        lodash.defaultsDeep(
+          loader(path.join(lab.getLibCfgDir('plugin1'), 'profile.js')),
+          loader(path.join(lab.getLibCfgDir('plugin2'), 'profile.js')),
+          loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
+          {}));
+      assert.deepEqual(lodash.get(config,"profile.mixture"), {});
+
+      // Sandbox configuration
+      assert.deepEqual(lodash.get(config,"sandbox.names"), ["default"]);
+      assert.deepEqual(lodash.get(config,"sandbox.default"),
+        lodash.defaultsDeep(
+          loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
+          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
+          {}));
+      assert.deepEqual(lodash.get(config,"sandbox.mixture"), {});
+    });
+
+    it('load application configuration (without options)', function() {
+      var cfgLoader = new ConfigLoader({appName: 'app', appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      var config = cfgLoader.load();
+      false && console.log(JSON.stringify(config, null, 2));
+
+      // Profile configuration
+      assert.deepEqual(lodash.get(config,"profile.default"),
+        lodash.defaultsDeep(
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'profile.js')),
+          loader(path.join(lab.getLibCfgDir('plugin1'), 'profile.js')),
+          loader(path.join(lab.getLibCfgDir('plugin2'), 'profile.js')),
+          loader(path.join(lab.getDevebotCfgDir(), 'profile.js')),
+          {}));
+      assert.deepEqual(lodash.get(config,"profile.mixture"),
+          lodash.get(config,"profile.default"));
+
+      // Sandbox configuration
+      assert.deepEqual(lodash.get(config,"sandbox.default"),
+        lodash.defaultsDeep(
+          loader(path.join(lab.getAppCfgDir('tdd-cfg', 'config'), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin1'), 'sandbox.js')),
+          loader(path.join(lab.getLibCfgDir('plugin2'), 'sandbox.js')),
+          loader(path.join(lab.getDevebotCfgDir(), 'sandbox.js')),
+          {}));
+      assert.deepEqual(lodash.get(config,"sandbox.mixture"),
+          lodash.get(config,"sandbox.default"));
     });
   });
 
