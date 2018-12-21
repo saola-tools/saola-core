@@ -332,12 +332,29 @@ chores.isUpgradeSupported = function(label) {
   if (!store.upgradeEnabled) {
     store.upgradeEnabled = envbox.getEnv('UPGRADE_ENABLED');
   }
-  label = nodash.isArray(label) ? label : [label];
-  let ok = true;
-  for(let k in label) {
-    if (!checkUpgradeSupported(label[k])) return false;
+  return isAnyOfTuplesSatistied(arguments);
+}
+
+let isAnyOfTuplesSatistied = function (tuples) {
+  for(let i=0; i<tuples.length; i++) {
+    if (isAllOfLabelsSatisfied(tuples[i])) return true;
+  }
+  return false;
+}
+
+let isAllOfLabelsSatisfied = function (labels) {
+  if (!labels) return false;
+  labels = nodash.isArray(labels) ? labels : [labels];
+  for(let k in labels) {
+    if (!checkUpgradeSupported(labels[k])) return false;
   }
   return true;
+}
+
+let checkUpgradeSupported = function(label) {
+  if (store.upgradeDisabled.indexOf(label) >= 0) return false;
+  if (constx.UPGRADE_ENABLED.indexOf(label) >= 0) return true;
+  return (store.upgradeEnabled.indexOf(label) >= 0);
 }
 
 chores.dateToString = function(d) {
@@ -354,12 +371,6 @@ chores.validate = function(object, schema) {
     result.valid = result.ok;
   }
   return result;
-}
-
-let checkUpgradeSupported = function(label) {
-  if (store.upgradeDisabled.indexOf(label) >= 0) return false;
-  if (constx.UPGRADE_ENABLED.indexOf(label) >= 0) return true;
-  return (store.upgradeEnabled.indexOf(label) >= 0);
 }
 
 chores.argumentsToArray = function(args, l, r) {

@@ -7,10 +7,10 @@ var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:utils:chores');
 var assert = require('chai').assert;
-var expect = require('chai').expect;
 var path = require('path');
 var util = require('util');
 var chores = require(lab.getDevebotModule('utils/chores'));
+var envbox = require(lab.getDevebotModule('utils/envbox'));
 var envmask = require('envmask').instance;
 var LogAdapter = require('logolite').LogAdapter;
 var LogTracer = require('logolite').LogTracer;
@@ -180,6 +180,43 @@ describe('tdd:devebot:utils:chores', function() {
       assert.deepEqual(convert('Hello', 1, true, {}, []), [true]);
       range.left = 3; range.right = 3;
       assert.deepEqual(convert('Hello', 1, true, {}, []), []);
+    })
+  });
+
+  describe('isUpgradeSupported()', function() {
+    beforeEach(function() {
+      envmask.setup({
+        DEVEBOT_UPGRADE_ENABLED: "abc, def, xyz",
+        DEVEBOT_UPGRADE_DISABLED: "disabled",
+      })
+      envbox.clearCache();
+      chores.clearCache();
+    })
+    it('An arguments-list presents the OR conditional operator', function() {
+      assert.isTrue(chores.isUpgradeSupported('abc'));
+      assert.isTrue(chores.isUpgradeSupported('abc', 'xyz'));
+      assert.isTrue(chores.isUpgradeSupported('abc', 'disabled'));
+      assert.isTrue(chores.isUpgradeSupported('disabled', 'abc'));
+      assert.isTrue(chores.isUpgradeSupported('abc', 'nil'));
+      assert.isTrue(chores.isUpgradeSupported('undefined', 'abc', 'nil'));
+      assert.isFalse(chores.isUpgradeSupported());
+      assert.isFalse(chores.isUpgradeSupported('disabled'));
+      assert.isFalse(chores.isUpgradeSupported('nil'));
+      assert.isFalse(chores.isUpgradeSupported('nil', 'disabled'));
+      assert.isFalse(chores.isUpgradeSupported('nil', 'disabled', 'abc.xyz'));
+    })
+    it('An array argument presents the AND conditional operator', function() {
+      assert.isTrue(chores.isUpgradeSupported(['abc', 'xyz'], 'nil'));
+      assert.isTrue(chores.isUpgradeSupported(['abc', 'xyz'], null));
+      assert.isFalse(chores.isUpgradeSupported(['abc', 'nil']));
+      assert.isFalse(chores.isUpgradeSupported(['abc', 'def', 'nil']));
+      assert.isFalse(chores.isUpgradeSupported(['abc', 'def', 'disabled']));
+      assert.isFalse(chores.isUpgradeSupported(['abc', '123'], ['def', '456']));
+    })
+    after(function() {
+      envmask.reset();
+      envbox.clearCache();
+      chores.clearCache();
     })
   });
 });
