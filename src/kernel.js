@@ -53,14 +53,12 @@ function Kernel(params={}) {
 
   if (chores.isUpgradeSupported('metadata-refiner')) {
     let schemaValidator = injektor.lookup('schemaValidator', chores.injektorContext);
-    let result = [];
     let CTX = {L, T, nameResolver, schemaValidator};
+    let result = [];
 
     // validate bridge's configures
     let bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
-    let bridgeMetadata = {};
-    bridgeLoader.loadMetadata(bridgeMetadata);
-
+    let bridgeMetadata = bridgeLoader.loadMetadata();
     L.has('silly') && L.log('silly', T.add({ metadata: bridgeMetadata }).toMessage({
       tags: [ blockRef, 'bridge-config-schema-input' ],
       text: " - bridge's metadata: ${metadata}"
@@ -74,9 +72,7 @@ function Kernel(params={}) {
 
     // validate plugin's configures
     let pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
-    let pluginMetadata = {};
-    pluginLoader.loadMetadata(pluginMetadata);
-
+    let pluginMetadata = pluginLoader.loadMetadata();
     L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
       tags: [ blockRef, 'plugin-config-schema-input' ],
       text: " - plugin's metadata: ${metadata}"

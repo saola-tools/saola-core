@@ -386,7 +386,7 @@ let modernizeConfigBlock = function(ctx, configData, configPath, manifestBlock, 
         if (moduleType === 'plugin') {
           manifestPath.push(CONFIG_SANDBOX_NAME);
         }
-        applyManifest(ctx, configData, configPath, myVersion, toVersion, lodash.get(manifestBlock, manifestPath));
+        applyManifestMigration(ctx, configData, configPath, myVersion, toVersion, lodash.get(manifestBlock, manifestPath));
       }
     }
   }
@@ -394,10 +394,6 @@ let modernizeConfigBlock = function(ctx, configData, configPath, manifestBlock, 
 
 let getConfigBlockVersion = function(ctx, configBlock) {
   return lodash.get(configBlock, [CONFIG_METADATA_BLOCK, 'version']);
-}
-
-let applyManifest = function(ctx, configData, configPath, oldVersion, newVersion, manifest) {
-  applyManifestMigration(ctx, configData, configPath, oldVersion, newVersion, manifest);
 }
 
 let applyManifestMigration = function(ctx, configData, configPath, oldVersion, newVersion, manifest) {
