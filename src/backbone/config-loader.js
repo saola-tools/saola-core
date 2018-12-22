@@ -151,8 +151,8 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
     libRefs.push(devebotRef);
   }
 
-  let bridgeManifests = extractConfigManifest(ctx, bridgeRefs, 'bridge');
-  let pluginManifests = extractConfigManifest(ctx, pluginRefs, 'plugin');
+  let bridgeManifests = extractConfigManifest(ctx, bridgeRefs);
+  let pluginManifests = extractConfigManifest(ctx, pluginRefs);
   if (!chores.isUpgradeSupported('manifest-refiner')) {
     bridgeManifests = pluginManifests = undefined;
   }
@@ -206,11 +206,11 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
   });
 }
 
-function extractConfigManifest(ctx, moduleRefs, moduleType) {
+function extractConfigManifest(ctx, moduleRefs, configManifest) {
   const { nameResolver } = ctx;
-  let configManifest = {};
+  configManifest = configManifest || {};
   lodash.forOwn(moduleRefs, function(moduleRef) {
-    const moduleName = nameResolver.getDefaultAliasOf(moduleRef.name, moduleType);
+    const moduleName = nameResolver.getDefaultAliasOf(moduleRef.name, moduleRef.type);
     configManifest[moduleName] = lodash.pick(moduleRef, ['version', 'manifest']);
   });
   return configManifest;

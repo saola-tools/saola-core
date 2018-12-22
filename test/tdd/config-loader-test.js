@@ -317,16 +317,15 @@ describe('tdd:devebot:core:config-loader', function() {
     var ctx = { nameResolver: nameResolver }
 
     it('return empty configManifest map if the moduleRef is empty or null', function() {
-      assert.deepEqual(extractConfigManifest(ctx, null, 'bridge'), {});
-      assert.deepEqual(extractConfigManifest(ctx, {}, 'bridge'), {});
-      assert.deepEqual(extractConfigManifest(ctx, null, 'plugin'), {});
-      assert.deepEqual(extractConfigManifest(ctx, {}, 'plugin'), {});
+      assert.deepEqual(extractConfigManifest(ctx, null), {});
+      assert.deepEqual(extractConfigManifest(ctx, {}), {});
     });
 
     it('return the correct configManifest with normal bridgeRefs', function() {
       var bridgeRefs = {
         "/test/lib/sub-bridge1": {
           "name": "sub-bridge1",
+          "type": "bridge",
           "path": "/test/lib/sub-bridge1",
           "version": "0.1.1",
           "manifest": {
@@ -335,6 +334,7 @@ describe('tdd:devebot:core:config-loader', function() {
         },
         "/test/lib/sub-bridge2": {
           "name": "sub-bridge2",
+          "type": "bridge",
           "path": "/test/lib/sub-bridge2",
           "version": "0.1.2",
           "manifest": {
@@ -343,6 +343,7 @@ describe('tdd:devebot:core:config-loader', function() {
         },
         "/test/lib/devebot-co-vps": {
           "name": "devebot-co-vps",
+          "type": "bridge",
           "path": "/test/lib/devebot-co-vps",
           "version": "0.1.3",
           "manifest": {
@@ -370,13 +371,14 @@ describe('tdd:devebot:core:config-loader', function() {
           },
         },
       }
-      assert.deepEqual(extractConfigManifest(ctx, bridgeRefs, 'bridge'), expected);
+      assert.deepEqual(extractConfigManifest(ctx, bridgeRefs), expected);
     });
 
     it('return the correct configManifest with normal pluginRefs', function() {
       var pluginRefs = {
         "/test/lib/sub-plugin1": {
           "name": "sub-plugin1",
+          "type": "plugin",
           "path": "/test/lib/sub-plugin1",
           "presets": {
             "configTags": "bridge[dialect-bridge]"
@@ -393,6 +395,7 @@ describe('tdd:devebot:core:config-loader', function() {
         },
         "/test/lib/sub-plugin2": {
           "name": "sub-plugin2",
+          "type": "plugin",
           "path": "/test/lib/sub-plugin2",
           "presets": {
             "configTags": "bridge[dialect-bridge]"
@@ -422,7 +425,7 @@ describe('tdd:devebot:core:config-loader', function() {
           },
         },
       }
-      assert.deepEqual(extractConfigManifest(ctx, pluginRefs, 'plugin'), expected);
+      assert.deepEqual(extractConfigManifest(ctx, pluginRefs), expected);
     });
   });
 
