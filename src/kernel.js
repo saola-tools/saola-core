@@ -74,12 +74,15 @@ function Kernel(params={}) {
     validateBridgeConfig(CTX, bridgeConfig, bridgeSchema, result);
 
     // validate plugin's configures
-    let pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
-    let pluginMetadata = pluginLoader.loadMetadata();
-    L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
-      tags: [ blockRef, 'plugin-config-schema-input' ],
-      text: " - plugin's metadata: ${metadata}"
-    }));
+    let pluginMetadata = null;
+    if (chores.isUpgradeSupported(['metadata-refiner'])) {
+      let pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
+      pluginMetadata = pluginLoader.loadMetadata();
+      L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
+        tags: [ blockRef, 'plugin-config-schema-input' ],
+        text: " - plugin's metadata: ${metadata}"
+      }));
+    }
 
     let pluginSchema = extractPluginSchema(CTX, configObject.pluginRefs, pluginMetadata);
 
@@ -87,11 +90,6 @@ function Kernel(params={}) {
       profile: lodash.get(configObject, ['profile', 'mixture'], {}),
       sandbox: lodash.pick(lodash.get(configObject, ['sandbox', 'mixture'], {}), ['application', 'plugins'])
     }
-
-    L.has('silly') && L.log('silly', T.add({ pluginConfig, pluginSchema }).toMessage({
-      tags: [ blockRef, 'validate-plugin-config-by-schema' ],
-      text: ' - Synchronize the structure of configuration data and schemas'
-    }));
 
     validatePluginConfig(CTX, pluginConfig, pluginSchema, result);
 
@@ -253,7 +251,7 @@ let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema
 }
 
 let enrichPluginSchema = function(ref, pluginRefs, pluginSchema) {
-  let { L, T, nameResolver } = ref;
+  const { L, T, nameResolver } = ref;
   lodash.forEach(pluginRefs, function(pluginRef) {
     let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
     if (!chores.isUpgradeSupported('improving-name-resolver')) {
@@ -278,13 +276,18 @@ let enrichPluginSchema = function(ref, pluginRefs, pluginSchema) {
 }
 
 let validatePluginConfig = function(ref, pluginConfig, pluginSchema, result) {
+  const { L, T } = ref;
+  L.has('silly') && L.log('silly', T.add({ pluginConfig, pluginSchema }).toMessage({
+    tags: [ blockRef, 'validate-plugin-config-by-schema' ],
+    text: ' - Synchronize the structure of configuration data and schemas'
+  }));
   result = result || [];
   validateSandboxSchemaOfCrates(ref, result, pluginConfig.sandbox, pluginSchema.sandbox);
   checkSandboxConstraintsOfCrates(ref, result, pluginConfig.sandbox, pluginSchema.sandbox);
 }
 
 let validateSandboxSchemaOfCrates = function(ref, result, config, schema) {
-  let { L, T } = ref;
+  const { L, T } = ref;
   config = config || {};
   schema = schema || {};
   if (config.application) {
@@ -300,7 +303,7 @@ let validateSandboxSchemaOfCrates = function(ref, result, config, schema) {
 }
 
 let validateSandboxSchemaOfCrate = function(ref, result, crateConfig, crateSchema, crateName) {
-  let { L, T, schemaValidator } = ref;
+  const { L, T, schemaValidator } = ref;
   if (crateSchema && crateSchema.enabled !== false && lodash.isObject(crateSchema.schema)) {
     let r = schemaValidator.validate(crateConfig, crateSchema.schema);
     result.push(customizeSandboxResult(r, crateSchema.crateScope, 'schema'));
@@ -313,7 +316,7 @@ let validateSandboxSchemaOfCrate = function(ref, result, crateConfig, crateSchem
 }
 
 let checkSandboxConstraintsOfCrates = function(ref, result, config, schema) {
-  let { L, T } = ref;
+  const { L, T } = ref;
   config = config || {};
   schema = schema || {};
   if (lodash.isObject(config.application)) {
