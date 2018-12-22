@@ -51,18 +51,21 @@ function Kernel(params={}) {
     injektor.defineService(serviceName, constructor, chores.injektorContext);
   });
 
-  if (chores.isUpgradeSupported('metadata-refiner')) {
+  if (chores.isUpgradeSupported(['manifest-refiner'], ['metadata-refiner'])) {
     let schemaValidator = injektor.lookup('schemaValidator', chores.injektorContext);
     let CTX = {L, T, nameResolver, schemaValidator};
     let result = [];
 
     // validate bridge's configures
-    let bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
-    let bridgeMetadata = bridgeLoader.loadMetadata();
-    L.has('silly') && L.log('silly', T.add({ metadata: bridgeMetadata }).toMessage({
-      tags: [ blockRef, 'bridge-config-schema-input' ],
-      text: " - bridge's metadata: ${metadata}"
-    }));
+    let bridgeMetadata = null;
+    if (chores.isUpgradeSupported(['metadata-refiner'])) {
+      let bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
+      bridgeMetadata = bridgeLoader.loadMetadata();
+      L.has('silly') && L.log('silly', T.add({ metadata: bridgeMetadata }).toMessage({
+        tags: [ blockRef, 'bridge-config-schema-input' ],
+        text: " - bridge's metadata: ${metadata}"
+      }));
+    }
 
     let bridgeSchema = extractBridgeSchema(CTX, configObject.bridgeRefs, bridgeMetadata);
 
@@ -135,17 +138,36 @@ function Kernel(params={}) {
 
 module.exports = Kernel;
 
+function extractModuleManifest(ctx, moduleRefs, moduleManifest) {
+  const { nameResolver } = ctx;
+  moduleManifest = moduleManifest || {};
+  lodash.forEach(moduleRefs, function(moduleRef) {
+    if (lodash.isObject(moduleRef.manifest)) {
+      const moduleName = nameResolver.getDefaultAliasOf(moduleRef.name, moduleRef.type);
+      moduleManifest[moduleName] = moduleRef.manifest;
+    }
+  });
+  return moduleManifest;
+}
+
 //-----------------------------------------------------------------------------
 
 let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
   const { nameResolver } = ref;
-  bridgeSchema = lodash.assign(bridgeSchema, bridgeMetadata);
+  bridgeSchema = bridgeSchema || {};
+  lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
+    bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
+  })
+  if (chores.isUpgradeSupported(['manifest-refiner'])) {
+    bridgeSchema = extractModuleManifest(ref, bridgeRefs, bridgeSchema);
+  }
   // apply 'schemaValidation' option from presets for bridges
   lodash.forEach(bridgeRefs, function(bridgeRef) {
     let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
-    if (!chores.isUpgradeSupported('improving-name-resolver')) {
+    if (!chores.isUpgradeSupported(['improving-name-resolver'])) {
       bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
     }
+    bridgeSchema[bridgeCode] = bridgeSchema[bridgeCode] || {};
     if (bridgeRef.presets && bridgeRef.presets.schemaValidation === false) {
       lodash.set(bridgeSchema, [bridgeCode, 'enabled'], false);
     }

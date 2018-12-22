@@ -383,7 +383,7 @@ let modernizeConfigBlock = function(ctx, configData, configPath, manifestBlock, 
       const myVersion = getConfigBlockVersion(ctx, configBlock);
       if (myVersion && semver.lt(myVersion, toVersion)) {
         const manifestPath = ['manifest'];
-        if (moduleType === 'plugin') {
+        if (moduleType !== 'bridge') {
           manifestPath.push(CONFIG_SANDBOX_NAME);
         }
         applyManifestMigration(ctx, configData, configPath, myVersion, toVersion, lodash.get(manifestBlock, manifestPath));

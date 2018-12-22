@@ -690,6 +690,239 @@ describe('tdd:devebot:base:kernel', function() {
     });
   });
 
+  describe('extractBridgeSchema()', function() {
+    var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
+    var extractBridgeSchema = rewiredKernel.__get__('extractBridgeSchema');
+    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
+    var nameResolver = lab.getNameResolver([], [
+      'bridge1', 'bridge2', 'bridge3', 'bridge4', 'devebot-co-connector1', 'devebot-co-connector2'
+    ]);
+    var L = loggingFactory.getLogger();
+    var T = loggingFactory.getTracer();
+    var CTX = {L, T, schemaValidator, nameResolver};
+
+    var expectedSchema = {
+      "bridge1": {},
+      "bridge2": {
+        "enabled": false,
+      },
+      "bridge3": {},
+      "bridge4": {
+        "enabled": false,
+      },
+      "connector1": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "host": {
+              "type": "string"
+            },
+            "port": {
+              "type": "number"
+            },
+            "verbose": {
+              "type": "boolean"
+            }
+          },
+          "required": [ "host", "port" ]
+        }
+      },
+      "connector2": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "params": {
+              "type": "object"
+            },
+            "handler": {}
+          },
+          "required": [ "params" ]
+        }
+      }
+    };
+
+    beforeEach(function() {
+      envbox.clearCache();
+      chores.clearCache();
+    });
+
+    it("should extract plugin schema from bridge metadata properly", function() {
+      envbox.setEnv('UPGRADE_ENABLED', ['metadata-refiner', 'improving-name-resolver']);
+      envbox.setEnv('UPGRADE_DISABLED', ['manifest-refiner']);
+      var bridgeRefs = lodash.values({
+        "/test/lib/bridge1": {
+          "name": "bridge1",
+          "type": "bridge",
+          "path": "/test/lib/bridge1",
+        },
+        "/test/lib/bridge2": {
+          "name": "bridge2",
+          "type": "bridge",
+          "path": "/test/lib/bridge2",
+          "presets": {
+            "schemaValidation": false
+          },
+        },
+        "/test/lib/bridge3": {
+          "name": "bridge3",
+          "type": "bridge",
+          "path": "/test/lib/bridge3",
+        },
+        "/test/lib/bridge4": {
+          "name": "bridge4",
+          "type": "bridge",
+          "path": "/test/lib/bridge4",
+          "presets": {
+            "schemaValidation": false
+          },
+        },
+        "/test/lib/devebot-co-connector1": {
+          "name": "devebot-co-connector1",
+          "type": "bridge",
+          "path": "/test/lib/devebot-co-connector1"
+        },
+        "/test/lib/devebot-co-connector2": {
+          "name": "devebot-co-connector2",
+          "type": "bridge",
+          "path": "/test/lib/devebot-co-connector2"
+        },
+      })
+
+      var  bridgeMetadata = {
+        "bridge1": {
+          "name": "bridge1"
+        },
+        "bridge2": {
+          "name": "bridge2"
+        },
+        "bridge3": {
+          "name": "bridge3"
+        },
+        "bridge4": {
+          "name": "bridge4"
+        },
+        "connector1": {
+          "name": "devebot-co-connector1",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "host": {
+                "type": "string"
+              },
+              "port": {
+                "type": "number"
+              },
+              "verbose": {
+                "type": "boolean"
+              }
+            },
+            "required": [ "host", "port" ]
+          }
+        },
+        "connector2": {
+          "name": "devebot-co-connector2",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "params": {
+                "type": "object"
+              },
+              "handler": {}
+            },
+            "required": [ "params" ]
+          }
+        },
+      }
+
+      var bridgeSchema = extractBridgeSchema(CTX, bridgeRefs, bridgeMetadata);
+
+      false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
+      assert.deepEqual(bridgeSchema, expectedSchema);
+    });
+
+    it("should extract plugin schema from bridge manifest properly", function() {
+      envbox.setEnv('UPGRADE_ENABLED', ['manifest-refiner', 'improving-name-resolver']);
+      envbox.setEnv('UPGRADE_DISABLED', ['metadata-refiner']);
+      var bridgeRefs = lodash.values({
+        "/test/lib/bridge1": {
+          "name": "bridge1",
+          "type": "bridge",
+          "path": "/test/lib/bridge1",
+        },
+        "/test/lib/bridge2": {
+          "name": "bridge2",
+          "type": "bridge",
+          "path": "/test/lib/bridge2",
+          "presets": {
+            "schemaValidation": false
+          },
+        },
+        "/test/lib/bridge3": {
+          "name": "bridge3",
+          "type": "bridge",
+          "path": "/test/lib/bridge3",
+        },
+        "/test/lib/bridge4": {
+          "name": "bridge4",
+          "type": "bridge",
+          "path": "/test/lib/bridge4",
+          "presets": {
+            "schemaValidation": false
+          },
+        },
+        "/test/lib/devebot-co-connector1": {
+          "name": "devebot-co-connector1",
+          "type": "bridge",
+          "path": "/test/lib/devebot-co-connector1",
+          "manifest": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                },
+                "verbose": {
+                  "type": "boolean"
+                }
+              },
+              "required": [ "host", "port" ]
+            },
+          },
+        },
+        "/test/lib/devebot-co-connector2": {
+          "name": "devebot-co-connector2",
+          "type": "bridge",
+          "path": "/test/lib/devebot-co-connector2",
+          "manifest": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "params": {
+                  "type": "object"
+                },
+                "handler": {}
+              },
+              "required": [ "params" ]
+            },
+          },
+        },
+      })
+
+      var bridgeSchema = extractBridgeSchema(CTX, bridgeRefs);
+
+      false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
+      assert.deepEqual(bridgeSchema, expectedSchema);
+    });
+
+    after(function() {
+      envbox.clearCache();
+      chores.clearCache();
+    });
+  });
+
   describe('validateBridgeConfig()', function() {
     before(function() {
       if (!chores.isUpgradeSupported('metadata-refiner')) {
@@ -704,8 +937,7 @@ describe('tdd:devebot:base:kernel', function() {
     var T = loggingFactory.getTracer();
 
     it("result should be ok if bridge config is valid with bridge schema", function() {
-      var result = [];
-      validateBridgeConfig({L, T, schemaValidator}, {
+      var bridgeConfig = {
         "bridge1": {
           "application": {
             "anyname1z": {
@@ -791,7 +1023,8 @@ describe('tdd:devebot:base:kernel', function() {
             }
           }
         }
-      }, {
+      };
+      var bridgeSchema = {
         "bridge1": {
           "name": "bridge1"
         },
@@ -819,10 +1052,7 @@ describe('tdd:devebot:base:kernel', function() {
                 "type": "boolean"
               }
             },
-            "required": [
-              "host",
-              "port"
-            ]
+            "required": [ "host", "port" ]
           }
         },
         "connector2": {
@@ -835,12 +1065,12 @@ describe('tdd:devebot:base:kernel', function() {
               },
               "handler": {}
             },
-            "required": [
-              "params"
-            ]
+            "required": [ "params" ]
           }
         }
-      }, result);
+      };
+      var result = [];
+      validateBridgeConfig({L, T, schemaValidator}, bridgeConfig, bridgeSchema, result);
       false && console.log('validation result: %s', JSON.stringify(result, null, 2));
       if (!chores.isUpgradeSupported('bridge-full-ref')) return;
       assert.sameDeepMembers(result, [
@@ -1078,13 +1308,7 @@ describe('tdd:devebot:base:kernel', function() {
                 "bar": "bar",
                 "num": 1001
               },
-              "field4": [
-                1,
-                2,
-                3,
-                null,
-                "4"
-              ]
+              "field4": [ 1, 2, 3, null, "4" ]
             }
           },
           "plugin2": {
@@ -1099,13 +1323,7 @@ describe('tdd:devebot:base:kernel', function() {
                 "bar": "bar",
                 "num": 1002
               },
-              "field4": [
-                1,
-                2,
-                3,
-                null,
-                "4"
-              ]
+              "field4": [ 1, 2, 3, null, "4" ]
             }
           },
           "subPlugin1": {
@@ -1139,10 +1357,7 @@ describe('tdd:devebot:base:kernel', function() {
                 "type": "boolean"
               }
             },
-            "required": [
-              "host",
-              "port"
-            ]
+            "required": [ "host", "port" ]
           }
         },
         "plugins": {
