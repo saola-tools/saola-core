@@ -140,9 +140,10 @@ function extractModuleManifest(ctx, moduleRefs, moduleManifest) {
   const { nameResolver } = ctx;
   moduleManifest = moduleManifest || {};
   lodash.forEach(moduleRefs, function(moduleRef) {
-    if (lodash.isObject(moduleRef.manifest)) {
+    const validationBlock = lodash.get(moduleRef, ['manifest', 'validation']);
+    if (lodash.isObject(validationBlock)) {
       const moduleName = nameResolver.getDefaultAliasOf(moduleRef.name, moduleRef.type);
-      moduleManifest[moduleName] = moduleRef.manifest;
+      moduleManifest[moduleName] = validationBlock;
     }
   });
   return moduleManifest;

@@ -875,20 +875,23 @@ describe('tdd:devebot:base:kernel', function() {
           "type": "bridge",
           "path": "/test/lib/devebot-co-connector1",
           "manifest": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "host": {
-                  "type": "string"
+            "migration": {},
+            "validation": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  },
+                  "verbose": {
+                    "type": "boolean"
+                  }
                 },
-                "port": {
-                  "type": "number"
-                },
-                "verbose": {
-                  "type": "boolean"
-                }
+                "required": [ "host", "port" ]
               },
-              "required": [ "host", "port" ]
             },
           },
         },
@@ -897,15 +900,18 @@ describe('tdd:devebot:base:kernel', function() {
           "type": "bridge",
           "path": "/test/lib/devebot-co-connector2",
           "manifest": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "params": {
-                  "type": "object"
+            "migration": {},
+            "validation": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "params": {
+                    "type": "object"
+                  },
+                  "handler": {}
                 },
-                "handler": {}
+                "required": [ "params" ]
               },
-              "required": [ "params" ]
             },
           },
         },
