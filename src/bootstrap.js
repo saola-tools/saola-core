@@ -63,8 +63,10 @@ function appLoader(params={}) {
   }
   if (appRef && lodash.isString(appRef.path)) {
     appRef.manifest = loadManifest(appRef.path);
+    appRef.version = loadPackageVersion(appRef.path);
     if (!chores.isUpgradeSupported('manifest-refiner')) {
       delete appRef.manifest;
+      delete appRef.version;
     }
   }
 
@@ -78,11 +80,13 @@ function appLoader(params={}) {
     ref.type = 'plugin';
     if (!chores.isUpgradeSupported('manifest-refiner')) return;
     ref.manifest = loadManifest(ref.path);
+    ref.version = loadPackageVersion(ref.path);
   });
   lodash.forOwn(params.bridgeRefs, function(ref) {
     ref.type = 'bridge';
     if (!chores.isUpgradeSupported('manifest-refiner')) return;
     ref.manifest = loadManifest(ref.path);
+    ref.version = loadPackageVersion(ref.path);
   });
 
   // declare user-defined environment variables
@@ -515,6 +519,11 @@ function loadPackageJson(pkgRootPath) {
   } catch(err) {
     return null;
   }
+}
+
+function loadPackageVersion(pkgRootPath) {
+  const pkgInfo = loadPackageJson(pkgRootPath);
+  return pkgInfo && pkgInfo.version;
 }
 
 function loadManifest(pkgRootPath) {

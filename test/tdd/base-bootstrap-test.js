@@ -783,6 +783,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "bridge3",
           "nameInCamel": "bridge3",
           "manifest": null,
+          "version": "0.1.3",
         },
         {
           "type": "bridge",
@@ -792,6 +793,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "bridge4",
           "nameInCamel": "bridge4",
           "manifest": null,
+          "version": "0.1.4",
         },
         {
           "type": "bridge",
@@ -801,6 +803,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "connector1",
           "nameInCamel": "devebotCoConnector1",
           "manifest": null,
+          "version": "0.1.1",
         },
         {
           "type": "bridge",
@@ -810,6 +813,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "connector2",
           "nameInCamel": "devebotCoConnector2",
           "manifest": null,
+          "version": "0.1.2",
         },
         {
           "type": "bridge",
@@ -819,6 +823,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "bridge1",
           "nameInCamel": "bridge1",
           "manifest": null,
+          "version": "0.1.1",
         },
         {
           "type": "bridge",
@@ -828,6 +833,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "bridge2",
           "nameInCamel": "bridge2",
           "manifest": null,
+          "version": "0.1.2",
         }
       ];
       if (!chores.isUpgradeSupported('manifest-refiner')) {
@@ -843,6 +849,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "name": "fullapp",
           "path": "/test/app/fullapp",
           "manifest": null,
+          "version": "0.1.0",
         },
         {
           "type": "plugin",
@@ -861,6 +868,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "subPlugin1",
           "nameInCamel": "subPlugin1",
           "manifest": null,
+          "version": "0.1.1",
         },
         {
           "type": "plugin",
@@ -879,6 +887,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "subPlugin2",
           "nameInCamel": "subPlugin2",
           "manifest": null,
+          "version": "0.1.2",
         },
         {
           "type": "plugin",
@@ -896,6 +905,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "plugin1",
           "nameInCamel": "plugin1",
           "manifest": null,
+          "version": "0.1.1",
         },
         {
           "type": "plugin",
@@ -913,6 +923,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "plugin2",
           "nameInCamel": "plugin2",
           "manifest": null,
+          "version": "0.1.2",
         },
         {
           "type": "plugin",
@@ -925,6 +936,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "codeInCamel": "plugin3",
           "nameInCamel": "plugin3",
           "manifest": null,
+          "version": "0.1.3",
         },
         {
           "type": "framework",

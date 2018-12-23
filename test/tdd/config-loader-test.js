@@ -352,19 +352,19 @@ describe('tdd:devebot:core:config-loader', function() {
         }
       }
       var expected = {
-        "subBridge1": {
+        "sub-bridge1": {
           "version": "0.1.1",
           "manifest": {
             "something": "sub-bridge1"
           },
         },
-        "subBridge2": {
+        "sub-bridge2": {
           "version": "0.1.2",
           "manifest": {
             "something": "sub-bridge2"
           },
         },
-        "vps": {
+        "devebot-co-vps": {
           "version": "0.1.3",
           "manifest": {
             "something": "devebot-co-vps"
@@ -412,13 +412,13 @@ describe('tdd:devebot:core:config-loader', function() {
         }
       }
       var expected = {
-        "subPlugin1": {
+        "sub-plugin1": {
           "version": "0.1.1",
           "manifest": {
             "something": "sub-plugin1"
           },
         },
-        "subPlugin2": {
+        "sub-plugin2": {
           "version": "0.1.2",
           "manifest": {
             "something": "sub-plugin2"

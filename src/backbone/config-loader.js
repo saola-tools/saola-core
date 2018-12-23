@@ -210,7 +210,7 @@ function extractConfigManifest(ctx, moduleRefs, configManifest) {
   const { nameResolver } = ctx;
   configManifest = configManifest || {};
   lodash.forOwn(moduleRefs, function(moduleRef) {
-    const moduleName = nameResolver.getDefaultAliasOf(moduleRef.name, moduleRef.type);
+    const moduleName = nameResolver.getOriginalNameOf(moduleRef.name, moduleRef.type);
     configManifest[moduleName] = lodash.pick(moduleRef, ['version', 'manifest']);
   });
   return configManifest;
