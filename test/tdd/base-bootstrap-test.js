@@ -838,7 +838,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       ];
       if (!chores.isUpgradeSupported('manifest-refiner')) {
         expectedBridgeRefs = lodash.map(expectedBridgeRefs, function(ref) {
-          return lodash.omit(ref, ["manifest"]);
+          return lodash.omit(ref, ["manifest", "version"]);
         })
       }
       assert.sameDeepMembers(cfg.bridgeRefs, expectedBridgeRefs);
@@ -951,7 +951,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       }
       if (!chores.isUpgradeSupported('manifest-refiner')) {
         expectedPluginRefs = lodash.map(expectedPluginRefs, function(ref) {
-          return lodash.omit(ref, ["manifest"]);
+          return lodash.omit(ref, ["manifest", "version"]);
         })
       }
       assert.sameDeepMembers(cfg.pluginRefs, expectedPluginRefs);

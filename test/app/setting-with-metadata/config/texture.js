@@ -2,7 +2,7 @@ var lodash = require('lodash');
 
 module.exports = {
   plugins: {
-    subPlugin1: {
+    subPlugin3: {
       reducers: {},
       services: {
         sublibService: {
@@ -43,7 +43,7 @@ module.exports = {
         }
       }
     },
-    subPlugin2: {
+    subPlugin4: {
       services: {
         sublibService: {
           methods: {

@@ -1,6 +1,6 @@
 module.exports = {
   plugins: {
-    subPlugin2: {
+    subPlugin4: {
       services: {
         sublibService: {
           enabled: false

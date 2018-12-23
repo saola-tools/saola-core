@@ -38,10 +38,10 @@ var Service = function(params={}) {
 };
 
 Service.referenceHash = {
-  "service1": "sub-plugin1/sublibService",
-  "service2": "sub-plugin2/sublibService",
-  "trigger1": "sub-plugin1/sublibTrigger",
-  "trigger2": "sub-plugin2/sublibTrigger",
+  "service1": "sub-plugin3/sublibService",
+  "service2": "sub-plugin4/sublibService",
+  "trigger1": "sub-plugin3/sublibTrigger",
+  "trigger2": "sub-plugin4/sublibTrigger",
   "instance4": "application/bridge4#instance"
 }
 
