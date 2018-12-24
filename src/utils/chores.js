@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 const lodash = require('lodash');
+const semver = require('semver');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -419,6 +420,32 @@ chores.extractObjectInfo = function(data, opts) {
     return info;
   }
   return detect(data, opts && opts.level);
+}
+
+chores.isVersionLessThan = function (myVersion, toVersion) {
+  if (!semver.valid(myVersion) || !semver.valid(toVersion)) return null;
+  return semver.lt(myVersion, toVersion);
+}
+
+chores.isVersionSatisfied = function (version, versionMask) {
+  let ok = false;
+  if (semver.valid(version)) {
+    if (lodash.isString(versionMask)) {
+      ok = ok || (version === versionMask);
+      if (ok) return ok;
+      ok = ok || semver.satisfies(version, versionMask);
+      if (ok) return ok;
+    }
+    if (lodash.isArray(versionMask)) {
+      ok = ok || (versionMask.indexOf(version) >= 0);
+      if (ok) return ok;
+      for(let i in versionMask) {
+        ok = ok || semver.satisfies(version, versionMask[i]);
+        if (ok) return ok;
+      }
+    }
+  }
+  return ok;
 }
 
 module.exports = chores;

@@ -219,4 +219,29 @@ describe('tdd:devebot:utils:chores', function() {
       chores.clearCache();
     })
   });
+
+  describe('isVersionSatisfied()', function() {
+    it('version/version-mask is invalid', function () {
+      assert.isFalse(chores.isVersionSatisfied(null, '~1.2.3'));
+      assert.isFalse(chores.isVersionSatisfied('1.2.3', null));
+      assert.isFalse(chores.isVersionSatisfied('1.2.3', '&1.2.x'));
+    })
+    it('version-mask is a string', function() {
+      assert.isTrue(chores.isVersionSatisfied('1.2.3', '1.2.3'));
+      assert.isFalse(chores.isVersionSatisfied('1.2.3', '1.2.4'));
+      assert.isFalse(chores.isVersionSatisfied('1.2.3', 'a.b.c'));
+
+      assert.isTrue(chores.isVersionSatisfied('1.2.3', '^1.2.1'));
+      assert.isTrue(chores.isVersionSatisfied('1.2.3', '^1.1.0'));
+      assert.isFalse(chores.isVersionSatisfied('1.2.3', '^1.2.4'));
+      assert.isFalse(chores.isVersionSatisfied('1.2.3', '^1.3.4'));
+    });
+    it('version-mask is an array', function() {
+      assert.isFalse(chores.isVersionSatisfied('1.2.3', []));
+      assert.isTrue(chores.isVersionSatisfied('1.2.3', ['1.2.3']));
+      assert.isTrue(chores.isVersionSatisfied('1.2.3', ['1.2.3', '1.2.4']));
+      assert.isTrue(chores.isVersionSatisfied('1.2.3', ['1.0.1', '1.2.x']));
+      assert.isFalse(chores.isVersionSatisfied('1.2.3', ['1.3', '2.3']));
+    });
+  });
 });

@@ -3,7 +3,6 @@
 const lodash = require('lodash');
 const util = require('util');
 const path = require('path');
-const semver = require('semver');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
 const loader = require('../utils/loader');
@@ -378,15 +377,16 @@ let modernizeConfig = function(ctx, configType, configData, crateInfo, bridgeMan
 let modernizeConfigBlock = function(ctx, configData, configPath, manifestBlock, moduleType) {
   const configBlock = lodash.get(configData, configPath);
   if (manifestBlock) {
-    const toVersion = manifestBlock.version;
-    if (toVersion) {
-      const myVersion = getConfigBlockVersion(ctx, configBlock);
-      if (myVersion && semver.lt(myVersion, toVersion)) {
+    const moduleVersion = manifestBlock.version;
+    if (moduleVersion) {
+      const blockVersion = getConfigBlockVersion(ctx, configBlock);
+      if (chores.isVersionLessThan(blockVersion, moduleVersion)) {
         const manifestPath = ['manifest'];
         if (moduleType !== 'bridge') {
           manifestPath.push(CONFIG_SANDBOX_NAME);
         }
-        applyManifestMigration(ctx, configData, configPath, myVersion, toVersion, lodash.get(manifestBlock, manifestPath));
+        const manifestObject = lodash.get(manifestBlock, manifestPath);
+        applyManifestMigration(ctx, configData, configPath, blockVersion, moduleVersion, manifestObject);
       }
     }
   }
@@ -396,10 +396,10 @@ let getConfigBlockVersion = function(ctx, configBlock) {
   return lodash.get(configBlock, [CONFIG_METADATA_BLOCK, 'version']);
 }
 
-let applyManifestMigration = function(ctx, configData, configPath, oldVersion, newVersion, manifest) {
+let applyManifestMigration = function(ctx, configData, configPath, blockVersion, moduleVersion, manifest) {
   if (manifest && manifest.migration) {
     lodash.forOwn(manifest.migration, function(rule, ruleName) {
-      if (oldVersion === rule.from && newVersion === rule.to && lodash.isFunction(rule.transform)) {
+      if (chores.isVersionSatisfied(blockVersion, rule.from) && lodash.isFunction(rule.transform)) {
         let configBlock = lodash.omit(lodash.get(configData, configPath), [CONFIG_METADATA_BLOCK]);
         if (lodash.isObject(configBlock) && !lodash.isEmpty(configBlock)) {
           configBlock = rule.transform(configBlock);
@@ -407,7 +407,7 @@ let applyManifestMigration = function(ctx, configData, configPath, oldVersion, n
         if (lodash.isObject(configBlock) && !lodash.isEmpty(configBlock)) {
           lodash.set(configData, configPath, configBlock);
         }
-        lodash.set(configData, configPath.concat([CONFIG_METADATA_BLOCK, 'version']), newVersion);
+        lodash.set(configData, configPath.concat([CONFIG_METADATA_BLOCK, 'version']), moduleVersion);
       }
     })
   }
