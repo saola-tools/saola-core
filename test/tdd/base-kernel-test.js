@@ -31,20 +31,339 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('extractPluginSchema()', function() {
-    before(function() {
-      if (!chores.isUpgradeSupported('metadata-refiner')) {
-        this.skip();
-        return;
-      }
-    });
-
     var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
     var extractPluginSchema = rewiredKernel.__get__('extractPluginSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
 
+    beforeEach(function() {
+      envbox.clearCache();
+      chores.clearCache();
+    });
+
+    it("should extract plugin manifest and enrich with dependencies (empty dependencies)", function() {
+      envbox.setEnv('UPGRADE_ENABLED', ['manifest-refiner', 'improving-name-resolver']);
+      envbox.setEnv('UPGRADE_DISABLED', ['metadata-refiner']);
+      var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
+      var C = {L, T, schemaValidator, nameResolver};
+      // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
+      var pluginRefs = [
+        {
+          "type": "plugin",
+          "name": "devebot-dp-wrapper1",
+          "nameInCamel": "devebotDpWrapper1",
+          "code": "wrapper1",
+          "codeInCamel": "wrapper1",
+          "path": lab.getLibHome('devebot-dp-wrapper1'),
+          "presets": {},
+          "bridgeDepends": [],
+          "pluginDepends": [],
+          "manifest": {
+            "sandbox": {
+              "migration": {},
+              "validation": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "host": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number"
+                    },
+                  },
+                  "required": [ "host", "port" ]
+                },
+              },
+            },
+          },
+          "version": "0.1.1",
+        },
+        {
+          "type": "plugin",
+          "name": "devebot-dp-wrapper2",
+          "nameInCamel": "devebotDpWrapper2",
+          "code": "wrapper2",
+          "codeInCamel": "wrapper2",
+          "path": lab.getLibHome('devebot-dp-wrapper2'),
+          "presets": {},
+          "bridgeDepends": [],
+          "pluginDepends": [],
+          "manifest": {
+            "sandbox": {
+              "migration": {},
+              "validation": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "host": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number"
+                    },
+                  },
+                  "required": [ "host", "port" ]
+                },
+              },
+            },
+          },
+          "version": "0.1.2",
+        }
+      ];
+
+      var pluginSchema = extractPluginSchema(C, pluginRefs);
+      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
+      assert.deepEqual(pluginSchema, {
+        "profile": {},
+        "sandbox": {
+          "plugins": {
+            "wrapper1": {
+              "crateScope": "devebot-dp-wrapper1",
+              "bridgeDepends": [],
+              "pluginDepends": [],
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  },
+                },
+                "required": [ "host", "port" ],
+              },
+            },
+            "wrapper2": {
+              "crateScope": "devebot-dp-wrapper2",
+              "bridgeDepends": [],
+              "pluginDepends": [],
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  },
+                },
+                "required": [ "host", "port" ],
+              },
+            },
+          }
+        }
+      });
+    });
+
+    it("should extract plugin manifest and enrich with dependencies (normal case)", function() {
+      envbox.setEnv('UPGRADE_ENABLED', ['manifest-refiner', 'improving-name-resolver']);
+      envbox.setEnv('UPGRADE_DISABLED', ['metadata-refiner']);
+      var nameResolver = lab.getNameResolver([
+        'sub-plugin1', 'sub-plugin2', 'plugin1', 'plugin2', 'plugin3'
+      ], [
+        "bridge1", "bridge2", "bridge3"
+      ]);
+      var C = {L, T, schemaValidator, nameResolver};
+      var pluginRefs = [
+        {
+          "type": "application",
+          "name": "fullapp",
+          "nameInCamel": "fullapp",
+          "code": "fullapp",
+          "codeInCamel": "fullapp",
+          "path": "/test/app/fullapp",
+          "manifest": {
+            "sandbox": {
+              "migration": {},
+              "validation": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "contextPath": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "version": "0.1.0",
+        },
+        {
+          "type": "plugin",
+          "name": "sub-plugin1",
+          "nameInCamel": "subPlugin1",
+          "code": "sub-plugin1",
+          "codeInCamel": "subPlugin1",
+          "path": lab.getLibHome('sub-plugin1'),
+          "presets": {},
+          "bridgeDepends": [ "bridge1", "bridge2" ],
+          "pluginDepends": [ "plugin1", "plugin2" ],
+          "manifest": {
+            "sandbox": {
+              "migration": {},
+              "validation": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "host": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number"
+                    },
+                  },
+                  "required": [ "host", "port" ]
+                },
+              },
+            },
+          },
+          "version": "0.1.1",
+        },
+        {
+          "type": "plugin",
+          "name": "sub-plugin2",
+          "nameInCamel": "subPlugin2",
+          "code": "sub-plugin2",
+          "codeInCamel": "subPlugin2",
+          "path": lab.getLibHome('sub-plugin2'),
+          "presets": {},
+          "bridgeDepends": [ "bridge2", "bridge3" ],
+          "pluginDepends": [ "plugin2", "plugin3" ],
+          "manifest": {
+            "sandbox": {
+              "migration": {},
+              "validation": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "host": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number"
+                    },
+                  },
+                  "required": [ "host", "port" ]
+                },
+              },
+            },
+          },
+          "version": "0.1.2",
+        },
+        {
+          "type": "plugin",
+          "name": "plugin1",
+          "nameInCamel": "plugin1",
+          "code": "plugin1",
+          "codeInCamel": "plugin1",
+          "path": "/test/lib/plugin1",
+          "presets": {
+            "configTags": "bridge[dialect-bridge]"
+          },
+          "bridgeDepends": [ "bridge1", "bridge2" ],
+          "pluginDepends": [],
+        },
+        {
+          "type": "plugin",
+          "name": "plugin2",
+          "nameInCamel": "plugin2",
+          "code": "plugin2",
+          "codeInCamel": "plugin2",
+          "path": "/test/lib/plugin2",
+          "presets": {
+            "configTags": "bridge[dialect-bridge]"
+          },
+          "bridgeDepends": [ "bridge1", "bridge2" ],
+          "pluginDepends": [],
+        },
+        {
+          "type": "plugin",
+          "name": "plugin3",
+          "nameInCamel": "plugin3",
+          "code": "plugin3",
+          "codeInCamel": "plugin3",
+          "path": "/test/lib/plugin3",
+          "presets": {},
+          "bridgeDepends": [],
+          "pluginDepends": [],
+        }
+      ];
+      var expectedPluginSchema = {
+        "profile": {},
+        "sandbox": {
+          "application": {
+            "crateScope": "application",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "contextPath": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "plugins": {
+            "subPlugin1": {
+              "crateScope": "sub-plugin1",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  }
+                },
+                "required": [ "host", "port" ]
+              },
+              "bridgeDepends": [ "bridge1", "bridge2" ],
+              "pluginDepends": [ "plugin1", "plugin2" ],
+            },
+            "subPlugin2": {
+              "crateScope": "sub-plugin2",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  }
+                },
+                "required": [ "host", "port" ]
+              },
+              "bridgeDepends": [ "bridge2", "bridge3" ],
+              "pluginDepends": [ "plugin2", "plugin3" ],
+            },
+            "plugin1": {
+              "bridgeDepends": [ "bridge1", "bridge2" ],
+              "pluginDepends": [],
+            },
+            "plugin2": {
+              "bridgeDepends": [ "bridge1", "bridge2" ],
+              "pluginDepends": [],
+            },
+            "plugin3": {
+              "bridgeDepends": [],
+              "pluginDepends": [],
+            }
+          }
+        }
+      };
+      var pluginSchema = extractPluginSchema(C, pluginRefs);
+      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
+      assert.deepEqual(pluginSchema, expectedPluginSchema);
+    });
+
     it("should extract plugin metadata and enrich with dependencies (empty dependencies)", function() {
+      envbox.setEnv('UPGRADE_ENABLED', ['metadata-refiner', 'improving-name-resolver']);
+      envbox.setEnv('UPGRADE_DISABLED', ['manifest-refiner']);
       var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
       var C = {L, T, schemaValidator, nameResolver};
       // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
@@ -98,7 +417,24 @@ describe('tdd:devebot:base:kernel', function() {
           "path": lab.getLibHome('devebot-dp-wrapper1'),
           "presets": {},
           "bridgeDepends": [],
-          "pluginDepends": []
+          "pluginDepends": [],
+          "manifest": {
+            "migration": {},
+            "validation": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  },
+                },
+                "required": [ "host", "port" ]
+              },
+            },
+          },
         },
         {
           "type": "plugin",
@@ -109,7 +445,24 @@ describe('tdd:devebot:base:kernel', function() {
           "path": lab.getLibHome('devebot-dp-wrapper2'),
           "presets": {},
           "bridgeDepends": [],
-          "pluginDepends": []
+          "pluginDepends": [],
+          "manifest": {
+            "migration": {},
+            "validation": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "number"
+                  },
+                },
+                "required": [ "host", "port" ]
+              },
+            },
+          },
         }
       ];
 
@@ -157,6 +510,8 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("should extract plugin metadata and enrich with dependencies (normal case)", function() {
+      envbox.setEnv('UPGRADE_ENABLED', ['metadata-refiner', 'improving-name-resolver']);
+      envbox.setEnv('UPGRADE_DISABLED', ['manifest-refiner']);
       var nameResolver = lab.getNameResolver([
         'sub-plugin1', 'sub-plugin2', 'plugin1', 'plugin2', 'plugin3'
       ], [
