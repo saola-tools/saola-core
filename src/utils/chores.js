@@ -422,9 +422,9 @@ chores.extractObjectInfo = function(data, opts) {
   return detect(data, opts && opts.level);
 }
 
-chores.isVersionLessThan = function (myVersion, toVersion) {
-  if (!semver.valid(myVersion) || !semver.valid(toVersion)) return null;
-  return semver.lt(myVersion, toVersion);
+chores.isVersionLessThan = function (version1, version2) {
+  if (!semver.valid(version1) || !semver.valid(version2)) return null;
+  return semver.lt(version1, version2);
 }
 
 chores.isVersionSatisfied = function (version, versionMask) {

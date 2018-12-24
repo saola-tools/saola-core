@@ -1664,17 +1664,11 @@ describe('tdd:devebot:base:kernel', function() {
         },
         "plugins": {
           "plugin1": {
-            "bridgeDepends": [
-              "bridge1",
-              "bridge2"
-            ],
+            "bridgeDepends": [ "bridge1", "bridge2" ],
             "pluginDepends": []
           },
           "plugin2": {
-            "bridgeDepends": [
-              "bridge1",
-              "bridge2"
-            ],
+            "bridgeDepends": [ "bridge1", "bridge2" ],
             "pluginDepends": []
           },
           "plugin3": {
@@ -1683,14 +1677,8 @@ describe('tdd:devebot:base:kernel', function() {
           },
           "subPlugin1": {
             "crateScope": "sub-plugin1",
-            "bridgeDepends": [
-              "bridge1",
-              "bridge2"
-            ],
-            "pluginDepends": [
-              "plugin1",
-              "plugin2"
-            ],
+            "bridgeDepends": [ "bridge1", "bridge2" ],
+            "pluginDepends": [ "plugin1", "plugin2" ],
             "schema": {
               "type": "object",
               "properties": {
@@ -1705,14 +1693,8 @@ describe('tdd:devebot:base:kernel', function() {
           },
           "subPlugin2": {
             "crateScope": "sub-plugin2",
-            "bridgeDepends": [
-              "bridge2",
-              "bridge3"
-            ],
-            "pluginDepends": [
-              "plugin2",
-              "plugin3"
-            ],
+            "bridgeDepends": [ "bridge2", "bridge3" ],
+            "pluginDepends": [ "plugin2", "plugin3" ],
             "schema": {
               "type": "object",
               "properties": {

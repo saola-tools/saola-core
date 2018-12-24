@@ -383,10 +383,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "presets": {
             "configTags": "bridge[dialect-bridge]"
           },
-          "bridgeDepends": [
-            "bridge1",
-            "bridge2"
-          ],
+          "bridgeDepends": [ "bridge1", "bridge2" ],
           "pluginDepends": [],
           "version": "0.1.1",
           "manifest": {
@@ -400,10 +397,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "presets": {
             "configTags": "bridge[dialect-bridge]"
           },
-          "bridgeDepends": [
-            "bridge1",
-            "bridge2"
-          ],
+          "bridgeDepends": [ "bridge1", "bridge2" ],
           "pluginDepends": [],
           "version": "0.1.2",
           "manifest": {
