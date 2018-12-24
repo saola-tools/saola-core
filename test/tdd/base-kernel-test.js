@@ -606,14 +606,8 @@ describe('tdd:devebot:base:kernel', function() {
           "codeInCamel": "subPlugin1",
           "path": lab.getLibHome('sub-plugin1'),
           "presets": {},
-          "bridgeDepends": [
-            "bridge1",
-            "bridge2"
-          ],
-          "pluginDepends": [
-            "plugin1",
-            "plugin2"
-          ]
+          "bridgeDepends": [ "bridge1", "bridge2" ],
+          "pluginDepends": [ "plugin1", "plugin2" ]
         },
         {
           "type": "plugin",
@@ -623,14 +617,8 @@ describe('tdd:devebot:base:kernel', function() {
           "codeInCamel": "subPlugin2",
           "path": lab.getLibHome('sub-plugin2'),
           "presets": {},
-          "bridgeDepends": [
-            "bridge2",
-            "bridge3"
-          ],
-          "pluginDepends": [
-            "plugin2",
-            "plugin3"
-          ]
+          "bridgeDepends": [ "bridge2", "bridge3" ],
+          "pluginDepends": [ "plugin2", "plugin3" ]
         },
         {
           "type": "plugin",
@@ -642,10 +630,7 @@ describe('tdd:devebot:base:kernel', function() {
           "presets": {
             "configTags": "bridge[dialect-bridge]"
           },
-          "bridgeDepends": [
-            "bridge1",
-            "bridge2"
-          ],
+          "bridgeDepends": [ "bridge1", "bridge2" ],
           "pluginDepends": []
         },
         {
@@ -658,10 +643,7 @@ describe('tdd:devebot:base:kernel', function() {
           "presets": {
             "configTags": "bridge[dialect-bridge]"
           },
-          "bridgeDepends": [
-            "bridge1",
-            "bridge2"
-          ],
+          "bridgeDepends": [ "bridge1", "bridge2" ],
           "pluginDepends": []
         },
         {
@@ -704,14 +686,8 @@ describe('tdd:devebot:base:kernel', function() {
                   }
                 }
               },
-              "bridgeDepends": [
-                "bridge1",
-                "bridge2"
-              ],
-              "pluginDepends": [
-                "plugin1",
-                "plugin2"
-              ]
+              "bridgeDepends": [ "bridge1", "bridge2" ],
+              "pluginDepends": [ "plugin1", "plugin2" ]
             },
             "subPlugin2": {
               "crateScope": "sub-plugin2",
@@ -726,31 +702,19 @@ describe('tdd:devebot:base:kernel', function() {
                   }
                 }
               },
-              "bridgeDepends": [
-                "bridge2",
-                "bridge3"
-              ],
-              "pluginDepends": [
-                "plugin2",
-                "plugin3"
-              ]
+              "bridgeDepends": [ "bridge2", "bridge3" ],
+              "pluginDepends": [ "plugin2", "plugin3" ]
             },
             "plugin1": {
               "crateScope": "plugin1",
               "schema": {},
-              "bridgeDepends": [
-                "bridge1",
-                "bridge2"
-              ],
+              "bridgeDepends": [ "bridge1", "bridge2" ],
               "pluginDepends": []
             },
             "plugin2": {
               "crateScope": "plugin2",
               "schema": {},
-              "bridgeDepends": [
-                "bridge1",
-                "bridge2"
-              ],
+              "bridgeDepends": [ "bridge1", "bridge2" ],
               "pluginDepends": []
             },
             "plugin3": {
@@ -861,14 +825,9 @@ describe('tdd:devebot:base:kernel', function() {
               }
             }
           },
-          "bridgeDepends": [
-            "bridge3"
-          ],
-          "pluginDepends": [
-            "subPlugin1",
-            "subPlugin2"
-          ],
-          checkConstraints: fakedCheckers['application']
+          "bridgeDepends": [ "bridge3" ],
+          "pluginDepends": [ "subPlugin1", "subPlugin2" ],
+          "checkConstraints": fakedCheckers['application']
         },
         "plugins": {
           "subPlugin1": {
@@ -884,15 +843,9 @@ describe('tdd:devebot:base:kernel', function() {
                 }
               }
             },
-            "bridgeDepends": [
-              "bridge1",
-              "bridge2"
-            ],
-            "pluginDepends": [
-              "plugin1",
-              "plugin2"
-            ],
-            checkConstraints: fakedCheckers['subPlugin1']
+            "bridgeDepends": [ "bridge1", "bridge2" ],
+            "pluginDepends": [ "plugin1", "plugin2" ],
+            "checkConstraints": fakedCheckers['subPlugin1']
           },
           "subPlugin2": {
             "crateScope": "sub-plugin2",
@@ -907,32 +860,20 @@ describe('tdd:devebot:base:kernel', function() {
                 }
               }
             },
-            "bridgeDepends": [
-              "bridge2",
-              "bridge3"
-            ],
-            "pluginDepends": [
-              "plugin2",
-              "plugin3"
-            ],
-            checkConstraints: fakedCheckers['subPlugin2']
+            "bridgeDepends": [ "bridge2", "bridge3" ],
+            "pluginDepends": [ "plugin2", "plugin3" ],
+            "checkConstraints": fakedCheckers['subPlugin2']
           },
           "plugin1": {
             "crateScope": "plugin1",
             "schema": {},
-            "bridgeDepends": [
-              "bridge1",
-              "bridge2"
-            ],
+            "bridgeDepends": [ "bridge1", "bridge2" ],
             "pluginDepends": []
           },
           "plugin2": {
             "crateScope": "plugin2",
             "schema": {},
-            "bridgeDepends": [
-              "bridge1",
-              "bridge2"
-            ],
+            "bridgeDepends": [ "bridge1", "bridge2" ],
             "pluginDepends": []
           },
           "plugin3": {
