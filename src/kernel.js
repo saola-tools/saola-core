@@ -141,11 +141,9 @@ module.exports = Kernel;
 let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
   const { nameResolver } = ref;
   bridgeSchema = bridgeSchema || {};
-  if (chores.isUpgradeSupported(['metadata-refiner'])) {
-    lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
-      bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
-    })
-  }
+  lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
+    bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
+  })
   lodash.forEach(bridgeRefs, function(bridgeRef) {
     let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
     if (!chores.isUpgradeSupported(['improving-name-resolver'])) {
@@ -156,12 +154,6 @@ let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema
       if (lodash.isObject(validationBlock)) {
         bridgeSchema[bridgeCode] = lodash.pick(validationBlock, SELECTED_FIELDS);
       }
-    }
-  });
-  lodash.forEach(bridgeRefs, function(bridgeRef) {
-    let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
-    if (!chores.isUpgradeSupported(['improving-name-resolver'])) {
-      bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
     }
     // apply 'schemaValidation' option from presets for bridges
     bridgeSchema[bridgeCode] = bridgeSchema[bridgeCode] || {};
@@ -265,12 +257,6 @@ let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema
           pluginSchema[configType]['plugins'][pluginCode] = validationBlock;
         }
       }
-    }
-  });
-  lodash.forEach(pluginRefs, function(pluginRef) {
-    let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
-    if (!chores.isUpgradeSupported('improving-name-resolver')) {
-      pluginCode = nameResolver.getDefaultAlias(pluginRef);
     }
     // apply 'schemaValidation' option from presets for plugins
     if (pluginRef.presets && pluginRef.presets.schemaValidation === false) {
