@@ -136,37 +136,35 @@ function Kernel(params={}) {
 
 module.exports = Kernel;
 
-function extractModuleManifest(ctx, moduleRefs, moduleManifest) {
-  const { nameResolver } = ctx;
-  moduleManifest = moduleManifest || {};
-  lodash.forEach(moduleRefs, function(moduleRef) {
-    const validationBlock = lodash.get(moduleRef, ['manifest', 'validation']);
-    if (lodash.isObject(validationBlock)) {
-      const moduleName = nameResolver.getDefaultAliasOf(moduleRef.name, moduleRef.type);
-      moduleManifest[moduleName] = validationBlock;
-    }
-  });
-  return moduleManifest;
-}
-
 //-----------------------------------------------------------------------------
 
 let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
   const { nameResolver } = ref;
   bridgeSchema = bridgeSchema || {};
-  lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
-    bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
-  })
-  if (chores.isUpgradeSupported(['manifest-refiner'])) {
-    bridgeSchema = extractModuleManifest(ref, bridgeRefs, bridgeSchema);
+  if (chores.isUpgradeSupported(['metadata-refiner'])) {
+    lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
+      bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
+    })
   }
-  // apply 'schemaValidation' option from presets for bridges
+  if (chores.isUpgradeSupported(['manifest-refiner'])) {
+    lodash.forEach(bridgeRefs, function(bridgeRef) {
+      let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
+      if (!chores.isUpgradeSupported(['improving-name-resolver'])) {
+        bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
+      }
+      const validationBlock = lodash.get(bridgeRef, ['manifest', 'validation']);
+      if (lodash.isObject(validationBlock)) {
+        bridgeSchema[bridgeCode] = validationBlock;
+      }
+    });
+  }
   lodash.forEach(bridgeRefs, function(bridgeRef) {
     let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
     if (!chores.isUpgradeSupported(['improving-name-resolver'])) {
       bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
     }
     bridgeSchema[bridgeCode] = bridgeSchema[bridgeCode] || {};
+    // apply 'schemaValidation' option from presets for bridges
     if (bridgeRef.presets && bridgeRef.presets.schemaValidation === false) {
       lodash.set(bridgeSchema, [bridgeCode, 'enabled'], false);
     }
@@ -238,24 +236,29 @@ let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema
   pluginSchema = pluginSchema || {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
-  lodash.forOwn(pluginMetadata, function(metainf, key) {
-    let def = metainf && metainf.default || {};
-    if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
-      if (chores.isSpecialPlugin(def.pluginCode)) {
-        pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
-      } else {
-        pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
-        pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+  if (chores.isUpgradeSupported(['metadata-refiner'])) {
+    lodash.forOwn(pluginMetadata, function(metainf, key) {
+      let def = metainf && metainf.default || {};
+      if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
+        if (chores.isSpecialPlugin(def.pluginCode)) {
+          pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+        } else {
+          pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
+          pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+        }
       }
-    }
-  });
+    });
+  }
   if (chores.isUpgradeSupported(['manifest-refiner'])) {
     lodash.forEach(pluginRefs, function(pluginRef) {
+      let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
+      if (!chores.isUpgradeSupported('improving-name-resolver')) {
+        pluginCode = nameResolver.getDefaultAlias(pluginRef);
+      }
       const configType = 'sandbox';
-      const def = lodash.get(pluginRef, ['manifest', configType, 'validation']);
-      if (lodash.isObject(def)) {
-        const pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
-        const validationBlock = lodash.pick(def, SELECTED_FIELDS);
+      let validationBlock = lodash.get(pluginRef, ['manifest', configType, 'validation']);
+      if (lodash.isObject(validationBlock)) {
+        validationBlock = lodash.pick(validationBlock, SELECTED_FIELDS);
         validationBlock.crateScope = nameResolver.getOriginalNameOf(pluginRef.name, pluginRef.type);
         if (chores.isSpecialPlugin(pluginCode)) {
           pluginSchema[configType][pluginCode] = validationBlock;
@@ -266,11 +269,6 @@ let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema
       }
     })
   }
-  return enrichPluginSchema(ref, pluginRefs, pluginSchema);
-}
-
-let enrichPluginSchema = function(ref, pluginRefs, pluginSchema) {
-  const { L, T, nameResolver } = ref;
   lodash.forEach(pluginRefs, function(pluginRef) {
     let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
     if (!chores.isUpgradeSupported('improving-name-resolver')) {
