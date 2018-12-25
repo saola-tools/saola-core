@@ -438,10 +438,10 @@ module.exports = {
     'bridge-full-ref',
     'standardizing-config',
     'gadget-around-log',
-    // 'simplify-name-resolver',
-    // 'refining-name-resolver',
+    'simplify-name-resolver',
+    'refining-name-resolver',
     'bean-decorator',
-    'metadata-refiner',
+    // 'metadata-refiner',
     'manifest-refiner',
   ]
 };
