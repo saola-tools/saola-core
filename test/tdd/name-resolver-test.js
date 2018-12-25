@@ -24,10 +24,7 @@ describe('tdd:devebot:core:name-resolver', function() {
     var buildRelativeAliasMap = NameResolver.__get__('buildRelativeAliasMap');
 
     it('should build the map of plugin-names transformation correctly', function() {
-      if (!chores.isUpgradeSupported('standardizing-config')) {
-        this.skip();
-        return;
-      }
+      if (!chores.isUpgradeSupported('standardizing-config')) this.skip();
 
       var pluginDefs = {
         "path/to/devebot-dp-wrapper1": {
@@ -135,10 +132,8 @@ describe('tdd:devebot:core:name-resolver', function() {
       'bridge1', 'bridge-kebab-case1', 'devebot-co-connector1', 'bridge2', 'bridge-kebab-case2', 'devebot-co-connector2'
     ]);
     it('should build absoluteAliasMap correctly', function() {
-      if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
-        this.skip();
-        return;
-      }
+      if (chores.isUpgradeSupported(['simplify-name-resolver'])) this.skip();
+
       var absoluteAliasMap = nameResolver.getAbsoluteAliasMap();
       false && console.log('absoluteAliasMap: %s', JSON.stringify(absoluteAliasMap, null, 2));
       assert.deepEqual(absoluteAliasMap, {
@@ -172,10 +167,8 @@ describe('tdd:devebot:core:name-resolver', function() {
     });
   
     it('should build relativeAliasMap correctly', function() {
-      if (chores.isUpgradeSupported(['simplify-name-resolver'])) {
-        this.skip();
-        return;
-      }
+      if (chores.isUpgradeSupported(['simplify-name-resolver'])) this.skip();
+
       var relativeAliasMap = nameResolver.getRelativeAliasMap();
       false && console.log('relativeAliasMap: %s', JSON.stringify(relativeAliasMap, null, 2));
       assert.deepEqual(relativeAliasMap, {

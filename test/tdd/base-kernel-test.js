@@ -1426,10 +1426,8 @@ describe('tdd:devebot:base:kernel', function() {
 
   describe('validate config/schemas', function() {
     before(function() {
-      if (!chores.isUpgradeSupported('manifest-refiner', 'metadata-refiner')) {
-        this.skip();
-        return;
-      }
+      if (chores.isUpgradeSupported('manifest-refiner')) return this.skip();
+      if (!chores.isUpgradeSupported('metadata-refiner')) return this.skip();
     });
 
     var loggingStore = {};
@@ -1794,10 +1792,7 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("loading an invalid bridge's configure but skipping validation", function() {
-      if (!chores.isUpgradeSupported(['presets'])) {
-        this.skip();
-        return;
-      }
+      if (!chores.isUpgradeSupported(['presets'])) this.skip();
       var unhook = lab.preventExit();
       var kernel = lab.createKernel('invalid-bridge-config-but-skip');
 
@@ -1838,10 +1833,7 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("loading an invalid plugin's configure but skipping validation", function() {
-      if (!chores.isUpgradeSupported(['presets'])) {
-        this.skip();
-        return;
-      }
+      if (!chores.isUpgradeSupported(['presets'])) return this.skip();
       var unhook = lab.preventExit();
       var kernel = lab.createKernel('invalid-plugin-config-but-skip');
 

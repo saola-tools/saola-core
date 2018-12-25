@@ -141,9 +141,11 @@ module.exports = Kernel;
 let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
   const { nameResolver } = ref;
   bridgeSchema = bridgeSchema || {};
-  lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
-    bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
-  })
+  if (!chores.isUpgradeSupported(['manifest-refiner'])) {
+    lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
+      bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
+    });
+  }
   lodash.forEach(bridgeRefs, function(bridgeRef) {
     let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
     if (!chores.isUpgradeSupported(['improving-name-resolver'])) {
@@ -228,17 +230,19 @@ let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema
   pluginSchema = pluginSchema || {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
-  lodash.forOwn(pluginMetadata, function(metainf, key) {
-    let def = metainf && metainf.default || {};
-    if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
-      if (chores.isSpecialPlugin(def.pluginCode)) {
-        pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
-      } else {
-        pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
-        pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+  if (!chores.isUpgradeSupported(['manifest-refiner'])) {
+    lodash.forOwn(pluginMetadata, function(metainf, key) {
+      let def = metainf && metainf.default || {};
+      if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
+        if (chores.isSpecialPlugin(def.pluginCode)) {
+          pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+        } else {
+          pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
+          pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+        }
       }
-    }
-  });
+    });
+  }
   lodash.forEach(pluginRefs, function(pluginRef) {
     let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
     if (!chores.isUpgradeSupported('improving-name-resolver')) {

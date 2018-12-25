@@ -71,10 +71,7 @@ describe('tdd:devebot:core:config-loader', function() {
     var transformConfig = ConfigLoader.__get__('transformConfig');
 
     it('should transform relative names into default full names', function() {
-      if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) {
-        this.skip();
-        return;
-      }
+      if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) this.skip();
 
       var originalCfg = {
         bridges: {
@@ -182,10 +179,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     it('should transform absolute names into relative names', function() {
-      if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) {
-        this.skip();
-        return;
-      }
+      if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) this.skip();
 
       var originalCfg = {
         bridges: {
