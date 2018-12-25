@@ -1070,7 +1070,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     it("should extract plugin schema from bridge metadata properly", function() {
       stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner, improving-name-resolver',
+        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner, refining-name-resolver',
         'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
       });
       var bridgeRefs = lodash.values({
@@ -1166,7 +1166,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     it("should extract plugin schema from bridge manifest properly", function() {
       stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner, improving-name-resolver',
+        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner, refining-name-resolver',
         'DEVEBOT_UPGRADE_DISABLED': 'metadata-refiner'
       });
       var bridgeRefs = lodash.values({

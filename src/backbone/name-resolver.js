@@ -76,12 +76,16 @@ function NameResolver(params={}) {
     this.getRelativeAliasMap = _getRelativeAliasMap;
   }
 
-  if (!chores.isUpgradeSupported('improving-name-resolver')) {
+  if (!chores.isUpgradeSupported(['refining-name-resolver'])) {
     this.getAliasBy = function(selectedField, crateDescriptor) {
       crateDescriptor = crateDescriptor || {};
       let crateAlias = crateDescriptor[selectedField];
       if (crateDescriptor.type === 'application') {
         crateAlias = crateDescriptor.type;
+      }
+      if (crateDescriptor.type === 'bridge' || crateDescriptor.type === 'plugin') {
+        extractAliasNames(CTX, crateDescriptor.type, [crateDescriptor]);
+        crateAlias = crateDescriptor[selectedField];
       }
       return crateAlias;
     }
@@ -154,6 +158,7 @@ const LIB_NAME_PATTERNS = {
 }
 
 let extractAliasNames = function(ctx, type, myRefs) {
+  const {issueInspector} = ctx;
   let generateAlias = function(myRef, myId) {
     let info = chores.extractCodeByPattern(ctx, LIB_NAME_PATTERNS[type], myRef.name);
     if (info.i >= 0) {

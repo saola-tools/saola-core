@@ -93,7 +93,7 @@ let loadBridgeContructor = function(ctx, bridgeRef) {
   let bridgePath = bridgeRef.path;
   let bridgeName = nameResolver.getOriginalNameOf(bridgeRef.name, bridgeRef.type);
   let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
-  if (!chores.isUpgradeSupported('improving-name-resolver')) {
+  if (!chores.isUpgradeSupported('refining-name-resolver')) {
     bridgeName = nameResolver.getOriginalName(bridgeRef);
     bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
   }

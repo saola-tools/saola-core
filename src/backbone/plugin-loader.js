@@ -171,7 +171,7 @@ let loadScriptEntry = function(CTX, scriptMap, scriptType, scriptSubDir, scriptF
         opStatus.hasError = false;
         let scriptName = scriptFile.replace('.js', '').toLowerCase();
         let pluginName = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
-        if (!chores.isUpgradeSupported('improving-name-resolver')) {
+        if (!chores.isUpgradeSupported('refining-name-resolver')) {
           pluginName = nameResolver.getOriginalName(pluginRootDir);
         }
         let uniqueName = [pluginName, scriptName].join(chores.getSeparator());
@@ -296,7 +296,7 @@ let loadMetainfEntry = function(CTX, metainfMap, metainfSubDir, schemaFile, plug
       let subtypeName = metainfObject.subtype || 'default';
       let crateScope = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
       let pluginCode = nameResolver.getDefaultAliasOf(pluginRootDir.name, pluginRootDir.type);
-      if (!chores.isUpgradeSupported('improving-name-resolver')) {
+      if (!chores.isUpgradeSupported('refining-name-resolver')) {
         crateScope = nameResolver.getOriginalName(pluginRootDir);
         pluginCode = nameResolver.getDefaultAlias(pluginRootDir);
       }
@@ -414,7 +414,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
 
   let pluginName = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
   let pluginCode = nameResolver.getDefaultAliasOf(pluginRootDir.name, pluginRootDir.type);
-  if (!chores.isUpgradeSupported('improving-name-resolver')) {
+  if (!chores.isUpgradeSupported('refining-name-resolver')) {
     pluginName = nameResolver.getOriginalName(pluginRootDir);
     pluginCode = nameResolver.getDefaultAlias(pluginRootDir);
   }

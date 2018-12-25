@@ -148,7 +148,7 @@ let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema
   }
   lodash.forEach(bridgeRefs, function(bridgeRef) {
     let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
-    if (!chores.isUpgradeSupported(['improving-name-resolver'])) {
+    if (!chores.isUpgradeSupported(['refining-name-resolver'])) {
       bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
     }
     if (chores.isUpgradeSupported(['manifest-refiner'])) {
@@ -245,7 +245,7 @@ let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema
   }
   lodash.forEach(pluginRefs, function(pluginRef) {
     let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
-    if (!chores.isUpgradeSupported('improving-name-resolver')) {
+    if (!chores.isUpgradeSupported('refining-name-resolver')) {
       pluginCode = nameResolver.getDefaultAlias(pluginRef);
     }
     if (chores.isUpgradeSupported(['manifest-refiner'])) {
