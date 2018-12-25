@@ -8,14 +8,15 @@ var debugx = Devebot.require('pinbug')('tdd:devebot:base:kernel');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
-var envbox = require(lab.getDevebotModule('utils/envbox'));
+var EnvMask = require('envmask');
+var envmask = EnvMask.instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
 
 describe('tdd:devebot:base:kernel', function() {
   this.timeout(lab.getDefaultTimeout());
 
+  var stepEnv = new EnvMask();
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
@@ -27,7 +28,7 @@ describe('tdd:devebot:base:kernel', function() {
     });
     LogConfig.reset();
     issueInspector.reset();
-    envbox.clearCache();
+    chores.clearCache();
   });
 
   describe('extractPluginSchema()', function() {
@@ -38,13 +39,20 @@ describe('tdd:devebot:base:kernel', function() {
     var T = loggingFactory.getTracer();
 
     beforeEach(function() {
-      envbox.clearCache();
+      stepEnv.reset();
+      chores.clearCache();
+    });
+
+    after(function() {
+      stepEnv.reset();
       chores.clearCache();
     });
 
     it("should extract plugin manifest and enrich with dependencies (empty dependencies)", function() {
-      envbox.setEnv('UPGRADE_ENABLED', ['manifest-refiner', 'improving-name-resolver']);
-      envbox.setEnv('UPGRADE_DISABLED', ['metadata-refiner']);
+      stepEnv.setup({
+        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner',
+        'DEVEBOT_UPGRADE_DISABLED': 'metadata-refiner'
+      });
       var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
       var C = {L, T, schemaValidator, nameResolver};
       // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
@@ -159,8 +167,10 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("should extract plugin manifest and enrich with dependencies (normal case)", function() {
-      envbox.setEnv('UPGRADE_ENABLED', ['manifest-refiner', 'improving-name-resolver']);
-      envbox.setEnv('UPGRADE_DISABLED', ['metadata-refiner']);
+      stepEnv.setup({
+        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner',
+        'DEVEBOT_UPGRADE_DISABLED': 'metadata-refiner'
+      });
       var nameResolver = lab.getNameResolver([
         'sub-plugin1', 'sub-plugin2', 'plugin1', 'plugin2', 'plugin3'
       ], [
@@ -362,8 +372,10 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("should extract plugin metadata and enrich with dependencies (empty dependencies)", function() {
-      envbox.setEnv('UPGRADE_ENABLED', ['metadata-refiner', 'improving-name-resolver']);
-      envbox.setEnv('UPGRADE_DISABLED', ['manifest-refiner']);
+      stepEnv.setup({
+        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
+        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
+      });
       var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
       var C = {L, T, schemaValidator, nameResolver};
       // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
@@ -510,8 +522,10 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("should extract plugin metadata and enrich with dependencies (normal case)", function() {
-      envbox.setEnv('UPGRADE_ENABLED', ['metadata-refiner', 'improving-name-resolver']);
-      envbox.setEnv('UPGRADE_DISABLED', ['manifest-refiner']);
+      stepEnv.setup({
+        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
+        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
+      });
       var nameResolver = lab.getNameResolver([
         'sub-plugin1', 'sub-plugin2', 'plugin1', 'plugin2', 'plugin3'
       ], [
@@ -733,13 +747,6 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('validatePluginConfig()', function() {
-    before(function() {
-      if (!chores.isUpgradeSupported('metadata-refiner')) {
-        this.skip();
-        return;
-      }
-    });
-
     var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
     var checkSandboxConstraintsOfCrates = rewiredKernel.__get__('checkSandboxConstraintsOfCrates');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
@@ -747,7 +754,21 @@ describe('tdd:devebot:base:kernel', function() {
     var T = loggingFactory.getTracer();
     var C = {L, T, schemaValidator};
 
+    beforeEach(function() {
+      stepEnv.reset();
+      chores.clearCache();
+    });
+
+    after(function() {
+      stepEnv.reset();
+      chores.clearCache();
+    });
+
     it("checkSandboxConstraintsOfCrates() invokes checkConstraints function properly", function() {
+      stepEnv.setup({
+        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
+        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
+      });
       var result = [];
       var fakedCheckers = {};
       lodash.forEach(['application', 'subPlugin1', 'subPlugin2'], function(pluginName) {
@@ -1038,13 +1059,20 @@ describe('tdd:devebot:base:kernel', function() {
     };
 
     beforeEach(function() {
-      envbox.clearCache();
+      stepEnv.reset();
+      chores.clearCache();
+    });
+
+    after(function() {
+      stepEnv.reset();
       chores.clearCache();
     });
 
     it("should extract plugin schema from bridge metadata properly", function() {
-      envbox.setEnv('UPGRADE_ENABLED', ['metadata-refiner', 'improving-name-resolver']);
-      envbox.setEnv('UPGRADE_DISABLED', ['manifest-refiner']);
+      stepEnv.setup({
+        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner, improving-name-resolver',
+        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
+      });
       var bridgeRefs = lodash.values({
         "/test/lib/bridge1": {
           "name": "bridge1",
@@ -1137,8 +1165,10 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("should extract plugin schema from bridge manifest properly", function() {
-      envbox.setEnv('UPGRADE_ENABLED', ['manifest-refiner', 'improving-name-resolver']);
-      envbox.setEnv('UPGRADE_DISABLED', ['metadata-refiner']);
+      stepEnv.setup({
+        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner, improving-name-resolver',
+        'DEVEBOT_UPGRADE_DISABLED': 'metadata-refiner'
+      });
       var bridgeRefs = lodash.values({
         "/test/lib/bridge1": {
           "name": "bridge1",
@@ -1218,27 +1248,29 @@ describe('tdd:devebot:base:kernel', function() {
       false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);
     });
-
-    after(function() {
-      envbox.clearCache();
-      chores.clearCache();
-    });
   });
 
   describe('validateBridgeConfig()', function() {
-    before(function() {
-      if (!chores.isUpgradeSupported('metadata-refiner')) {
-        this.skip();
-        return;
-      }
-    });
-
     var validateBridgeConfig = rewire(lab.getDevebotModule('kernel')).__get__('validateBridgeConfig');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
 
+    beforeEach(function() {
+      stepEnv.reset();
+      chores.clearCache();
+    });
+
+    after(function() {
+      stepEnv.reset();
+      chores.clearCache();
+    });
+
     it("result should be ok if bridge config is valid with bridge schema", function() {
+      stepEnv.setup({
+        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
+        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
+      });
       var bridgeConfig = {
         "bridge1": {
           "application": {
@@ -1394,7 +1426,7 @@ describe('tdd:devebot:base:kernel', function() {
 
   describe('validate config/schemas', function() {
     before(function() {
-      if (!chores.isUpgradeSupported('metadata-refiner')) {
+      if (!chores.isUpgradeSupported('manifest-refiner', 'metadata-refiner')) {
         this.skip();
         return;
       }
@@ -1432,6 +1464,11 @@ describe('tdd:devebot:base:kernel', function() {
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
       issueInspector.reset();
+    });
+
+    after(function() {
+      stepEnv.reset();
+      chores.clearCache();
     });
 
     it('kernel constructor is ok if no error has occurred in validating', function() {
