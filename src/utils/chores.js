@@ -323,6 +323,7 @@ chores.isVerboseForced = function(moduleId, cfg) {
 chores.clearCache = function() {
   store.upgradeDisabled = null;
   store.upgradeEnabled = null;
+  envbox.clearCache();
   return this;
 }
 

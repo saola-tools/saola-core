@@ -191,27 +191,24 @@ function EnvironmentCollection(params={}) {
   }
 
   this.getEnv = function(label, defaultValue) {
+    if (label in store.env) return store.env[label];
     if (!lodash.isString(label)) return undefined;
-    if (!(label in definition)) {
-      return process.env[label] || defaultValue;
+    if (!(label in definition)) return process.env[label] || defaultValue;
+    let def = definition[label] || {};
+    store.env[label] = getValue(label, def.scope);
+    if (!store.env[label]) {
+      if (lodash.isUndefined(defaultValue)) {
+        defaultValue = def.defaultValue;
+      }
+      if (lodash.isArray(def.aliases)) {
+        lodash.forEach(def.aliases, function(alias) {
+          store.env[label] = store.env[label] || getValue(alias, def.scope);
+        });
+      }
+      store.env[label] = store.env[label] || defaultValue;
     }
-    if (!(label in store.env)) {
-      let def = definition[label] || {};
-      store.env[label] = getValue(label, def.scope);
-      if (!store.env[label]) {
-        if (lodash.isUndefined(defaultValue)) {
-          defaultValue = def.defaultValue;
-        }
-        if (lodash.isArray(def.aliases)) {
-          lodash.forEach(def.aliases, function(alias) {
-            store.env[label] = store.env[label] || getValue(alias, def.scope);
-          });
-        }
-        store.env[label] = store.env[label] || defaultValue;
-      }
-      if (def.type === 'array') {
-        store.env[label] = nodash.stringToArray(store.env[label]);
-      }
+    if (def.type === 'array') {
+      store.env[label] = nodash.stringToArray(store.env[label]);
     }
     return store.env[label];
   }
