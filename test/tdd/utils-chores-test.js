@@ -3,14 +3,13 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var debugx = Devebot.require('pinbug')('tdd:devebot:utils:chores');
 var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
-var chores = require(lab.getDevebotModule('utils/chores'));
-var envbox = require(lab.getDevebotModule('utils/envbox'));
 var envmask = require('envmask').instance;
 var LogAdapter = require('logolite').LogAdapter;
 var LogTracer = require('logolite').LogTracer;
@@ -189,7 +188,6 @@ describe('tdd:devebot:utils:chores', function() {
         DEVEBOT_UPGRADE_ENABLED: "abc, def, xyz",
         DEVEBOT_UPGRADE_DISABLED: "disabled",
       })
-      envbox.clearCache();
       chores.clearCache();
     })
     it('An arguments-list presents the OR conditional operator', function() {
@@ -215,7 +213,6 @@ describe('tdd:devebot:utils:chores', function() {
     })
     after(function() {
       envmask.reset();
-      envbox.clearCache();
       chores.clearCache();
     })
   });

@@ -3,14 +3,13 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
+var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var EnvMask = require('envmask');
 var envmask = EnvMask.instance;
-var envbox = require(lab.getDevebotModule('utils/envbox'));
-var debugx = Devebot.require('pinbug')('tdd:devebot:core:context-manager');
 
 describe('tdd:devebot:core:context-manager', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -28,7 +27,7 @@ describe('tdd:devebot:core:context-manager', function() {
   });
 
   beforeEach(function() {
-    envbox.clearCache();
+    chores.clearCache();
   });
 
   it("isFeatureSupported() return true with provided features", function() {
@@ -58,5 +57,6 @@ describe('tdd:devebot:core:context-manager', function() {
   after(function() {
     envmask.reset();
     issueInspector.reset();
+    chores.clearCache();
   });
 });

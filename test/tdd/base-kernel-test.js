@@ -60,9 +60,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper1",
-          "nameInCamel": "devebotDpWrapper1",
-          "code": "wrapper1",
-          "codeInCamel": "wrapper1",
           "path": lab.getLibHome('devebot-dp-wrapper1'),
           "presets": {},
           "bridgeDepends": [],
@@ -91,9 +88,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper2",
-          "nameInCamel": "devebotDpWrapper2",
-          "code": "wrapper2",
-          "codeInCamel": "wrapper2",
           "path": lab.getLibHome('devebot-dp-wrapper2'),
           "presets": {},
           "bridgeDepends": [],
@@ -181,9 +175,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "application",
           "name": "fullapp",
-          "nameInCamel": "fullapp",
-          "code": "fullapp",
-          "codeInCamel": "fullapp",
           "path": "/test/app/fullapp",
           "manifest": {
             "sandbox": {
@@ -205,9 +196,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "sub-plugin1",
-          "nameInCamel": "subPlugin1",
-          "code": "sub-plugin1",
-          "codeInCamel": "subPlugin1",
           "path": lab.getLibHome('sub-plugin1'),
           "presets": {},
           "bridgeDepends": [ "bridge1", "bridge2" ],
@@ -236,9 +224,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "sub-plugin2",
-          "nameInCamel": "subPlugin2",
-          "code": "sub-plugin2",
-          "codeInCamel": "subPlugin2",
           "path": lab.getLibHome('sub-plugin2'),
           "presets": {},
           "bridgeDepends": [ "bridge2", "bridge3" ],
@@ -267,9 +252,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "plugin1",
-          "nameInCamel": "plugin1",
-          "code": "plugin1",
-          "codeInCamel": "plugin1",
           "path": "/test/lib/plugin1",
           "presets": {
             "configTags": "bridge[dialect-bridge]"
@@ -280,9 +262,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "plugin2",
-          "nameInCamel": "plugin2",
-          "code": "plugin2",
-          "codeInCamel": "plugin2",
           "path": "/test/lib/plugin2",
           "presets": {
             "configTags": "bridge[dialect-bridge]"
@@ -293,9 +272,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "plugin3",
-          "nameInCamel": "plugin3",
-          "code": "plugin3",
-          "codeInCamel": "plugin3",
           "path": "/test/lib/plugin3",
           "presets": {},
           "bridgeDepends": [],
@@ -423,9 +399,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper1",
-          "nameInCamel": "devebotDpWrapper1",
-          "code": "wrapper1",
-          "codeInCamel": "wrapper1",
           "path": lab.getLibHome('devebot-dp-wrapper1'),
           "presets": {},
           "bridgeDepends": [],
@@ -451,9 +424,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper2",
-          "nameInCamel": "devebotDpWrapper2",
-          "code": "wrapper2",
-          "codeInCamel": "wrapper2",
           "path": lab.getLibHome('devebot-dp-wrapper2'),
           "presets": {},
           "bridgeDepends": [],
@@ -615,9 +585,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "sub-plugin1",
-          "nameInCamel": "subPlugin1",
-          "code": "sub-plugin1",
-          "codeInCamel": "subPlugin1",
           "path": lab.getLibHome('sub-plugin1'),
           "presets": {},
           "bridgeDepends": [ "bridge1", "bridge2" ],
@@ -626,9 +593,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "sub-plugin2",
-          "nameInCamel": "subPlugin2",
-          "code": "sub-plugin2",
-          "codeInCamel": "subPlugin2",
           "path": lab.getLibHome('sub-plugin2'),
           "presets": {},
           "bridgeDepends": [ "bridge2", "bridge3" ],
@@ -637,9 +601,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "plugin1",
-          "nameInCamel": "plugin1",
-          "code": "plugin1",
-          "codeInCamel": "plugin1",
           "path": "/test/lib/plugin1",
           "presets": {
             "configTags": "bridge[dialect-bridge]"
@@ -650,9 +611,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "plugin2",
-          "nameInCamel": "plugin2",
-          "code": "plugin2",
-          "codeInCamel": "plugin2",
           "path": "/test/lib/plugin2",
           "presets": {
             "configTags": "bridge[dialect-bridge]"
@@ -663,9 +621,6 @@ describe('tdd:devebot:base:kernel', function() {
         {
           "type": "plugin",
           "name": "plugin3",
-          "nameInCamel": "plugin3",
-          "code": "plugin3",
-          "codeInCamel": "plugin3",
           "path": "/test/lib/plugin3",
           "presets": {},
           "bridgeDepends": [],
@@ -1070,7 +1025,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     it("should extract plugin schema from bridge metadata properly", function() {
       stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner, refining-name-resolver',
+        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
         'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
       });
       var bridgeRefs = lodash.values({
@@ -1166,7 +1121,7 @@ describe('tdd:devebot:base:kernel', function() {
 
     it("should extract plugin schema from bridge manifest properly", function() {
       stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner, refining-name-resolver',
+        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner',
         'DEVEBOT_UPGRADE_DISABLED': 'metadata-refiner'
       });
       var bridgeRefs = lodash.values({

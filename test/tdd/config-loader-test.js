@@ -12,7 +12,6 @@ var NameResolver = require(lab.getDevebotModule('backbone/name-resolver'));
 var LogAdapter = require('logolite').LogAdapter;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
-var envbox = require(lab.getDevebotModule('utils/envbox'));
 var rewire = require('rewire');
 var sinon = require('sinon');
 
@@ -1408,7 +1407,7 @@ describe('tdd:devebot:core:config-loader', function() {
         DEVEBOT_CONFIG_ENV: 'dev',
         DEVEBOT_SANDBOX: 'private1,private2,ev1,ev2'
       });
-      envbox.clearCache();
+      chores.clearCache();
     });
 
     var appRef = {
