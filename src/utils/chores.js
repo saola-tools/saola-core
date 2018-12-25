@@ -346,11 +346,13 @@ let isAnyOfTuplesSatistied = function (tuples) {
 
 let isAllOfLabelsSatisfied = function (labels) {
   if (!labels) return false;
-  labels = nodash.isArray(labels) ? labels : [labels];
-  for(let k in labels) {
-    if (!checkUpgradeSupported(labels[k])) return false;
+  if (nodash.isArray(labels)) {
+    for(let k in labels) {
+      if (!checkUpgradeSupported(labels[k])) return false;
+    }
+    return true;
   }
-  return true;
+  return checkUpgradeSupported(labels);
 }
 
 let checkUpgradeSupported = function(label) {
