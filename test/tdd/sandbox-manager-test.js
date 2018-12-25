@@ -32,7 +32,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
 
   it('getBridgeDialectNames() - retrieve bridge dialect names correctly', function() {
     var sandboxManager = lab.createSandboxManager('fullapp');
-    if (!chores.isUpgradeSupported(['bridge-full-ref'])) {
+    if (!chores.isUpgradeSupported('bridge-full-ref')) {
       assert.deepEqual(sandboxManager.getBridgeDialectNames(), [
         "bridge1/anyname1a",
         "bridge1/anyname1b",

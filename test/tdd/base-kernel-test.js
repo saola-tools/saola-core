@@ -1792,7 +1792,7 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("loading an invalid bridge's configure but skipping validation", function() {
-      if (!chores.isUpgradeSupported(['presets'])) this.skip();
+      if (!chores.isUpgradeSupported('presets')) this.skip();
       var unhook = lab.preventExit();
       var kernel = lab.createKernel('invalid-bridge-config-but-skip');
 
@@ -1833,7 +1833,7 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("loading an invalid plugin's configure but skipping validation", function() {
-      if (!chores.isUpgradeSupported(['presets'])) return this.skip();
+      if (!chores.isUpgradeSupported('presets')) return this.skip();
       var unhook = lab.preventExit();
       var kernel = lab.createKernel('invalid-plugin-config-but-skip');
 

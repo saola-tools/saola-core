@@ -93,7 +93,7 @@ let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRe
       applyAliasMap(ctx, config[configType].default, nameResolver.getDefaultAliasOf);
       applyAliasMap(ctx, config[configType].expanse, nameResolver.getDefaultAliasOf);
       applyAliasMap(ctx, config[configType].mixture, nameResolver.getDefaultAliasOf);
-      if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
+      if (!chores.isUpgradeSupported('simplify-name-resolver')) {
         let {plugin: pluginReverseMap, bridge: bridgeReverseMap} = nameResolver.getRelativeAliasMap();
         doAliasMap(ctx, config[configType].default, pluginReverseMap, bridgeReverseMap);
         doAliasMap(ctx, config[configType].expanse, pluginReverseMap, bridgeReverseMap);
@@ -418,7 +418,7 @@ let transformConfig = function(ctx, configType, configData, crateInfo) {
   if (configType === CONFIG_SANDBOX_NAME) {
     configData = convertPreciseConfig(ctx, configData, crateInfo.type, crateInfo.name, crateInfo.presets);
     configData = applyAliasMap(ctx, configData, nameResolver.getOriginalNameOf);
-    if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
+    if (!chores.isUpgradeSupported('simplify-name-resolver')) {
       let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
       configData = doAliasMap(ctx, configData, pluginAliasMap, bridgeAliasMap);
     }
@@ -469,7 +469,7 @@ let convertPreciseConfig = function(ctx, preciseConfig, moduleType, moduleName, 
 
 let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
   const { L, T } = ctx;
-  if (chores.isUpgradeSupported(['standardizing-config'])) {
+  if (chores.isUpgradeSupported('standardizing-config')) {
     if (preciseConfig && lodash.isObject(preciseConfig.plugins)) {
       let oldPlugins = preciseConfig.plugins;
       let newPlugins = {};
@@ -505,7 +505,7 @@ let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
 }
 
 let doAliasMap = null;
-if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
+if (!chores.isUpgradeSupported('simplify-name-resolver')) {
   const applyAliasMap_Ref = applyAliasMap;
   applyAliasMap = function(ctx, configData) {
     return configData;

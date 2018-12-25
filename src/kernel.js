@@ -58,7 +58,7 @@ function Kernel(params={}) {
 
     // validate bridge's configures
     let bridgeMetadata = null;
-    if (chores.isUpgradeSupported(['metadata-refiner'])) {
+    if (chores.isUpgradeSupported('metadata-refiner')) {
       let bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
       bridgeMetadata = bridgeLoader.loadMetadata();
       L.has('silly') && L.log('silly', T.add({ metadata: bridgeMetadata }).toMessage({
@@ -75,7 +75,7 @@ function Kernel(params={}) {
 
     // validate plugin's configures
     let pluginMetadata = null;
-    if (chores.isUpgradeSupported(['metadata-refiner'])) {
+    if (chores.isUpgradeSupported('metadata-refiner')) {
       let pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
       pluginMetadata = pluginLoader.loadMetadata();
       L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
@@ -141,17 +141,17 @@ module.exports = Kernel;
 let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
   const { nameResolver } = ref;
   bridgeSchema = bridgeSchema || {};
-  if (!chores.isUpgradeSupported(['manifest-refiner'])) {
+  if (!chores.isUpgradeSupported('manifest-refiner')) {
     lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
       bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
     });
   }
   lodash.forEach(bridgeRefs, function(bridgeRef) {
     let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
-    if (!chores.isUpgradeSupported(['refining-name-resolver'])) {
+    if (!chores.isUpgradeSupported('refining-name-resolver')) {
       bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
     }
-    if (chores.isUpgradeSupported(['manifest-refiner'])) {
+    if (chores.isUpgradeSupported('manifest-refiner')) {
       const validationBlock = lodash.get(bridgeRef, ['manifest', 'validation']);
       if (lodash.isObject(validationBlock)) {
         bridgeSchema[bridgeCode] = lodash.pick(validationBlock, SELECTED_FIELDS);
@@ -230,7 +230,7 @@ let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema
   pluginSchema = pluginSchema || {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
-  if (!chores.isUpgradeSupported(['manifest-refiner'])) {
+  if (!chores.isUpgradeSupported('manifest-refiner')) {
     lodash.forOwn(pluginMetadata, function(metainf, key) {
       let def = metainf && metainf.default || {};
       if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
@@ -248,7 +248,7 @@ let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema
     if (!chores.isUpgradeSupported('refining-name-resolver')) {
       pluginCode = nameResolver.getDefaultAlias(pluginRef);
     }
-    if (chores.isUpgradeSupported(['manifest-refiner'])) {
+    if (chores.isUpgradeSupported('manifest-refiner')) {
       const configType = 'sandbox';
       let validationBlock = lodash.get(pluginRef, ['manifest', configType, 'validation']);
       if (lodash.isObject(validationBlock)) {

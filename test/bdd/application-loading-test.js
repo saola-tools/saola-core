@@ -120,7 +120,7 @@ describe('bdd:devebot:application', function() {
         ];
       }
 
-      if (!chores.isUpgradeSupported(['bridge-full-ref'])) {
+      if (!chores.isUpgradeSupported('bridge-full-ref')) {
         bridge1Scopes = [
           chores.toFullname("bridge1", "anyname1a"),
           chores.toFullname("bridge1", "anyname1b"),

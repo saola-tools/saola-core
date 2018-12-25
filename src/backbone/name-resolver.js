@@ -71,12 +71,12 @@ function NameResolver(params={}) {
   this.getOriginalNameOf = _getOriginalNameOf;
   this.getDefaultAliasOf = _getDefaultAliasOf;
 
-  if (!chores.isUpgradeSupported(['simplify-name-resolver'])) {
+  if (!chores.isUpgradeSupported('simplify-name-resolver')) {
     this.getAbsoluteAliasMap = _getAbsoluteAliasMap;
     this.getRelativeAliasMap = _getRelativeAliasMap;
   }
 
-  if (!chores.isUpgradeSupported(['refining-name-resolver'])) {
+  if (!chores.isUpgradeSupported('refining-name-resolver')) {
     this.getAliasBy = function(selectedField, crateDescriptor) {
       crateDescriptor = crateDescriptor || {};
       let crateAlias = crateDescriptor[selectedField];

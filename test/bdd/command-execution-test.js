@@ -78,7 +78,7 @@ describe('bdd:devebot:command:execution', function() {
         chores.toFullname("plugin1", "bridge2#anyname2c")
       ]);
     }
-    if (!chores.isUpgradeSupported(['bridge-full-ref'])) {
+    if (!chores.isUpgradeSupported('bridge-full-ref')) {
       injectedServiceNames.push.apply(injectedServiceNames, [
         chores.toFullname("bridge1", "anyname1a"),
         chores.toFullname("bridge1", "anyname1b"),
