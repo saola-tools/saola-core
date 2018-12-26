@@ -150,8 +150,13 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
     libRefs.push(devebotRef);
   }
 
+  let packetRefs = {};
+  if (appRef && appRef.path) packetRefs[appRef.path] = appRef;
+  lodash.assign(packetRefs, pluginRefs);
+  if (devebotRef && devebotRef.path) packetRefs[devebotRef.path] = devebotRef;
+
   let bridgeManifests = extractConfigManifest(ctx, bridgeRefs);
-  let pluginManifests = extractConfigManifest(ctx, pluginRefs);
+  let pluginManifests = extractConfigManifest(ctx, packetRefs);
   if (!chores.isUpgradeSupported('manifest-refiner')) {
     bridgeManifests = pluginManifests = undefined;
   }
@@ -368,6 +373,10 @@ let modernizeConfig = function(ctx, configType, configStore, crateInfo, bridgeMa
     }
   }
   if (pluginManifests) {
+    if (crateInfo.type === "application" && configStore["application"] && pluginManifests["application"]) {
+      const r = modernizeConfigBlock(ctx, configStore, ["application"], pluginManifests["application"], "application");
+      collector.push(r, crateInfo, "application");
+    }
     for(let pluginName in configStore.plugins) {
       const r = modernizeConfigBlock(ctx, configStore, ["plugins", pluginName], pluginManifests[pluginName], "plugin");
       collector.push(r, crateInfo, "plugin", pluginName);
@@ -413,21 +422,21 @@ let applyManifestMigration = function(ctx, configStore, configPath, moduleVersio
             result.steps[ruleName] = 'not_function';
             continue;
           }
-          if (chores.isVersionSatisfied(configVersion, rule.from)) {
-            configData = rule.transform(configData);
-            if (lodash.isObject(configData)) {
-              lodash.set(configMeta, 'version', moduleVersion);
-              lodash.set(configData, CONFIG_METADATA_BLOCK, configMeta);
-              lodash.set(configStore, configPath, configData);
-              result.migrated = true;
-              result.ruleName = ruleName;
-              result.steps[ruleName] = 'ok';
-              break;
-            } else {
-              result.steps[ruleName] = 'empty_output';
-            }
-          } else {
+          if (!chores.isVersionSatisfied(configVersion, rule.from)) {
             result.steps[ruleName] = 'unmatched';
+            continue;
+          }
+          configData = rule.transform(configData);
+          if (lodash.isObject(configData)) {
+            lodash.set(configMeta, 'version', moduleVersion);
+            lodash.set(configData, CONFIG_METADATA_BLOCK, configMeta);
+            lodash.set(configStore, configPath, configData);
+            result.migrated = true;
+            result.ruleName = ruleName;
+            result.steps[ruleName] = 'ok';
+            break;
+          } else {
+            result.steps[ruleName] = 'empty_output';
           }
         }
       }
