@@ -5,17 +5,14 @@ var Devebot = lab.getDevebot();
 var chores = Devebot.require('chores');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:name-resolver');
 var assert = require('chai').assert;
-var LogAdapter = require('logolite').LogAdapter;
-var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
 var rewire = require('rewire');
 
 describe('tdd:devebot:core:name-resolver', function() {
-
+  var loggingFactory = lab.createLoggingFactoryMock();
   var CTX = {
-    L: LogAdapter.getLogger(),
-    T: LogTracer.ROOT
-  };
+    L: loggingFactory.getLogger(),
+    T: loggingFactory.getTracer(),
+  }
 
   describe('standardizing loaded configuration data', function() {
     var NameResolver = rewire(lab.getDevebotModule('backbone/name-resolver'));

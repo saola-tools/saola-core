@@ -83,15 +83,15 @@ function NameResolver(params={}) {
       if (crateDescriptor.type === 'application') {
         crateAlias = crateDescriptor.type;
       }
-      if (crateDescriptor.type === 'bridge' || crateDescriptor.type === 'plugin') {
-        extractAliasNames(CTX, crateDescriptor.type, [crateDescriptor]);
+      if (crateDescriptor.type in LIB_NAME_PATTERNS) {
+        if (!hasSupportFields(crateDescriptor)) {
+          extractAliasNames(CTX, crateDescriptor.type, [crateDescriptor]);
+        }
         crateAlias = crateDescriptor[selectedField];
       }
       return crateAlias;
     }
-
     this.getOriginalName = this.getAliasBy.bind(this, 'name');
-
     this.getDefaultAlias = this.getAliasBy.bind(this, 'codeInCamel');
   }
 
@@ -157,17 +157,22 @@ const LIB_NAME_PATTERNS = {
   ]
 }
 
-let extractAliasNames = function(ctx, type, myRefs) {
+let hasSupportFields = function (moduleRef) {
+  return nodash.isString(moduleRef.code) && nodash.isString(moduleRef.codeInCamel) &&
+      nodash.isString(moduleRef.name) && nodash.isString(moduleRef.nameInCamel);
+}
+
+let extractAliasNames = function (ctx, type, moduleRefs) {
   const {issueInspector} = ctx;
-  let generateAlias = function(myRef, myId) {
-    let info = chores.extractCodeByPattern(ctx, LIB_NAME_PATTERNS[type], myRef.name);
+  function buildSupportFields(moduleRef) {
+    let info = chores.extractCodeByPattern(ctx, LIB_NAME_PATTERNS[type], moduleRef.name);
     if (info.i >= 0) {
-      myRef.code = info.code;
-      myRef.codeInCamel = chores.stringCamelCase(myRef.code);
-      if (myRef.name == myRef.code) {
-        myRef.nameInCamel = myRef.codeInCamel;
+      moduleRef.code = info.code;
+      moduleRef.codeInCamel = chores.stringCamelCase(moduleRef.code);
+      if (moduleRef.name == moduleRef.code) {
+        moduleRef.nameInCamel = moduleRef.codeInCamel;
       } else {
-        myRef.nameInCamel = chores.stringCamelCase(myRef.name);
+        moduleRef.nameInCamel = chores.stringCamelCase(moduleRef.name);
       }
     } else {
       issueInspector.collect(lodash.assign({
@@ -175,32 +180,32 @@ let extractAliasNames = function(ctx, type, myRefs) {
         type: type,
         hasError: true,
         stack: LIB_NAME_PATTERNS[type].toString()
-      }, myRef));
+      }, moduleRef));
     }
   }
-  if (lodash.isArray(myRefs)) {
-    lodash.forEach(myRefs, generateAlias);
-  } else if (lodash.isObject(myRefs)) {
-    lodash.forOwn(myRefs, generateAlias);
+  if (lodash.isArray(moduleRefs)) {
+    lodash.forEach(moduleRefs, buildSupportFields);
+  } else if (lodash.isObject(moduleRefs)) {
+    lodash.forOwn(moduleRefs, buildSupportFields);
   }
-  return myRefs;
+  return moduleRefs;
 }
 
-let buildAbsoluteAliasMap = function(myRefs, aliasMap) {
+let buildAbsoluteAliasMap = function(moduleRefs, aliasMap) {
   aliasMap = aliasMap || {};
-  lodash.forEach(myRefs, function(myRef) {
-    aliasMap[myRef.name] = myRef.name;
-    aliasMap[myRef.nameInCamel] = myRef.name;
-    aliasMap[myRef.code] = aliasMap[myRef.code] || myRef.name;
-    aliasMap[myRef.codeInCamel] = aliasMap[myRef.codeInCamel] || myRef.name;
+  lodash.forEach(moduleRefs, function(moduleRef) {
+    aliasMap[moduleRef.name] = moduleRef.name;
+    aliasMap[moduleRef.nameInCamel] = moduleRef.name;
+    aliasMap[moduleRef.code] = aliasMap[moduleRef.code] || moduleRef.name;
+    aliasMap[moduleRef.codeInCamel] = aliasMap[moduleRef.codeInCamel] || moduleRef.name;
   });
   return aliasMap;
 }
 
-let buildRelativeAliasMap = function(myRefs, aliasMap) {
+let buildRelativeAliasMap = function(moduleRefs, aliasMap) {
   aliasMap = aliasMap || {};
-  lodash.forEach(myRefs, function(myRef) {
-    aliasMap[myRef.name] = myRef.codeInCamel;
+  lodash.forEach(moduleRefs, function(moduleRef) {
+    aliasMap[moduleRef.name] = moduleRef.codeInCamel;
   });
   return aliasMap;
 }

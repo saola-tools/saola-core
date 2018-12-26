@@ -11,8 +11,6 @@ var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
 var envmask = require('envmask').instance;
-var LogAdapter = require('logolite').LogAdapter;
-var LogTracer = require('logolite').LogTracer;
 
 describe('tdd:devebot:utils:chores', function() {
   describe('loadServiceByNames()', function() {
@@ -69,9 +67,10 @@ describe('tdd:devebot:utils:chores', function() {
   });
 
   describe('extractCodeByPattern()', function() {
-    const CTX = {
-      L: LogAdapter.getLogger(),
-      T: LogTracer.ROOT
+    var loggingFactory = lab.createLoggingFactoryMock();
+    var CTX = {
+      L: loggingFactory.getLogger(),
+      T: loggingFactory.getTracer(),
     }
     it('should extract code by pattern from name correctly', function() {
       const BRIDGE_NAME_PATTERNS = [

@@ -9,8 +9,6 @@ var assert = require('chai').assert;
 var path = require('path');
 var ConfigLoader = require(lab.getDevebotModule('backbone/config-loader'));
 var NameResolver = require(lab.getDevebotModule('backbone/name-resolver'));
-var LogAdapter = require('logolite').LogAdapter;
-var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
@@ -19,10 +17,11 @@ describe('tdd:devebot:core:config-loader', function() {
 
   var issueInspector = lab.getIssueInspector();
   var stateInspector = lab.getStateInspector();
+  var loggingFactory = lab.createLoggingFactoryMock();
 
   var CTX = {
-    L: LogAdapter.getLogger(),
-    T: LogTracer.ROOT,
+    L: loggingFactory.getLogger(),
+    T: loggingFactory.getTracer(),
     issueInspector,
     CONFIG_PROFILE_NAME: 'profile',
     CONFIG_SANDBOX_NAME: 'sandbox'
