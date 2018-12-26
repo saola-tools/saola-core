@@ -342,40 +342,40 @@ let standardizeNames = function(ctx, cfgLabels) {
   return cfgLabels;
 }
 
-let standardizeConfig = function(ctx, configType, configData, crateInfo, bridgeManifests, pluginManifests) {
-  configData = transformConfig(ctx, configType, configData, crateInfo);
-  configData = modernizeConfig(ctx, configType, configData, crateInfo, bridgeManifests, pluginManifests);
-  return configData;
+let standardizeConfig = function(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests) {
+  configStore = transformConfig(ctx, configType, configStore, crateInfo);
+  configStore = modernizeConfig(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests);
+  return configStore;
 }
 
-let modernizeConfig = function(ctx, configType, configData, crateInfo, bridgeManifests, pluginManifests) {
+let modernizeConfig = function(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests) {
   if (configType !== CONFIG_SANDBOX_NAME) {
-    return configData;
+    return configStore;
   }
   if (bridgeManifests) {
-    for(let bridgeName in configData.bridges) {
+    for(let bridgeName in configStore.bridges) {
       const bridgePath = ["bridges"].concat(bridgeName);
-      const bridgeNode = configData.bridges[bridgeName] || {};
+      const bridgeNode = configStore.bridges[bridgeName] || {};
       for(let pluginName in bridgeNode) {
         const pluginPath = bridgePath.concat(pluginName);
         const pluginNode = bridgeNode[pluginName] || {};
         for(let dialectName in pluginNode) {
           const dialectPath = pluginPath.concat(dialectName);
-          modernizeConfigBlock(ctx, configData, dialectPath, bridgeManifests[bridgeName], "bridge");
+          modernizeConfigBlock(ctx, configStore, dialectPath, bridgeManifests[bridgeName], "bridge");
         }
       }
     }
   }
   if (pluginManifests) {
-    for(let pluginName in configData.plugins) {
-      modernizeConfigBlock(ctx, configData, ["plugins", pluginName], pluginManifests[pluginName], "plugin");
+    for(let pluginName in configStore.plugins) {
+      modernizeConfigBlock(ctx, configStore, ["plugins", pluginName], pluginManifests[pluginName], "plugin");
     }
   }
-  return configData;
+  return configStore;
 }
 
-let modernizeConfigBlock = function(ctx, configData, configPath, manifestBlock, moduleType) {
-  const configBlock = lodash.get(configData, configPath);
+let modernizeConfigBlock = function(ctx, configStore, configPath, manifestBlock, moduleType) {
+  const configBlock = lodash.get(configStore, configPath);
   if (manifestBlock) {
     const moduleVersion = manifestBlock.version;
     if (moduleVersion) {
@@ -386,7 +386,7 @@ let modernizeConfigBlock = function(ctx, configData, configPath, manifestBlock, 
           manifestPath.push(CONFIG_SANDBOX_NAME);
         }
         const manifestObject = lodash.get(manifestBlock, manifestPath);
-        applyManifestMigration(ctx, configData, configPath, blockVersion, moduleVersion, manifestObject);
+        applyManifestMigration(ctx, configStore, configPath, blockVersion, moduleVersion, manifestObject);
       }
     }
   }
@@ -396,34 +396,34 @@ let getConfigBlockVersion = function(ctx, configBlock) {
   return lodash.get(configBlock, [CONFIG_METADATA_BLOCK, 'version']);
 }
 
-let applyManifestMigration = function(ctx, configData, configPath, blockVersion, moduleVersion, manifest) {
+let applyManifestMigration = function(ctx, configStore, configPath, blockVersion, moduleVersion, manifest) {
   if (manifest && manifest.migration) {
     lodash.forOwn(manifest.migration, function(rule, ruleName) {
       if (chores.isVersionSatisfied(blockVersion, rule.from) && lodash.isFunction(rule.transform)) {
-        let configBlock = lodash.omit(lodash.get(configData, configPath), [CONFIG_METADATA_BLOCK]);
+        let configBlock = lodash.omit(lodash.get(configStore, configPath), [CONFIG_METADATA_BLOCK]);
         if (lodash.isObject(configBlock) && !lodash.isEmpty(configBlock)) {
           configBlock = rule.transform(configBlock);
         }
         if (lodash.isObject(configBlock) && !lodash.isEmpty(configBlock)) {
-          lodash.set(configData, configPath, configBlock);
+          lodash.set(configStore, configPath, configBlock);
         }
-        lodash.set(configData, configPath.concat([CONFIG_METADATA_BLOCK, 'version']), moduleVersion);
+        lodash.set(configStore, configPath.concat([CONFIG_METADATA_BLOCK, 'version']), moduleVersion);
       }
     })
   }
 }
 
-let transformConfig = function(ctx, configType, configData, crateInfo) {
+let transformConfig = function(ctx, configType, configStore, crateInfo) {
   let { L, T, nameResolver } = ctx || this;
   if (configType === CONFIG_SANDBOX_NAME) {
-    configData = convertPreciseConfig(ctx, configData, crateInfo.type, crateInfo.name, crateInfo.presets);
-    configData = applyAliasMap(ctx, configData, nameResolver.getOriginalNameOf);
+    configStore = convertPreciseConfig(ctx, configStore, crateInfo.type, crateInfo.name, crateInfo.presets);
+    configStore = applyAliasMap(ctx, configStore, nameResolver.getOriginalNameOf);
     if (!chores.isUpgradeSupported('simplify-name-resolver')) {
       let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
-      configData = doAliasMap(ctx, configData, pluginAliasMap, bridgeAliasMap);
+      configStore = doAliasMap(ctx, configStore, pluginAliasMap, bridgeAliasMap);
     }
   }
-  return configData;
+  return configStore;
 }
 
 let convertPreciseConfig = function(ctx, preciseConfig, moduleType, moduleName, modulePresets) {
@@ -507,8 +507,8 @@ let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
 let doAliasMap = null;
 if (!chores.isUpgradeSupported('simplify-name-resolver')) {
   const applyAliasMap_Ref = applyAliasMap;
-  applyAliasMap = function(ctx, configData) {
-    return configData;
+  applyAliasMap = function(ctx, configStore) {
+    return configStore;
   }
   doAliasMap = function(ctx, preciseConfig, pluginAliasMap, bridgeAliasMap) {
     function nameTransformer(name, type) {
