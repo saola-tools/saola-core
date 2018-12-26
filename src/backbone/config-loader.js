@@ -349,9 +349,9 @@ let standardizeConfig = function(ctx, configType, configStore, crateInfo, bridge
 }
 
 let modernizeConfig = function(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests) {
-  if (configType !== CONFIG_SANDBOX_NAME) {
-    return configStore;
-  }
+  if (configType !== CONFIG_SANDBOX_NAME) return configStore;
+  const { issueInspector } = ctx;
+  const collector = new ModernizingResultCollector();
   if (bridgeManifests) {
     for(let bridgeName in configStore.bridges) {
       const bridgePath = ["bridges"].concat(bridgeName);
@@ -361,55 +361,113 @@ let modernizeConfig = function(ctx, configType, configStore, crateInfo, bridgeMa
         const pluginNode = bridgeNode[pluginName] || {};
         for(let dialectName in pluginNode) {
           const dialectPath = pluginPath.concat(dialectName);
-          modernizeConfigBlock(ctx, configStore, dialectPath, bridgeManifests[bridgeName], "bridge");
+          const r = modernizeConfigBlock(ctx, configStore, dialectPath, bridgeManifests[bridgeName], "bridge");
+          collector.push(r, crateInfo, "bridge", pluginName, bridgeName, dialectName);
         }
       }
     }
   }
   if (pluginManifests) {
     for(let pluginName in configStore.plugins) {
-      modernizeConfigBlock(ctx, configStore, ["plugins", pluginName], pluginManifests[pluginName], "plugin");
+      const r = modernizeConfigBlock(ctx, configStore, ["plugins", pluginName], pluginManifests[pluginName], "plugin");
+      collector.push(r, crateInfo, "plugin", pluginName);
     }
   }
+  issueInspector.collect(collector.toList());
   return configStore;
 }
 
 let modernizeConfigBlock = function(ctx, configStore, configPath, manifestBlock, moduleType) {
-  const configBlock = lodash.get(configStore, configPath);
+  let result = null;
   if (manifestBlock) {
     const moduleVersion = manifestBlock.version;
     if (moduleVersion) {
-      const blockVersion = getConfigBlockVersion(ctx, configBlock);
-      if (chores.isVersionLessThan(blockVersion, moduleVersion)) {
-        const manifestPath = ['manifest'];
-        if (moduleType !== 'bridge') {
-          manifestPath.push(CONFIG_SANDBOX_NAME);
+      const manifestPath = ['manifest'];
+      if (moduleType !== 'bridge') {
+        manifestPath.push(CONFIG_SANDBOX_NAME);
+      }
+      const manifestObject = lodash.get(manifestBlock, manifestPath);
+      result = applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifestObject);
+    }
+  }
+  return result;
+}
+
+let applyManifestMigration = function(ctx, configStore, configPath, moduleVersion, manifest) {
+  let result = null;
+  if (manifest && manifest.migration) {
+    let configNode = lodash.get(configStore, configPath);
+    if (lodash.isObject(configNode)) {
+      const configVersion = lodash.get(configNode, [CONFIG_METADATA_BLOCK, 'version']);
+      if (chores.isVersionLessThan(configVersion, moduleVersion)) {
+        let configMeta = lodash.get(configNode, [CONFIG_METADATA_BLOCK]);
+        let configData = lodash.omit(configNode, [CONFIG_METADATA_BLOCK]);
+        result = { migrated: false, configVersion, moduleVersion, steps: {} };
+        for(const ruleName in manifest.migration) {
+          const rule = manifest.migration[ruleName];
+          if (rule.enabled === false) {
+            result.steps[ruleName] = 'disabled';
+            continue;
+          }
+          if (!lodash.isFunction(rule.transform)) {
+            result.steps[ruleName] = 'not_function';
+            continue;
+          }
+          if (chores.isVersionSatisfied(configVersion, rule.from)) {
+            configData = rule.transform(configData);
+            if (lodash.isObject(configData)) {
+              lodash.set(configMeta, 'version', moduleVersion);
+              lodash.set(configData, CONFIG_METADATA_BLOCK, configMeta);
+              lodash.set(configStore, configPath, configData);
+              result.migrated = true;
+              result.ruleName = ruleName;
+              result.steps[ruleName] = 'ok';
+              break;
+            } else {
+              result.steps[ruleName] = 'empty_output';
+            }
+          } else {
+            result.steps[ruleName] = 'unmatched';
+          }
         }
-        const manifestObject = lodash.get(manifestBlock, manifestPath);
-        applyManifestMigration(ctx, configStore, configPath, blockVersion, moduleVersion, manifestObject);
       }
     }
   }
+  return result;
 }
 
-let getConfigBlockVersion = function(ctx, configBlock) {
-  return lodash.get(configBlock, [CONFIG_METADATA_BLOCK, 'version']);
-}
+let ModernizingResultCollector = function() {
+  let collection = [];
 
-let applyManifestMigration = function(ctx, configStore, configPath, blockVersion, moduleVersion, manifest) {
-  if (manifest && manifest.migration) {
-    lodash.forOwn(manifest.migration, function(rule, ruleName) {
-      if (chores.isVersionSatisfied(blockVersion, rule.from) && lodash.isFunction(rule.transform)) {
-        let configBlock = lodash.omit(lodash.get(configStore, configPath), [CONFIG_METADATA_BLOCK]);
-        if (lodash.isObject(configBlock) && !lodash.isEmpty(configBlock)) {
-          configBlock = rule.transform(configBlock);
+  this.push = function(result, crateInfo, moduleType, pluginName, bridgeName, dialectName) {
+    let opStatus = { stage: 'config/upgrade' };
+    opStatus.hasError = (result != null) && (result.migrated !== true);
+    opStatus.type = crateInfo.type;
+    opStatus.name = crateInfo.name;
+    if (opStatus.hasError) {
+      let stackText = [];
+      switch (moduleType) {
+        case 'bridge': {
+          stackText.push(util.format('Converting config block for bridge[%s/%s#%s] from [%s] to [%s] has failed',
+              pluginName, bridgeName, dialectName, result.configVersion, result.moduleVersion));
+          break;
         }
-        if (lodash.isObject(configBlock) && !lodash.isEmpty(configBlock)) {
-          lodash.set(configStore, configPath, configBlock);
+        case 'plugin': {
+          stackText.push(util.format('Converting config block for plugin[%s] from [%s] to [%s] has failed',
+              pluginName, result.configVersion, result.moduleVersion));
+          break;
         }
-        lodash.set(configStore, configPath.concat([CONFIG_METADATA_BLOCK, 'version']), moduleVersion);
       }
-    })
+      lodash.forOwn(result.steps, function(state, ruleName) {
+        stackText.push(util.format('- rule[%s]: %s', ruleName, state));
+      });
+      opStatus.stack = stackText.join('\n  ');
+    }
+    collection.push(opStatus);
+  }
+
+  this.toList = function() {
+    return collection;
   }
 }
 

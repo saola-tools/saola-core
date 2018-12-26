@@ -92,6 +92,15 @@ function IssueInspector(params={}) {
               return;
             }
           }
+          if (fsv.stage === 'config/upgrade') {
+            switch (fsv.type) {
+              default: {
+                console.error(chalk.errorMessage('--> [%s:%s] migrating configure has been failed:'), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+            }
+          }
           if (fsv.stage === 'config/schema') {
             switch(fsv.type) {
               case 'application':

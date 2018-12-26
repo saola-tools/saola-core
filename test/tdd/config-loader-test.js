@@ -422,6 +422,7 @@ describe('tdd:devebot:core:config-loader', function() {
     var loggingFactory = lab.createLoggingFactoryMock();
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
+    var CTX = { L, T, issueInspector, nameResolver };
 
     var moduleInfo = { name: 'example', type: 'application', presets: {} }
 
@@ -432,7 +433,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('do nothing if manifests is empty or not found', function() {
       var configType = 'sandbox';
       var configData = {};
-      var result = modernizeConfig({L, T, nameResolver}, configType, configData, moduleInfo);
+      var result = modernizeConfig(CTX, configType, configData, moduleInfo);
       assert.deepEqual(result, configData);
     });
 
@@ -497,7 +498,7 @@ describe('tdd:devebot:core:config-loader', function() {
         },
       }
 
-      var result = modernizeConfig({L, T, nameResolver}, configType, configData, moduleInfo, bridgeManifests, pluginManifests);
+      var result = modernizeConfig(CTX, configType, configData, moduleInfo, bridgeManifests, pluginManifests);
 
       false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 
@@ -665,7 +666,7 @@ describe('tdd:devebot:core:config-loader', function() {
         },
       }
 
-      var result = modernizeConfig({L, T, nameResolver}, configType, configData, moduleInfo, bridgeManifests, pluginManifests);
+      var result = modernizeConfig(CTX, configType, configData, moduleInfo, bridgeManifests, pluginManifests);
 
       false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 
