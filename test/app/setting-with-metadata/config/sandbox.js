@@ -2,7 +2,10 @@ module.exports = {
   application: {
     "host": "0.0.0.0",
     "port": 17700,
-    "verbose": false
+    "verbose": false,
+    "__metadata__": {
+      "version": "0.0.1",
+    },
   },
   plugins: {
     "plugin1": {
@@ -10,32 +13,32 @@ module.exports = {
       "port": 17701,
       "verbose": false,
       "__metadata__": {
-        "version": "0.1.1"
-      }
+        "version": "0.1.1",
+      },
     },
     "plugin2": {
       "host": "0.0.0.0",
       "port": 17702,
       "verbose": false,
       "__metadata__": {
-        "version": "0.1.1"
-      }
+        "version": "0.1.1",
+      },
     },
     "plugin3": {
       "host": "0.0.0.0",
       "port": 17703,
       "verbose": false,
       "__metadata__": {
-        "version": "0.1.1"
-      }
+        "version": "0.1.1",
+      },
     },
     "plugin4": {
       "host": "0.0.0.0",
       "port": 17704,
       "verbose": false,
       "__metadata__": {
-        "version": "0.1.1"
-      }
+        "version": "0.1.1",
+      },
     }
   },
   bridges: {
@@ -47,6 +50,6 @@ module.exports = {
           "refName": "default"
         }
       }
-    }
+    },
   }
 }

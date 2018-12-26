@@ -24,8 +24,8 @@ var Service = function(params={}) {
     return server;
   };
 
-  var configHost = lodash.get(mainCfg, 'host', '0.0.0.0');
-  var configPort = lodash.get(mainCfg, 'port', 8080);
+  var configHost = lodash.get(mainCfg, ['server', 'host'], '0.0.0.0');
+  var configPort = lodash.get(mainCfg, ['server', 'port'], 8080);
 
   this.start = function() {
     return new Promise(function(resolved, rejected) {

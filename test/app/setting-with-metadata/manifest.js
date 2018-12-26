@@ -1,11 +1,10 @@
 module.exports = {
   "sandbox": {
     "migration": {
-      "0.2.2_0.2.3": {
-        "from": "0.2.2",
-        "to": "0.2.3",
+      "0.0.1_0.1.0": {
+        "from": "0.0.1",
         "transform": function(source) {
-          return source;
+          return { server: source };
         }
       }
     },
@@ -16,17 +15,22 @@ module.exports = {
       "schema": {
         "type": "object",
         "properties": {
-          "host": {
-            "type": "string"
-          },
-          "port": {
-            "type": "number"
-          },
-          "verbose": {
-            "type": "boolean"
+          "server": {
+            "type": "object",
+            "properties": {
+              "host": {
+                "type": "string"
+              },
+              "port": {
+                "type": "number"
+              },
+              "verbose": {
+                "type": "boolean"
+              }
+            },
+            "required": ["host", "port"]
           }
         },
-        "required": ["host", "port"]
       }
     }
   }
