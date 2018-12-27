@@ -486,8 +486,16 @@ describe('tdd:devebot:core:config-loader', function() {
       var configStore = {
         plugins: {
           "subPlugin1": {
-            host: "localhost",
-            port: 17721,
+            "host": "localhost",
+            "port": 17721,
+          },
+          "subPlugin2": {
+            "host": "localhost",
+            "port": 17722,
+            "__metadata__": {
+              "version": "0.1.1",
+              "note": "extended fields are reserved",
+            }
           },
         },
         bridges: {
@@ -500,9 +508,25 @@ describe('tdd:devebot:core:config-loader', function() {
               }
             }
           },
+          "bridge2": {
+            "subPlugin2": {
+              "connector": {
+                "refName": "subPlugin2/bridge2#connector",
+                "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.1",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
         }
       };
-      var pluginTransform = sinon.stub().callsFake(function(source) {
+      var pluginTransform1 = sinon.stub().callsFake(function(source) {
+        return { "httpserver": source }
+      });
+      var pluginTransform2 = sinon.stub().callsFake(function(source) {
         return { "httpserver": source }
       });
       var pluginManifests = {
@@ -513,15 +537,33 @@ describe('tdd:devebot:core:config-loader', function() {
               "migration": {
                 "0.1.0_0.1.1": {
                   "from": "0.1.0",
-                  "to": "0.1.1",
-                  "transform": pluginTransform
+                  "transform": pluginTransform1
+                }
+              }
+            }
+          }
+        },
+        "subPlugin2": {
+          "version": "0.1.2",
+          "manifest": {
+            "sandbox": {
+              "migration": {
+                "default": {
+                  "from": "0.1.x",
+                  "transform": pluginTransform2
                 }
               }
             }
           }
         },
       }
-      var bridgeTransform = sinon.stub().callsFake(function(source) {
+      var bridgeTransform1 = sinon.stub().callsFake(function(source) {
+        return {
+          name: source.refName,
+          path: source.refPath
+        }
+      });
+      var bridgeTransform2 = sinon.stub().callsFake(function(source) {
         return {
           name: source.refName,
           path: source.refPath
@@ -534,8 +576,18 @@ describe('tdd:devebot:core:config-loader', function() {
             "migration": {
               "latest": {
                 "from": "0.1.0",
-                "to": "0.1.1",
-                "transform": bridgeTransform
+                "transform": bridgeTransform1
+              }
+            }
+          }
+        },
+        "bridge2": {
+          "version": "0.1.2",
+          "manifest": {
+            "migration": {
+              "latest": {
+                "from": "0.1.x",
+                "transform": bridgeTransform2
               }
             }
           }
@@ -549,8 +601,18 @@ describe('tdd:devebot:core:config-loader', function() {
       var expected = {
         plugins: {
           "subPlugin1": {
-            host: "localhost",
-            port: 17721,
+            "host": "localhost",
+            "port": 17721,
+          },
+          "subPlugin2": {
+            "httpserver": {
+              "host": "localhost",
+              "port": 17722,
+            },
+            "__metadata__": {
+              "version": "0.1.2",
+              "note": "extended fields are reserved",
+            },
           },
         },
         bridges: {
@@ -563,12 +625,26 @@ describe('tdd:devebot:core:config-loader', function() {
               }
             }
           },
+          "bridge2": {
+            "subPlugin2": {
+              "connector": {
+                "name": "subPlugin2/bridge2#connector",
+                "path": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
+                "__metadata__": {
+                  "version": "0.1.2",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
         }
       }
 
       assert.deepEqual(result, expected);
-      assert.isFalse(pluginTransform.called);
-      assert.isFalse(bridgeTransform.called);
+      assert.isFalse(pluginTransform1.called);
+      assert.isTrue(pluginTransform2.calledOnce);
+      assert.isFalse(bridgeTransform1.called);
+      assert.isTrue(bridgeTransform2.calledOnce);
     });
 
     it('upgrade the configuration corresponding to manifests', function() {
