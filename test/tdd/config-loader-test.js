@@ -481,7 +481,7 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.deepEqual(result, configStore);
     });
 
-    it('keep configStore unchange if __metadata__ not found', function() {
+    it('keep configure unchange if __metadata__ not found', function() {
       var configType = 'sandbox';
       var configStore = {
         plugins: {
@@ -645,6 +645,187 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.isTrue(pluginTransform2.calledOnce);
       assert.isFalse(bridgeTransform1.called);
       assert.isTrue(bridgeTransform2.calledOnce);
+    });
+
+    it('keep configure unchange if configVersion is not less than moduleVersion', function() {
+      var configType = 'sandbox';
+      var configStore = {
+        plugins: {
+          "subPlugin1": {
+            "host": "localhost",
+            "port": 17721,
+            "__metadata__": {
+              "version": "0.1.9",
+              "note": "extended fields are reserved",
+            },
+          },
+          "subPlugin2": {
+            "host": "localhost",
+            "port": 17722,
+            "__metadata__": {
+              "version": "0.1.2",
+              "note": "extended fields are reserved",
+            }
+          },
+        },
+        bridges: {
+          "bridge1": {
+            "subPlugin1": {
+              "connector": {
+                "refName": "subPlugin1/bridge1#connector",
+                "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.9",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
+          "bridge2": {
+            "subPlugin2": {
+              "connector": {
+                "refName": "subPlugin2/bridge2#connector",
+                "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.2",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
+        }
+      };
+      var pluginTransform1 = sinon.stub().callsFake(function(source) {
+        return { "httpserver": source }
+      });
+      var pluginTransform2 = sinon.stub().callsFake(function(source) {
+        return { "httpserver": source }
+      });
+      var pluginManifests = {
+        "subPlugin1": {
+          "version": "0.1.1",
+          "manifest": {
+            "sandbox": {
+              "migration": {
+                "0.1.x": {
+                  "from": "0.1.x",
+                  "transform": pluginTransform1
+                }
+              }
+            }
+          }
+        },
+        "subPlugin2": {
+          "version": "0.1.2",
+          "manifest": {
+            "sandbox": {
+              "migration": {
+                "default": {
+                  "from": "0.1.x",
+                  "transform": pluginTransform2
+                }
+              }
+            }
+          }
+        },
+      }
+      var bridgeTransform1 = sinon.stub().callsFake(function(source) {
+        return {
+          name: source.refName,
+          path: source.refPath
+        }
+      });
+      var bridgeTransform2 = sinon.stub().callsFake(function(source) {
+        return {
+          name: source.refName,
+          path: source.refPath
+        }
+      });
+      var bridgeManifests = {
+        "bridge1": {
+          "version": "0.1.1",
+          "manifest": {
+            "migration": {
+              "latest": {
+                "from": "0.1.x",
+                "transform": bridgeTransform1
+              }
+            }
+          }
+        },
+        "bridge2": {
+          "version": "0.1.2",
+          "manifest": {
+            "migration": {
+              "latest": {
+                "from": "0.1.x",
+                "transform": bridgeTransform2
+              }
+            }
+          }
+        },
+      }
+
+      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
+
+      false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
+
+      var expected = {
+        plugins: {
+          "subPlugin1": {
+            "host": "localhost",
+            "port": 17721,
+            "__metadata__": {
+              "version": "0.1.9",
+              "note": "extended fields are reserved",
+            },
+          },
+          "subPlugin2": {
+            "host": "localhost",
+            "port": 17722,
+            "__metadata__": {
+              "version": "0.1.2",
+              "note": "extended fields are reserved",
+            },
+          },
+        },
+        bridges: {
+          "bridge1": {
+            "subPlugin1": {
+              "connector": {
+                "refName": "subPlugin1/bridge1#connector",
+                "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.9",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
+          "bridge2": {
+            "subPlugin2": {
+              "connector": {
+                "refName": "subPlugin2/bridge2#connector",
+                "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.2",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
+        }
+      }
+
+      assert.deepEqual(result, expected);
+      assert.isFalse(pluginTransform1.called);
+      assert.isFalse(pluginTransform2.called);
+      assert.isFalse(bridgeTransform1.called);
+      assert.isFalse(bridgeTransform2.called);
     });
 
     it('upgrade the configuration corresponding to manifests', function() {
