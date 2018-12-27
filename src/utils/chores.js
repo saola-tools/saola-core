@@ -128,10 +128,10 @@ chores.filterFiles = function(dir, filter, filenames) {
 chores.loadServiceByNames = function(serviceMap, serviceFolder, serviceNames) {
   serviceNames = nodash.arrayify(serviceNames);
   serviceNames.forEach(function(serviceName) {
-    let filepath = path.join(serviceFolder, serviceName + '.js');
-    let serviceConstructor = loader(filepath);
+    const filepath = path.join(serviceFolder, serviceName + '.js');
+    const serviceConstructor = loader(filepath);
     if (lodash.isFunction(serviceConstructor)) {
-      let serviceEntry = {};
+      const serviceEntry = {};
       serviceEntry[chores.stringCamelCase(serviceName)] = serviceConstructor;
       lodash.defaults(serviceMap, serviceEntry);
     }
@@ -157,7 +157,7 @@ chores.stringCamelCase = function camelCase(str) {
 }
 
 chores.assertDir = function(appName) {
-  let configDir = path.join(this.homedir(), '.' + appName);
+  const configDir = path.join(this.homedir(), '.' + appName);
   try {
     fs.readdirSync(configDir);
   } catch (err) {
@@ -202,11 +202,11 @@ chores.isSpecialPlugin = function(pluginCode) {
 
 chores.extractCodeByPattern = function(ctx, patterns, name) {
   assert.ok(patterns instanceof Array);
-  for(let k in patterns) {
+  for(const k in patterns) {
     assert.ok(patterns[k] instanceof RegExp);
   }
-  let {L, T} = ctx;
-  let info = {};
+  const {L, T} = ctx;
+  const info = {};
   for(info.i=0; info.i<patterns.length; info.i++) {
     if (name.match(patterns[info.i])) break;
   }
@@ -226,14 +226,14 @@ chores.extractCodeByPattern = function(ctx, patterns, name) {
 chores.getComponentDir = function(pluginRef, componentType) {
   let compDir = lodash.get(pluginRef, ['presets', 'componentDir'], {});
   if (componentType) {
-    return compDir[componentType] || constx[componentType].SCRIPT_DIR;
+    compDir = compDir[componentType] || constx[componentType].SCRIPT_DIR;
   }
   return compDir;
 }
 
 chores.getBlockRef = function(filename, blockScope) {
   if (filename == null) return null;
-  let blockName = chores.stringCamelCase(path.basename(filename, '.js'));
+  const blockName = chores.stringCamelCase(path.basename(filename, '.js'));
   blockScope = blockScope || store.defaultScope;
   if (!nodash.isArray(blockScope)) blockScope = [blockScope];
   return blockScope.concat(blockName).join(chores.getSeparator());
@@ -254,13 +254,13 @@ chores.toFullname = function() {
 chores.transformBeanName = function(name, opts) {
   opts = opts || {};
   if (typeof name !== 'string') return name;
-  let pattern = (opts.namePattern instanceof RegExp) ? opts.namePattern : /^(.+)\/([^:^\/]+)$/g;
+  const pattern = (opts.namePattern instanceof RegExp) ? opts.namePattern : /^(.+)\/([^:^\/]+)$/g;
   return name.replace(pattern, "$1:$2");
 }
 
 chores.lookupMethodRef = function(methodName, serviceName, proxyName, sandboxRegistry) {
-  let ref = {};
-  let commander = sandboxRegistry.lookupService(proxyName);
+  const ref = {};
+  const commander = sandboxRegistry.lookupService(proxyName);
   if (commander && lodash.isFunction(commander.lookupService)) {
     ref.isDirected = false;
     ref.isRemote = true;
@@ -311,12 +311,12 @@ chores.skipProcessExit = function() {
 }
 
 chores.isSilentForced = function(moduleId, cfg) {
-  let fsm = envbox.getEnv('FORCING_SILENT');
+  const fsm = envbox.getEnv('FORCING_SILENT');
   return (fsm.indexOf(moduleId) >= 0) || (cfg && cfg.verbose === false);
 }
 
 chores.isVerboseForced = function(moduleId, cfg) {
-  let fvm = envbox.getEnv('FORCING_VERBOSE');
+  const fvm = envbox.getEnv('FORCING_VERBOSE');
   return (fvm.indexOf(moduleId) >= 0) || (cfg && cfg.verbose !== false);
 }
 
@@ -337,17 +337,17 @@ chores.isUpgradeSupported = function(label) {
   return isAnyOfTuplesSatistied(arguments);
 }
 
-let isAnyOfTuplesSatistied = function (tuples) {
+function isAnyOfTuplesSatistied(tuples) {
   for(let i=0; i<tuples.length; i++) {
     if (isAllOfLabelsSatisfied(tuples[i])) return true;
   }
   return false;
 }
 
-let isAllOfLabelsSatisfied = function (labels) {
+function isAllOfLabelsSatisfied(labels) {
   if (!labels) return false;
   if (nodash.isArray(labels)) {
-    for(let k in labels) {
+    for(const k in labels) {
       if (!checkUpgradeSupported(labels[k])) return false;
     }
     return true;
@@ -355,7 +355,7 @@ let isAllOfLabelsSatisfied = function (labels) {
   return checkUpgradeSupported(labels);
 }
 
-let checkUpgradeSupported = function(label) {
+function checkUpgradeSupported(label) {
   if (store.upgradeDisabled.indexOf(label) >= 0) return false;
   if (constx.UPGRADE_ENABLED.indexOf(label) >= 0) return true;
   return (store.upgradeEnabled.indexOf(label) >= 0);

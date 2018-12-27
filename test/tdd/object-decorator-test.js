@@ -946,6 +946,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         gadgetName: 'originalBean',
         useDefaultTexture: false,
       });
+      assert.equal(WrappedConstructor, MockedConstructor);
+
       var wrappedBean = new WrappedConstructor();
       // invoke method1() 3 times
       lodash.range(3).forEach(function() {
@@ -1039,7 +1041,9 @@ describe('tdd:devebot:core:object-decorator', function() {
         gadgetName: 'originalBean',
         useDefaultTexture: false,
       });
+      assert.notEqual(WrappedConstructor, MockedConstructor);
       var wrappedBean = new WrappedConstructor();
+
       // invokes method1() 3 times
       lodash.range(3).forEach(function() {
         wrappedBean.level1.method1('Hello world', {
@@ -1047,6 +1051,7 @@ describe('tdd:devebot:core:object-decorator', function() {
          });
       });
       assert.equal(mockedBean.level1.method1.callCount, 3);
+
       // invokes method2() 5 times
       lodash.range(5).forEach(function() {
         wrappedBean.level2.sub2.method2('Hello world', {
@@ -1054,6 +1059,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         });
       });
       assert.equal(mockedBean.level2.sub2.method2.callCount, 5);
+
       //verify tracer
       var tracerStore = loggingFactory.getTracerStore();
       let logState_method1 = tracerStore.add.filter(item => {
