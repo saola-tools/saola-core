@@ -48,7 +48,7 @@ module.exports = ConfigLoader;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
 
-let readVariable = function(ctx, appLabel, varName) {
+function readVariable(ctx, appLabel, varName) {
   const { L, T } = ctx || this;
   const labels = [
     util.format('%s_%s', appLabel, varName),
@@ -70,7 +70,7 @@ let readVariable = function(ctx, appLabel, varName) {
   return value;
 }
 
-let loadConfig = function(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
+function loadConfig(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
   const { L, T, issueInspector, stateInspector, nameResolver } = ctx || this;
 
   const aliasesOf = buildConfigTypeAliases();
@@ -122,20 +122,20 @@ function buildConfigTypeAliases() {
 function buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName) {
   appOptions = appOptions || {};
 
-  let tileNames = {};
+  const tileNames = {};
   tileNames[CONFIG_PROFILE_NAME] = standardizeNames(ctx, profileName);
   tileNames[CONFIG_SANDBOX_NAME] = standardizeNames(ctx, sandboxName);
   tileNames[CONFIG_TEXTURE_NAME] = standardizeNames(ctx, textureName);
 
-  let appProfiles = standardizeNames(ctx, appOptions.privateProfile || appOptions.privateProfiles);
+  const appProfiles = standardizeNames(ctx, appOptions.privateProfile || appOptions.privateProfiles);
   tileNames[CONFIG_PROFILE_NAME] = lodash.concat(
     lodash.difference(tileNames[CONFIG_PROFILE_NAME], appProfiles), appProfiles);
 
-  let appSandboxes = standardizeNames(ctx, appOptions.privateSandbox || appOptions.privateSandboxes);
+  const appSandboxes = standardizeNames(ctx, appOptions.privateSandbox || appOptions.privateSandboxes);
   tileNames[CONFIG_SANDBOX_NAME] = lodash.concat(
     lodash.difference(tileNames[CONFIG_SANDBOX_NAME], appSandboxes), appSandboxes);
 
-  let appTextures = standardizeNames(ctx, appOptions.privateTexture || appOptions.privateTextures);
+  const appTextures = standardizeNames(ctx, appOptions.privateTexture || appOptions.privateTextures);
   tileNames[CONFIG_TEXTURE_NAME] = lodash.concat(
     lodash.difference(tileNames[CONFIG_TEXTURE_NAME], appTextures), appTextures);
 
@@ -274,8 +274,8 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManif
   }
 }
 
-let loadConfigFile = function(ctx, configFile) {
-  let { L, T, issueInspector } = ctx || this;
+function loadConfigFile(ctx, configFile) {
+  const { L, T, issueInspector } = ctx || this;
   let opStatus = { type: 'CONFIG', file: configFile };
   let content;
   try {
@@ -300,7 +300,7 @@ let loadConfigFile = function(ctx, configFile) {
   return RELOADING_FORCED ? lodash.cloneDeep(content) : content;
 }
 
-let filterConfigBy = function(ctx, configInfos, selectedNames, configType, aliasesOf) {
+function filterConfigBy(ctx, configInfos, selectedNames, configType, aliasesOf) {
   let arr = {};
   let idx = {};
   selectedNames[configType].forEach(function(name, index) {
@@ -315,8 +315,8 @@ let filterConfigBy = function(ctx, configInfos, selectedNames, configType, alias
   return lodash.values(arr);
 }
 
-let resolveConfigDir = function(ctx, appName, appRootDir, configDir, configEnv) {
-  let { L, T, issueInspector } = ctx || this;
+function resolveConfigDir(ctx, appName, appRootDir, configDir, configEnv) {
+  const { L, T, issueInspector } = ctx || this;
   let dirPath = configDir;
   if (lodash.isEmpty(dirPath)) {
     if (['production'].indexOf(process.env.NODE_ENV) >= 0) {
@@ -339,7 +339,7 @@ let resolveConfigDir = function(ctx, appName, appRootDir, configDir, configEnv) 
   return dirPath;
 }
 
-let standardizeNames = function(ctx, cfgLabels) {
+function standardizeNames(ctx, cfgLabels) {
   if (lodash.isString(cfgLabels) && cfgLabels.length > 0) {
     cfgLabels = cfgLabels.split(',');
   }
@@ -350,13 +350,13 @@ let standardizeNames = function(ctx, cfgLabels) {
   return cfgLabels;
 }
 
-let standardizeConfig = function(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests) {
+function standardizeConfig(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests) {
   configStore = transformConfig(ctx, configType, configStore, crateInfo);
   configStore = modernizeConfig(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests);
   return configStore;
 }
 
-let modernizeConfig = function(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests) {
+function modernizeConfig(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests) {
   if (configType !== CONFIG_SANDBOX_NAME) return configStore;
   const { issueInspector } = ctx;
   const collector = new ModernizingResultCollector();
@@ -389,7 +389,7 @@ let modernizeConfig = function(ctx, configType, configStore, crateInfo, bridgeMa
   return configStore;
 }
 
-let modernizeConfigBlock = function(ctx, configStore, configPath, manifestBlock, moduleType) {
+function modernizeConfigBlock(ctx, configStore, configPath, manifestBlock, moduleType) {
   let result = null;
   if (manifestBlock) {
     const moduleVersion = manifestBlock.version;
@@ -405,7 +405,7 @@ let modernizeConfigBlock = function(ctx, configStore, configPath, manifestBlock,
   return result;
 }
 
-let applyManifestMigration = function(ctx, configStore, configPath, moduleVersion, manifest) {
+function applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifest) {
   let result = null;
   if (manifest && manifest.migration) {
     let configNode = lodash.get(configStore, configPath);
@@ -448,11 +448,11 @@ let applyManifestMigration = function(ctx, configStore, configPath, moduleVersio
   return result;
 }
 
-let ModernizingResultCollector = function() {
-  let collection = [];
+function ModernizingResultCollector() {
+  const collection = [];
 
   this.push = function(result, crateInfo, moduleType, pluginName, bridgeName, dialectName) {
-    let opStatus = { stage: 'config/upgrade' };
+    const opStatus = { stage: 'config/upgrade' };
     opStatus.hasError = (result != null) && (result.migrated !== true);
     opStatus.type = crateInfo.type;
     opStatus.name = crateInfo.name;
@@ -483,8 +483,8 @@ let ModernizingResultCollector = function() {
   }
 }
 
-let transformConfig = function(ctx, configType, configStore, crateInfo) {
-  let { L, T, nameResolver } = ctx || this;
+function transformConfig(ctx, configType, configStore, crateInfo) {
+  const { L, T, nameResolver } = ctx || this;
   if (configType === CONFIG_SANDBOX_NAME) {
     configStore = convertPreciseConfig(ctx, configStore, crateInfo.type, crateInfo.name, crateInfo.presets);
     configStore = applyAliasMap(ctx, configStore, nameResolver.getOriginalNameOf);
@@ -496,7 +496,7 @@ let transformConfig = function(ctx, configType, configStore, crateInfo) {
   return configStore;
 }
 
-let convertPreciseConfig = function(ctx, preciseConfig, moduleType, moduleName, modulePresets) {
+function convertPreciseConfig(ctx, preciseConfig, moduleType, moduleName, modulePresets) {
   const { L, T } = ctx;
   if (lodash.isEmpty(preciseConfig) || !lodash.isObject(preciseConfig)) {
     return preciseConfig;
@@ -536,6 +536,8 @@ let convertPreciseConfig = function(ctx, preciseConfig, moduleType, moduleName, 
   }
   return preciseConfig;
 }
+
+//-----------------------------------------------------------------------------
 
 let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
   const { L, T } = ctx;
