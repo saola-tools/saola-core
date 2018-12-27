@@ -214,7 +214,10 @@ function extractConfigManifest(ctx, moduleRefs, configManifest) {
   const { nameResolver } = ctx;
   configManifest = configManifest || {};
   lodash.forOwn(moduleRefs, function(moduleRef) {
-    const moduleName = nameResolver.getOriginalNameOf(moduleRef.name, moduleRef.type);
+    let moduleName = nameResolver.getOriginalNameOf(moduleRef.name, moduleRef.type);
+    if (!chores.isUpgradeSupported('refining-name-resolver')) {
+      moduleName = nameResolver.getOriginalName(moduleRef);
+    }
     configManifest[moduleName] = lodash.pick(moduleRef, ['version', 'manifest']);
   });
   return configManifest;

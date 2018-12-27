@@ -368,6 +368,23 @@ describe('tdd:devebot:core:config-loader', function() {
 
     it('return the correct configManifest with normal pluginRefs', function() {
       var pluginRefs = {
+        "/test/app/default": {
+          "name": "fullapp",
+          "type": "application",
+          "path": "/test/app/default",
+          "presets": {
+            "privateProfile": "abc",
+            "privateSandbox": "xyz",
+          },
+          "bridgeDepends": [ "bridge1", "bridge2" ],
+          "pluginDepends": [ "sub-plugin1", "sub-plugin2" ],
+          "version": "0.1.0",
+          "manifest": {
+            "sandbox": {
+              "something": "application",
+            },
+          },
+        },
         "/test/lib/sub-plugin1": {
           "name": "sub-plugin1",
           "type": "plugin",
@@ -395,9 +412,28 @@ describe('tdd:devebot:core:config-loader', function() {
           "manifest": {
             "something": "sub-plugin2"
           },
+        },
+        "/": {
+          "name": "devebot",
+          "type": "framework",
+          "path": "/",
+          "version": "0.2.9",
+          "manifest": {
+            "profile": {
+              "something": "devebot"
+            },
+          },
         }
       }
       var expected = {
+        "application": {
+          "version": "0.1.0",
+          "manifest": {
+            "sandbox": {
+              "something": "application",
+            },
+          },
+        },
         "sub-plugin1": {
           "version": "0.1.1",
           "manifest": {
@@ -408,6 +444,14 @@ describe('tdd:devebot:core:config-loader', function() {
           "version": "0.1.2",
           "manifest": {
             "something": "sub-plugin2"
+          },
+        },
+        "devebot": {
+          "version": "0.2.9",
+          "manifest": {
+            "profile": {
+              "something": "devebot"
+            },
           },
         },
       }
@@ -432,14 +476,14 @@ describe('tdd:devebot:core:config-loader', function() {
 
     it('do nothing if manifests is empty or not found', function() {
       var configType = 'sandbox';
-      var configData = {};
-      var result = modernizeConfig(CTX, configType, configData, moduleInfo);
-      assert.deepEqual(result, configData);
+      var configStore = {};
+      var result = modernizeConfig(CTX, configType, configStore, moduleInfo);
+      assert.deepEqual(result, configStore);
     });
 
-    it('keep configData unchange if __metadata__ not found', function() {
+    it('keep configStore unchange if __metadata__ not found', function() {
       var configType = 'sandbox';
-      var configData = {
+      var configStore = {
         plugins: {
           "subPlugin1": {
             host: "localhost",
@@ -498,7 +542,7 @@ describe('tdd:devebot:core:config-loader', function() {
         },
       }
 
-      var result = modernizeConfig(CTX, configType, configData, moduleInfo, bridgeManifests, pluginManifests);
+      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
       false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 
@@ -527,9 +571,9 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.isFalse(bridgeTransform.called);
     });
 
-    it('upgrade the configuration based on manifests', function() {
+    it('upgrade the configuration corresponding to manifests', function() {
       var configType = 'sandbox';
-      var configData = {
+      var configStore = {
         plugins: {
           "subPlugin1": {
             host: "localhost",
@@ -666,7 +710,7 @@ describe('tdd:devebot:core:config-loader', function() {
         },
       }
 
-      var result = modernizeConfig(CTX, configType, configData, moduleInfo, bridgeManifests, pluginManifests);
+      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
       false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 

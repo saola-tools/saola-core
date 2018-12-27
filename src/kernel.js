@@ -16,10 +16,10 @@ chores.loadServiceByNames(CONSTRUCTORS, path.join(__dirname, 'backbone'), [
   'object-decorator', 'logging-factory', 'process-manager',
 ]);
 
-function Kernel(params={}) {
-  let loggingWrapper = new LoggingWrapper(blockRef);
-  let L = loggingWrapper.getLogger();
-  let T = loggingWrapper.getTracer();
+function Kernel(params = {}) {
+  const loggingWrapper = new LoggingWrapper(blockRef);
+  const L = loggingWrapper.getLogger();
+  const T = loggingWrapper.getTracer();
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
@@ -27,7 +27,7 @@ function Kernel(params={}) {
   }));
 
   // init the default parameters
-  let { configObject, contextManager, issueInspector, stateInspector, nameResolver } = params || {};
+  let { configObject, contextManager, issueInspector, stateInspector, nameResolver } = params;
 
   // create injektor instance
   let injektor = new Injektor(chores.injektorOptions);

@@ -4,6 +4,7 @@ const lodash = require('lodash');
 const LoggingWrapper = require('./logging-wrapper');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
+const nodash = require('../utils/nodash');
 const blockRef = chores.getBlockRef(__filename);
 
 function NameResolver(params={}) {
