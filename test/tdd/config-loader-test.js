@@ -72,7 +72,7 @@ describe('tdd:devebot:core:config-loader', function() {
       if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) this.skip();
 
       var originalCfg = {
-        bridges: {
+        "bridges": {
           "bridgeKebabCase1": {
             "wrapper1": {
               "pointer": {
@@ -105,7 +105,7 @@ describe('tdd:devebot:core:config-loader', function() {
       };
 
       var expectedCfg = {
-        bridges: {
+        "bridges": {
           "bridge-kebab-case1": {
             "devebot-dp-wrapper1": {
               "pointer": {
@@ -180,7 +180,7 @@ describe('tdd:devebot:core:config-loader', function() {
       if (!chores.isUpgradeSupported(['bridge-full-ref', 'standardizing-config'])) this.skip();
 
       var originalCfg = {
-        bridges: {
+        "bridges": {
           "bridgeKebabCase1": {
             "wrapper1": {
               "pointer": {
@@ -213,7 +213,7 @@ describe('tdd:devebot:core:config-loader', function() {
       };
 
       var expectedCfg = {
-        bridges: {
+        "bridges": {
           "bridgeKebabCase1": {
             "wrapper1": {
               "pointer": {
@@ -491,7 +491,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('keep configure unchange if manifests are disabled or not found', function() {
       var configType = 'sandbox';
       var configStore = {
-        plugins: {
+        "plugins": {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
@@ -509,7 +509,7 @@ describe('tdd:devebot:core:config-loader', function() {
             },
           },
         },
-        bridges: {
+        "bridges": {
           "bridge1": {
             "subPlugin1": {
               "connector": {
@@ -590,7 +590,7 @@ describe('tdd:devebot:core:config-loader', function() {
       false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 
       var expected = {
-        plugins: {
+        "plugins": {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
@@ -608,7 +608,7 @@ describe('tdd:devebot:core:config-loader', function() {
             },
           },
         },
-        bridges: {
+        "bridges": {
           "bridge1": {
             "subPlugin1": {
               "connector": {
@@ -646,7 +646,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('keep configure unchange if __metadata__ not found', function() {
       var configType = 'sandbox';
       var configStore = {
-        plugins: {
+        "plugins": {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
@@ -660,7 +660,7 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           },
         },
-        bridges: {
+        "bridges": {
           "bridge1": {
             "subPlugin1": {
               "connector": {
@@ -761,7 +761,7 @@ describe('tdd:devebot:core:config-loader', function() {
       false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 
       var expected = {
-        plugins: {
+        "plugins": {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
@@ -777,7 +777,7 @@ describe('tdd:devebot:core:config-loader', function() {
             },
           },
         },
-        bridges: {
+        "bridges": {
           "bridge1": {
             "subPlugin1": {
               "connector": {
@@ -812,7 +812,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('keep configure unchange if configVersion is not less than moduleVersion', function() {
       var configType = 'sandbox';
       var configStore = {
-        plugins: {
+        "plugins": {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
@@ -830,7 +830,7 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           },
         },
-        bridges: {
+        "bridges": {
           "bridge1": {
             "subPlugin1": {
               "connector": {
@@ -935,7 +935,7 @@ describe('tdd:devebot:core:config-loader', function() {
       false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 
       var expected = {
-        plugins: {
+        "plugins": {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
@@ -953,7 +953,7 @@ describe('tdd:devebot:core:config-loader', function() {
             },
           },
         },
-        bridges: {
+        "bridges": {
           "bridge1": {
             "subPlugin1": {
               "connector": {
@@ -993,7 +993,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('upgrade the configuration corresponding to manifests', function() {
       var configType = 'sandbox';
       var configStore = {
-        plugins: {
+        "plugins": {
           "subPlugin1": {
             host: "localhost",
             port: 17721,
@@ -1009,7 +1009,7 @@ describe('tdd:devebot:core:config-loader', function() {
             },
           },
         },
-        bridges: {
+        "bridges": {
           "bridge1": {
             "subPlugin1": {
               "connector": {
@@ -1134,7 +1134,7 @@ describe('tdd:devebot:core:config-loader', function() {
       false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
 
       var expected = {
-        plugins: {
+        "plugins": {
           "subPlugin1": {
             "httpserver": {
               host: "localhost",
@@ -1154,7 +1154,7 @@ describe('tdd:devebot:core:config-loader', function() {
             },
           },
         },
-        bridges: {
+        "bridges": {
           "bridge1": {
             "subPlugin1": {
               "connector": {
