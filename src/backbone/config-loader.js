@@ -360,7 +360,7 @@ function modernizeConfig(ctx, configType, configStore, crateInfo, bridgeManifest
   if (configType !== CONFIG_SANDBOX_NAME) return configStore;
   const { issueInspector } = ctx;
   const collector = new ModernizingResultCollector();
-  if (bridgeManifests) {
+  if (!lodash.isEmpty(bridgeManifests)) {
     for(let bridgeName in configStore.bridges) {
       const bridgePath = ["bridges"].concat(bridgeName);
       const bridgeNode = configStore.bridges[bridgeName] || {};
@@ -375,7 +375,7 @@ function modernizeConfig(ctx, configType, configStore, crateInfo, bridgeManifest
       }
     }
   }
-  if (pluginManifests) {
+  if (!lodash.isEmpty(pluginManifests)) {
     if (crateInfo.type === "application" && configStore["application"] && pluginManifests["application"]) {
       const r = modernizeConfigBlock(ctx, configStore, ["application"], pluginManifests["application"], "application");
       collector.push(r, crateInfo, "application");
@@ -407,7 +407,7 @@ function modernizeConfigBlock(ctx, configStore, configPath, manifestBlock, modul
 
 function applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifest) {
   let result = null;
-  if (manifest && manifest.migration) {
+  if (manifest && manifest.migration && manifest.enabled !== false) {
     let configNode = lodash.get(configStore, configPath);
     if (lodash.isObject(configNode)) {
       const configVersion = lodash.get(configNode, [CONFIG_METADATA_BLOCK, 'version']);

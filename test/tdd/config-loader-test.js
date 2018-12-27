@@ -474,11 +474,173 @@ describe('tdd:devebot:core:config-loader', function() {
       loggingFactory.resetHistory();
     })
 
-    it('do nothing if manifests is empty or not found', function() {
+    it('do nothing if manifests are omitted', function() {
       var configType = 'sandbox';
       var configStore = {};
       var result = modernizeConfig(CTX, configType, configStore, moduleInfo);
       assert.deepEqual(result, configStore);
+    });
+
+    it('do nothing if manifests are empty', function() {
+      var configType = 'sandbox';
+      var configStore = {};
+      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, {}, {});
+      assert.deepEqual(result, configStore);
+    });
+
+    it('keep configure unchange if manifests are disabled or not found', function() {
+      var configType = 'sandbox';
+      var configStore = {
+        plugins: {
+          "subPlugin1": {
+            "host": "localhost",
+            "port": 17721,
+            "__metadata__": {
+              "version": "0.1.0",
+              "note": "extended fields are reserved",
+            },
+          },
+          "subPlugin2": {
+            "host": "localhost",
+            "port": 17722,
+            "__metadata__": {
+              "version": "0.1.1",
+              "note": "extended fields are reserved",
+            },
+          },
+        },
+        bridges: {
+          "bridge1": {
+            "subPlugin1": {
+              "connector": {
+                "refName": "subPlugin1/bridge1#connector",
+                "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.0",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
+          "bridge2": {
+            "subPlugin2": {
+              "connector": {
+                "refName": "subPlugin2/bridge2#connector",
+                "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.1",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
+        }
+      };
+      var pluginTransform1 = sinon.stub().callsFake(function(source) {
+        return { "httpserver": source }
+      });
+      var pluginManifests = {
+        "subPlugin1": {
+          "version": "0.1.1",
+          "manifest": {
+            "sandbox": {
+              "enabled": false,
+              "migration": {
+                "0.1.0_0.1.1": {
+                  "from": "0.1.0",
+                  "transform": pluginTransform1
+                }
+              }
+            }
+          }
+        },
+        "subPlugin2": {
+          "version": "0.1.2",
+        },
+      }
+      var bridgeTransform1 = sinon.stub().callsFake(function(source) {
+        return {
+          name: source.refName,
+          path: source.refPath
+        }
+      });
+      var bridgeManifests = {
+        "bridge1": {
+          "version": "0.1.1",
+          "manifest": {
+            "enabled": false,
+            "migration": {
+              "latest": {
+                "from": "0.1.0",
+                "transform": bridgeTransform1
+              }
+            }
+          }
+        },
+        "bridge2": {
+          "version": "0.1.2",
+          "manifest": {}
+        },
+      }
+
+      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
+
+      false && console.log('modernizeConfig(): %s', JSON.stringify(result, null, 2));
+
+      var expected = {
+        plugins: {
+          "subPlugin1": {
+            "host": "localhost",
+            "port": 17721,
+            "__metadata__": {
+              "version": "0.1.0",
+              "note": "extended fields are reserved",
+            },
+          },
+          "subPlugin2": {
+            "host": "localhost",
+            "port": 17722,
+            "__metadata__": {
+              "version": "0.1.1",
+              "note": "extended fields are reserved",
+            },
+          },
+        },
+        bridges: {
+          "bridge1": {
+            "subPlugin1": {
+              "connector": {
+                "refName": "subPlugin1/bridge1#connector",
+                "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.0",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
+          "bridge2": {
+            "subPlugin2": {
+              "connector": {
+                "refName": "subPlugin2/bridge2#connector",
+                "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
+                "refType": "dialect",
+                "__metadata__": {
+                  "version": "0.1.1",
+                  "note": "extended fields are reserved",
+                },
+              }
+            }
+          },
+        }
+      }
+
+      assert.deepEqual(result, expected);
+      assert.isFalse(pluginTransform1.called);
+      assert.isFalse(bridgeTransform1.called);
     });
 
     it('keep configure unchange if __metadata__ not found', function() {
