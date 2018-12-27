@@ -12,7 +12,7 @@ function ErrorCollection() {
   }
 
   this.createConstructor = function(errorName) {
-    let ErrorConstructor = function() {
+    function ErrorConstructor() {
       let message = undefined, code = undefined, payload = undefined;
       Array.prototype.forEach.call(arguments, function(arg) {
         if (arg) {

@@ -9,7 +9,7 @@ const constx = require('./utils/constx');
 const LoggingWrapper = require('./backbone/logging-wrapper');
 const blockRef = chores.getBlockRef(__filename);
 
-let CONSTRUCTORS = {};
+const CONSTRUCTORS = {};
 chores.loadServiceByNames(CONSTRUCTORS, path.join(__dirname, 'backbone'), [
   'sandbox-manager', 'schema-validator', 'script-executor', 'script-renderer',
   'security-manager', 'bridge-loader', 'plugin-loader',
@@ -138,7 +138,7 @@ module.exports = Kernel;
 
 //-----------------------------------------------------------------------------
 
-let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
+function extractBridgeSchema(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
   const { nameResolver } = ref;
   bridgeSchema = bridgeSchema || {};
   if (!chores.isUpgradeSupported('manifest-refiner')) {
@@ -166,8 +166,8 @@ let extractBridgeSchema = function(ref, bridgeRefs, bridgeMetadata, bridgeSchema
   return bridgeSchema;
 }
 
-let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
-  let { L, T, schemaValidator } = ref;
+function validateBridgeConfig(ref, bridgeConfig, bridgeSchema, result) {
+  const { L, T, schemaValidator } = ref;
   result = result || [];
 
   bridgeConfig = bridgeConfig || {};
@@ -177,18 +177,6 @@ let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
     tags: [ blockRef, 'validate-bridge-config-by-schema' ],
     text: ' - bridge config/schema:\n${bridgeSchema}\n${bridgeConfig}'
   }));
-
-  let customizeBridgeResult = function(result, bridgeCode, pluginName, dialectName) {
-    let output = {};
-    output.stage = 'config/schema';
-    output.name = [pluginName, chores.getSeparator(), bridgeCode, '#', dialectName].join('');
-    output.type = 'bridge';
-    output.hasError = result.ok !== true;
-    if (!result.ok && result.errors) {
-      output.stack = JSON.stringify(result.errors, null, 2);
-    }
-    return output;
-  }
 
   if (!chores.isUpgradeSupported('bridge-full-ref')) {
     for(let dialectName in bridgeConfig) {
@@ -221,11 +209,23 @@ let validateBridgeConfig = function(ref, bridgeConfig, bridgeSchema, result) {
   return result;
 }
 
+function customizeBridgeResult(result, bridgeCode, pluginName, dialectName) {
+  const output = {};
+  output.stage = 'config/schema';
+  output.name = [pluginName, chores.getSeparator(), bridgeCode, '#', dialectName].join('');
+  output.type = 'bridge';
+  output.hasError = result.ok !== true;
+  if (!result.ok && result.errors) {
+    output.stack = JSON.stringify(result.errors, null, 2);
+  }
+  return output;
+}
+
 //-----------------------------------------------------------------------------
 
 const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
-let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema) {
+function extractPluginSchema(ref, pluginRefs, pluginMetadata, pluginSchema) {
   let { L, T, nameResolver } = ref;
   pluginSchema = pluginSchema || {};
   pluginSchema.profile = pluginSchema.profile || {};
@@ -280,7 +280,7 @@ let extractPluginSchema = function(ref, pluginRefs, pluginMetadata, pluginSchema
   return pluginSchema;
 }
 
-let validatePluginConfig = function(ref, pluginConfig, pluginSchema, result) {
+function validatePluginConfig(ref, pluginConfig, pluginSchema, result) {
   const { L, T } = ref;
   L.has('silly') && L.log('silly', T.add({ pluginConfig, pluginSchema }).toMessage({
     tags: [ blockRef, 'validate-plugin-config-by-schema' ],
@@ -291,7 +291,7 @@ let validatePluginConfig = function(ref, pluginConfig, pluginSchema, result) {
   checkSandboxConstraintsOfCrates(ref, result, pluginConfig.sandbox, pluginSchema.sandbox);
 }
 
-let validateSandboxSchemaOfCrates = function(ref, result, config, schema) {
+function validateSandboxSchemaOfCrates(ref, result, config, schema) {
   const { L, T } = ref;
   config = config || {};
   schema = schema || {};
@@ -307,10 +307,10 @@ let validateSandboxSchemaOfCrates = function(ref, result, config, schema) {
   }
 }
 
-let validateSandboxSchemaOfCrate = function(ref, result, crateConfig, crateSchema, crateName) {
+function validateSandboxSchemaOfCrate(ref, result, crateConfig, crateSchema, crateName) {
   const { L, T, schemaValidator } = ref;
   if (crateSchema && crateSchema.enabled !== false && lodash.isObject(crateSchema.schema)) {
-    let r = schemaValidator.validate(crateConfig, crateSchema.schema);
+    const r = schemaValidator.validate(crateConfig, crateSchema.schema);
     result.push(customizeSandboxResult(r, crateSchema.crateScope, 'schema'));
   } else {
     L.has('silly') && L.log('silly', T.add({ crateName, crateConfig, crateSchema }).toMessage({
@@ -320,7 +320,7 @@ let validateSandboxSchemaOfCrate = function(ref, result, crateConfig, crateSchem
   }
 }
 
-let checkSandboxConstraintsOfCrates = function(ref, result, config, schema) {
+function checkSandboxConstraintsOfCrates(ref, result, config, schema) {
   const { L, T } = ref;
   config = config || {};
   schema = schema || {};
@@ -334,8 +334,8 @@ let checkSandboxConstraintsOfCrates = function(ref, result, config, schema) {
   }
 }
 
-let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
-  let { L, T } = ref;
+function checkSandboxConstraintsOfAppbox(ref, result, config, schema) {
+  const { L, T } = ref;
   let crateName = 'application';
   let crateConfig = config.application;
   let crateSchema = schema.application;
@@ -361,8 +361,8 @@ let checkSandboxConstraintsOfAppbox = function(ref, result, config, schema) {
   }
 }
 
-let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crateName) {
-  let { L, T } = ref;
+function checkSandboxConstraintsOfPlugin(ref, result, config, schema, crateName) {
+  const { L, T } = ref;
   let crateConfig = config.plugins[crateName];
   let crateSchema = schema && schema.plugins && schema.plugins[crateName];
   let checkConstraints = crateSchema && crateSchema.checkConstraints;
@@ -397,10 +397,10 @@ let checkSandboxConstraintsOfPlugin = function(ref, result, config, schema, crat
   }
 }
 
-let customizeSandboxResult = function(result, crateScope, validationType) {
+function customizeSandboxResult(result, crateScope, validationType) {
   result = (result == undefined || result == null) ? false : result;
   result = (typeof result === 'boolean') ? { ok: result } : result;
-  let output = {};
+  const output = {};
   output.stage = 'config/' + validationType;
   output.name = crateScope;
   output.type = chores.isSpecialPlugin(crateScope) ? crateScope : 'plugin';

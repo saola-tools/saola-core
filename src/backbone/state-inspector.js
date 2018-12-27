@@ -11,9 +11,9 @@ const LoggingWrapper = require('./logging-wrapper');
 const blockRef = chores.getBlockRef(__filename);
 
 function StateInspector(params={}) {
-  let loggingWrapper = new LoggingWrapper(blockRef);
-  let L = loggingWrapper.getLogger();
-  let T = loggingWrapper.getTracer();
+  const loggingWrapper = new LoggingWrapper(blockRef);
+  const L = loggingWrapper.getLogger();
+  const T = loggingWrapper.getTracer();
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
@@ -197,7 +197,7 @@ module.exports = StateInspector;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ color chalks
 
-let chalk = new Chalk({
+const chalk = new Chalk({
   themes: {
     heading1: ['cyan', 'bold'],
     heading2: 'cyan',

@@ -7,10 +7,10 @@ const chores = require('../utils/chores');
 const blockRef = chores.getBlockRef(__filename);
 
 function BridgeLoader(params={}) {
-  let loggingFactory = params.loggingFactory.branch(blockRef);
-  let L = loggingFactory.getLogger();
-  let T = loggingFactory.getTracer();
-  let CTX = lodash.assign({L, T}, lodash.pick(params, [
+  const loggingFactory = params.loggingFactory.branch(blockRef);
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
+  const CTX = lodash.assign({L, T}, lodash.pick(params, [
     'issueInspector', 'nameResolver', 'objectDecorator'
   ]));
 
@@ -85,8 +85,8 @@ module.exports = BridgeLoader;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
 
-let loadBridgeContructor = function(ctx, bridgeRef) {
-  let {L, T, issueInspector, nameResolver} = ctx;
+function loadBridgeContructor(ctx, bridgeRef) {
+  const {L, T, issueInspector, nameResolver} = ctx;
 
   bridgeRef = bridgeRef || {};
 
@@ -138,8 +138,8 @@ let loadBridgeContructor = function(ctx, bridgeRef) {
   return result;
 };
 
-let loadBridgeConstructors = function(ctx, bridgeRefs) {
-  let {L, T} = ctx;
+function loadBridgeConstructors(ctx, bridgeRefs) {
+  const {L, T} = ctx;
 
   bridgeRefs = lodash.isArray(bridgeRefs) ? bridgeRefs : [];
 
@@ -151,7 +151,7 @@ let loadBridgeConstructors = function(ctx, bridgeRefs) {
     text: ' - load a list of bridge constructors: ${bridgeRefs}'
   }));
 
-  let bridgeConstructors = {};
+  const bridgeConstructors = {};
   bridgeRefs.forEach(function(bridgeRef) {
     lodash.assign(bridgeConstructors, loadBridgeContructor(ctx, bridgeRef));
   });
@@ -165,8 +165,8 @@ let loadBridgeConstructors = function(ctx, bridgeRefs) {
   return bridgeConstructors;
 };
 
-let buildBridgeDialect = function(ctx, dialectOpts) {
-  let {L, T, issueInspector, nameResolver, objectDecorator} = ctx;
+function buildBridgeDialect(ctx, dialectOpts) {
+  const {L, T, issueInspector, nameResolver, objectDecorator} = ctx;
   let {pluginName, bridgeCode, bridgeRecord, dialectName, optType} = dialectOpts;
   let result = {};
 
@@ -327,8 +327,8 @@ let buildBridgeDialect = function(ctx, dialectOpts) {
   return result;
 };
 
-let buildBridgeDialects = function(ctx, bridgeRefs, dialectOptions, optType) {
-  let {L, T, nameResolver} = ctx;
+function buildBridgeDialects(ctx, bridgeRefs, dialectOptions, optType) {
+  const {L, T, nameResolver} = ctx;
 
   optType = (lodash.isNumber(optType)) ? optType : 0;
 
@@ -336,7 +336,7 @@ let buildBridgeDialects = function(ctx, bridgeRefs, dialectOptions, optType) {
     text: ' - bridgeDialects will be built: ${bridgeRefs}'
   }));
 
-  let bridgeConstructors = loadBridgeConstructors(ctx, bridgeRefs);
+  const bridgeConstructors = loadBridgeConstructors(ctx, bridgeRefs);
 
   if (lodash.isEmpty(dialectOptions)) {
     L.has('silly') && L.log('silly', T.toMessage({
@@ -348,7 +348,7 @@ let buildBridgeDialects = function(ctx, bridgeRefs, dialectOptions, optType) {
     }));
   }
 
-  let bridgeDialects = {};
+  const bridgeDialects = {};
   if (!chores.isUpgradeSupported('bridge-full-ref')) {
     switch(optType) {
       case 0:

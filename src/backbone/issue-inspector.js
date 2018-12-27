@@ -8,16 +8,16 @@ const LoggingWrapper = require('./logging-wrapper');
 const blockRef = chores.getBlockRef(__filename);
 
 function IssueInspector(params={}) {
-  let loggingWrapper = new LoggingWrapper(blockRef);
-  let L = loggingWrapper.getLogger();
-  let T = loggingWrapper.getTracer();
+  const loggingWrapper = new LoggingWrapper(blockRef);
+  const L = loggingWrapper.getLogger();
+  const T = loggingWrapper.getTracer();
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
 
-  let opStates = [];
+  const opStates = [];
 
   this.init = function() {
     return this.reset();
@@ -36,7 +36,7 @@ function IssueInspector(params={}) {
 
   this.examine = function(options) {
     options = options || {};
-    let summary = lodash.reduce(opStates, function(store, item) {
+    const summary = lodash.reduce(opStates, function(store, item) {
       if (item.hasError) {
         store.numberOfErrors += 1;
         store.failedServices.push(item);

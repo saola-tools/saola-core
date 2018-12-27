@@ -158,12 +158,12 @@ const LIB_NAME_PATTERNS = {
   ]
 }
 
-let hasSupportFields = function (moduleRef) {
+function hasSupportFields(moduleRef) {
   return nodash.isString(moduleRef.code) && nodash.isString(moduleRef.codeInCamel) &&
       nodash.isString(moduleRef.name) && nodash.isString(moduleRef.nameInCamel);
 }
 
-let extractAliasNames = function (ctx, type, moduleRefs) {
+function extractAliasNames(ctx, type, moduleRefs) {
   const {issueInspector} = ctx;
   function buildSupportFields(moduleRef) {
     let info = chores.extractCodeByPattern(ctx, LIB_NAME_PATTERNS[type], moduleRef.name);
@@ -192,7 +192,7 @@ let extractAliasNames = function (ctx, type, moduleRefs) {
   return moduleRefs;
 }
 
-let buildAbsoluteAliasMap = function(moduleRefs, aliasMap) {
+function buildAbsoluteAliasMap(moduleRefs, aliasMap) {
   aliasMap = aliasMap || {};
   lodash.forEach(moduleRefs, function(moduleRef) {
     aliasMap[moduleRef.name] = moduleRef.name;
@@ -203,7 +203,7 @@ let buildAbsoluteAliasMap = function(moduleRefs, aliasMap) {
   return aliasMap;
 }
 
-let buildRelativeAliasMap = function(moduleRefs, aliasMap) {
+function buildRelativeAliasMap(moduleRefs, aliasMap) {
   aliasMap = aliasMap || {};
   lodash.forEach(moduleRefs, function(moduleRef) {
     aliasMap[moduleRef.name] = moduleRef.codeInCamel;

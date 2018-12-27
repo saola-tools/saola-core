@@ -117,7 +117,7 @@ function LoggingFactory(args={}) {
   this.getTracer();
 };
 
-let transformLoggingConfig = function(profileConfig, derivative) {
+function transformLoggingConfig(profileConfig, derivative) {
   profileConfig = profileConfig || {};
   let loggingConfig = profileConfig.logger;
 
@@ -150,7 +150,7 @@ let transformLoggingConfig = function(profileConfig, derivative) {
   return profileConfig;
 };
 
-let transformLoggingLabels = function(loglabelConfig, loglabelMappings) {
+function transformLoggingLabels(loglabelConfig, loglabelMappings) {
   let result = {};
   if (!lodash.isEmpty(loglabelConfig)) {
     result.levels = {};

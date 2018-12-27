@@ -9,10 +9,10 @@ const loader = require('../utils/loader');
 const blockRef = chores.getBlockRef(__filename);
 
 function PluginLoader(params={}) {
-  let loggingFactory = params.loggingFactory.branch(blockRef);
-  let L = loggingFactory.getLogger();
-  let T = loggingFactory.getTracer();
-  let CTX = lodash.assign({L, T}, lodash.pick(params, [
+  const loggingFactory = params.loggingFactory.branch(blockRef);
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
+  const CTX = lodash.assign({L, T}, lodash.pick(params, [
     'issueInspector','nameResolver', 'schemaValidator', 'objectDecorator'
   ]));
 
@@ -93,7 +93,7 @@ module.exports = PluginLoader;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
 
-let hasSeparatedDir = function(scriptType) {
+function hasSeparatedDir(scriptType) {
   return lodash.filter(constx, function(obj, key) {
     // return ['METAINF', 'ROUTINE', 'SERVICE', 'TRIGGER'].indexOf(key) >= 0;
     return obj.ROOT_KEY && obj.SCRIPT_DIR;
@@ -103,11 +103,11 @@ let hasSeparatedDir = function(scriptType) {
   }).length === 0;
 }
 
-let getFilterPattern = function(scriptType) {
+function getFilterPattern(scriptType) {
   return hasSeparatedDir(scriptType) ? '.*\.js' : constx[scriptType].ROOT_KEY + '_.*\.js';
 }
 
-let loadAllScripts = function(CTX, scriptMap, scriptType, scriptContext, pluginRootDirs) {
+function loadAllScripts(CTX, scriptMap, scriptType, scriptContext, pluginRootDirs) {
   scriptMap = scriptMap || {};
 
   if (scriptType !== 'ROUTINE') return scriptMap;
@@ -119,9 +119,8 @@ let loadAllScripts = function(CTX, scriptMap, scriptType, scriptContext, pluginR
   return scriptMap;
 };
 
-let loadScriptEntries = function(CTX, scriptMap, scriptType, scriptContext, pluginRootDir) {
-  CTX = CTX || this;
-  let {L, T, schemaValidator} = CTX;
+function loadScriptEntries(CTX, scriptMap, scriptType, scriptContext, pluginRootDir) {
+  const {L, T, schemaValidator} = CTX || this;
 
   let scriptSubDir = chores.getComponentDir(pluginRootDir, scriptType);
   let scriptFolder = path.join(pluginRootDir.pathDir, scriptSubDir);
@@ -138,11 +137,10 @@ let loadScriptEntries = function(CTX, scriptMap, scriptType, scriptContext, plug
   });
 };
 
-let loadScriptEntry = function(CTX, scriptMap, scriptType, scriptSubDir, scriptFile, scriptContext, pluginRootDir) {
-  CTX = CTX || this;
-  let {L, T, issueInspector, nameResolver, schemaValidator} = CTX;
-  let opStatus = lodash.assign({ type: scriptType, file: scriptFile, subDir: scriptSubDir }, pluginRootDir);
-  let filepath = path.join(pluginRootDir.pathDir, scriptSubDir, scriptFile);
+function loadScriptEntry(CTX, scriptMap, scriptType, scriptSubDir, scriptFile, scriptContext, pluginRootDir) {
+  const {L, T, issueInspector, nameResolver, schemaValidator} = CTX || this;
+  const opStatus = lodash.assign({ type: scriptType, file: scriptFile, subDir: scriptSubDir }, pluginRootDir);
+  const filepath = path.join(pluginRootDir.pathDir, scriptSubDir, scriptFile);
   try {
     let scriptInit = loader(filepath, { stopWhenError: true });
     if (lodash.isFunction(scriptInit)) {
@@ -199,7 +197,7 @@ let loadScriptEntry = function(CTX, scriptMap, scriptType, scriptSubDir, scriptF
   issueInspector.collect(opStatus);
 };
 
-let parseScriptTree = function(scriptFile, scriptInstance, isHierarchical) {
+function parseScriptTree(scriptFile, scriptInstance, isHierarchical) {
   let entryPath = scriptFile.replace('.js', '').toLowerCase().split('_');
   if (entryPath.length > 0 && entryPath[0] !== constx[scriptType].ROOT_KEY) {
     entryPath.unshift(constx[scriptType].ROOT_KEY);
@@ -214,9 +212,8 @@ let parseScriptTree = function(scriptFile, scriptInstance, isHierarchical) {
   return entry;
 }
 
-let validateScript = function(CTX, scriptObject, scriptType) {
-  CTX = CTX || this;
-  let {L, T, schemaValidator} = CTX;
+function validateScript(CTX, scriptObject, scriptType) {
+  const {L, T, schemaValidator} = CTX || this;
   scriptObject = scriptObject || {};
   let results = [];
 
@@ -238,7 +235,7 @@ let validateScript = function(CTX, scriptObject, scriptType) {
   }, { valid: true, errors: [] });
 };
 
-let loadAllMetainfs = function(CTX, metainfMap, pluginRootDirs) {
+function loadAllMetainfs(CTX, metainfMap, pluginRootDirs) {
   CTX = CTX || this;
   metainfMap = metainfMap || {};
   pluginRootDirs.forEach(function(pluginRootDir) {
@@ -249,7 +246,7 @@ let loadAllMetainfs = function(CTX, metainfMap, pluginRootDirs) {
 
 let loadMetainfEntries = function(CTX, metainfMap, pluginRootDir) {
   CTX = CTX || this;
-  let {L, T, schemaValidator} = CTX;
+  const {L, T, schemaValidator} = CTX || this;
   let metainfType = 'METAINF';
   let metainfSubDir = chores.getComponentDir(pluginRootDir, metainfType);
   let metainfFolder = path.join(pluginRootDir.pathDir, metainfSubDir);
@@ -265,15 +262,14 @@ let loadMetainfEntries = function(CTX, metainfMap, pluginRootDir) {
   });
 }
 
-let loadMetainfEntry = function(CTX, metainfMap, metainfSubDir, schemaFile, pluginRootDir) {
-  CTX = CTX || this;
-  let {L, T, issueInspector, nameResolver, schemaValidator} = CTX;
-  let metainfType = 'METAINF';
-  let opStatus = lodash.assign({ type: 'METAINF', file: schemaFile, subDir: metainfSubDir }, pluginRootDir);
-  let filepath = path.join(pluginRootDir.pathDir, metainfSubDir, schemaFile);
+function loadMetainfEntry(CTX, metainfMap, metainfSubDir, schemaFile, pluginRootDir) {
+  const {L, T, issueInspector, nameResolver, schemaValidator} = CTX || this;
+  const metainfType = 'METAINF';
+  const opStatus = lodash.assign({ type: 'METAINF', file: schemaFile, subDir: metainfSubDir }, pluginRootDir);
+  const filepath = path.join(pluginRootDir.pathDir, metainfSubDir, schemaFile);
   try {
-    let metainfObject = loader(filepath, { stopWhenError: true });
-    let output = validateMetainf(CTX, metainfObject, metainfType);
+    const metainfObject = loader(filepath, { stopWhenError: true });
+    const output = validateMetainf(CTX, metainfObject, metainfType);
     if (!output.valid) {
       L.has('dunce') && L.log('dunce', T.add({
         validationResult: output
@@ -323,7 +319,7 @@ let loadMetainfEntry = function(CTX, metainfMap, metainfSubDir, schemaFile, plug
   issueInspector.collect(opStatus);
 }
 
-let validateMetainf = function(CTX, metainfObject) {
+function validateMetainf(CTX, metainfObject) {
   CTX = CTX || this;
   let {L, T, schemaValidator} = CTX;
   let metainfType = 'METAINF';

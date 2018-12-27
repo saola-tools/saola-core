@@ -16,7 +16,7 @@ const envbox = require('./envbox');
 const nodash = require('./nodash');
 const getenv = require('./getenv');
 
-let store = {
+const store = {
   defaultScope: getenv('DEVEBOT_DEFAULT_SCOPE', constx.FRAMEWORK.NAME),
   injektorOptions: {
     namePatternTemplate: '^[a-zA-Z]{1}[a-zA-Z0-9&#\\-_%s]*$',
@@ -25,7 +25,7 @@ let store = {
   injektorContext: { scope: constx.FRAMEWORK.NAME },
   validatorOptions: { schemaVersion: 4 }
 };
-let chores = {};
+const chores = {};
 
 // @Deprecated
 let CustomError = function(message, payload) {

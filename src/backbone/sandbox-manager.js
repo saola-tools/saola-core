@@ -13,10 +13,10 @@ const blockRef = chores.getBlockRef(__filename);
 const DEFAULT_SERVICES = [ 'jobqueue-binder' ];
 
 function SandboxManager(params={}) {
-  let issueInspector = params.issueInspector;
-  let loggingFactory = params.loggingFactory.branch(blockRef);
-  let L = loggingFactory.getLogger();
-  let T = loggingFactory.getTracer();
+  const issueInspector = params.issueInspector;
+  const loggingFactory = params.loggingFactory.branch(blockRef);
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
@@ -259,8 +259,8 @@ function SandboxManager(params={}) {
   };
 
   this.getServiceHelp = function() {
-    let self = this;
-    let blocks = [];
+    const self = this;
+    const blocks = [];
 
     blocks.push({
       type: 'record',
@@ -346,7 +346,7 @@ SandboxManager.argumentSchema = {
 
 module.exports = SandboxManager;
 
-let getComponentLabel = function(compName) {
+function getComponentLabel(compName) {
   return constx.FRAMEWORK.NAME + chores.getSeparator() + compName;
 }
 
@@ -367,16 +367,16 @@ let wrapScriptConstructor = function(ScriptConstructor, wrapperNames) {
   return wrapperConstructor;
 };
 
-let mergeSandboxServiceHelps = function(serviceNames, blocks) {
-  let self = this;
+function mergeSandboxServiceHelps(serviceNames, blocks) {
+  const self = this;
   serviceNames.forEach(function(serviceName) {
     pickSandboxServiceHelp.call(self, serviceName, blocks);
   });
 };
 
-let pickSandboxServiceHelp = function(serviceName, blocks) {
-  let self = this;
-  let serviceObject = self.getSandboxService(serviceName);
+function pickSandboxServiceHelp(serviceName, blocks) {
+  const self = this;
+  const serviceObject = self.getSandboxService(serviceName);
   if (lodash.isObject(serviceObject) && lodash.isFunction(serviceObject.getServiceHelp)) {
     let serviceHelp = serviceObject.getServiceHelp();
     if (lodash.isObject(serviceHelp) && !lodash.isArray(serviceHelp)) {
@@ -393,9 +393,8 @@ let pickSandboxServiceHelp = function(serviceName, blocks) {
   }
 };
 
-function SandboxRegistry(params) {
-  params = params || {};
-  let {injektor, isExcluded, excludedServices} = params;
+function SandboxRegistry(params = {}) {
+  const {injektor, isExcluded, excludedServices} = params;
   this.defineService = function(name, construktor, context) {
     context = context || {};
     let info = injektor.parseName(name, context);

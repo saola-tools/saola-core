@@ -6,9 +6,9 @@ const constx = require('../utils/constx');
 const blockRef = chores.getBlockRef(__filename);
 
 function JobqueueBinder(params={}) {
-  let loggingFactory = params.loggingFactory.branch(blockRef);
-  let L = loggingFactory.getLogger();
-  let T = loggingFactory.getTracer();
+  const loggingFactory = params.loggingFactory.branch(blockRef);
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
   let sandboxName = params.sandboxName;
 
   L.has('silly') && L.log('silly', T.add({ sandboxName }).toMessage({

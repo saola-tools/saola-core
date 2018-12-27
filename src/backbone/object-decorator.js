@@ -411,7 +411,7 @@ function LoggingInterceptor(params={}) {
     }
   }
   const CALLED_EVENTS = ['Request', 'Success', 'Failure'];
-  let logOnEvent = lodash.mapValues(lodash.keyBy(CALLED_EVENTS), function(value) {
+  const logOnEvent = lodash.mapValues(lodash.keyBy(CALLED_EVENTS), function(value) {
     return createListener(texture, value);
   });
 
