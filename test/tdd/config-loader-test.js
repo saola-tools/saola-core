@@ -22,9 +22,7 @@ describe('tdd:devebot:core:config-loader', function() {
   var CTX = {
     L: loggingFactory.getLogger(),
     T: loggingFactory.getTracer(),
-    issueInspector,
-    CONFIG_PROFILE_NAME: 'profile',
-    CONFIG_SANDBOX_NAME: 'sandbox'
+    issueInspector: issueInspector,
   };
 
   var appRef = {
@@ -456,6 +454,128 @@ describe('tdd:devebot:core:config-loader', function() {
         },
       }
       assert.deepEqual(extractConfigManifest(ctx, pluginRefs), expected);
+    });
+  });
+
+  describe('applyManifestMigration()', function() {
+    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var applyManifestMigration = ConfigLoader.__get__('applyManifestMigration');
+    var nameResolver = lab.getNameResolver(['sub-plugin1', 'sub-plugin2', 'sub-plugin3'], []);
+    var loggingFactory = lab.createLoggingFactoryMock();
+    var L = loggingFactory.getLogger();
+    var T = loggingFactory.getTracer();
+    var ctx = { L, T, nameResolver }
+
+    beforeEach(function() {
+      loggingFactory.resetHistory();
+    })
+
+    it('at most only one migration rule will be applied', function() {
+      const configStore = {
+        "plugins": {
+          "subPlugin1": {
+            "host": "localhost",
+            "port": 17721,
+            "__metadata__": {
+              "version": "1.2.9",
+              "note": "extended fields are reserved",
+            },
+          },
+          "subPlugin2": {
+            "host": "localhost",
+            "port": 17722,
+            "__metadata__": {
+              "version": "1.3.1",
+              "note": "extended fields are reserved",
+            },
+          },
+          "subPlugin3": {
+            "host": "localhost",
+            "port": 17723,
+            "__metadata__": {
+              "version": "1.4.5",
+              "note": "extended fields are reserved",
+            },
+          },
+        },
+      };
+      const moduleVersion = "1.7.0";
+      const transform = new Array(4);
+      transform[0] = sinon.stub();
+      transform[1] = sinon.stub().callsFake(function(cfg) { return { "matched1": cfg } });
+      transform[2] = sinon.stub().callsFake(function(cfg) { return { "matched2": cfg } });
+      transform[3] = sinon.stub().callsFake(function(cfg) { return { "matched3": cfg } });
+      const manifest = {
+        "migration": {
+          "head": {
+            "from": "1.0.0",
+            "transform": transform[0]
+          },
+          "matched1": {
+            "from": "~1.2.3",
+            "transform": transform[1]
+          },
+          "matched2": {
+            "from": "1.3.x",
+            "transform": transform[2]
+          },
+          "matched3": {
+            "from": "^1.2.3",
+            "transform": transform[3]
+          },
+          "tail": {
+            "from": "1.6.0",
+            "transform": transform[0]
+          },
+        }
+      }
+
+      const result = lodash.map(lodash.range(1,4), function(i) {
+        const configPath = ["plugins", "subPlugin" + i];
+        return applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifest);
+      });
+
+      false && console.log(JSON.stringify(result, null, 2));
+      assert.deepEqual(result, [
+        {
+          "migrated": true,
+          "configVersion": "1.2.9",
+          "moduleVersion": "1.7.0",
+          "steps": {
+            "head": "unmatched",
+            "matched1": "ok"
+          },
+          "ruleName": "matched1"
+        },
+        {
+          "migrated": true,
+          "configVersion": "1.3.1",
+          "moduleVersion": "1.7.0",
+          "steps": {
+            "head": "unmatched",
+            "matched1": "unmatched",
+            "matched2": "ok"
+          },
+          "ruleName": "matched2"
+        },
+        {
+          "migrated": true,
+          "configVersion": "1.4.5",
+          "moduleVersion": "1.7.0",
+          "steps": {
+            "head": "unmatched",
+            "matched1": "unmatched",
+            "matched2": "unmatched",
+            "matched3": "ok"
+          },
+          "ruleName": "matched3"
+        }
+      ]);
+
+      assert.isFalse(transform[0].called);
+      assert.isTrue(transform[1].calledOnce);
+      assert.isTrue(transform[2].calledOnce);
+      assert.isTrue(transform[3].calledOnce);
     });
   });
 
