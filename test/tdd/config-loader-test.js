@@ -319,7 +319,9 @@ describe('tdd:devebot:core:config-loader', function() {
           "path": "/test/lib/sub-bridge1",
           "version": "0.1.1",
           "manifest": {
-            "something": "sub-bridge1"
+            "config": {
+              "something": "sub-bridge1"
+            }
           },
         },
         "/test/lib/sub-bridge2": {
@@ -328,7 +330,9 @@ describe('tdd:devebot:core:config-loader', function() {
           "path": "/test/lib/sub-bridge2",
           "version": "0.1.2",
           "manifest": {
-            "something": "sub-bridge2"
+            "config": {
+              "something": "sub-bridge2"
+            }
           },
         },
         "/test/lib/devebot-co-vps": {
@@ -337,7 +341,9 @@ describe('tdd:devebot:core:config-loader', function() {
           "path": "/test/lib/devebot-co-vps",
           "version": "0.1.3",
           "manifest": {
-            "something": "devebot-co-vps"
+            "config": {
+              "something": "devebot-co-vps"
+            }
           },
         }
       }
@@ -345,19 +351,25 @@ describe('tdd:devebot:core:config-loader', function() {
         "sub-bridge1": {
           "version": "0.1.1",
           "manifest": {
-            "something": "sub-bridge1"
+            "config": {
+              "something": "sub-bridge1"
+            }
           },
         },
         "sub-bridge2": {
           "version": "0.1.2",
           "manifest": {
-            "something": "sub-bridge2"
+            "config": {
+              "something": "sub-bridge2"
+            }
           },
         },
         "devebot-co-vps": {
           "version": "0.1.3",
           "manifest": {
-            "something": "devebot-co-vps"
+            "config": {
+              "something": "devebot-co-vps"
+            }
           },
         },
       }
@@ -378,7 +390,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "pluginDepends": [ "sub-plugin1", "sub-plugin2" ],
           "version": "0.1.0",
           "manifest": {
-            "sandbox": {
+            "config": {
               "something": "application",
             },
           },
@@ -394,7 +406,9 @@ describe('tdd:devebot:core:config-loader', function() {
           "pluginDepends": [],
           "version": "0.1.1",
           "manifest": {
-            "something": "sub-plugin1"
+            "config": {
+              "something": "sub-plugin1"
+            }
           },
         },
         "/test/lib/sub-plugin2": {
@@ -408,7 +422,9 @@ describe('tdd:devebot:core:config-loader', function() {
           "pluginDepends": [],
           "version": "0.1.2",
           "manifest": {
-            "something": "sub-plugin2"
+            "config": {
+              "something": "sub-plugin2"
+            }
           },
         },
         "/": {
@@ -417,7 +433,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "path": "/",
           "version": "0.2.9",
           "manifest": {
-            "profile": {
+            "config": {
               "something": "devebot"
             },
           },
@@ -427,7 +443,7 @@ describe('tdd:devebot:core:config-loader', function() {
         "application": {
           "version": "0.1.0",
           "manifest": {
-            "sandbox": {
+            "config": {
               "something": "application",
             },
           },
@@ -435,19 +451,23 @@ describe('tdd:devebot:core:config-loader', function() {
         "sub-plugin1": {
           "version": "0.1.1",
           "manifest": {
-            "something": "sub-plugin1"
+            "config": {
+              "something": "sub-plugin1"
+            }
           },
         },
         "sub-plugin2": {
           "version": "0.1.2",
           "manifest": {
-            "something": "sub-plugin2"
+            "config": {
+              "something": "sub-plugin2"
+            }
           },
         },
         "devebot": {
           "version": "0.2.9",
           "manifest": {
-            "profile": {
+            "config": {
               "something": "devebot"
             },
           },
@@ -665,7 +685,7 @@ describe('tdd:devebot:core:config-loader', function() {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
-            "sandbox": {
+            "config": {
               "enabled": false,
               "migration": {
                 "0.1.0_0.1.1": {
@@ -690,11 +710,13 @@ describe('tdd:devebot:core:config-loader', function() {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
-            "enabled": false,
-            "migration": {
-              "latest": {
-                "from": "0.1.0",
-                "transform": bridgeTransform1
+            "config": {
+              "enabled": false,
+              "migration": {
+                "latest": {
+                  "from": "0.1.0",
+                  "transform": bridgeTransform1
+                }
               }
             }
           }
@@ -815,7 +837,7 @@ describe('tdd:devebot:core:config-loader', function() {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {
                 "0.1.0_0.1.1": {
                   "from": "0.1.0",
@@ -828,7 +850,7 @@ describe('tdd:devebot:core:config-loader', function() {
         "subPlugin2": {
           "version": "0.1.2",
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {
                 "default": {
                   "from": "0.1.x",
@@ -855,10 +877,12 @@ describe('tdd:devebot:core:config-loader', function() {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
-            "migration": {
-              "latest": {
-                "from": "0.1.0",
-                "transform": bridgeTransform1
+            "config": {
+              "migration": {
+                "latest": {
+                  "from": "0.1.0",
+                  "transform": bridgeTransform1
+                }
               }
             }
           }
@@ -866,10 +890,12 @@ describe('tdd:devebot:core:config-loader', function() {
         "bridge2": {
           "version": "0.1.2",
           "manifest": {
-            "migration": {
-              "latest": {
-                "from": "0.1.x",
-                "transform": bridgeTransform2
+            "config": {
+              "migration": {
+                "latest": {
+                  "from": "0.1.x",
+                  "transform": bridgeTransform2
+                }
               }
             }
           }
@@ -989,7 +1015,7 @@ describe('tdd:devebot:core:config-loader', function() {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {
                 "0.1.x": {
                   "from": "0.1.x",
@@ -1002,7 +1028,7 @@ describe('tdd:devebot:core:config-loader', function() {
         "subPlugin2": {
           "version": "0.1.2",
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {
                 "default": {
                   "from": "0.1.x",
@@ -1029,10 +1055,12 @@ describe('tdd:devebot:core:config-loader', function() {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
-            "migration": {
-              "latest": {
-                "from": "0.1.x",
-                "transform": bridgeTransform1
+            "config": {
+              "migration": {
+                "latest": {
+                  "from": "0.1.x",
+                  "transform": bridgeTransform1
+                }
               }
             }
           }
@@ -1040,10 +1068,12 @@ describe('tdd:devebot:core:config-loader', function() {
         "bridge2": {
           "version": "0.1.2",
           "manifest": {
-            "migration": {
-              "latest": {
-                "from": "0.1.x",
-                "transform": bridgeTransform2
+            "config": {
+              "migration": {
+                "latest": {
+                  "from": "0.1.x",
+                  "transform": bridgeTransform2
+                }
               }
             }
           }
@@ -1178,7 +1208,7 @@ describe('tdd:devebot:core:config-loader', function() {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {
                 "0.1.0_0.1.1": {
                   "from": "0.1.0",
@@ -1191,7 +1221,7 @@ describe('tdd:devebot:core:config-loader', function() {
         "subPlugin2": {
           "version": "0.1.2",
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {
                 "0.1.0_0.1.2": {
                   "from": "0.1.0",
@@ -1212,10 +1242,12 @@ describe('tdd:devebot:core:config-loader', function() {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
-            "migration": {
-              "latest": {
-                "from": "0.1.0",
-                "transform": bridgeTransformer
+            "config": {
+              "migration": {
+                "latest": {
+                  "from": "0.1.0",
+                  "transform": bridgeTransformer
+                }
               }
             }
           }
@@ -1223,10 +1255,12 @@ describe('tdd:devebot:core:config-loader', function() {
         "bridge2": {
           "version": "0.1.2",
           "manifest": {
-            "migration": {
-              "latest": {
-                "from": "0.1.1",
-                "transform": bridgeTransformer
+            "config": {
+              "migration": {
+                "latest": {
+                  "from": "0.1.1",
+                  "transform": bridgeTransformer
+                }
               }
             }
           }
@@ -1234,10 +1268,12 @@ describe('tdd:devebot:core:config-loader', function() {
         "bridge4": {
           "version": "0.1.4",
           "manifest": {
-            "migration": {
-              "latest": {
-                "from": "0.1.2",
-                "transform": bridgeTransformer
+            "config": {
+              "migration": {
+                "latest": {
+                  "from": "0.1.2",
+                  "transform": bridgeTransformer
+                }
               }
             }
           }

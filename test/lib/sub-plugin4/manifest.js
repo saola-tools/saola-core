@@ -1,5 +1,5 @@
 module.exports = {
-  "sandbox": {
+  "config": {
     "migration": {
       "0.1.0_0.1.2": {
         "enabled": false,

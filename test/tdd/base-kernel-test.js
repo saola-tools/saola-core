@@ -65,7 +65,7 @@ describe('tdd:devebot:base:kernel', function() {
           "bridgeDepends": [],
           "pluginDepends": [],
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {},
               "validation": {
                 "schema": {
@@ -93,7 +93,7 @@ describe('tdd:devebot:base:kernel', function() {
           "bridgeDepends": [],
           "pluginDepends": [],
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {},
               "validation": {
                 "schema": {
@@ -177,7 +177,7 @@ describe('tdd:devebot:base:kernel', function() {
           "name": "fullapp",
           "path": "/test/app/fullapp",
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {},
               "validation": {
                 "schema": {
@@ -201,7 +201,7 @@ describe('tdd:devebot:base:kernel', function() {
           "bridgeDepends": [ "bridge1", "bridge2" ],
           "pluginDepends": [ "plugin1", "plugin2" ],
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {},
               "validation": {
                 "schema": {
@@ -229,7 +229,7 @@ describe('tdd:devebot:base:kernel', function() {
           "bridgeDepends": [ "bridge2", "bridge3" ],
           "pluginDepends": [ "plugin2", "plugin3" ],
           "manifest": {
-            "sandbox": {
+            "config": {
               "migration": {},
               "validation": {
                 "schema": {
@@ -404,19 +404,21 @@ describe('tdd:devebot:base:kernel', function() {
           "bridgeDepends": [],
           "pluginDepends": [],
           "manifest": {
-            "migration": {},
-            "validation": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "host": {
-                    "type": "string"
+            "config": {
+              "migration": {},
+              "validation": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "host": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number"
+                    },
                   },
-                  "port": {
-                    "type": "number"
-                  },
+                  "required": [ "host", "port" ]
                 },
-                "required": [ "host", "port" ]
               },
             },
           },
@@ -429,19 +431,21 @@ describe('tdd:devebot:base:kernel', function() {
           "bridgeDepends": [],
           "pluginDepends": [],
           "manifest": {
-            "migration": {},
-            "validation": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "host": {
-                    "type": "string"
+            "config": {
+              "migration": {},
+              "validation": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "host": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number"
+                    },
                   },
-                  "port": {
-                    "type": "number"
-                  },
+                  "required": [ "host", "port" ]
                 },
-                "required": [ "host", "port" ]
               },
             },
           },
@@ -1156,22 +1160,24 @@ describe('tdd:devebot:base:kernel', function() {
           "type": "bridge",
           "path": "/test/lib/devebot-co-connector1",
           "manifest": {
-            "migration": {},
-            "validation": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "host": {
-                    "type": "string"
+            "config": {
+              "migration": {},
+              "validation": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "host": {
+                      "type": "string"
+                    },
+                    "port": {
+                      "type": "number"
+                    },
+                    "verbose": {
+                      "type": "boolean"
+                    }
                   },
-                  "port": {
-                    "type": "number"
-                  },
-                  "verbose": {
-                    "type": "boolean"
-                  }
+                  "required": [ "host", "port" ]
                 },
-                "required": [ "host", "port" ]
               },
             },
           },
@@ -1181,17 +1187,19 @@ describe('tdd:devebot:base:kernel', function() {
           "type": "bridge",
           "path": "/test/lib/devebot-co-connector2",
           "manifest": {
-            "migration": {},
-            "validation": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "params": {
-                    "type": "object"
+            "config": {
+              "migration": {},
+              "validation": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "params": {
+                      "type": "object"
+                    },
+                    "handler": {}
                   },
-                  "handler": {}
+                  "required": [ "params" ]
                 },
-                "required": [ "params" ]
               },
             },
           },

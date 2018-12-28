@@ -394,10 +394,7 @@ function modernizeConfigBlock(ctx, configStore, configPath, manifestBlock, modul
   if (manifestBlock) {
     const moduleVersion = manifestBlock.version;
     if (moduleVersion) {
-      const manifestPath = ['manifest'];
-      if (moduleType !== 'bridge') {
-        manifestPath.push(CONFIG_SANDBOX_NAME);
-      }
+      const manifestPath = ['manifest', constx.MANIFEST.DEFAULT_ROOT_NAME];
       const manifestObject = lodash.get(manifestBlock, manifestPath);
       result = applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifestObject);
     }

@@ -152,7 +152,7 @@ function extractBridgeSchema(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
       bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
     }
     if (chores.isUpgradeSupported('manifest-refiner')) {
-      const validationBlock = lodash.get(bridgeRef, ['manifest', 'validation']);
+      const validationBlock = lodash.get(bridgeRef, ['manifest', constx.MANIFEST.DEFAULT_ROOT_NAME, 'validation']);
       if (lodash.isObject(validationBlock)) {
         bridgeSchema[bridgeCode] = lodash.pick(validationBlock, SELECTED_FIELDS);
       }
@@ -250,7 +250,7 @@ function extractPluginSchema(ref, pluginRefs, pluginMetadata, pluginSchema) {
     }
     if (chores.isUpgradeSupported('manifest-refiner')) {
       const configType = 'sandbox';
-      let validationBlock = lodash.get(pluginRef, ['manifest', configType, 'validation']);
+      let validationBlock = lodash.get(pluginRef, ['manifest', constx.MANIFEST.DEFAULT_ROOT_NAME, 'validation']);
       if (lodash.isObject(validationBlock)) {
         validationBlock = lodash.pick(validationBlock, SELECTED_FIELDS);
         validationBlock.crateScope = nameResolver.getOriginalNameOf(pluginRef.name, pluginRef.type);

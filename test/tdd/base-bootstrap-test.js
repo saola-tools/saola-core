@@ -1028,9 +1028,9 @@ describe('tdd:devebot:base:bootstrap', function() {
         name: appName,
         path: lab.getAppHome(appName),
       }, issueInspector);
-      assert.isObject(lodash.get(manifest, ['sandbox', 'migration']));
-      assert.isObject(lodash.get(manifest, ['sandbox', 'validation', 'schema']));
-      assert.isFunction(lodash.get(manifest, ['sandbox', 'validation', 'checkConstraints']));
+      assert.isObject(lodash.get(manifest, ['config', 'migration']));
+      assert.isObject(lodash.get(manifest, ['config', 'validation', 'schema']));
+      assert.isFunction(lodash.get(manifest, ['config', 'validation', 'checkConstraints']));
     });
 
     it('return null if manifest not found', function() {

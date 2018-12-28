@@ -536,11 +536,7 @@ function loadManifest(pkgRef, issueInspector) {
     manifest = null;
   }
   if (!lodash.isEmpty(manifest)) {
-    let content = manifest;
-    if (pkgRef.type !== 'bridge') {
-      content = lodash.get(manifest, 'sandbox');
-    }
-    const result = chores.validate(content, constx.MANIFEST.SCHEMA_OBJECT);
+    const result = chores.validate(manifest, constx.MANIFEST.SCHEMA_OBJECT);
     if (!result.ok) {
       issueInspector.collect({
         stage: 'manifest',
