@@ -66,18 +66,21 @@ function IssueInspector(params={}) {
             switch(fsv.type) {
               case 'appbox':
               case 'application':
-              console.error(chalk.errorMessage("--> [%s:%s] bootstrap has failed, reasons:"), fsv.type, fsv.name);
-              console.error(chalk.errorStack("  " + fsv.stack));
-              return;
-              case 'plugin':
-              case constx.FRAMEWORK.NAME:
-              console.error(chalk.errorMessage('--> [%s:%s] loading plugin is failed, reasons:'), fsv.type, fsv.name);
-              console.error(chalk.errorStack("  " + fsv.stack));
-              return;
-              case 'bridge':
-              console.error(chalk.errorMessage('--> [%s:%s] loading bridge is failed, reasons:'), fsv.type, fsv.name);
-              console.error(chalk.errorStack("  " + fsv.stack));
-              return;
+              case constx.FRAMEWORK.NAME: {
+                console.error(chalk.errorMessage("--> [%s:%s] lauching bootstrap has failed, reasons:"), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+              case 'plugin': {
+                console.error(chalk.errorMessage("--> [%s:%s] loading plugin is failed, reasons:"), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+              case 'bridge': {
+                console.error(chalk.errorMessage("--> [%s:%s] loading bridge is failed, reasons:"), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
             }
           }
           if (fsv.stage === 'manifest') {
@@ -85,7 +88,7 @@ function IssueInspector(params={}) {
               case 'appbox':
               case 'application':
               case constx.FRAMEWORK.NAME: {
-                console.error(chalk.errorMessage("--> [%s] loading manifest has failed, reasons:"), fsv.type, fsv.name);
+                console.error(chalk.errorMessage("--> [%s:%s] loading manifest has failed, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
               }
@@ -103,14 +106,16 @@ function IssueInspector(params={}) {
           }
           if (fsv.stage === 'naming') {
             switch(fsv.type) {
-              case 'plugin':
-              console.error(chalk.errorMessage('--> [%s:%s] resolving plugin-code is failed, reasons:'), fsv.type, fsv.name);
-              console.error(chalk.errorStack("  " + fsv.stack));
-              return;
-              case 'bridge':
-              console.error(chalk.errorMessage('--> [%s:%s] resolving bridge-code is failed, reasons:'), fsv.type, fsv.name);
-              console.error(chalk.errorStack("  " + fsv.stack));
-              return;
+              case 'plugin': {
+                console.error(chalk.errorMessage('--> [%s:%s] resolving plugin-code is failed, reasons:'), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+              case 'bridge': {
+                console.error(chalk.errorMessage('--> [%s:%s] resolving bridge-code is failed, reasons:'), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
             }
           }
           if (fsv.stage === 'config/upgrade') {
@@ -125,65 +130,78 @@ function IssueInspector(params={}) {
           if (fsv.stage === 'config/schema') {
             switch(fsv.type) {
               case 'application':
-              case 'plugin':
               case constx.FRAMEWORK.NAME:
-              console.error(chalk.errorMessage('--> [%s:%s] plugin configure is invalid, reasons:'), fsv.type, fsv.name);
-              console.error(chalk.errorStack("  " + fsv.stack));
-              return;
-              case 'bridge':
-              console.error(chalk.errorMessage('--> [%s:%s] bridge configure is invalid, reasons:'), fsv.type, fsv.name);
-              console.error(chalk.errorStack("  " + fsv.stack));
-              return;
+              case 'plugin': {
+                console.error(chalk.errorMessage("--> [%s:%s] plugin's configure is invalid, reasons:"), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+              case 'bridge': {
+                console.error(chalk.errorMessage("--> [%s:%s] bridge's configure is invalid, reasons:"), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
             }
           }
           if (fsv.stage === 'instantiating') {
             switch(fsv.type) {
               case 'ROUTINE':
               case 'SERVICE':
-              case 'TRIGGER':
-              console.error(chalk.errorMessage('--> [%s:%s] new() is failed:'), fsv.type, fsv.name);
-              console.error(chalk.errorStack("  " + fsv.stack));
-              return;
-              case 'DIALECT':
-              console.error(chalk.errorMessage('--> [%s:%s/%s] new() is failed:'), fsv.type, fsv.code, fsv.name);
-              console.error(chalk.errorStack("  " + fsv.stack));
-              return;
-              default:
-              console.error(chalk.errorMessage('--> %s'), JSON.stringify(fsv));
-              return;
+              case 'TRIGGER': {
+                console.error(chalk.errorMessage('--> [%s:%s] new() is failed:'), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+              case 'DIALECT': {
+                console.error(chalk.errorMessage('--> [%s:%s/%s] new() is failed:'), fsv.type, fsv.code, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+              default: {
+                console.error(chalk.errorMessage('--> %s'), JSON.stringify(fsv));
+                return;
+              }
             }
           }
           if (fsv.stage === 'check-methods') {
             switch(fsv.type) {
-              case 'TRIGGER':
-              console.error(chalk.errorMessage('--> [%s:%s] required method(s): %s not found'), fsv.type, fsv.name, JSON.stringify(fsv.methods));
-              return;
-              default:
-              console.error(chalk.errorMessage('--> %s'), JSON.stringify(fsv));
-              return;
+              case 'TRIGGER': {
+                console.error(chalk.errorMessage('--> [%s:%s] required method(s): %s not found'), fsv.type, fsv.name, JSON.stringify(fsv.methods));
+                return;
+              }
+              default: {
+                console.error(chalk.errorMessage('--> %s'), JSON.stringify(fsv));
+                return;
+              }
             }
           }
           switch(fsv.type) {
-            case 'CONFIG':
-            console.error(chalk.errorMessage('--> [%s] in (%s):'), fsv.type, fsv.file);
-            console.error(chalk.errorStack("  " + fsv.stack));
-            break;
+            case 'CONFIG': {
+              console.error(chalk.errorMessage('--> [%s] in (%s):'), fsv.type, fsv.file);
+              console.error(chalk.errorStack("  " + fsv.stack));
+              break;
+            }
             case 'ROUTINE':
             case 'SERVICE':
-            case 'TRIGGER':
-            console.error(chalk.errorMessage('--> [%s:%s] - %s in (%s%s):'), fsv.type, fsv.name, fsv.file, fsv.pathDir, fsv.subDir);
-            console.error(chalk.errorStack("  " + fsv.stack));
-            break;
-            case 'DIALECT':
-            console.error(chalk.errorMessage('--> [%s:%s/%s] in (%s):'), fsv.type, fsv.code, fsv.name, fsv.path);
-            console.error(chalk.errorStack("  " + fsv.stack));
-            break;
-            case 'application':
-            console.error(chalk.errorMessage('--> [%s:%s/%s] in (%s):'), fsv.type, fsv.name, fsv.code, fsv.path);
-            console.error(chalk.errorStack("  " + fsv.stack));
-            break;
-            default:
-            console.error(chalk.errorMessage('--> %s'), JSON.stringify(fsv));
+            case 'TRIGGER': {
+              console.error(chalk.errorMessage('--> [%s:%s] - %s in (%s%s):'), fsv.type, fsv.name, fsv.file, fsv.pathDir, fsv.subDir);
+              console.error(chalk.errorStack("  " + fsv.stack));
+              break;
+            }
+            case 'DIALECT': {
+              console.error(chalk.errorMessage('--> [%s:%s/%s] in (%s):'), fsv.type, fsv.code, fsv.name, fsv.path);
+              console.error(chalk.errorStack("  " + fsv.stack));
+              break;
+            }
+            case 'application': {
+              console.error(chalk.errorMessage('--> [%s:%s/%s] in (%s):'), fsv.type, fsv.name, fsv.code, fsv.path);
+              console.error(chalk.errorStack("  " + fsv.stack));
+              break;
+            }
+            default: {
+              console.error(chalk.errorMessage('--> %s'), JSON.stringify(fsv));
+              break;
+            }
           }
         });
       }
@@ -245,7 +263,7 @@ module.exports = IssueInspector;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ color chalks
 
-let chalk = new Chalk({
+const chalk = new Chalk({
   themes: {
     errorHeader: ['red', 'bold'],
     errorMessage: ['red'],
