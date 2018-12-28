@@ -1182,7 +1182,6 @@ describe('tdd:devebot:core:config-loader', function() {
               "migration": {
                 "0.1.0_0.1.1": {
                   "from": "0.1.0",
-                  "to": "0.1.1",
                   "transform": subPlugin1Transform
                 }
               }
@@ -1196,7 +1195,6 @@ describe('tdd:devebot:core:config-loader', function() {
               "migration": {
                 "0.1.0_0.1.2": {
                   "from": "0.1.0",
-                  "to": "0.1.2",
                   "transform": subPlugin2Transform
                 }
               }
@@ -1217,7 +1215,6 @@ describe('tdd:devebot:core:config-loader', function() {
             "migration": {
               "latest": {
                 "from": "0.1.0",
-                "to": "0.1.1",
                 "transform": bridgeTransformer
               }
             }
@@ -1229,7 +1226,6 @@ describe('tdd:devebot:core:config-loader', function() {
             "migration": {
               "latest": {
                 "from": "0.1.1",
-                "to": "0.1.2",
                 "transform": bridgeTransformer
               }
             }
@@ -1241,7 +1237,6 @@ describe('tdd:devebot:core:config-loader', function() {
             "migration": {
               "latest": {
                 "from": "0.1.2",
-                "to": "0.1.4",
                 "transform": bridgeTransformer
               }
             }
