@@ -80,6 +80,27 @@ function IssueInspector(params={}) {
               return;
             }
           }
+          if (fsv.stage === 'manifest') {
+            switch(fsv.type) {
+              case 'appbox':
+              case 'application':
+              case constx.FRAMEWORK.NAME: {
+                console.error(chalk.errorMessage("--> [%s] loading manifest has failed, reasons:"), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+              case 'plugin': {
+                console.error(chalk.errorMessage("--> [%s:%s] loading plugin's manifest has failed, reasons:"), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+              case 'bridge': {
+                console.error(chalk.errorMessage("--> [%s:%s] loading bridge's manifest has failed, reasons:"), fsv.type, fsv.name);
+                console.error(chalk.errorStack("  " + fsv.stack));
+                return;
+              }
+            }
+          }
           if (fsv.stage === 'naming') {
             switch(fsv.type) {
               case 'plugin':
