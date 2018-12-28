@@ -36,6 +36,12 @@ let CustomError = function(message, payload) {
 }
 util.inherits(CustomError, Error);
 
+chores.assertOk = function () {
+  for(let k=0; k<arguments.length; k++) {
+    assert.ok(arguments[k], util.format('The argument #%s evaluated to a falsy value', k));
+  }
+}
+
 chores.buildError = function(errorName) {
   let ErrorConstructor = function() {
     CustomError.apply(this, arguments);
@@ -300,6 +306,11 @@ chores.injektorContext = store.injektorContext;
 
 chores.isDevelopmentMode = function() {
   return ['test', 'dev', 'development'].indexOf(envbox.getEnv('ENV')) >= 0;
+}
+
+chores.isProductionMode = function() {
+  if (envbox.getEnv('ENV') === 'production') return true;
+  return false;
 }
 
 chores.fatalErrorReaction = function() {

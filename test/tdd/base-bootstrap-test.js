@@ -1016,19 +1016,30 @@ describe('tdd:devebot:base:bootstrap', function() {
   });
 
   describe('loadManifest()', function() {
+    var issueInspector = lab.getIssueInspector();
     var bootstrap = rewire(lab.getDevebotModule('bootstrap'));
     var loadManifest = bootstrap.__get__('loadManifest');
     assert.isFunction(loadManifest);
 
     it('load manifest of modules properly', function() {
-      var manifest = loadManifest(lab.getAppHome('setting-with-metadata'));
+      var appName = 'setting-with-metadata';
+      var manifest = loadManifest({
+        type: 'application',
+        name: appName,
+        path: lab.getAppHome(appName),
+      }, issueInspector);
       assert.isObject(lodash.get(manifest, ['sandbox', 'migration']));
       assert.isObject(lodash.get(manifest, ['sandbox', 'validation', 'schema']));
       assert.isFunction(lodash.get(manifest, ['sandbox', 'validation', 'checkConstraints']));
     });
 
     it('return null if manifest not found', function() {
-      var manifest = loadManifest(lab.getAppHome('plugin-reference-alias'));
+      var appName = 'plugin-reference-alias';
+      var manifest = loadManifest({
+        type: 'application',
+        name: appName,
+        path: lab.getAppHome(appName),
+      }, issueInspector);
       assert.isNull(manifest);
     });
   });

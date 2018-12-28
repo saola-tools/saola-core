@@ -56,16 +56,16 @@ function appLoader(params={}) {
   if (!lodash.isEmpty(appRootPath)) {
     appRef.path = appRootPath;
   }
-  if (lodash.isObject(params.presets)) {
-    appRef.presets = lodash.cloneDeep(params.presets);
-  }
   if (lodash.isString(appRef.path)) {
-    appRef.manifest = loadManifest(appRef.path);
+    appRef.manifest = loadManifest(appRef, issueInspector);
     appRef.version = loadPackageVersion(appRef.path);
     if (!chores.isUpgradeSupported('manifest-refiner')) {
       delete appRef.manifest;
       delete appRef.version;
     }
+  }
+  if (lodash.isObject(params.presets)) {
+    appRef.presets = lodash.cloneDeep(params.presets);
   }
 
   const devebotRef = {
@@ -77,13 +77,13 @@ function appLoader(params={}) {
   lodash.forOwn(params.pluginRefs, function(ref) {
     ref.type = 'plugin';
     if (!chores.isUpgradeSupported('manifest-refiner')) return;
-    ref.manifest = loadManifest(ref.path);
+    ref.manifest = loadManifest(ref, issueInspector);
     ref.version = loadPackageVersion(ref.path);
   });
   lodash.forOwn(params.bridgeRefs, function(ref) {
     ref.type = 'bridge';
     if (!chores.isUpgradeSupported('manifest-refiner')) return;
-    ref.manifest = loadManifest(ref.path);
+    ref.manifest = loadManifest(ref, issueInspector);
     ref.version = loadPackageVersion(ref.path);
   });
 
@@ -524,15 +524,32 @@ function loadPackageVersion(pkgRootPath) {
   return pkgInfo && pkgInfo.version;
 }
 
-function loadManifest(pkgRootPath) {
+function loadManifest(pkgRef, issueInspector) {
+  chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name, issueInspector);
   let manifest = null;
   try {
-    manifest = require(pkgRootPath).manifest;
+    manifest = require(pkgRef.path).manifest;
     if (!manifest) {
-      manifest = require(path.join(pkgRootPath, '/manifest.js'));
+      manifest = require(path.join(pkgRef.path, '/manifest.js'));
     }
   } catch (err) {
     manifest = null;
+  }
+  if (!lodash.isEmpty(manifest)) {
+    let content = manifest;
+    if (pkgRef.type !== 'bridge') {
+      content = lodash.get(manifest, 'sandbox');
+    }
+    const result = chores.validate(content, constx.MANIFEST.SCHEMA_OBJECT);
+    if (!result.ok) {
+      issueInspector.collect({
+        stage: 'manifest',
+        type: pkgRef.type,
+        name: pkgRef.name,
+        hasError: true,
+        stack: JSON.stringify(result.errors, null, 4)
+      });
+    }
   }
   return manifest;
 }

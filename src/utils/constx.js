@@ -244,6 +244,33 @@ module.exports = {
       }
     }
   },
+  MANIFEST: {
+    SCHEMA_OBJECT: {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "migration": {
+          "type": "object"
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "schema": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "$ref": "http://json-schema.org/draft-04/schema#"
+                }
+              ]
+            },
+            "checkConstraints": {}
+          }
+        }
+      }
+    }
+  },
   LOGGER: {
     LABELS: {
       silly: {
