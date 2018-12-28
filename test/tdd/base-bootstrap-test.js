@@ -643,9 +643,13 @@ describe('tdd:devebot:base:bootstrap', function() {
       assert.sameDeepMembers(cfg.bridgeRefs, []);
       assert.sameDeepMembers(cfg.pluginRefs, [
         {
-          "type": "framework",
+          "name": "devebot-application",
+          "type": "application",
+        },
+        {
           "name": "devebot",
-          "path": "/devebot"
+          "type": "framework",
+          "path": "/devebot",
         }
       ]);
     });

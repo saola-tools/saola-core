@@ -24,7 +24,7 @@ const stateInspector = StateInspector.instance;
 const FRAMEWORK_CAPNAME = lodash.capitalize(constx.FRAMEWORK.NAME);
 
 function appLoader(params={}) {
-  let {logger: L, tracer: T} = params;
+  const {logger: L, tracer: T} = params;
 
   L.has('silly') && L.log('silly', T.add({ context: lodash.cloneDeep(params) }).toMessage({
     tags: [ blockRef, 'constructor-begin', 'appLoader' ],
@@ -35,15 +35,15 @@ function appLoader(params={}) {
     text: ' * application parameters: ${context}'
   }));
 
-  let appRootPath = params.appRootPath;
-  let libRootPaths = lodash.map(params.pluginRefs, function(pluginRef) {
+  const appRootPath = params.appRootPath;
+  const libRootPaths = lodash.map(params.pluginRefs, function(pluginRef) {
     return pluginRef.path;
   });
-  let topRootPath = path.join(__dirname, '/..');
+  const topRootPath = path.join(__dirname, '/..');
 
-  let appInfo = appinfoLoader(appRootPath, libRootPaths, topRootPath);
-  let appName = params.appName || appInfo.name || constx.FRAMEWORK.NAME + '-application';
-  let appOptions = {
+  const appInfo = appinfoLoader(appRootPath, libRootPaths, topRootPath);
+  const appName = params.appName || appInfo.name || constx.FRAMEWORK.NAME + '-application';
+  const appOptions = {
     privateProfile: params.privateProfile || params.privateProfiles,
     privateSandbox: params.privateSandbox || params.privateSandboxes
   };
@@ -52,16 +52,14 @@ function appLoader(params={}) {
     text: ' - application name (appName): ${appName}'
   }));
 
-  let appRef = lodash.isEmpty(appRootPath) ? null : {
-    type: 'application',
-    name: appName,
-    path: appRootPath
-  };
+  const appRef = { type: 'application', name: appName };
+  if (!lodash.isEmpty(appRootPath)) {
+    appRef.path = appRootPath;
+  }
   if (lodash.isObject(params.presets)) {
-    appRef = appRef || {};
     appRef.presets = lodash.cloneDeep(params.presets);
   }
-  if (appRef && lodash.isString(appRef.path)) {
+  if (lodash.isString(appRef.path)) {
     appRef.manifest = loadManifest(appRef.path);
     appRef.version = loadPackageVersion(appRef.path);
     if (!chores.isUpgradeSupported('manifest-refiner')) {
@@ -70,7 +68,7 @@ function appLoader(params={}) {
     }
   }
 
-  let devebotRef = {
+  const devebotRef = {
     type: 'framework',
     name: constx.FRAMEWORK.NAME,
     path: topRootPath
@@ -90,9 +88,9 @@ function appLoader(params={}) {
   });
 
   // declare user-defined environment variables
-  let currentEnvNames = envbox.getEnvNames();
-  let evDescriptors = lodash.get(params, ['environmentVarDescriptors'], []);
-  let duplicated = lodash.filter(evDescriptors, function(ev) {
+  const currentEnvNames = envbox.getEnvNames();
+  const evDescriptors = lodash.get(params, ['environmentVarDescriptors'], []);
+  const duplicated = lodash.filter(evDescriptors, function(ev) {
     return currentEnvNames.indexOf(ev.name) >= 0;
   });
   if (duplicated.length > 0) {
@@ -102,7 +100,7 @@ function appLoader(params={}) {
       type: 'application',
       name: appName,
       stack: duplicated.map(function(ev) {
-        let evName = chores.stringLabelCase(appName) + '_' + ev.name;
+        const evName = chores.stringLabelCase(appName) + '_' + ev.name;
         return util.format('- Environment Variable "%s" has already been defined', evName)
       }).join('\n')
     });
@@ -116,20 +114,20 @@ function appLoader(params={}) {
     ownershipLabel: util.format('<owned-by-%s>', appName)
   });
 
-  let pluginRefList = lodash.values(params.pluginRefs);
-  let bridgeRefList = lodash.values(params.bridgeRefs);
-  let nameResolver = new NameResolver({ issueInspector, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
+  const pluginRefList = lodash.values(params.pluginRefs);
+  const bridgeRefList = lodash.values(params.bridgeRefs);
+  const nameResolver = new NameResolver({ issueInspector, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
 
   stateInspector.register({ nameResolver, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
 
-  let configLoader = new ConfigLoader({appName, appOptions, appRef, devebotRef,
+  const configLoader = new ConfigLoader({appName, appOptions, appRef, devebotRef,
     pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs, issueInspector, stateInspector, nameResolver
   });
 
-  let contextManager = new ContextManager({ issueInspector });
+  const contextManager = new ContextManager({ issueInspector });
   contextManager.addDefaultFeatures(params.defaultFeatures);
 
-  let app = {};
+  const app = {};
 
   let _config;
   Object.defineProperty(app, 'config', {
@@ -149,7 +147,7 @@ function appLoader(params={}) {
   let _runner;
   Object.defineProperty(app, 'runner', {
     get: function() {
-      let args = { configObject: this.config, contextManager, issueInspector, stateInspector, nameResolver };
+      const args = { configObject: this.config, contextManager, issueInspector, stateInspector, nameResolver };
       return _runner = _runner || new Runner(args);
     },
     set: function(value) {}
@@ -158,7 +156,7 @@ function appLoader(params={}) {
   let _server;
   Object.defineProperty(app, 'server', {
     get: function() {
-      let args = { configObject: this.config, contextManager, issueInspector, stateInspector, nameResolver };
+      const args = { configObject: this.config, contextManager, issueInspector, stateInspector, nameResolver };
       return _server = _server || new Server(args);
     },
     set: function(value) {}
@@ -183,7 +181,7 @@ function registerLayerware(context, pluginNames, bridgeNames) {
 
   context = lodash.isString(context) ? { layerRootPath: context } : context;
   if (!lodash.isEmpty(context)) {
-    let result = chores.validate(context, constx.BOOTSTRAP.registerLayerware.context.schema);
+    const result = chores.validate(context, constx.BOOTSTRAP.registerLayerware.context.schema);
     if (!result.ok) {
       issueInspector.collect({
         stage: 'bootstrap',
@@ -201,7 +199,7 @@ function registerLayerware(context, pluginNames, bridgeNames) {
   context.tracer = loggingWrapper.getTracer();
 
   if (!lodash.isEmpty(pluginNames)) {
-    let result = chores.validate(pluginNames, constx.BOOTSTRAP.registerLayerware.plugins.schema);
+    const result = chores.validate(pluginNames, constx.BOOTSTRAP.registerLayerware.plugins.schema);
     if (!result.ok) {
       issueInspector.collect({
         stage: 'bootstrap',
@@ -214,7 +212,7 @@ function registerLayerware(context, pluginNames, bridgeNames) {
   }
 
   if (!lodash.isEmpty(bridgeNames)) {
-    let result = chores.validate(bridgeNames, constx.BOOTSTRAP.registerLayerware.bridges.schema);
+    const result = chores.validate(bridgeNames, constx.BOOTSTRAP.registerLayerware.bridges.schema);
     if (!result.ok) {
       issueInspector.collect({
         stage: 'bootstrap',
@@ -230,7 +228,7 @@ function registerLayerware(context, pluginNames, bridgeNames) {
     context = context || {};
     accumulator = accumulator || {};
 
-    let {logger: L, tracer: T} = context;
+    const {logger: L, tracer: T} = context;
     lodash.defaults(accumulator, lodash.pick(context, ['logger', 'tracer']));
 
     if (context.layerRootPath && context.layerRootPath != accumulator.libRootPath) {
@@ -252,8 +250,8 @@ function registerLayerware(context, pluginNames, bridgeNames) {
     }
 
     if (accumulator.libRootPath) {
-      let newPresets = context.presets || {};
-      let oldPresets = lodash.get(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], null);
+      const newPresets = context.presets || {};
+      const oldPresets = lodash.get(accumulator, ['pluginRefs', accumulator.libRootPath, 'presets'], null);
       if (oldPresets) {
         lodash.defaultsDeep(oldPresets, newPresets);
       } else {
@@ -269,7 +267,7 @@ function registerLayerware(context, pluginNames, bridgeNames) {
 function launchApplication(context, pluginNames, bridgeNames) {
   context = lodash.isString(context) ? { appRootPath: context } : context;
   if (!lodash.isEmpty(context)) {
-    let result = chores.validate(context, constx.BOOTSTRAP.launchApplication.context.schema);
+    const result = chores.validate(context, constx.BOOTSTRAP.launchApplication.context.schema);
     if (!result.ok) {
       issueInspector.collect({
         stage: 'bootstrap',
@@ -291,7 +289,7 @@ function launchApplication(context, pluginNames, bridgeNames) {
   context.tracer = loggingWrapper.getTracer();
 
   if (!lodash.isEmpty(pluginNames)) {
-    let result = chores.validate(pluginNames, constx.BOOTSTRAP.launchApplication.plugins.schema);
+    const result = chores.validate(pluginNames, constx.BOOTSTRAP.launchApplication.plugins.schema);
     if (!result.ok) {
       issueInspector.collect({
         stage: 'bootstrap',
@@ -304,7 +302,7 @@ function launchApplication(context, pluginNames, bridgeNames) {
   }
 
   if (!lodash.isEmpty(bridgeNames)) {
-    let result = chores.validate(bridgeNames, constx.BOOTSTRAP.launchApplication.bridges.schema);
+    const result = chores.validate(bridgeNames, constx.BOOTSTRAP.launchApplication.bridges.schema);
     if (!result.ok) {
       issueInspector.collect({
         stage: 'bootstrap',
@@ -323,8 +321,8 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
   accumulator = accumulator || {};
   accumulator.bridgeRefs = accumulator.bridgeRefs || {};
   accumulator.pluginRefs = accumulator.pluginRefs || {};
-  let context = lodash.pick(accumulator, ATTRS.concat(['logger', 'tracer']));
-  let {logger: L, tracer: T} = context;
+  const context = lodash.pick(accumulator, ATTRS.concat(['logger', 'tracer']));
+  const {logger: L, tracer: T} = context;
 
   context.libRootPaths = context.libRootPaths || [];
   context.bridgeRefs = context.bridgeRefs || {};
@@ -335,14 +333,14 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
 
   const CTX = { issueInspector };
 
-  let bridgeInfos = lodash.map(bridgeNames, function(bridgeName) {
-    let item = lodash.isString(bridgeName) ? { name: bridgeName, path: bridgeName } : bridgeName;
+  const bridgeInfos = lodash.map(bridgeNames, function(bridgeName) {
+    const item = lodash.isString(bridgeName) ? { name: bridgeName, path: bridgeName } : bridgeName;
     if (!chores.isUpgradeSupported('presets')) { return item }
     item.path = locatePackage(CTX, item, 'bridge');
     return item;
   });
-  let pluginInfos = lodash.map(pluginNames, function(pluginName) {
-    let item = lodash.isString(pluginName) ? { name: pluginName, path: pluginName } : pluginName;
+  const pluginInfos = lodash.map(pluginNames, function(pluginName) {
+    const item = lodash.isString(pluginName) ? { name: pluginName, path: pluginName } : pluginName;
     if (!chores.isUpgradeSupported('presets')) { return item }
     item.path = locatePackage(CTX, item, 'plugin');
     return item;
@@ -350,7 +348,7 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
 
   // create the bridge & plugin dependencies
   if (lodash.isString(accumulator.libRootPath)) {
-    let crateRef = accumulator.pluginRefs[accumulator.libRootPath];
+    const crateRef = accumulator.pluginRefs[accumulator.libRootPath];
     if (lodash.isObject(crateRef)) {
       crateRef.bridgeDepends = lodash.map(bridgeInfos, function(item) {
         return item.name;
@@ -373,13 +371,13 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
     }
   }
 
-  let bridgeDiffs = lodash.differenceWith(bridgeInfos, lodash.keys(context.bridgeRefs), function(bridgeInfo, bridgeKey) {
+  const bridgeDiffs = lodash.differenceWith(bridgeInfos, lodash.keys(context.bridgeRefs), function(bridgeInfo, bridgeKey) {
     if (!chores.isUpgradeSupported('presets')) {
       return (bridgeInfo.name == bridgeKey);
     }
     return (bridgeInfo.path == bridgeKey);
   });
-  let pluginDiffs = lodash.differenceWith(pluginInfos, lodash.keys(context.pluginRefs), function(pluginInfo, pluginKey) {
+  const pluginDiffs = lodash.differenceWith(pluginInfos, lodash.keys(context.pluginRefs), function(pluginInfo, pluginKey) {
     if (!chores.isUpgradeSupported('presets')) {
       return (pluginInfo.name == pluginKey);
     }
@@ -394,7 +392,7 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
       }
       return;
     }
-    let inc = lodash.pick(bridgeInfo, ['name', 'path', 'presets']);
+    const inc = lodash.pick(bridgeInfo, ['name', 'path', 'presets']);
     context.bridgeRefs[bridgeInfo.path] = lodash.assign(context.bridgeRefs[bridgeInfo.path], inc);
   });
 
@@ -406,13 +404,13 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
       }
       return;
     }
-    let inc = lodash.pick(pluginInfo, ['name', 'path', 'presets']);
+    const inc = lodash.pick(pluginInfo, ['name', 'path', 'presets']);
     context.pluginRefs[pluginInfo.path] = lodash.assign(context.pluginRefs[pluginInfo.path], inc);
   });
 
   issueInspector.barrier({ invoker: blockRef, footmark: 'package-touching' });
 
-  let pluginInitializers = lodash.map(pluginDiffs, function(pluginInfo) {
+  const pluginInitializers = lodash.map(pluginDiffs, function(pluginInfo) {
     if (!chores.isUpgradeSupported('presets')) {
       return require(pluginInfo.path);
     }
@@ -431,7 +429,7 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
   }, context);
 };
 
-let bootstrap = {};
+const bootstrap = {};
 
 bootstrap.registerLayerware = registerLayerware;
 bootstrap.launchApplication = launchApplication;
@@ -445,15 +443,15 @@ bootstrap.initialize = function(action, options) {
   options = options || {};
   if (['actions', 'tasks'].indexOf(action) >= 0) {
     if (options.enabled !== false) {
-      let argv = minimist(process.argv.slice(2));
-      let tasks = argv.tasks || argv.actions;
+      const argv = minimist(process.argv.slice(2));
+      const tasks = argv.tasks || argv.actions;
       if (lodash.isEmpty(tasks)) {
         if (options.forced && !lodash.isEmpty(argv._)) {
           console.log('Incorrect task(s). Should be: (--tasks=print-config,check-config)');
           process.exit(0);
         }
       } else {
-        let jobs = stateInspector.init({ tasks });
+        const jobs = stateInspector.init({ tasks });
         if (lodash.isEmpty(jobs)) {
           console.log('Unknown task(s): (%s)!', tasks);
           process.exit(0);
