@@ -163,38 +163,24 @@ function wrapObject(refs, object, opts) {
         info: argList
       }));
       if (!cached[methodPath]) {
-        let texture = getTextureByPath({
-          textureOfBean: opts.textureOfBean,
-          fieldChain: fieldChain,
-          methodName: methodName
-        });
+        const { textureOfBean } = opts; 
         const supportAllMethods = chores.getFirstDefinedValue(
-          opts.textureOfBean && opts.textureOfBean.supportAllMethods,
+          textureOfBean && textureOfBean.supportAllMethods,
           opts.supportAllMethods);
-        if (supportAllMethods) {
-          texture = texture || {}
-        }
+        const emptyTexture = supportAllMethods ? {} : null;
+        const texture = getTextureByPath({ textureOfBean, fieldChain, methodName }) || emptyTexture;
         if (lodash.isObject(texture)) {
           const useDefaultTexture = chores.getFirstDefinedValue(
             texture.useDefaultTexture,
-            opts.textureOfBean && opts.textureOfBean.useDefaultTexture,
+            textureOfBean && textureOfBean.useDefaultTexture,
             opts.useDefaultTexture);
           if (useDefaultTexture) {
             const SELECTED = opts.streamId ? DEFAULT_TEXTURE_WITH_STREAM_ID : DEFAULT_TEXTURE;
             lodash.defaultsDeep(texture, SELECTED);
           }
         }
-        let owner = thisArg;
-        if (!owner) {
-          owner = object;
-          if (fieldChain.length > 0) {
-            owner = lodash.get(object, fieldChain);
-          }
-        }
-        let ownerName = opts.objectName;
-        if (fieldChain.length > 0) {
-          ownerName = [opts.objectName].concat(fieldChain).join('.');
-        }
+        const owner = thisArg || (fieldChain.length > 0 ? lodash.get(object, fieldChain) : object);
+        const ownerName = (fieldChain.length > 0) ? [opts.objectName].concat(fieldChain).join('.') : opts.objectName;
         cached[methodPath] = {};
         cached[methodPath].method = wrapMethod(refs, target, {
           texture: texture,
