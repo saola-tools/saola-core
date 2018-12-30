@@ -67,6 +67,8 @@ const DEPENDENCIES_SCHEMA = {
   }
 }
 
+const SEMVER_PATTERN = '.+';
+
 module.exports = {
   FRAMEWORK: {
     NAME: 'devebot'
@@ -256,7 +258,30 @@ module.exports = {
               "type": "boolean"
             },
             "migration": {
-              "type": "object"
+              "type": "object",
+              "patternProperties": {
+                ".+": {
+                  "type": "object",
+                  "properties": {
+                    "from": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": SEMVER_PATTERN,
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": SEMVER_PATTERN,
+                          }
+                        },
+                      ]
+                    },
+                    "transform": {}
+                  }
+                }
+              }
             },
             "validation": {
               "type": "object",
@@ -272,7 +297,8 @@ module.exports = {
                 "checkConstraints": {}
               }
             }
-          }
+          },
+          "additionalProperties": false
         }
       }
     }

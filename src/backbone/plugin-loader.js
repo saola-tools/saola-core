@@ -122,8 +122,8 @@ function loadAllScripts(CTX, scriptMap, scriptType, scriptContext, pluginRootDir
 function loadScriptEntries(CTX, scriptMap, scriptType, scriptContext, pluginRootDir) {
   const {L, T, schemaValidator} = CTX || this;
 
-  let scriptSubDir = chores.getComponentDir(pluginRootDir, scriptType);
-  let scriptFolder = path.join(pluginRootDir.pathDir, scriptSubDir);
+  const scriptSubDir = chores.getComponentDir(pluginRootDir, scriptType);
+  const scriptFolder = path.join(pluginRootDir.pathDir, scriptSubDir);
   L.has('dunce') && L.log('dunce', T.add({
     scriptKey: constx[scriptType].ROOT_KEY,
     scriptFolder: scriptFolder
@@ -131,7 +131,7 @@ function loadScriptEntries(CTX, scriptMap, scriptType, scriptContext, pluginRoot
     text: ' - load ${scriptKey}s from folder: ${scriptFolder}'
   }));
 
-  let scriptFiles = chores.filterFiles(scriptFolder, getFilterPattern(scriptType));
+  const scriptFiles = chores.filterFiles(scriptFolder, getFilterPattern(scriptType));
   scriptFiles.forEach(function(scriptFile) {
     loadScriptEntry(CTX, scriptMap, scriptType, scriptSubDir, scriptFile, scriptContext, pluginRootDir);
   });
@@ -214,8 +214,9 @@ function parseScriptTree(scriptFile, scriptInstance, isHierarchical) {
 
 function validateScript(CTX, scriptObject, scriptType) {
   const {L, T, schemaValidator} = CTX || this;
+  const results = [];
+
   scriptObject = scriptObject || {};
-  let results = [];
 
   results.push(schemaValidator.validate(scriptObject, constx[scriptType].SCHEMA_OBJECT));
 
@@ -244,19 +245,15 @@ function loadAllMetainfs(CTX, metainfMap, pluginRootDirs) {
   return metainfMap;
 }
 
-let loadMetainfEntries = function(CTX, metainfMap, pluginRootDir) {
-  CTX = CTX || this;
-  const {L, T, schemaValidator} = CTX || this;
-  let metainfType = 'METAINF';
-  let metainfSubDir = chores.getComponentDir(pluginRootDir, metainfType);
-  let metainfFolder = path.join(pluginRootDir.pathDir, metainfSubDir);
-  L.has('dunce') && L.log('dunce', T.add({
-    metainfKey: constx[metainfType].ROOT_KEY,
-    metainfFolder: metainfFolder
-  }).toMessage({
+function loadMetainfEntries(CTX, metainfMap, pluginRootDir) {
+  const {L, T, schemaValidator} = CTX = CTX || this;
+  const metainfType = 'METAINF';
+  const metainfSubDir = chores.getComponentDir(pluginRootDir, metainfType);
+  const metainfFolder = path.join(pluginRootDir.pathDir, metainfSubDir);
+  L.has('dunce') && L.log('dunce', T.add({ metainfKey: constx[metainfType].ROOT_KEY, metainfFolder }).toMessage({
     text: ' - load ${metainfKey}s from folder: ${metainfFolder}'
   }));
-  let schemaFiles = chores.filterFiles(metainfFolder, getFilterPattern(metainfType));
+  const schemaFiles = chores.filterFiles(metainfFolder, getFilterPattern(metainfType));
   schemaFiles.forEach(function(schemaFile) {
     loadMetainfEntry(CTX, metainfMap, metainfSubDir, schemaFile, pluginRootDir);
   });
@@ -320,11 +317,10 @@ function loadMetainfEntry(CTX, metainfMap, metainfSubDir, schemaFile, pluginRoot
 }
 
 function validateMetainf(CTX, metainfObject) {
-  CTX = CTX || this;
-  let {L, T, schemaValidator} = CTX;
-  let metainfType = 'METAINF';
+  const {L, T, schemaValidator} = CTX = CTX || this;
+  const metainfType = 'METAINF';
+  const results = [];
   metainfObject = metainfObject || {};
-  let results = [];
   results.push(schemaValidator.validate(metainfObject, constx[metainfType].SCHEMA_OBJECT));
   return results.reduce(function(output, result) {
     output.valid = output.valid && (result.valid != false);
@@ -333,25 +329,20 @@ function validateMetainf(CTX, metainfObject) {
   }, { valid: true, errors: [] });
 };
 
-let loadAllGadgets = function(CTX, gadgetMap, gadgetType, pluginRootDirs) {
-  CTX = CTX || this;
+function loadAllGadgets(CTX, gadgetMap, gadgetType, pluginRootDirs) {
   gadgetMap = gadgetMap || {};
-
   if (['SERVICE', 'TRIGGER'].indexOf(gadgetType) < 0) return gadgetMap;
-
   pluginRootDirs.forEach(function(pluginRootDir) {
     loadGadgetEntries(CTX, gadgetMap, gadgetType, pluginRootDir);
   });
-
   return gadgetMap;
 };
 
-let loadGadgetEntries = function(CTX, gadgetMap, gadgetType, pluginRootDir) {
-  CTX = CTX || this;
-  let {L, T, schemaValidator} = CTX;
+function loadGadgetEntries(CTX, gadgetMap, gadgetType, pluginRootDir) {
+  const {L, T, schemaValidator} = CTX || this;
 
-  let gadgetSubDir = chores.getComponentDir(pluginRootDir, gadgetType);
-  let gadgetFolder = path.join(pluginRootDir.pathDir, gadgetSubDir);
+  const gadgetSubDir = chores.getComponentDir(pluginRootDir, gadgetType);
+  const gadgetFolder = path.join(pluginRootDir.pathDir, gadgetSubDir);
   L.has('dunce') && L.log('dunce', T.add({
     gadgetKey: constx[gadgetType].ROOT_KEY,
     gadgetFolder: gadgetFolder
@@ -359,24 +350,23 @@ let loadGadgetEntries = function(CTX, gadgetMap, gadgetType, pluginRootDir) {
     text: ' - load ${gadgetKey}s from folder: ${gadgetFolder}'
   }));
 
-  let gadgetFiles = chores.filterFiles(gadgetFolder, getFilterPattern(gadgetType));
+  const gadgetFiles = chores.filterFiles(gadgetFolder, getFilterPattern(gadgetType));
   gadgetFiles.forEach(function(gadgetFile) {
     loadGadgetEntry(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, pluginRootDir);
   });
 };
 
-let loadGadgetEntry = function(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, pluginRootDir) {
-  CTX = CTX || this;
-  let {L, T, issueInspector, schemaValidator} = CTX;
-  let opStatus = lodash.assign({ type: gadgetType, file: gadgetFile, subDir: gadgetSubDir }, pluginRootDir);
-  let filepath = path.join(pluginRootDir.pathDir, gadgetSubDir, gadgetFile);
+function loadGadgetEntry(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, pluginRootDir) {
+  const {L, T, issueInspector, schemaValidator} = CTX = CTX || this;
+  const opStatus = lodash.assign({ type: gadgetType, file: gadgetFile, subDir: gadgetSubDir }, pluginRootDir);
+  const filepath = path.join(pluginRootDir.pathDir, gadgetSubDir, gadgetFile);
   try {
-    let gadgetConstructor = loader(filepath, { stopWhenError: true });
+    const gadgetConstructor = loader(filepath, { stopWhenError: true });
     L.has('dunce') && L.log('dunce', T.add({ filepath }).toMessage({
       text: ' - gadget file ${filepath} loading has done'
     }));
     if (lodash.isFunction(gadgetConstructor)) {
-      let gadgetName = chores.stringCamelCase(gadgetFile.replace('.js', ''));
+      const gadgetName = chores.stringCamelCase(gadgetFile.replace('.js', ''));
       lodash.defaults(gadgetMap, buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, gadgetName, pluginRootDir));
       opStatus.hasError = false;
     } else {
@@ -396,10 +386,9 @@ let loadGadgetEntry = function(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetF
   issueInspector.collect(opStatus);
 };
 
-let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperName, pluginRootDir) {
-  CTX = CTX || this;
-  let {L, T, nameResolver, objectDecorator, schemaValidator} = CTX;
-  let result = {};
+function buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, wrapperName, pluginRootDir) {
+  const {L, T, nameResolver, objectDecorator, schemaValidator} = CTX;
+  const result = {};
 
   if (!lodash.isFunction(gadgetConstructor)) {
     L.has('dunce') && L.log('dunce', T.toMessage({
@@ -414,8 +403,8 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
     pluginName = nameResolver.getOriginalName(pluginRootDir);
     pluginCode = nameResolver.getDefaultAlias(pluginRootDir);
   }
-  let uniqueName = [pluginName, wrapperName].join(chores.getSeparator());
-  let referenceAlias = lodash.get(pluginRootDir, ['presets', 'referenceAlias'], {});
+  const uniqueName = [pluginName, wrapperName].join(chores.getSeparator());
+  const referenceAlias = lodash.get(pluginRootDir, ['presets', 'referenceAlias'], {});
 
   function wrapperConstructor(kwargs) {
     kwargs = kwargs || {};
@@ -466,7 +455,7 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
       }
     }
     // transform parameters by referenceHash (after referenceAlias)
-    let referenceHash = gadgetConstructor.referenceHash;
+    const referenceHash = gadgetConstructor.referenceHash;
     if (lodash.isObject(referenceHash)) {
       kwargs = getWrappedParams(kwargs);
       lodash.forOwn(referenceHash, function(fullname, shortname) {
@@ -497,10 +486,10 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
 
   util.inherits(wrapperConstructor, gadgetConstructor);
 
-  let wrappedArgumentFields = ["sandboxName", "sandboxConfig", "profileName", "profileConfig", "loggingFactory"];
+  const wrappedArgumentFields = ["sandboxName", "sandboxConfig", "profileName", "profileConfig", "loggingFactory"];
 
   if (gadgetConstructor.argumentSchema) {
-    let wrappedArgumentSchema = {
+    const wrappedArgumentSchema = {
       "$id": uniqueName,
       "type": "object",
       "properties": {}
@@ -518,12 +507,10 @@ let buildGadgetWrapper = function(CTX, gadgetConstructor, gadgetType, wrapperNam
     }
     wrapperConstructor.argumentSchema = lodash.merge(wrappedArgumentSchema, originalArgumentSchema);
     if (!lodash.isEmpty(referenceAlias)) {
-      let properties = lodash.mapKeys(gadgetConstructor.argumentSchema.properties, function(val, key) {
+      const properties = lodash.mapKeys(gadgetConstructor.argumentSchema.properties, function(val, key) {
         return referenceAlias[key] || key;
       });
-      wrapperConstructor.argumentSchema = lodash.merge(wrappedArgumentSchema, {
-        properties: properties
-      });
+      wrapperConstructor.argumentSchema = lodash.merge(wrappedArgumentSchema, { properties });
     }
     L.has('dunce') && L.log('dunce', T.add({
       argumentSchema: wrapperConstructor.argumentSchema
