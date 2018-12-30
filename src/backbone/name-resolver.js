@@ -8,31 +8,27 @@ const nodash = require('../utils/nodash');
 const blockRef = chores.getBlockRef(__filename);
 
 function NameResolver(params={}) {
-  let loggingWrapper = new LoggingWrapper(blockRef);
-  let L = loggingWrapper.getLogger();
-  let T = loggingWrapper.getTracer();
-  let CTX = {L, T, issueInspector: params.issueInspector};
+  const loggingWrapper = new LoggingWrapper(blockRef);
+  const L = loggingWrapper.getLogger();
+  const T = loggingWrapper.getTracer();
+  const CTX = {L, T, issueInspector: params.issueInspector};
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
 
-  let absoluteAliasMap, relativeAliasMap;
+  const absoluteAliasMap = {}, relativeAliasMap = {};
 
   function _getAbsoluteAliasMap() {
-    absoluteAliasMap = absoluteAliasMap || {
-      plugin: buildAbsoluteAliasMap(params.pluginRefs),
-      bridge: buildAbsoluteAliasMap(params.bridgeRefs)
-    }
+    absoluteAliasMap.plugin = absoluteAliasMap.plugin || buildAbsoluteAliasMap(params.pluginRefs);
+    absoluteAliasMap.bridge = absoluteAliasMap.bridge || buildAbsoluteAliasMap(params.bridgeRefs);
     return absoluteAliasMap;
   }
 
   function _getRelativeAliasMap() {
-    relativeAliasMap = relativeAliasMap || {
-      plugin: buildRelativeAliasMap(params.pluginRefs),
-      bridge: buildRelativeAliasMap(params.bridgeRefs)
-    }
+    relativeAliasMap.plugin = relativeAliasMap.plugin || buildRelativeAliasMap(params.pluginRefs);
+    relativeAliasMap.bridge = relativeAliasMap.bridge || buildRelativeAliasMap(params.bridgeRefs);
     return relativeAliasMap;
   }
 
@@ -44,7 +40,7 @@ function NameResolver(params={}) {
       }
       case 'plugin':
       case 'bridge': {
-        let absoluteAlias = _getAbsoluteAliasMap();
+        const absoluteAlias = _getAbsoluteAliasMap();
         crateName = absoluteAlias[crateType][crateName] || crateName;
         break;
       }
@@ -61,7 +57,7 @@ function NameResolver(params={}) {
       case 'plugin':
       case 'bridge': {
         crateName = _getOriginalNameOf(crateName, crateType);
-        let relativeAlias = _getRelativeAliasMap();
+        const relativeAlias = _getRelativeAliasMap();
         crateName = relativeAlias[crateType][crateName] || crateName;
         break;
       }
@@ -80,17 +76,15 @@ function NameResolver(params={}) {
   if (!chores.isUpgradeSupported('refining-name-resolver')) {
     this.getAliasBy = function(selectedField, crateDescriptor) {
       crateDescriptor = crateDescriptor || {};
-      let crateAlias = crateDescriptor[selectedField];
       if (crateDescriptor.type === 'application') {
-        crateAlias = crateDescriptor.type;
+        return crateDescriptor.type;
       }
       if (crateDescriptor.type in LIB_NAME_PATTERNS) {
         if (!hasSupportFields(crateDescriptor)) {
           extractAliasNames(CTX, crateDescriptor.type, [crateDescriptor]);
         }
-        crateAlias = crateDescriptor[selectedField];
       }
-      return crateAlias;
+      return crateDescriptor[selectedField];
     }
     this.getOriginalName = this.getAliasBy.bind(this, 'name');
     this.getDefaultAlias = this.getAliasBy.bind(this, 'codeInCamel');
@@ -166,7 +160,7 @@ function hasSupportFields(moduleRef) {
 function extractAliasNames(ctx, type, moduleRefs) {
   const {issueInspector} = ctx;
   function buildSupportFields(moduleRef) {
-    let info = chores.extractCodeByPattern(ctx, LIB_NAME_PATTERNS[type], moduleRef.name);
+    const info = chores.extractCodeByPattern(ctx, LIB_NAME_PATTERNS[type], moduleRef.name);
     if (info.i >= 0) {
       moduleRef.code = info.code;
       moduleRef.codeInCamel = chores.stringCamelCase(moduleRef.code);
