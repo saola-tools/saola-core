@@ -500,12 +500,12 @@ function convertPreciseConfig(ctx, preciseConfig, moduleType, moduleName, module
   }
   // convert old bridge structures
   if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
-    let tags = nodash.arrayify(lodash.get(modulePresets, ['configTags'], []));
-    let cfgBridges = preciseConfig.bridges;
-    let loadable = RELOADING_FORCED || !(cfgBridges && cfgBridges.__status__);
+    const tags = nodash.arrayify(lodash.get(modulePresets, ['configTags'], []));
+    const cfgBridges = preciseConfig.bridges;
+    const loadable = RELOADING_FORCED || !(cfgBridges && cfgBridges.__status__);
     if (lodash.isObject(cfgBridges) && tags.indexOf('bridge[dialect-bridge]') >= 0 && loadable) {
-      let newBridges = RELOADING_FORCED ? {} : { __status__: true };
-      let traverseBackward = function(cfgBridges, newBridges) {
+      const newBridges = RELOADING_FORCED ? {} : { __status__: true };
+      function traverseBackward(cfgBridges, newBridges) {
         lodash.forOwn(cfgBridges, function(bridgeCfg, cfgName) {
           if (lodash.isObject(bridgeCfg) && !lodash.isEmpty(bridgeCfg)) {
             if (moduleType === 'application') {
@@ -514,9 +514,9 @@ function convertPreciseConfig(ctx, preciseConfig, moduleType, moduleName, module
             } else
             if (moduleType === 'plugin') {
               moduleName = moduleName || '*';
-              let bridgeNames = lodash.keys(bridgeCfg);
+              const bridgeNames = lodash.keys(bridgeCfg);
               if (bridgeNames.length === 1) {
-                let bridgeName = bridgeNames[0];
+                const bridgeName = bridgeNames[0];
                 newBridges[bridgeName] = newBridges[bridgeName] || {};
                 newBridges[bridgeName][moduleName] = newBridges[bridgeName][moduleName] || {};
                 if (lodash.isObject(bridgeCfg[bridgeName])) {
@@ -540,10 +540,10 @@ let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
   const { L, T } = ctx;
   if (chores.isUpgradeSupported('standardizing-config')) {
     if (preciseConfig && lodash.isObject(preciseConfig.plugins)) {
-      let oldPlugins = preciseConfig.plugins;
-      let newPlugins = {};
+      const oldPlugins = preciseConfig.plugins;
+      const newPlugins = {};
       lodash.forOwn(oldPlugins, function(oldPlugin, oldPluginName) {
-        let newPluginName = nameTransformer(oldPluginName, 'plugin');
+        const newPluginName = nameTransformer(oldPluginName, 'plugin');
         newPlugins[newPluginName] = oldPlugin;
       });
       preciseConfig.plugins = newPlugins;
@@ -551,15 +551,15 @@ let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
   }
   if (chores.isUpgradeSupported(['standardizing-config', 'bridge-full-ref'])) {
     if (preciseConfig && lodash.isObject(preciseConfig.bridges)) {
-      let oldBridges = preciseConfig.bridges;
-      let newBridges = {};
+      const oldBridges = preciseConfig.bridges;
+      const newBridges = {};
       lodash.forOwn(oldBridges, function(oldBridge, oldBridgeName) {
-        let newBridgeName = nameTransformer(oldBridgeName, 'bridge');
+        const newBridgeName = nameTransformer(oldBridgeName, 'bridge');
         if (newBridgeName) {
           if (lodash.isObject(oldBridge)) {
             newBridges[newBridgeName] = {};
             lodash.forOwn(oldBridge, function(oldPlugin, oldPluginName) {
-              let newPluginName = nameTransformer(oldPluginName, 'plugin');
+              const newPluginName = nameTransformer(oldPluginName, 'plugin');
               newBridges[newBridgeName][newPluginName] = oldPlugin;
             });
           } else {
