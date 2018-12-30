@@ -40,10 +40,12 @@ describe('tdd:devebot:core:config-loader', function() {
   var pluginRefs = {
     "plugin1": {
       name: 'plugin1',
+      type: 'plugin',
       path: lab.getLibHome('plugin1')
     },
     "plugin2": {
       name: 'plugin2',
+      type: 'plugin',
       path: lab.getLibHome('plugin2')
     }
   };

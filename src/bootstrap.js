@@ -473,19 +473,20 @@ bootstrap.require = function(packageName) {
 };
 
 function locatePackage(ctx, pkgInfo, pkgType) {
+  chores.assertOk(ctx, ctx.issueInspector, pkgInfo, pkgInfo.path, pkgInfo.name);
   try {
     const entrypoint = require.resolve(pkgInfo.path);
     let absolutePath = path.dirname(entrypoint);
     let pkg = loadPackageJson(absolutePath);
     while (pkg === null) {
-      let parentPath = path.dirname(absolutePath);
+      const parentPath = path.dirname(absolutePath);
       if (parentPath === absolutePath) break;
       absolutePath = parentPath;
       pkg = loadPackageJson(absolutePath);
     }
     if (pkg && typeof pkg === 'object') {
       if (typeof pkg.main === 'string') {
-        let verifiedPath = require.resolve(path.join(absolutePath, pkg.main));
+        const verifiedPath = require.resolve(path.join(absolutePath, pkg.main));
         if (verifiedPath !== entrypoint) {
           throw new Error("package.json file's [main] attribute is mismatched");
         }

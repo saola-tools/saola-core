@@ -112,13 +112,14 @@ describe('tdd:devebot:base:bootstrap', function() {
   });
 
   describe('locatePackage()', function() {
+    var issueInspector = lab.getIssueInspector();
     var bootstrap = rewire(lab.getDevebotModule('bootstrap'));
     var locatePackage = bootstrap.__get__('locatePackage');
     assert.isFunction(locatePackage);
 
     it('locate a valid package successfully', function() {
       var providedPkg = lab.getAppHome('locating-package-json');
-      var detectedPkg = locatePackage({}, {
+      var detectedPkg = locatePackage({ issueInspector }, {
         name: 'locating-package-json',
         path: providedPkg
       }, 'plugin');
