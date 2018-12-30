@@ -123,7 +123,7 @@ function wrapConstructor(refs, constructor, opts) {
       return wrapObject(refs, new F(), opts);
     },
     apply: function(target, thisArg, argumentsList) {
-      let createdObject = target.apply(thisArg, argumentsList) || thisArg;
+      const createdObject = target.apply(thisArg, argumentsList) || thisArg;
       return wrapObject(refs, createdObject, opts);
     }
   })
@@ -135,8 +135,8 @@ function wrapObject(refs, object, opts) {
   }
   opts = opts || {};
   refs = refs || {};
-  let {L, T} = refs;
-  let cached = {};
+  const {L, T} = refs;
+  const cached = {};
   return new BeanProxy(object, {
     get(target, property, receiver) {
       const node = Reflect.get(target, property, receiver);
@@ -168,20 +168,20 @@ function wrapObject(refs, object, opts) {
           fieldChain: fieldChain,
           methodName: methodName
         });
-        let supportAllMethods = chores.getFirstDefinedValue(
+        const supportAllMethods = chores.getFirstDefinedValue(
           opts.textureOfBean && opts.textureOfBean.supportAllMethods,
           opts.supportAllMethods);
         if (supportAllMethods) {
           texture = texture || {}
         }
         if (lodash.isObject(texture)) {
-          let useDefaultTexture = chores.getFirstDefinedValue(
+          const useDefaultTexture = chores.getFirstDefinedValue(
             texture.useDefaultTexture,
             opts.textureOfBean && opts.textureOfBean.useDefaultTexture,
             opts.useDefaultTexture);
           if (useDefaultTexture) {
             const SELECTED = opts.streamId ? DEFAULT_TEXTURE_WITH_STREAM_ID : DEFAULT_TEXTURE;
-            texture = lodash.defaultsDeep(texture, SELECTED);
+            lodash.defaultsDeep(texture, SELECTED);
           }
         }
         let owner = thisArg;
@@ -207,7 +207,7 @@ function wrapObject(refs, object, opts) {
         });
         cached[methodPath].spread = isProxyRecursive(texture);
       }
-      let node = cached[methodPath].method.apply(thisArg, argList);
+      const node = cached[methodPath].method.apply(thisArg, argList);
       if (cached[methodPath].spread && !isPromise(node)) {
         if (lodash.isFunction(node) || lodash.isObject(node)) {
           return this.nest(node);
@@ -220,13 +220,11 @@ function wrapObject(refs, object, opts) {
 
 function wrapMethod(refs, method, opts) {
   if (!lodash.isFunction(method)) return method;
-  let {texture, object, objectName, methodName, streamId} = opts || {};
-  object = lodash.isObject(object) ? object : null;
-  let loggingProxy = null;
-  let mockingProxy = null;
+  const {texture, objectName, methodName, streamId} = opts || {};
+  const object = lodash.get(opts, 'object', null);
   let wrapped = method;
   if (isMockingEnabled(texture)) {
-    mockingProxy = new MockingInterceptor({
+    const mockingProxy = new MockingInterceptor({
       texture: texture,
       object: object,
       objectName: objectName,
@@ -238,7 +236,7 @@ function wrapMethod(refs, method, opts) {
     wrapped = mockingProxy.capsule;
   }
   if (isLoggingEnabled(texture)) {
-    loggingProxy = new LoggingInterceptor({
+    const loggingProxy = new LoggingInterceptor({
       texture: texture,
       object: object,
       objectName: objectName,
@@ -262,8 +260,8 @@ function MockingInterceptor(params) {
       if (!enabled) return method;
       return capsule = capsule || new Proxy(method, {
         apply: function(target, thisArg, argumentsList) {
-          let output = {};
-          let generate = getGenerator(texture, thisArg, argumentsList);
+          const output = {};
+          const generate = getMockingGenerator(texture, thisArg, argumentsList);
           if (generate) {
             try {
               output.result = generate.apply(thisArg, argumentsList);
@@ -316,26 +314,27 @@ function MockingInterceptor(params) {
       });
     }
   });
-  function getGenerator(texture, thisArg, argumentsList) {
-    let generate = null;
-    for(const name in texture.mocking.mappings) {
-      const rule = texture.mocking.mappings[name];
-      if (!lodash.isFunction(rule.selector)) continue;
-      if (!lodash.isFunction(rule.generate)) continue;
-      if (rule.selector.apply(thisArg, argumentsList)) {
-        generate = rule.generate;
-        break;
-      }
+}
+
+function getMockingGenerator(texture, thisArg, argumentsList) {
+  let generate = null;
+  for(const name in texture.mocking.mappings) {
+    const rule = texture.mocking.mappings[name];
+    if (!lodash.isFunction(rule.selector)) continue;
+    if (!lodash.isFunction(rule.generate)) continue;
+    if (rule.selector.apply(thisArg, argumentsList)) {
+      generate = rule.generate;
+      break;
     }
-    return generate;
   }
+  return generate;
 }
 
 function LoggingInterceptor(params={}) {
   const { logger, tracer, preciseThreshold } = params
   const { texture, object, objectName, method, methodName, streamId } = params;
-  let counter = { promise: 0, callback: 0, general: 0 }
-  let pointer = { current: null, actionFlow: null, preciseThreshold }
+  const counter = { promise: 0, callback: 0, general: 0 }
+  const pointer = { current: null, actionFlow: null, preciseThreshold }
 
   assert.ok(lodash.isObject(logger));
   assert.ok(lodash.isObject(tracer));
@@ -343,7 +342,7 @@ function LoggingInterceptor(params={}) {
   assert.ok(lodash.isFunction(method));
 
   // pre-processing logging texture
-  let methodType = texture.methodType;
+  const methodType = texture.methodType;
   pointer.preciseThreshold = pointer.preciseThreshold || 5;
 
   function createListener(texture, eventName) {
@@ -375,7 +374,7 @@ function LoggingInterceptor(params={}) {
       if (pointer.actionFlow) {
         logState.actionFlow = pointer.actionFlow;
       }
-      let msgObj = {
+      const msgObj = {
         text: "Req[#{requestId}] #{objectName}.#{methodName}"
       }
       switch (eventName) {
@@ -411,7 +410,7 @@ function LoggingInterceptor(params={}) {
       if (!lodash.isArray(msgObj.tags) && lodash.isEmpty(msgObj.tags)) {
         delete msgObj.tags;
       }
-      let logLevel = onEvent.logLevel || (eventName === 'Failure' ? 'error' : 'debug');
+      const logLevel = onEvent.logLevel || (eventName === 'Failure' ? 'error' : 'debug');
       logger.has(logLevel) && logger.log(logLevel, tracer.add(logState).toMessage(msgObj, MODE));
     }
   }
@@ -444,7 +443,7 @@ function callMethod(refs, argumentsList, logOnEvent, logState) {
 
   function _detect(argumentsList) {
     let result = null, exception = null, found = false;
-    let pair = proxifyCallback(argumentsList, logOnEvent, logState, function() {
+    const pair = proxifyCallback(argumentsList, logOnEvent, logState, function() {
       hitMethodType(pointer, counter, 'callback');
     });
     try {
@@ -494,7 +493,7 @@ function callMethod(refs, argumentsList, logOnEvent, logState) {
       }
       case 'callback': {
         try {
-          let pair = proxifyCallback(argumentsList, logOnEvent, logState);
+          const pair = proxifyCallback(argumentsList, logOnEvent, logState);
           logOnEvent.Request(logState, pair.parameters);
           result = method.apply(object, pair.parameters);
         } catch (error) {
@@ -542,7 +541,7 @@ function hitMethodType(pointer, counter, methodType) {
       counter[methodType]++;
     } else {
       if (methodType !== pointer.current && pointer.current) {
-        for(let name in counter) {
+        for(const name in counter) {
           counter[name] = 0;
         }
       }
@@ -577,7 +576,7 @@ function isPromise(p) {
 }
 
 function extractCallback(argumentsList) {
-  let r = {};
+  const r = {};
   r.callback = argumentsList.length > 0 && argumentsList[argumentsList.length - 1] || null;
   if (typeof r.callback === 'function') {
     r.parameters = Array.prototype.slice.call(argumentsList, 0, argumentsList.length - 1);
@@ -589,12 +588,12 @@ function extractCallback(argumentsList) {
 }
 
 function proxifyCallback(argumentsList, logOnEvent, logState, checker) {
-  let pair = extractCallback(argumentsList);
+  const pair = extractCallback(argumentsList);
   if (pair.callback) {
     pair.parameters.push(new Proxy(pair.callback, {
       apply: function(target, thisArg, callbackArgs) {
         (typeof checker === 'function') && checker();
-        let error = callbackArgs[0];
+        const error = callbackArgs[0];
         if (error) {
           logOnEvent.Failure(logState, error);
         } else {
@@ -622,7 +621,7 @@ function isMockingEnabled(texture) {
 function getTextureByPath({textureOfBean, fieldChain, methodName}) {
   let texture = null;
   if (nodash.isObject(textureOfBean)) {
-    let beanToMethod = [];
+    const beanToMethod = [];
     if (nodash.isArray(fieldChain) && fieldChain.length > 0) {
       Array.prototype.push.apply(beanToMethod, fieldChain);
     }
@@ -640,7 +639,7 @@ function getBridgeFullname({pluginName, bridgeCode, dialectName}) {
 }
 
 function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, dialectPath}) {
-  let rootToBean = [];
+  const rootToBean = [];
   if (lodash.isArray(dialectPath) && !lodash.isEmpty(dialectPath)) {
     rootToBean.push("bridges");
     Array.prototype.push.apply(rootToBean, dialectPath);
@@ -649,10 +648,7 @@ function getTextureOfBridge({textureStore, pluginCode, bridgeCode, dialectName, 
       rootToBean.push("bridges", bridgeCode, pluginCode, dialectName);
     }
   }
-  let textureOfBean = textureStore;
-  if (rootToBean.length > 0) {
-    textureOfBean = lodash.get(textureStore, rootToBean, null);
-  }
+  const textureOfBean = (rootToBean.length > 0) ? lodash.get(textureStore, rootToBean) : textureStore;
   return propagateEnabled(textureOfBean, textureStore);
 }
 
@@ -661,7 +657,7 @@ function getPluginFullname({pluginName, gadgetType, gadgetName}) {
 }
 
 function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) {
-  let rootToBean = [];
+  const rootToBean = [];
   if (pluginCode) {
     if (chores.isSpecialPlugin(pluginCode)) {
       rootToBean.push(pluginCode);
@@ -675,10 +671,7 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) 
       }
     }
   }
-  let textureOfBean = textureStore;
-  if (rootToBean.length > 0) {
-    textureOfBean = lodash.get(textureStore, rootToBean, null);
-  }
+  const textureOfBean = (rootToBean.length > 0) ? lodash.get(textureStore, rootToBean) : textureStore;
   return propagateEnabled(textureOfBean, textureStore);
 }
 
@@ -722,7 +715,7 @@ function extractStreamId(logging, appInfo, instanceId) {
     }
     if (lodash.isFunction(logging.streamIdExtractor)) {
       try {
-        let streamId = logging.streamIdExtractor(lodash.pick(appInfo, [
+        const streamId = logging.streamIdExtractor(lodash.pick(appInfo, [
           'name', 'version', 'framework.name', 'framework.version'
         ]), instanceId);
         if (lodash.isString(streamId)) return streamId;
