@@ -188,7 +188,7 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
         }));
       }
       let libRootDir = libRef.path;
-      for(let i in aliasesOf[configType]) {
+      for(const i in aliasesOf[configType]) {
         let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, aliasesOf[configType][i] + '.js');
         if (chores.fileExists(defaultFile)) {
           config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
@@ -245,7 +245,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManif
     L.has('dunce') && L.log('dunce', T.add({ configType }).toMessage({
       text: ' - load the application default config of "${configType}"'
     }));
-    for(let i in aliasesOf[configType]) {
+    for(const i in aliasesOf[configType]) {
       let defaultFile = path.join(configDir, aliasesOf[configType][i] + '.js');
       if (chores.fileExists(defaultFile)) {
         config[configType]['expanse'] = standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), appRef, bridgeManifests, pluginManifests);
@@ -361,13 +361,13 @@ function modernizeConfig(ctx, configType, configStore, crateInfo, bridgeManifest
   const { issueInspector } = ctx;
   const collector = new ModernizingResultCollector();
   if (!lodash.isEmpty(bridgeManifests)) {
-    for(let bridgeName in configStore.bridges) {
+    for(const bridgeName in configStore.bridges) {
       const bridgePath = ["bridges"].concat(bridgeName);
       const bridgeNode = configStore.bridges[bridgeName] || {};
-      for(let pluginName in bridgeNode) {
+      for(const pluginName in bridgeNode) {
         const pluginPath = bridgePath.concat(pluginName);
         const pluginNode = bridgeNode[pluginName] || {};
-        for(let dialectName in pluginNode) {
+        for(const dialectName in pluginNode) {
           const dialectPath = pluginPath.concat(dialectName);
           const r = modernizeConfigBlock(ctx, configStore, dialectPath, bridgeManifests[bridgeName], "bridge");
           collector.push(r, crateInfo, "bridge", pluginName, bridgeName, dialectName);
@@ -380,7 +380,7 @@ function modernizeConfig(ctx, configType, configStore, crateInfo, bridgeManifest
       const r = modernizeConfigBlock(ctx, configStore, ["application"], pluginManifests["application"], "application");
       collector.push(r, crateInfo, "application");
     }
-    for(let pluginName in configStore.plugins) {
+    for(const pluginName in configStore.plugins) {
       const r = modernizeConfigBlock(ctx, configStore, ["plugins", pluginName], pluginManifests[pluginName], "plugin");
       collector.push(r, crateInfo, "plugin", pluginName);
     }

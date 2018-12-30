@@ -58,14 +58,8 @@ function ObjectDecorator(params={}) {
       pluginName: opts.pluginName || nameResolver.getOriginalNameOf(opts.pluginCode, 'plugin'),
       gadgetName: opts.gadgetName
     });
-    let supportAllMethods = (['services'].indexOf(opts.gadgetType) >= 0);
-    if (opts && 'supportAllMethods' in opts) {
-      supportAllMethods = opts.supportAllMethods;
-    }
-    let useDefaultTexture = (['services', 'triggers'].indexOf(opts.gadgetType) >= 0);
-    if (opts && 'useDefaultTexture' in opts) {
-      useDefaultTexture = opts.useDefaultTexture;
-    }
+    const supportAllMethods = determineOptionValue('supportAllMethods', ['services'], opts);
+    const useDefaultTexture = determineOptionValue('useDefaultTexture', ['services', 'triggers'], opts);
     return wrapConstructor(C, beanConstructor, lodash.assign({
       textureOfBean, supportAllMethods, useDefaultTexture, objectName: fullObjectName, streamId
     }, lodash.pick(opts, ['logger', 'tracer'])));
@@ -101,6 +95,17 @@ ObjectDecorator.argumentSchema = {
 };
 
 module.exports = ObjectDecorator;
+
+function determineOptionValue(fieldName, conditional, opts) {
+  let value = false;
+  if (opts) {
+    value = (conditional.indexOf(opts.gadgetType) >= 0);
+    if (fieldName in opts) {
+      value = opts[fieldName];
+    }
+  }
+  return value;
+}
 
 function wrapConstructor(refs, constructor, opts) {
   opts = opts || {};

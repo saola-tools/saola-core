@@ -210,15 +210,27 @@ describe('tdd:devebot:core:object-decorator', function() {
     });
     ObjectDecorator.__set__('wrapObject', wrapObject);
 
-    beforeEach(function() {
-      wrapObject.resetHistory();
-    })
-
-    it('should wrap a constructor that will be invoked as a constructor', function() {
-      var refs = { L: {}, T: {} };
-      var ExampleConstructor = function () {}
+    // Default example constructor
+    var ExampleConstructor = function () {}
       ExampleConstructor.prototype.calculate = function() {}
       ExampleConstructor.prototype.getConfig = function() {}
+
+    beforeEach(function() {
+      wrapObject.resetHistory();
+    });
+
+    it('skip wrapping a constructor if textureOfBean is undefined or null', function() {
+      var refs = { L: {}, T: {} }
+      var opts = {}
+      assert.equal(wrapConstructor(refs, ExampleConstructor, opts), ExampleConstructor);
+      opts = { textureOfBean: null }
+      assert.equal(wrapConstructor(refs, ExampleConstructor, opts), ExampleConstructor);
+      opts = { textureOfBean: {} }
+      assert.notEqual(wrapConstructor(refs, ExampleConstructor, opts), ExampleConstructor);
+    });
+
+    it('skip wrapping a constructor if textureOfBean.enabled is false', function() {
+      var refs = { L: {}, T: {} };
       var opts = { textureOfBean: {
         enabled: false,
         methods: {
@@ -777,6 +789,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         issueInspector: issueInspector,
         schemaValidator: schemaValidator
       });
+
+      // define Constructor
       var mockedBean = {
         method1: sinon.stub(),
         method2: sinon.stub()
@@ -785,12 +799,16 @@ describe('tdd:devebot:core:object-decorator', function() {
         this.method1 = mockedBean.method1
         this.method2 = mockedBean.method2
       }
+
+      // wrapping Constructor
       var WrappedConstructor = objectDecorator.wrapBridgeDialect(MockedConstructor, {
         pluginName: 'simple-plugin',
         bridgeName: 'simple-bridge',
         dialectName: 'connector',
         useDefaultTexture: false,
       });
+      assert.equal(WrappedConstructor, MockedConstructor);
+
       var wrappedBean = new WrappedConstructor();
       // invoke method1() 3 times
       lodash.range(3).forEach(function() {
@@ -884,6 +902,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         dialectName: 'connector',
         useDefaultTexture: false,
       });
+      assert.notEqual(WrappedConstructor, MockedConstructor);
+
       var wrappedBean = new WrappedConstructor();
       // invokes method1() 3 times
       lodash.range(3).forEach(function() {
@@ -1042,8 +1062,8 @@ describe('tdd:devebot:core:object-decorator', function() {
         useDefaultTexture: false,
       });
       assert.notEqual(WrappedConstructor, MockedConstructor);
-      var wrappedBean = new WrappedConstructor();
 
+      var wrappedBean = new WrappedConstructor();
       // invokes method1() 3 times
       lodash.range(3).forEach(function() {
         wrappedBean.level1.method1('Hello world', {
@@ -1051,7 +1071,6 @@ describe('tdd:devebot:core:object-decorator', function() {
          });
       });
       assert.equal(mockedBean.level1.method1.callCount, 3);
-
       // invokes method2() 5 times
       lodash.range(5).forEach(function() {
         wrappedBean.level2.sub2.method2('Hello world', {
