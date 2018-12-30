@@ -15,6 +15,7 @@ const NameResolver = require('./backbone/name-resolver');
 const chores = require('./utils/chores');
 const constx = require('./utils/constx');
 const envbox = require('./utils/envbox');
+const errors = require('./utils/errors');
 const nodash = require('./utils/nodash');
 const Runner = require('./runner');
 const Server = require('./server');
@@ -488,16 +489,19 @@ function locatePackage(ctx, pkgInfo, pkgType) {
       if (typeof pkg.main === 'string') {
         const verifiedPath = require.resolve(path.join(absolutePath, pkg.main));
         if (verifiedPath !== entrypoint) {
-          throw new Error("package.json file's [main] attribute is mismatched");
+          const MismatchedMainError = errors.assertConstructor('PackageError');
+          throw new MismatchedMainError("package.json file's [main] attribute is mismatched");
         }
       }
       if (typeof pkgInfo.name === 'string') {
         if (pkgInfo.name !== pkg.name) {
-          throw new Error('package name is different with provided name');
+          const MismatchedNameError = errors.assertConstructor('PackageError');
+          throw new MismatchedNameError('package name is different with provided name');
         }
       }
     } else {
-      throw new Error('package.json file is not found or has invalid format');
+      const InvalidPackageError = errors.assertConstructor('PackageError');
+      throw new InvalidPackageError('package.json file is not found or has invalid format');
     }
     return absolutePath;
   } catch (err) {
