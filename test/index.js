@@ -339,12 +339,16 @@ function LoggingFactoryMock(params) {
   var tracerStore = { add: [], toMessage: [] }
   var tracer = {
     add: sinon.stub().callsFake(function(params) {
-      tracerStore.add.push(lodash.cloneDeep(params));
+      if (params.captureMethodCall !== false) {
+        tracerStore.add.push(lodash.cloneDeep(params));
+      }
       LogTracer.ROOT.add(params);
       return tracer;
     }),
     toMessage: sinon.stub().callsFake(function(params) {
-      tracerStore.toMessage.push(lodash.cloneDeep(params));
+      if (params.captureMethodCall !== false) {
+        tracerStore.toMessage.push(lodash.cloneDeep(params));
+      }
       return LogTracer.ROOT.toMessage(params);
     }),
     get: function(key) {
