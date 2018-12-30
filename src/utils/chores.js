@@ -12,6 +12,7 @@ const format = require('logolite/lib/format');
 const Validator = require('schemato').Validator;
 const constx = require('./constx');
 const loader = require('./loader');
+const errors = require('./errors');
 const envbox = require('./envbox');
 const nodash = require('./nodash');
 const getenv = require('./getenv');
@@ -27,28 +28,15 @@ const store = {
 };
 const chores = {};
 
-// @Deprecated
-let CustomError = function(message, payload) {
-  Error.call(this, message);
-  Error.captureStackTrace(this, this.constructor);
-  this.message = message;
-  this.payload = payload;
-}
-util.inherits(CustomError, Error);
-
 chores.assertOk = function () {
   for(let k=0; k<arguments.length; k++) {
     assert.ok(arguments[k], util.format('The argument #%s evaluated to a falsy value', k));
   }
 }
 
+// @Deprecated
 chores.buildError = function(errorName) {
-  let ErrorConstructor = function() {
-    CustomError.apply(this, arguments);
-    this.name = errorName;
-  }
-  util.inherits(ErrorConstructor, CustomError);
-  return ErrorConstructor;
+  return errors.assertConstructor(errorName);
 }
 
 chores.getUUID = function() {
@@ -206,26 +194,19 @@ chores.isSpecialPlugin = function(pluginCode) {
   return (SPECIAL_PLUGINS.indexOf(pluginCode) >= 0);
 }
 
-chores.extractCodeByPattern = function(ctx, patterns, name) {
+chores.extractCodeByPattern = function(patterns, name) {
   assert.ok(patterns instanceof Array);
   for(const k in patterns) {
     assert.ok(patterns[k] instanceof RegExp);
   }
-  const {L, T} = ctx;
   const info = {};
   for(info.i=0; info.i<patterns.length; info.i++) {
     if (name.match(patterns[info.i])) break;
   }
   if (info.i >= patterns.length) {
-    L.has('dunce') && L.log('dunce', T.add({ name }).toMessage({
-      text: ' - The name "${name}" is not matched the patterns'
-    }));
     return { i: -1, code: name };
   }
   info.code = name.replace(patterns[info.i], '\$1');
-  L.has('dunce') && L.log('dunce', T.add(lodash.assign({name}, info)).toMessage({
-    text: ' - extracted code of "${name}" is "${code}"'
-  }));
   return info;
 }
 
