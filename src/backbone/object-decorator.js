@@ -153,9 +153,9 @@ function wrapObject(refs, object, opts) {
       return node;
     },
     apply(target, thisArg, argList) {
-      let methodName = this.path[this.path.length - 1];
-      let fieldChain = lodash.slice(this.path, 0, this.path.length - 1);
-      let methodPath = this.path.join('.');
+      const methodName = lodash.get(this.path, this.path.length - 1);
+      const fieldChain = lodash.slice(this.path, 0, this.path.length - 1);
+      const methodPath = this.path.join('.');
       L.has('dunce') && L.log('dunce', T.add({
         objectName: opts.objectName, fieldChain, methodName, methodPath
       }).toMessage({
@@ -180,18 +180,19 @@ function wrapObject(refs, object, opts) {
           }
         }
         const owner = thisArg || (fieldChain.length > 0 ? lodash.get(object, fieldChain) : object);
-        const ownerName = (fieldChain.length > 0) ? [opts.objectName].concat(fieldChain).join('.') : opts.objectName;
-        cached[methodPath] = {};
-        cached[methodPath].method = wrapMethod(refs, target, {
-          texture: texture,
-          object: owner,
-          objectName: ownerName,
-          methodName: methodName,
-          streamId: opts.streamId,
-          logger: opts.logger || object.logger,
-          tracer: opts.tracer || object.tracer
-        });
-        cached[methodPath].spread = isProxyRecursive(texture);
+        const ownerName = opts.objectName && [opts.objectName].concat(fieldChain).join('.') || null;
+        cached[methodPath] = {
+          method: wrapMethod(refs, target, {
+            texture: texture,
+            object: owner,
+            objectName: ownerName,
+            methodName: methodName,
+            streamId: opts.streamId,
+            logger: opts.logger || object.logger,
+            tracer: opts.tracer || object.tracer
+          }),
+          spread: isProxyRecursive(texture)
+        };
       }
       const node = cached[methodPath].method.apply(thisArg, argList);
       if (cached[methodPath].spread && !isPromise(node)) {
@@ -263,7 +264,7 @@ function MockingInterceptor(params) {
               }, MODE));
             }
             if (texture.methodType === 'callback') {
-              let pair = extractCallback(argumentsList);
+              const pair = extractCallback(argumentsList);
               if (pair.callback) {
                 return pair.callback.apply(null, [output.exception].concat(output.result));
               }
@@ -280,13 +281,13 @@ function MockingInterceptor(params) {
             return output.result;
           } else {
             if (texture.mocking.unmatched === 'exception') {
-              let MockNotFoundError = errors.assertConstructor('MockNotFoundError');
+              const MockNotFoundError = errors.assertConstructor('MockNotFoundError');
               output.exception = new MockNotFoundError('All of selectors are unmatched');
               if (texture.methodType === 'promise') {
                 return Promise.reject(output.exception);
               }
               if (texture.methodType === 'callback') {
-                let pair = extractCallback(argumentsList);
+                const pair = extractCallback(argumentsList);
                 if (pair.callback) {
                   return pair.callback(output.exception);
                 }
@@ -674,7 +675,7 @@ function detectRequestId(argumentsList) {
   let reqId = undefined;
   if (argumentsList && argumentsList.length > 0) {
     for(let k=(argumentsList.length-1); k>=0; k--) {
-      let o = argumentsList[k];
+      const o = argumentsList[k];
       reqId = o && (o.requestId || o.reqId);
       if (typeof reqId === 'string') break;
     }
@@ -706,7 +707,7 @@ function extractStreamId(logging, appInfo, instanceId) {
         ]), instanceId);
         if (lodash.isString(streamId)) return streamId;
       } catch (fatal) {
-        // return 'streamIdExtractor-throw-an-error';
+        return instanceId || 'streamIdExtractor-throw-an-error';
       }
     }
   }
