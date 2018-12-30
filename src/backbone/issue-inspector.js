@@ -34,8 +34,7 @@ function IssueInspector(params={}) {
     return this;
   }
 
-  this.examine = function(options) {
-    options = options || {};
+  this.examine = function(options = {}) {
     const summary = lodash.reduce(opStates, function(store, item) {
       if (item.hasError) {
         store.numberOfErrors += 1;
@@ -54,10 +53,9 @@ function IssueInspector(params={}) {
     return summary;
   }
 
-  this.barrier = function(options) {
-    options = options || {};
-    let silent = chores.isSilentForced('issue-inspector', options);
-    let summary = this.examine(options);
+  this.barrier = function(options = {}) {
+    const silent = chores.isSilentForced('issue-inspector', options);
+    const summary = this.examine(options);
     if (summary.numberOfErrors > 0) {
       if (!silent) {
         console.error(chalk.errorHeader('[x] There are %s error(s) occurred during load:'), summary.numberOfErrors);
