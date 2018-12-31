@@ -30,7 +30,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
     var wrapMethod = ObjectDecorator.__get__('wrapMethod');
     var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
-    var CTX = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
+    var refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
 
     beforeEach(function() {
       loggingFactory.resetHistory();
@@ -38,20 +38,20 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('skip wrapping a method if texture is undefined or disabled', function() {
       var originalMethod = sinon.stub();
-      assert.equal(wrapMethod(CTX, originalMethod), originalMethod);
-      assert.equal(wrapMethod(CTX, originalMethod, {}), originalMethod);
-      assert.equal(wrapMethod(CTX, originalMethod, { texture: {} }), originalMethod);
-      assert.equal(wrapMethod(CTX, originalMethod, { texture: { enabled: false } }), originalMethod);
-      assert.equal(wrapMethod(CTX, originalMethod, { texture: { logging: { enabled: false } } }), originalMethod);
-      assert.equal(wrapMethod(CTX, originalMethod, { texture: { mocking: { enabled: false } } }), originalMethod);
-      assert.equal(wrapMethod(CTX, originalMethod, { texture: { mocking: {} } }), originalMethod);
-      assert.notEqual(wrapMethod(CTX, originalMethod, { texture: { mocking: { mappings: { default_rule: {} } } } }), originalMethod);
-      assert.notEqual(wrapMethod(CTX, originalMethod, { texture: { logging: {} } }), originalMethod);
+      assert.equal(wrapMethod(refs, originalMethod), originalMethod);
+      assert.equal(wrapMethod(refs, originalMethod, {}), originalMethod);
+      assert.equal(wrapMethod(refs, originalMethod, { texture: {} }), originalMethod);
+      assert.equal(wrapMethod(refs, originalMethod, { texture: { enabled: false } }), originalMethod);
+      assert.equal(wrapMethod(refs, originalMethod, { texture: { logging: { enabled: false } } }), originalMethod);
+      assert.equal(wrapMethod(refs, originalMethod, { texture: { mocking: { enabled: false } } }), originalMethod);
+      assert.equal(wrapMethod(refs, originalMethod, { texture: { mocking: {} } }), originalMethod);
+      assert.notEqual(wrapMethod(refs, originalMethod, { texture: { mocking: { mappings: { default_rule: {} } } } }), originalMethod);
+      assert.notEqual(wrapMethod(refs, originalMethod, { texture: { logging: {} } }), originalMethod);
     });
 
     it('should wrap a method if texture is defined', function() {
       var originalMethod = sinon.stub();
-      var wrappedMethod = wrapMethod(CTX, originalMethod, { texture: { logging: {} } });
+      var wrappedMethod = wrapMethod(refs, originalMethod, { texture: { logging: {} } });
       assert.notEqual(wrappedMethod, originalMethod);
       var result = wrappedMethod({ msg: 'Hello world' }, { reqId: LogConfig.getLogID() });
       assert.equal(originalMethod.callCount, 1);
@@ -98,7 +98,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         }
       }
-      var wrappedMethod = wrapMethod(CTX, object.sampleMethod, {
+      var wrappedMethod = wrapMethod(refs, object.sampleMethod, {
         texture: texture,
         object: object,
         objectName: 'sampleObject',
@@ -148,7 +148,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         }
       };
-      var wrappedMethod = wrapMethod(CTX, object.sampleMethod, {
+      var wrappedMethod = wrapMethod(refs, object.sampleMethod, {
         texture: texture,
         object: object,
         objectName: 'sampleObject',
@@ -203,7 +203,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           cb(null, { msg: "This is a normal result" });
         })
       }
-      var wrappedMethod = wrapMethod(CTX, object.sampleMethod, {
+      var wrappedMethod = wrapMethod(refs, object.sampleMethod, {
         texture: texture,
         object: object,
         objectName: 'sampleObject',
@@ -225,7 +225,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     ObjectDecorator.__set__('wrapObject', wrapObject);
 
     var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
-    var CTX = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
+    var refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
 
     // Default example constructor
     var ExampleConstructor = function () {}
@@ -238,11 +238,11 @@ describe('tdd:devebot:core:object-decorator', function() {
 
     it('skip wrapping a constructor if textureOfBean is undefined or null', function() {
       var opts = {}
-      assert.equal(wrapConstructor(CTX, ExampleConstructor, opts), ExampleConstructor);
+      assert.equal(wrapConstructor(refs, ExampleConstructor, opts), ExampleConstructor);
       opts = { textureOfBean: null }
-      assert.equal(wrapConstructor(CTX, ExampleConstructor, opts), ExampleConstructor);
+      assert.equal(wrapConstructor(refs, ExampleConstructor, opts), ExampleConstructor);
       opts = { textureOfBean: {} }
-      assert.notEqual(wrapConstructor(CTX, ExampleConstructor, opts), ExampleConstructor);
+      assert.notEqual(wrapConstructor(refs, ExampleConstructor, opts), ExampleConstructor);
     });
 
     it('skip wrapping a constructor if textureOfBean.enabled is false', function() {
@@ -253,7 +253,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           getConfig: DEFAULT_TEXTURE
         }
       } };
-      var WrappedConstructor = wrapConstructor(CTX, ExampleConstructor, opts);
+      var WrappedConstructor = wrapConstructor(refs, ExampleConstructor, opts);
       assert.equal(WrappedConstructor, ExampleConstructor);
     });
 
@@ -274,7 +274,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       ExampleConstructor = sinon.spy(ExampleConstructor);
 
       // compare wrapped constructor ~ original constructor
-      var WrappedConstructor = wrapConstructor(CTX, ExampleConstructor, opts);
+      var WrappedConstructor = wrapConstructor(refs, ExampleConstructor, opts);
       assert.notEqual(WrappedConstructor, ExampleConstructor);
       assert.equal(WrappedConstructor.prototype, ExampleConstructor.prototype);
       assert.equal(WrappedConstructor.argumentSchema, ExampleConstructor.argumentSchema);
@@ -294,13 +294,12 @@ describe('tdd:devebot:core:object-decorator', function() {
       // assert wrapObject has been called with correct parameters
       assert.equal(wrapObject.callCount, 1);
       var wrapObject_args = wrapObject.firstCall.args;
-      assert.deepEqual(wrapObject_args[0], CTX);
+      assert.deepEqual(wrapObject_args[0], refs);
       assert.isTrue(wrapObject_args[1] instanceof ExampleConstructor);
       assert.deepEqual(wrapObject_args[2], opts);
     });
 
     it('should wrap a constructor that will be invoked as a function', function() {
-      var refs = { L: {}, T: {} };
       var opts = { textureOfBean: {} };
 
       var ExampleConstructor = function () {
@@ -365,7 +364,7 @@ describe('tdd:devebot:core:object-decorator', function() {
     var wrapMethod = sinon.spy(ObjectDecorator.__get__('wrapMethod'));
     ObjectDecorator.__set__('wrapMethod', wrapMethod);
     var loggingFactory = lab.createLoggingFactoryMock();
-    var CTX = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
+    var refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
 
     beforeEach(function() {
       loggingFactory.resetHistory();
@@ -378,7 +377,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         method1: sinon.stub(),
         method2: sinon.stub()
       }
-      var wrappedBean = wrapObject(CTX, mockedBean, {
+      var wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: 'originalBean'
       });
@@ -437,7 +436,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         method1: sinon.stub(),
         method2: sinon.stub()
       }
-      var wrappedBean = wrapObject(CTX, mockedBean, {
+      var wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: 'originalBean'
       });
@@ -499,7 +498,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         })()}}
       }
-      var wrappedBean = wrapObject(CTX, mockedBean, {
+      var wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: 'originalBean'
       });
@@ -570,7 +569,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           }
         })()}}
       }
-      var wrappedBean = wrapObject(CTX, mockedBean, {
+      var wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: 'originalBean'
       });
@@ -635,7 +634,7 @@ describe('tdd:devebot:core:object-decorator', function() {
           })()
         } } }
       }
-      var wrappedBean = wrapObject(CTX, mockedBean, {
+      var wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: 'originalBean'
       });
@@ -733,7 +732,7 @@ describe('tdd:devebot:core:object-decorator', function() {
         method1: sinon.stub(),
         method2: sinon.stub(),
       }
-      var wrappedBean = wrapObject(CTX, mockedBean, {
+      var wrappedBean = wrapObject(refs, mockedBean, {
         logger: loggingFactory.getLogger(),
         tracer: loggingFactory.getTracer(),
         textureOfBean: textureOfBean,
