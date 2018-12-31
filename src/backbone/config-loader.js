@@ -94,7 +94,7 @@ function loadConfig(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, br
       applyAliasMap(ctx, config[configType].expanse, nameResolver.getDefaultAliasOf);
       applyAliasMap(ctx, config[configType].mixture, nameResolver.getDefaultAliasOf);
       if (!chores.isUpgradeSupported('simplify-name-resolver')) {
-        let {plugin: pluginReverseMap, bridge: bridgeReverseMap} = nameResolver.getRelativeAliasMap();
+        const {plugin: pluginReverseMap, bridge: bridgeReverseMap} = nameResolver.getRelativeAliasMap();
         doAliasMap(ctx, config[configType].default, pluginReverseMap, bridgeReverseMap);
         doAliasMap(ctx, config[configType].expanse, pluginReverseMap, bridgeReverseMap);
         doAliasMap(ctx, config[configType].mixture, pluginReverseMap, bridgeReverseMap);
@@ -145,12 +145,12 @@ function buildConfigTileNames(ctx, appOptions, profileName, sandboxName, texture
 function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
   const { L, T, nameResolver } = ctx;
 
-  let libRefs = lodash.values(pluginRefs);
+  const libRefs = lodash.values(pluginRefs);
   if (devebotRef) {
     libRefs.push(devebotRef);
   }
 
-  let packetRefs = {};
+  const packetRefs = {};
   if (appRef && appRef.path) packetRefs[appRef.path] = appRef;
   lodash.assign(packetRefs, pluginRefs);
   if (devebotRef && devebotRef.path) packetRefs[devebotRef.path] = devebotRef;
@@ -161,15 +161,15 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
     bridgeManifests = pluginManifests = undefined;
   }
 
-  let appRootDir = appRef && lodash.isString(appRef.path) ? appRef.path : null;
+  const appRootDir = appRef && lodash.isString(appRef.path) ? appRef.path : null;
 
-  let defaultConfigDir = appRootDir ? path.join(appRootDir, CONFIG_SUBDIR) : null;
+  const defaultConfigDir = appRootDir ? path.join(appRootDir, CONFIG_SUBDIR) : null;
   L.has('silly') && L.log('silly', T.add({ configDir: defaultConfigDir }).toMessage({
     tags: [ blockRef, 'config-dir', 'internal-config-dir' ],
     text: ' - internal configDir: ${configDir}'
   }));
 
-  let externalConfigDir = resolveConfigDir(ctx, appName, appRootDir, customDir, customEnv);
+  const externalConfigDir = resolveConfigDir(ctx, appName, appRootDir, customDir, customEnv);
   L.has('silly') && L.log('silly', T.add({ configDir: externalConfigDir }).toMessage({
     tags: [ blockRef, 'config-dir', 'external-config-dir' ],
     text: ' - external configDir: ${configDir}'
@@ -187,9 +187,9 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
           text: ' - Presets of ${type}[${name}]: ${presets}'
         }));
       }
-      let libRootDir = libRef.path;
+      const libRootDir = libRef.path;
       for(const i in aliasesOf[configType]) {
-        let defaultFile = path.join(libRootDir, CONFIG_SUBDIR, aliasesOf[configType][i] + '.js');
+        const defaultFile = path.join(libRootDir, CONFIG_SUBDIR, aliasesOf[configType][i] + '.js');
         if (chores.fileExists(defaultFile)) {
           config[configType]['default'] = lodash.defaultsDeep(config[configType]['default'],
               standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libRef, bridgeManifests, pluginManifests));
@@ -229,8 +229,8 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManif
     L.has('dunce') && L.log('dunce', T.add({ configType, configDir }).toMessage({
       text: ' + load the "${configType}" configuration in "${configDir}"'
     }));
-    let configFiles = chores.filterFiles(configDir, '.*\.js');
-    let configInfos = lodash.map(configFiles, function(file) {
+    const configFiles = chores.filterFiles(configDir, '.*\.js');
+    const configInfos = lodash.map(configFiles, function(file) {
       if (false) {
         return file.replace('.js', '').split(/_(.+)/).filter(function(sub) {
           return sub.length > 0;
@@ -246,7 +246,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManif
       text: ' - load the application default config of "${configType}"'
     }));
     for(const i in aliasesOf[configType]) {
-      let defaultFile = path.join(configDir, aliasesOf[configType][i] + '.js');
+      const defaultFile = path.join(configDir, aliasesOf[configType][i] + '.js');
       if (chores.fileExists(defaultFile)) {
         config[configType]['expanse'] = standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), appRef, bridgeManifests, pluginManifests);
         break;
@@ -257,14 +257,14 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManif
     L.has('dunce') && L.log('dunce', T.add({ configType }).toMessage({
       text: ' - load the application customized config of "${configType}"'
     }));
-    let expanseNames = filterConfigBy(ctx, configInfos, tileNames, configType, aliasesOf);
+    const expanseNames = filterConfigBy(ctx, configInfos, tileNames, configType, aliasesOf);
     L.has('dunce') && L.log('dunce', T.add({ expanseNames }).toMessage({
       text: ' + expanded names: ${expanseNames}'
     }));
     config[configType]['expanse'] = config[configType]['expanse'] || {};
     config[configType]['expanse'] = lodash.reduce(expanseNames, function(accum, expanseItem) {
-      let configFile = path.join(configDir, expanseItem.join('_') + '.js');
-      let configObj = lodash.defaultsDeep(standardizeConfig(ctx, configType, loadConfigFile(ctx, configFile), appRef, bridgeManifests, pluginManifests), accum);
+      const configFile = path.join(configDir, expanseItem.join('_') + '.js');
+      const configObj = lodash.defaultsDeep(standardizeConfig(ctx, configType, loadConfigFile(ctx, configFile), appRef, bridgeManifests, pluginManifests), accum);
       if (configObj.disabled) return accum;
       config[configType]['names'].push(expanseItem[1]);
       return configObj;
@@ -276,7 +276,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManif
 
 function loadConfigFile(ctx, configFile) {
   const { L, T, issueInspector } = ctx || this;
-  let opStatus = { type: 'CONFIG', file: configFile };
+  const opStatus = { type: 'CONFIG', file: configFile };
   let content;
   try {
     L.has('dunce') && L.log('dunce', T.add({ configFile }).toMessage({
@@ -301,13 +301,13 @@ function loadConfigFile(ctx, configFile) {
 }
 
 function filterConfigBy(ctx, configInfos, selectedNames, configType, aliasesOf) {
-  let arr = {};
-  let idx = {};
+  const arr = {};
+  const idx = {};
   selectedNames[configType].forEach(function(name, index) {
     idx[name] = index;
   });
   lodash.forEach(configInfos, function(item) {
-    let found = (item.length == 2) && (aliasesOf[configType].indexOf(item[0]) >= 0) && (item[1].length > 0);
+    const found = (item.length == 2) && (aliasesOf[configType].indexOf(item[0]) >= 0) && (item[1].length > 0);
     if (found && idx[item[1]] != null) {
       arr[idx[item[1]]] = item;
     }
@@ -405,12 +405,12 @@ function modernizeConfigBlock(ctx, configStore, configPath, manifestBlock, modul
 function applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifest) {
   let result = null;
   if (manifest && manifest.migration && manifest.enabled !== false) {
-    let configNode = lodash.get(configStore, configPath);
+    const configNode = lodash.get(configStore, configPath);
     if (lodash.isObject(configNode)) {
       const configVersion = lodash.get(configNode, [CONFIG_METADATA_BLOCK, 'version']);
       if (chores.isVersionLessThan(configVersion, moduleVersion)) {
-        let configMeta = lodash.get(configNode, [CONFIG_METADATA_BLOCK]);
-        let configData = lodash.omit(configNode, [CONFIG_METADATA_BLOCK]);
+        const configMeta = lodash.get(configNode, [CONFIG_METADATA_BLOCK]);
+        const configData = lodash.omit(configNode, [CONFIG_METADATA_BLOCK]);
         result = { migrated: false, configVersion, moduleVersion, steps: {} };
         for(const ruleName in manifest.migration) {
           const rule = manifest.migration[ruleName];
@@ -426,11 +426,11 @@ function applyManifestMigration(ctx, configStore, configPath, moduleVersion, man
             result.steps[ruleName] = 'unmatched';
             continue;
           }
-          configData = rule.transform(configData);
-          if (lodash.isObject(configData)) {
+          const transformedData = rule.transform(configData);
+          if (lodash.isObject(transformedData)) {
             lodash.set(configMeta, 'version', moduleVersion);
-            lodash.set(configData, CONFIG_METADATA_BLOCK, configMeta);
-            lodash.set(configStore, configPath, configData);
+            lodash.set(transformedData, CONFIG_METADATA_BLOCK, configMeta);
+            lodash.set(configStore, configPath, transformedData);
             result.migrated = true;
             result.ruleName = ruleName;
             result.steps[ruleName] = 'ok';
@@ -454,7 +454,7 @@ function ModernizingResultCollector() {
     opStatus.type = crateInfo.type;
     opStatus.name = crateInfo.name;
     if (opStatus.hasError) {
-      let stackText = [];
+      const stackText = [];
       switch (moduleType) {
         case 'bridge': {
           stackText.push(util.format('Converting config block for bridge[%s/%s#%s] from [%s] to [%s] has failed',
@@ -486,7 +486,7 @@ function transformConfig(ctx, configType, configStore, crateInfo) {
     configStore = convertPreciseConfig(ctx, configStore, crateInfo.type, crateInfo.name, crateInfo.presets);
     configStore = applyAliasMap(ctx, configStore, nameResolver.getOriginalNameOf);
     if (!chores.isUpgradeSupported('simplify-name-resolver')) {
-      let {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
+      const {plugin: pluginAliasMap, bridge: bridgeAliasMap} = nameResolver.getAbsoluteAliasMap();
       configStore = doAliasMap(ctx, configStore, pluginAliasMap, bridgeAliasMap);
     }
   }
