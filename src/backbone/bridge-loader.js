@@ -31,10 +31,10 @@ function BridgeLoader(params={}) {
 
   this.loadMetadata = function(metadataMap, dialectOptions) {
     metadataMap = metadataMap || {};
-    let bridgeDescriptors = loadBridgeConstructors(CTX, params.bridgeRefs);
+    const bridgeDescriptors = loadBridgeConstructors(CTX, params.bridgeRefs);
     lodash.defaultsDeep(metadataMap, lodash.mapValues(bridgeDescriptors, function(entrypoint) {
-      let construktor = lodash.get(entrypoint, "construktor", {});
-      let metadata = construktor.devebotMetadata || construktor.metainf || construktor.metadata || {};
+      const construktor = lodash.get(entrypoint, "construktor", {});
+      const metadata = construktor.devebotMetadata || construktor.metainf || construktor.metadata || {};
       metadata.name = entrypoint.name;
       return metadata;
     }));
@@ -102,14 +102,14 @@ function loadBridgeContructor(ctx, bridgeRef) {
     text: ' - bridge constructor (${name}) loading is started'
   }));
 
-  let result = {};
+  const result = {};
 
   if (typeof(bridgeCode) !== 'string') return result;
 
-  let opStatus = lodash.assign({ type: 'DIALECT', code: bridgeCode }, bridgeRef);
+  const opStatus = lodash.assign({ type: 'DIALECT', code: bridgeCode }, bridgeRef);
 
   try {
-    let bridgeConstructor = loader(bridgePath, { stopWhenError: true });
+    const bridgeConstructor = loader(bridgePath, { stopWhenError: true });
     L.has('dunce') && L.log('dunce', T.add(bridgeRef).toMessage({
       text: ' - bridge constructor (${name}) loading has done.'
     }));
@@ -233,18 +233,13 @@ function buildBridgeDialect(ctx, dialectOpts) {
   function dialectConstructor(kwargs) {
     kwargs = kwargs || {};
 
-    let kwargsRef = null;
-    let getWrappedParams = function(kwargs) {
-      return kwargsRef = kwargsRef || lodash.clone(kwargs) || {};
-    }
-
     let newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', dialectName], null);
     if (newFeatures === null) {
       newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', bridgeCode], {});
     }
 
     if (newFeatures.logoliteEnabled !== false) {
-      let loggingFactory = kwargs.loggingFactory.branch(sectorRef);
+      const loggingFactory = kwargs.loggingFactory.branch(sectorRef);
       this.logger = loggingFactory.getLogger();
       this.tracer = loggingFactory.getTracer();
     } else {
@@ -256,7 +251,7 @@ function buildBridgeDialect(ctx, dialectOpts) {
       text: ' - newFeatures[${dialectName}]: ${newFeatures}'
     }));
 
-    let opStatus = { stage: 'instantiating', type: 'DIALECT', name: dialectName, code: bridgeCode };
+    const opStatus = { stage: 'instantiating', type: 'DIALECT', name: dialectName, code: bridgeCode };
     try {
       if (newFeatures.logoliteEnabled !== false) {
         L.has('silly') && L.log('silly', T.toMessage({
@@ -308,7 +303,7 @@ function buildBridgeDialect(ctx, dialectOpts) {
     }
   };
 
-  let construktor = objectDecorator.wrapBridgeDialect(dialectConstructor, {
+  const construktor = objectDecorator.wrapBridgeDialect(dialectConstructor, {
     pluginName: pluginName,
     bridgeCode: bridgeCode,
     dialectName: dialectName
@@ -353,7 +348,7 @@ function buildBridgeDialects(ctx, bridgeRefs, dialectOptions, optType) {
     switch(optType) {
       case 0:
         lodash.forOwn(dialectOptions, function(dialectConfig, dialectName) {
-          let bridgeCode = lodash.findKey(dialectConfig, function(o, k) {
+          const bridgeCode = lodash.findKey(dialectConfig, function(o, k) {
             return lodash.isObject(o) && bridgeConstructors[k];
           });
           if (bridgeCode) {
