@@ -74,6 +74,17 @@ module.exports = {
     }
   },
   bridges: {
+    adapter: {
+      application: {
+        instance: {
+          methods: {
+            getConfig: {
+              useDefaultTexture: true
+            }
+          }
+        }
+      }
+    },
     bridge4: {
       application: {
         instance: {
@@ -109,6 +120,6 @@ module.exports = {
           }
         }
       }
-    }
+    },
   }
 }

@@ -3,7 +3,6 @@ module.exports = {
     "migration": {
       "0.1.0_0.1.1": {
         "from": "0.1.0",
-        "to": "0.1.1",
         "transform": function(source) {
           return { couchdb: source };
         }

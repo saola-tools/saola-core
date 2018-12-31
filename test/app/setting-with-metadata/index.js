@@ -17,12 +17,16 @@ var app = Devebot.launchApplication({
   {
     name: 'plugin4',
     path: lab.getLibHome('plugin4')
-  }
+  },
 ], [
+  {
+    name: 'devebot-co-adapter',
+    path: lab.getLibHome('devebot-co-adapter')
+  },
   {
     name: 'bridge4',
     path: lab.getLibHome('bridge4')
-  }
+  },
 ]);
 
 if (require.main === module) app.server.start();

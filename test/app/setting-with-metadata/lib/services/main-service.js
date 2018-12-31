@@ -31,6 +31,7 @@ var Service = function(params={}) {
       params.service2.getConfig(opts),
       params.trigger1.getConfig(opts),
       params.trigger2.getConfig(opts),
+      params.adapter.getConfig(opts),
       params.instance4.getConfig(opts));
   }
 
@@ -42,7 +43,8 @@ Service.referenceHash = {
   "service2": "sub-plugin4/sublibService",
   "trigger1": "sub-plugin3/sublibTrigger",
   "trigger2": "sub-plugin4/sublibTrigger",
-  "instance4": "application/bridge4#instance"
+  "adapter": "application/adapter#instance",
+  "instance4": "application/bridge4#instance",
 }
 
 module.exports = Service;

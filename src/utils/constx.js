@@ -251,6 +251,9 @@ module.exports = {
     SCHEMA_OBJECT: {
       "type": "object",
       "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
         "config": {
           "type": "object",
           "properties": {
@@ -259,10 +262,18 @@ module.exports = {
             },
             "migration": {
               "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+              },
               "patternProperties": {
                 ".+": {
                   "type": "object",
                   "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
                     "from": {
                       "oneOf": [
                         {
@@ -279,13 +290,18 @@ module.exports = {
                       ]
                     },
                     "transform": {}
-                  }
+                  },
+                  "required": ["from", "transform"],
+                  "additionalProperties": false
                 }
               }
             },
             "validation": {
               "type": "object",
               "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
                 "schema": {
                   "type": "object",
                   "oneOf": [
@@ -300,7 +316,8 @@ module.exports = {
           },
           "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   LOGGER: {

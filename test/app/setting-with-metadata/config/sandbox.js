@@ -42,10 +42,17 @@ module.exports = {
     }
   },
   bridges: {
+    "adapter": {
+      "application": {
+        "instance": {
+          "connection_string": "mongodb://localhost:27017/example",
+        }
+      }
+    },
     "bridge4": {
       "application": {
         "instance": {
-          "refPath": "sandbox -> bridge1 -> anyname1a",
+          "refPath": "sandbox -> bridge4 -> application -> instance",
           "refType": "application",
           "refName": "default"
         }
