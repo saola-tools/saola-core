@@ -205,37 +205,31 @@ function wrapObject(refs, object, opts) {
   })
 }
 
-function wrapMethod(refs, method, opts) {
-  if (!lodash.isFunction(method)) return method;
-  const {texture, objectName, methodName, streamId} = opts || {};
-  const object = lodash.get(opts, 'object', null);
-  let wrapped = method;
-  if (isMockingEnabled(texture)) {
-    const mockingProxy = new MockingInterceptor({
-      texture: texture,
-      object: object,
-      objectName: objectName,
-      method: wrapped,
-      methodName: methodName,
-      logger: opts.logger || refs.L,
-      tracer: opts.tracer || refs.T
-    });
-    wrapped = mockingProxy.capsule;
+function wrapMethod(refs, target, opts) {
+  if (!lodash.isFunction(target)) return target;
+  const texture = lodash.get(opts, 'texture', null);
+  const loggingEnabled = isLoggingEnabled(texture);
+  const mockingEnabled = isMockingEnabled(texture);
+  let method = target;
+  if (mockingEnabled || loggingEnabled) {
+    const {objectName, methodName, streamId} = opts || {};
+    const object = lodash.get(opts, 'object', null);
+    const logger = opts && opts.logger || refs && refs.L;
+    const tracer = opts && opts.tracer || refs && refs.T;
+    if (mockingEnabled) {
+      const mockingProxy = new MockingInterceptor({
+        texture, object, objectName, method, methodName, logger, tracer
+      });
+      method = mockingProxy.capsule;
+    }
+    if (loggingEnabled) {
+      const loggingProxy = new LoggingInterceptor({
+        texture, object, objectName, method, methodName, streamId, logger, tracer
+      });
+      method = loggingProxy.capsule;
+    }
   }
-  if (isLoggingEnabled(texture)) {
-    const loggingProxy = new LoggingInterceptor({
-      texture: texture,
-      object: object,
-      objectName: objectName,
-      method: wrapped,
-      methodName: methodName,
-      streamId: streamId,
-      logger: opts.logger || refs.L,
-      tracer: opts.tracer || refs.T
-    });
-    wrapped = loggingProxy.capsule;
-  }
-  return wrapped;
+  return method;
 }
 
 function MockingInterceptor(params) {
