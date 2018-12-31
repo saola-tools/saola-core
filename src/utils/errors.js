@@ -16,7 +16,7 @@ function ErrorCollection() {
       let message = undefined, code = undefined, payload = undefined;
       Array.prototype.forEach.call(arguments, function(arg) {
         if (arg) {
-          let type = typeof(arg);
+          const type = typeof(arg);
           switch(type) {
             case 'string': {
               if (message !== undefined) {
@@ -77,7 +77,7 @@ function ErrorCollection() {
     this.message = message;
     this.code = code;
     this.payload = payload;
-    let oldLimit = Error.stackTraceLimit;
+    const oldLimit = Error.stackTraceLimit;
     Error.stackTraceLimit = stackTraceLimit;
     Error.captureStackTrace(this, this.constructor);
     Error.stackTraceLimit = oldLimit;

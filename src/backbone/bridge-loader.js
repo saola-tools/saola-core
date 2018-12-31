@@ -90,7 +90,7 @@ function loadBridgeContructor(ctx, bridgeRef) {
 
   bridgeRef = bridgeRef || {};
 
-  let bridgePath = bridgeRef.path;
+  const bridgePath = bridgeRef.path;
   let bridgeName = nameResolver.getOriginalNameOf(bridgeRef.name, bridgeRef.type);
   let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
   if (!chores.isUpgradeSupported('refining-name-resolver')) {
@@ -167,8 +167,8 @@ function loadBridgeConstructors(ctx, bridgeRefs) {
 
 function buildBridgeDialect(ctx, dialectOpts) {
   const {L, T, issueInspector, nameResolver, objectDecorator} = ctx;
-  let {pluginName, bridgeCode, bridgeRecord, dialectName, optType} = dialectOpts;
-  let result = {};
+  const {pluginName, bridgeCode, bridgeRecord, optType} = dialectOpts;
+  const result = {};
 
   if (!lodash.isString(bridgeCode)) {
     L.has('dunce') && L.log('dunce', T.toMessage({
@@ -181,7 +181,7 @@ function buildBridgeDialect(ctx, dialectOpts) {
     }));
   }
 
-  dialectName = dialectName || bridgeCode + 'Wrapper';
+  const dialectName = lodash.get(dialectOpts, 'dialectName', bridgeCode + 'Wrapper');
   L.has('dunce') && L.log('dunce', T.add({ dialectName }).toMessage({
     text: ' - building bridgeDialect (${dialectName}) is started'
   }));
@@ -197,7 +197,7 @@ function buildBridgeDialect(ctx, dialectOpts) {
     uniqueName = [bridgeRecord.name, dialectName].join(chores.getSeparator());
   }
 
-  let bridgeConstructor = bridgeRecord.construktor;
+  const bridgeConstructor = bridgeRecord.construktor;
   if (!lodash.isFunction(bridgeConstructor)) {
     L.has('dunce') && L.log('dunce', T.toMessage({
       text: ' - bridgeConstructor is invalid (not a function)'
@@ -230,9 +230,7 @@ function buildBridgeDialect(ctx, dialectOpts) {
     text: ' - configPath: ${configPath}'
   }));
 
-  function dialectConstructor(kwargs) {
-    kwargs = kwargs || {};
-
+  function dialectConstructor(kwargs = {}) {
     let newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', dialectName], null);
     if (newFeatures === null) {
       newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', bridgeCode], {});

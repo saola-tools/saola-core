@@ -32,12 +32,12 @@ function SandboxManager(params={}) {
   params.pluginLoader.loadServices(serviceMap);
   params.pluginLoader.loadTriggers(triggerMap);
 
-  let managerNames = lodash.keys(managerMap);
+  const managerNames = lodash.keys(managerMap);
   serviceMap = lodash.omit(serviceMap, managerNames);
   triggerMap = lodash.omit(triggerMap, managerNames);
 
-  let sandboxNames = params.sandboxNames;
-  let sandboxConfig = params.sandboxConfig;
+  const sandboxNames = params.sandboxNames;
+  const sandboxConfig = params.sandboxConfig;
 
   L.has('dunce') && L.log('dunce', T.add({
     sandboxNames: sandboxNames,
@@ -51,8 +51,8 @@ function SandboxManager(params={}) {
     text: ' - create sandbox${sandboxNames}.injektor object'
   }));
 
-  let sandboxInjektor = new Injektor(chores.injektorOptions);
-  let COPIED_DEPENDENCIES = [ 'appName', 'appInfo',
+  const sandboxInjektor = new Injektor(chores.injektorOptions);
+  const COPIED_DEPENDENCIES = [ 'appName', 'appInfo',
     'sandboxNames', 'sandboxConfig', 'profileNames', 'profileConfig',
     'contextManager', 'schemaValidator', 'loggingFactory', 'processManager'
   ];
@@ -72,7 +72,7 @@ function SandboxManager(params={}) {
     });
   });
 
-  let dialectMap = params.bridgeLoader.loadDialects({}, lodash.get(sandboxConfig, ['bridges'], {}));
+  const dialectMap = params.bridgeLoader.loadDialects({}, lodash.get(sandboxConfig, ['bridges'], {}));
 
   lodash.forOwn(dialectMap, function(dialectRecord, dialectName) {
     sandboxInjektor.defineService(dialectRecord.name, dialectRecord.construktor, {
@@ -80,7 +80,7 @@ function SandboxManager(params={}) {
     });
   });
 
-  let REGISTRY_EXCLUDED_SERVICES = [ getComponentLabel('sandboxRegistry') ];
+  const REGISTRY_EXCLUDED_SERVICES = [ getComponentLabel('sandboxRegistry') ];
   L.has('silly') && L.log('silly', T.add({
     excludedServices: REGISTRY_EXCLUDED_SERVICES
   }).toMessage({
@@ -97,11 +97,11 @@ function SandboxManager(params={}) {
     return [handlerRecord.crateScope, handlerRecord.name].join(sandboxInjektor.separator);
   }
 
-  let injectedHandlers = {};
-  let injectedServices = {};
-  let sandboxName = params['sandboxNames'].join(',');
-  let profileName = params['profileNames'].join(',');
-  let miscObjects = {
+  const injectedHandlers = {};
+  const injectedServices = {};
+  const sandboxName = params['sandboxNames'].join(',');
+  const profileName = params['profileNames'].join(',');
+  const miscObjects = {
     bridgeDialectNames: lodash.map(lodash.values(dialectMap), getCrateName),
     pluginServiceNames: lodash.map(lodash.values(serviceMap), getCrateName),
     pluginTriggerNames: lodash.map(lodash.values(triggerMap), getCrateName),
@@ -112,14 +112,14 @@ function SandboxManager(params={}) {
     sandboxInjektor.registerObject(name, obj, chores.injektorContext);
   });
 
-  let instantiateObject = function(_injektor, handlerRecord, handlerType, injectedHandlers, injectedServices) {
-    let exceptions = [];
-    let handlerName = [handlerRecord.crateScope, handlerRecord.name].join(_injektor.separator);
+  const instantiateObject = function(_injektor, handlerRecord, handlerType, injectedHandlers, injectedServices) {
+    const exceptions = [];
+    const handlerName = [handlerRecord.crateScope, handlerRecord.name].join(_injektor.separator);
     L.has('silly') && L.log('silly', T.add({ handlerName, handlerType }).toMessage({
       tags: [ blockRef, 'instantiateObject' ],
       text: ' - instantiate object: ${handlerName}'
     }));
-    let handler = _injektor.lookup(handlerName, exceptions);
+    const handler = _injektor.lookup(handlerName, exceptions);
     if (handler && injectedHandlers) {
       injectedHandlers[handlerName] = handler;
     }
@@ -128,11 +128,11 @@ function SandboxManager(params={}) {
       injectedServices[handlerRecord.crateScope][handlerName] = handler;
     }
     if (handler && handlerType === 'TRIGGER') {
-      let methods = {
+      const methods = {
         start: (handler.start || handler.open),
         stop: (handler.stop || handler.close)
       }
-      let requiredMethods = lodash.filter(lodash.keys(methods), function(name) {
+      const requiredMethods = lodash.filter(lodash.keys(methods), function(name) {
         return !lodash.isFunction(methods[name]);
       });
       if (!lodash.isEmpty(requiredMethods)) {
@@ -146,7 +146,7 @@ function SandboxManager(params={}) {
       }
     }
     lodash.forEach(exceptions, function(exception) {
-      let opStatus = {
+      const opStatus = {
         stage: 'instantiating',
         type: handlerType,
         name: handlerName,
@@ -169,8 +169,8 @@ function SandboxManager(params={}) {
     instantiateObject(sandboxInjektor, triggerRecord, 'TRIGGER', injectedServices);
   });
 
-  let runhookInjektor = new Injektor(chores.injektorOptions);
-  let RUNHOOK_DEPENDENCIES = [ 'pluginLoader' ].concat(COPIED_DEPENDENCIES);
+  const runhookInjektor = new Injektor(chores.injektorOptions);
+  const RUNHOOK_DEPENDENCIES = [ 'pluginLoader' ].concat(COPIED_DEPENDENCIES);
   RUNHOOK_DEPENDENCIES.forEach(function(refName) {
     runhookInjektor.registerObject(refName, params[refName], chores.injektorContext);
   });
@@ -183,7 +183,7 @@ function SandboxManager(params={}) {
     runhookInjektor.defineService(managerName, managerConstructor, chores.injektorContext);
   });
   runhookInjektor.defineService('runhookManager', RunhookManager, chores.injektorContext);
-  let runhookManager = runhookInjektor.lookup('runhookManager', chores.injektorContext);
+  const runhookManager = runhookInjektor.lookup('runhookManager', chores.injektorContext);
 
   sandboxInjektor.registerObject('runhookManager', runhookManager, chores.injektorContext);
 
@@ -235,22 +235,21 @@ function SandboxManager(params={}) {
       tags: [ blockRef, 'trigger', 'loop' ],
       text: ' - Loop triggers: ${triggerNames}'
     }));
-    let actionName = options && options.actionName;
-    let triggers = [];
+    const actionName = options && options.actionName;
+    const triggers = [];
     lodash.forOwn(triggerMap, function(triggerRecord, triggerId) {
-      let triggerName = getCrateName(triggerRecord);
+      const triggerName = getCrateName(triggerRecord);
       if (!triggerNames || triggerNames.indexOf(triggerName) >= 0) {
         L.has('silly') && L.log('silly', T.add({ actionName, triggerName }).toMessage({
           tags: [ blockRef, 'trigger', 'action' ],
           text: ' - ${actionName} trigger[${triggerName}]'
         }));
-        let trigger = sandboxInjektor.lookup(triggerName);
+        const trigger = sandboxInjektor.lookup(triggerName);
         if (trigger) {
           triggers.push(trigger);
         }
       }
     });
-
     return Promise.mapSeries(triggers, iteratee);
   };
 
@@ -350,7 +349,7 @@ function getComponentLabel(compName) {
   return constx.FRAMEWORK.NAME + chores.getSeparator() + compName;
 }
 
-let wrapScriptConstructor = function(ScriptConstructor, wrapperNames) {
+function wrapScriptConstructor(ScriptConstructor, wrapperNames) {
   function wrapperConstructor(params) {
     ScriptConstructor.call(this, params);
   }
@@ -359,7 +358,7 @@ let wrapScriptConstructor = function(ScriptConstructor, wrapperNames) {
 
   wrapperConstructor.argumentSchema = lodash.cloneDeep(ScriptConstructor.argumentSchema);
   lodash.forEach(wrapperNames, function(serviceName) {
-    let serviceEntry = {};
+    const serviceEntry = {};
     serviceEntry[serviceName] = { "type": "object" };
     lodash.assign(wrapperConstructor.argumentSchema.properties, serviceEntry);
   });
@@ -397,26 +396,26 @@ function SandboxRegistry(params = {}) {
   const {injektor, isExcluded, excludedServices} = params;
   this.defineService = function(name, construktor, context) {
     context = context || {};
-    let info = injektor.parseName(name, context);
+    const info = injektor.parseName(name, context);
     if (info.scope === constx.FRAMEWORK.NAME) {
-      let RestrictedError = errors.createConstructor('RestrictedDevebotError');
+      const RestrictedError = errors.createConstructor('RestrictedDevebotError');
       throw new RestrictedError(util.format('dependency scope [%s] is restricted', constx.FRAMEWORK.NAME));
     }
-    let exceptions = [];
-    let fullname = injektor.resolveName(serviceName, {
+    const exceptions = [];
+    const fullname = injektor.resolveName(serviceName, {
       scope: context.scope,
       exceptions: exceptions
     });
     if (fullname != null) {
-      let DuplicatedError = errors.createConstructor('DuplicatedDevebotError');
+      const DuplicatedError = errors.createConstructor('DuplicatedDevebotError');
       throw new DuplicatedError('dependency item is duplicated');
     }
     injektor.defineService(name, construktor, context);
   };
   this.lookupService = function(serviceName, context) {
     context = context || {};
-    let exceptions = [];
-    let fullname = injektor.resolveName(serviceName, {
+    const exceptions = [];
+    const fullname = injektor.resolveName(serviceName, {
       scope: context.scope,
       exceptions: exceptions
     });

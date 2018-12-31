@@ -142,13 +142,13 @@ function loadScriptEntry(CTX, scriptMap, scriptType, scriptSubDir, scriptFile, s
   const opStatus = lodash.assign({ type: scriptType, file: scriptFile, subDir: scriptSubDir }, pluginRootDir);
   const filepath = path.join(pluginRootDir.pathDir, scriptSubDir, scriptFile);
   try {
-    let scriptInit = loader(filepath, { stopWhenError: true });
+    const scriptInit = loader(filepath, { stopWhenError: true });
     if (lodash.isFunction(scriptInit)) {
       L.has('dunce') && L.log('dunce', T.add({ filepath }).toMessage({
         text: ' - script file ${filepath} is ok'
       }));
-      let scriptObject = scriptInit(scriptContext);
-      let output = validateScript(CTX, scriptObject, scriptType);
+      const scriptObject = scriptInit(scriptContext);
+      const output = validateScript(CTX, scriptObject, scriptType);
       if (!output.valid) {
         L.has('dunce') && L.log('dunce', T.add({
           validationResult: output
@@ -167,13 +167,13 @@ function loadScriptEntry(CTX, scriptMap, scriptType, scriptSubDir, scriptFile, s
           text: ' - script validation pass'
         }));
         opStatus.hasError = false;
-        let scriptName = scriptFile.replace('.js', '').toLowerCase();
+        const scriptName = scriptFile.replace('.js', '').toLowerCase();
         let pluginName = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
         if (!chores.isUpgradeSupported('refining-name-resolver')) {
           pluginName = nameResolver.getOriginalName(pluginRootDir);
         }
-        let uniqueName = [pluginName, scriptName].join(chores.getSeparator());
-        let entry = {};
+        const uniqueName = [pluginName, scriptName].join(chores.getSeparator());
+        const entry = {};
         entry[uniqueName] = {
           crateScope: pluginName,
           name: scriptName,
@@ -204,8 +204,8 @@ function parseScriptTree(scriptFile, scriptInstance, isHierarchical) {
   }
   entryPath = entryPath.reverse();
   entryPath.unshift(scriptInstance);
-  let entry = lodash.reduce(entryPath, function(result, item) {
-    let nestEntry = {};
+  const entry = lodash.reduce(entryPath, function(result, item) {
+    const nestEntry = {};
     nestEntry[item] = result;
     return nestEntry;
   });
@@ -285,16 +285,16 @@ function loadMetainfEntry(CTX, metainfMap, metainfSubDir, schemaFile, pluginRoot
         text: ' - schema validation pass'
       }));
       opStatus.hasError = false;
-      let typeName = metainfObject.type || schemaFile.replace('.js', '').toLowerCase();
-      let subtypeName = metainfObject.subtype || 'default';
+      const typeName = metainfObject.type || schemaFile.replace('.js', '').toLowerCase();
+      const subtypeName = metainfObject.subtype || 'default';
       let crateScope = nameResolver.getOriginalNameOf(pluginRootDir.name, pluginRootDir.type);
       let pluginCode = nameResolver.getDefaultAliasOf(pluginRootDir.name, pluginRootDir.type);
       if (!chores.isUpgradeSupported('refining-name-resolver')) {
         crateScope = nameResolver.getOriginalName(pluginRootDir);
         pluginCode = nameResolver.getDefaultAlias(pluginRootDir);
       }
-      let uniqueName = [crateScope, typeName].join(chores.getSeparator());
-      let entry = {};
+      const uniqueName = [crateScope, typeName].join(chores.getSeparator());
+      const entry = {};
       entry[uniqueName] = entry[uniqueName] || {};
       entry[uniqueName][subtypeName] = {
         crateScope: crateScope,
@@ -409,7 +409,7 @@ function buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, wrapperName, plu
   function wrapperConstructor(kwargs) {
     kwargs = kwargs || {};
     let kwargsRef = null;
-    let getWrappedParams = function(kwargs) {
+    function getWrappedParams(kwargs) {
       return kwargsRef = kwargsRef || lodash.clone(kwargs) || {};
     }
     // crateScope & componentName
@@ -417,7 +417,7 @@ function buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, wrapperName, plu
     kwargs.componentName = wrapperName;
     kwargs.componentId = uniqueName;
     // resolve newFeatures
-    let newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', pluginCode], {});
+    const newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', pluginCode], {});
     L.has('dunce') && L.log('dunce', T.add({ pluginCode, newFeatures }).toMessage({
       text: ' - newFeatures[${pluginCode}]: ${newFeatures}'
     }));
@@ -445,8 +445,8 @@ function buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, wrapperName, plu
       });
       if (false) {
         // remove the old references
-        let newKeys = lodash.keys(referenceAlias);
-        let oldKeys = lodash.values(referenceAlias);
+        const newKeys = lodash.keys(referenceAlias);
+        const oldKeys = lodash.values(referenceAlias);
         lodash.forEach(oldKeys, function(oldKey) {
           if (newKeys.indexOf(oldKey) < 0) {
             delete kwargs[oldKey];
@@ -501,10 +501,7 @@ function buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, wrapperName, plu
         wrappedArgumentSchema.properties[fieldName] = { "type": "object" }
       }
     });
-    let originalArgumentSchema = gadgetConstructor.argumentSchema;
-    if (originalArgumentSchema['$id']) {
-      originalArgumentSchema = lodash.omit(originalArgumentSchema, ['$id']);
-    }
+    const originalArgumentSchema = lodash.omit(gadgetConstructor.argumentSchema, ['$id']);
     wrapperConstructor.argumentSchema = lodash.merge(wrappedArgumentSchema, originalArgumentSchema);
     if (!lodash.isEmpty(referenceAlias)) {
       const properties = lodash.mapKeys(gadgetConstructor.argumentSchema.properties, function(val, key) {

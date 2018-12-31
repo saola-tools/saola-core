@@ -134,21 +134,20 @@ const ENV_DEF_DEFAULT = [
 ]
 
 function EnvironmentCollection(params={}) {
-  let definition = {};
-  let namespace = params.namespace || 'DEVEBOT';
-  let store = { env: {} };
+  const definition = {};
+  const store = { env: {}, namespace: params.namespace || 'DEVEBOT' };
 
   function getLabel(name, scope) {
     let ns = 'DEVEBOT';
     if (scope !== 'framework') {
-      ns = namespace || 'DEVEBOT';
+      ns = store.namespace || 'DEVEBOT';
     }
     return ns + '_' + name;
   }
 
   function getValue(name, scope) {
-    if (scope !== 'framework' && namespace) {
-      let longname = namespace + '_' + name;
+    if (scope !== 'framework' && store.namespace) {
+      const longname = store.namespace + '_' + name;
       if (longname in process.env) {
         return process.env[longname];
       }
@@ -158,22 +157,20 @@ function EnvironmentCollection(params={}) {
 
   this.define = function(descriptors) {
     if (lodash.isArray(descriptors)) {
-      let defs = lodash.keyBy(descriptors, 'name');
-      definition = lodash.defaults(definition, defs);
+      const defs = lodash.keyBy(descriptors, 'name');
+      lodash.defaults(definition, defs);
     }
     return this;
   }
 
   this.define(params.definition);
 
-  this.setNamespace = function(ns, opts) {
-    namespace = ns;
-    opts = opts || {};
+  this.setNamespace = function(ns, opts = {}) {
+    store.namespace = ns;
     if (opts.occupyValues) {
-      for(let envKey in definition) {
-        let info = definition[envKey];
+      for(const envKey in definition) {
         this.getEnv(envKey);
-        let envName = getLabel(envKey);
+        const envName = getLabel(envKey);
         if (envName in process.env) {
           if (opts.ownershipLabel) {
             process.env[envName] = opts.ownershipLabel;
@@ -194,7 +191,7 @@ function EnvironmentCollection(params={}) {
     if (label in store.env) return store.env[label];
     if (!lodash.isString(label)) return undefined;
     if (!(label in definition)) return process.env[label] || defaultValue;
-    let def = definition[label] || {};
+    const def = definition[label] || {};
     store.env[label] = getValue(label, def.scope);
     if (!store.env[label]) {
       if (lodash.isUndefined(defaultValue)) {
@@ -221,7 +218,7 @@ function EnvironmentCollection(params={}) {
   }
 
   this.getAcceptedValues = function(envName) {
-    let def = definition[envName];
+    const def = definition[envName];
     if (lodash.isObject(def)) {
       return def.enum || null;
     }
@@ -229,7 +226,7 @@ function EnvironmentCollection(params={}) {
   }
 
   this.setAcceptedValues = function(envName, acceptedValues) {
-    let def = definition[envName];
+    const def = definition[envName];
     if (lodash.isObject(def)) {
       def.enum = acceptedValues;
     }
@@ -238,7 +235,7 @@ function EnvironmentCollection(params={}) {
 
   this.clearCache = function(keys) {
     keys = nodash.arrayify(keys);
-    for(let key in store.env) {
+    for(const key in store.env) {
       if (keys.length === 0 || keys.indexOf(key) >= 0) {
         delete store.env[key];
       }
@@ -246,15 +243,14 @@ function EnvironmentCollection(params={}) {
     return this;
   }
 
-  this.printEnvList = function(opts) {
-    let self = this;
-    opts = opts || {};
+  this.printEnvList = function(opts = {}) {
+    const self = this;
     // get the excluded scopes
-    let excl = nodash.arrayify(opts.excludes || [ 'framework', 'test' ]);
+    const excl = nodash.arrayify(opts.excludes || [ 'framework', 'test' ]);
     // print to console or muted?
-    let lines = [], muted = (opts.muted === true);
-    let chalk = muted ? new Chalk({ blanked: true, themes: DEFAULT_THEMES }) : DEFAULT_CHALK;
-    let printInfo = function() {
+    const lines = [], muted = (opts.muted === true);
+    const chalk = muted ? new Chalk({ blanked: true, themes: DEFAULT_THEMES }) : DEFAULT_CHALK;
+    function printInfo() {
       if (muted) {
         lines.push(util.format.apply(util, arguments));
       } else {

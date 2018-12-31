@@ -27,10 +27,10 @@ function Kernel(params = {}) {
   }));
 
   // init the default parameters
-  let { configObject, contextManager, issueInspector, stateInspector, nameResolver } = params;
+  const { configObject, contextManager, issueInspector, stateInspector, nameResolver } = params;
 
   // create injektor instance
-  let injektor = new Injektor(chores.injektorOptions);
+  const injektor = new Injektor(chores.injektorOptions);
 
   ['appName', 'appInfo', 'bridgeRefs', 'pluginRefs'].forEach(function(refName) {
     injektor.registerObject(refName, configObject[refName], chores.injektorContext);
@@ -52,14 +52,14 @@ function Kernel(params = {}) {
   });
 
   if (chores.isUpgradeSupported(['manifest-refiner'], ['metadata-refiner'])) {
-    let schemaValidator = injektor.lookup('schemaValidator', chores.injektorContext);
-    let CTX = {L, T, nameResolver, schemaValidator};
-    let result = [];
+    const schemaValidator = injektor.lookup('schemaValidator', chores.injektorContext);
+    const CTX = {L, T, nameResolver, schemaValidator};
+    const result = [];
 
     // validate bridge's configures
     let bridgeMetadata = null;
     if (chores.isUpgradeSupported('metadata-refiner')) {
-      let bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
+      const bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
       bridgeMetadata = bridgeLoader.loadMetadata();
       L.has('silly') && L.log('silly', T.add({ metadata: bridgeMetadata }).toMessage({
         tags: [ blockRef, 'bridge-config-schema-input' ],
@@ -67,16 +67,16 @@ function Kernel(params = {}) {
       }));
     }
 
-    let bridgeSchema = extractBridgeSchema(CTX, configObject.bridgeRefs, bridgeMetadata);
+    const bridgeSchema = extractBridgeSchema(CTX, configObject.bridgeRefs, bridgeMetadata);
 
-    let bridgeConfig = lodash.get(configObject, ['sandbox', 'mixture', 'bridges'], {});
+    const bridgeConfig = lodash.get(configObject, ['sandbox', 'mixture', 'bridges'], {});
 
     validateBridgeConfig(CTX, bridgeConfig, bridgeSchema, result);
 
     // validate plugin's configures
     let pluginMetadata = null;
     if (chores.isUpgradeSupported('metadata-refiner')) {
-      let pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
+      const pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
       pluginMetadata = pluginLoader.loadMetadata();
       L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
         tags: [ blockRef, 'plugin-config-schema-input' ],
@@ -84,9 +84,9 @@ function Kernel(params = {}) {
       }));
     }
 
-    let pluginSchema = extractPluginSchema(CTX, configObject.pluginRefs, pluginMetadata);
+    const pluginSchema = extractPluginSchema(CTX, configObject.pluginRefs, pluginMetadata);
 
-    let pluginConfig = {
+    const pluginConfig = {
       profile: lodash.get(configObject, ['profile', 'mixture'], {}),
       sandbox: lodash.pick(lodash.get(configObject, ['sandbox', 'mixture'], {}), ['application', 'plugins'])
     }
@@ -103,11 +103,11 @@ function Kernel(params = {}) {
   }
 
   // initialize plugins, bridges, sandboxManager
-  let sandboxManager = injektor.lookup('sandboxManager', chores.injektorContext);
+  const sandboxManager = injektor.lookup('sandboxManager', chores.injektorContext);
 
-  let profileConfig = injektor.lookup('profileConfig', chores.injektorContext);
-  let frameworkCfg = profileConfig[constx.FRAMEWORK.NAME] || {};
-  let inOpts = lodash.assign({ invoker: blockRef, footmark: 'sandbox-loading' }, frameworkCfg);
+  const profileConfig = injektor.lookup('profileConfig', chores.injektorContext);
+  const frameworkCfg = profileConfig[constx.FRAMEWORK.NAME] || {};
+  const inOpts = lodash.assign({ invoker: blockRef, footmark: 'sandbox-loading' }, frameworkCfg);
   issueInspector.barrier(inOpts);
   stateInspector.conclude(inOpts);
 
@@ -179,28 +179,28 @@ function validateBridgeConfig(ref, bridgeConfig, bridgeSchema, result) {
   }));
 
   if (!chores.isUpgradeSupported('bridge-full-ref')) {
-    for(let dialectName in bridgeConfig) {
-      let dialectMap = bridgeConfig[dialectName] || {};
-      for(let bridgeCode in dialectMap) {
-        let bridgeMetadata = lodash.get(bridgeSchema, [bridgeCode], {});
+    for(const dialectName in bridgeConfig) {
+      const dialectMap = bridgeConfig[dialectName] || {};
+      for(const bridgeCode in dialectMap) {
+        const bridgeMetadata = lodash.get(bridgeSchema, [bridgeCode], {});
         if (bridgeMetadata.enabled === false || !lodash.isObject(bridgeMetadata.schema)) continue;
-        let dialectConfig = dialectMap[bridgeCode] || {};
-        let r = schemaValidator.validate(dialectConfig, bridgeMetadata.schema);
+        const dialectConfig = dialectMap[bridgeCode] || {};
+        const r = schemaValidator.validate(dialectConfig, bridgeMetadata.schema);
         result.push(customizeBridgeResult(r, bridgeCode, '*', dialectName));
       }
     }
     return result;
   }
 
-  for(let bridgeCode in bridgeConfig) {
-    let bridgeMap = bridgeConfig[bridgeCode] || {};
-    let bridgeMetadata = lodash.get(bridgeSchema, [bridgeCode], {});
+  for(const bridgeCode in bridgeConfig) {
+    const bridgeMap = bridgeConfig[bridgeCode] || {};
+    const bridgeMetadata = lodash.get(bridgeSchema, [bridgeCode], {});
     if (bridgeMetadata.enabled === false || !lodash.isObject(bridgeMetadata.schema)) continue;
-    for(let pluginName in bridgeMap) {
-      let pluginMap = bridgeMap[pluginName] || {};
-      for(let dialectName in pluginMap) {
-        let dialectConfig = pluginMap[dialectName] || {};
-        let r = schemaValidator.validate(dialectConfig, bridgeMetadata.schema);
+    for(const pluginName in bridgeMap) {
+      const pluginMap = bridgeMap[pluginName] || {};
+      for(const dialectName in pluginMap) {
+        const dialectConfig = pluginMap[dialectName] || {};
+        const r = schemaValidator.validate(dialectConfig, bridgeMetadata.schema);
         result.push(customizeBridgeResult(r, bridgeCode, pluginName, dialectName));
       }
     }
@@ -226,13 +226,13 @@ function customizeBridgeResult(result, bridgeCode, pluginName, dialectName) {
 const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
 function extractPluginSchema(ref, pluginRefs, pluginMetadata, pluginSchema) {
-  let { L, T, nameResolver } = ref;
+  const { L, T, nameResolver } = ref;
   pluginSchema = pluginSchema || {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
   if (!chores.isUpgradeSupported('manifest-refiner')) {
     lodash.forOwn(pluginMetadata, function(metainf, key) {
-      let def = metainf && metainf.default || {};
+      const def = metainf && metainf.default || {};
       if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
         if (chores.isSpecialPlugin(def.pluginCode)) {
           pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
@@ -336,20 +336,18 @@ function checkSandboxConstraintsOfCrates(ref, result, config, schema) {
 
 function checkSandboxConstraintsOfAppbox(ref, result, config, schema) {
   const { L, T } = ref;
-  let crateName = 'application';
-  let crateConfig = config.application;
-  let crateSchema = schema.application;
-  let checkConstraints = crateSchema && crateSchema.checkConstraints;
+  const crateName = 'application';
+  const crateConfig = config.application;
+  const crateSchema = schema.application;
+  const checkConstraints = crateSchema && crateSchema.checkConstraints;
   if (lodash.isFunction(checkConstraints)) {
-    let extractedCfg = { plugins: {}, bridges: {} };
+    const extractedCfg = { plugins: {}, bridges: {} };
     extractedCfg.application = crateConfig;
-    let pluginDepends = crateSchema.pluginDepends || [];
-    lodash.forEach(pluginDepends, function(depName) {
+    lodash.forEach(crateSchema.pluginDepends, function(depName) {
       extractedCfg.plugins[depName] = config.plugins[depName];
     });
-    let bridgeDepends = crateSchema.bridgeDepends || [];
-    lodash.forEach(bridgeDepends, function(depName) {
-      extractedCfg.bridges[depName] = lodash.get(config, ["bridges", depName, "application"]);
+    lodash.forEach(crateSchema.bridgeDepends, function(depName) {
+      extractedCfg.bridges[depName] = lodash.get(config, ["bridges", depName, crateName]);
     });
     let r = null;
     try {
@@ -363,16 +361,15 @@ function checkSandboxConstraintsOfAppbox(ref, result, config, schema) {
 
 function checkSandboxConstraintsOfPlugin(ref, result, config, schema, crateName) {
   const { L, T } = ref;
-  let crateConfig = config.plugins[crateName];
-  let crateSchema = schema && schema.plugins && schema.plugins[crateName];
-  let checkConstraints = crateSchema && crateSchema.checkConstraints;
+  const crateConfig = config.plugins[crateName];
+  const crateSchema = schema && schema.plugins && schema.plugins[crateName];
+  const checkConstraints = crateSchema && crateSchema.checkConstraints;
   if (lodash.isFunction(checkConstraints)) {
-    let extractedCfg = { plugins: {}, bridges: {} };
+    const extractedCfg = { plugins: {}, bridges: {} };
     extractedCfg.plugins[crateName] = crateConfig;
-    let pluginDepends = crateSchema.pluginDepends || [];
-    lodash.forEach(pluginDepends, function(depName) {
+    lodash.forEach(crateSchema.pluginDepends, function(depName) {
       if (depName === crateName) {
-        let r = { ok: false, reason: {
+        const r = { ok: false, reason: {
           pluginName: crateName,
           message: 'plugin depends on itself'
         } };
@@ -380,8 +377,7 @@ function checkSandboxConstraintsOfPlugin(ref, result, config, schema, crateName)
       }
       extractedCfg.plugins[depName] = config.plugins[depName];
     });
-    let bridgeDepends = crateSchema.bridgeDepends || [];
-    lodash.forEach(bridgeDepends, function(depName) {
+    lodash.forEach(crateSchema.bridgeDepends, function(depName) {
       extractedCfg.bridges[depName] = lodash.get(config, ["bridges", depName, crateName]);
     });
     let r = null;

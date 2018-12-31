@@ -235,4 +235,13 @@ describe('tdd:devebot:utils:chores', function() {
       assert.isFalse(chores.isVersionSatisfied('1.2.3', ['1.3', '2.3']));
     });
   });
+
+  describe('getFirstDefinedValue()', function() {
+    it('return the first defined value in arguments', function () {
+      assert.isUndefined(chores.getFirstDefinedValue(undefined, null, null, undefined));
+      assert.equal(chores.getFirstDefinedValue(undefined, null, 1024, 'hello'), 1024);
+      assert.equal(chores.getFirstDefinedValue(null, undefined, 'hello world'), 'hello world');
+      assert.equal(chores.getFirstDefinedValue(undefined, false, 'abc.xyz'), false);
+    })
+  });
 });

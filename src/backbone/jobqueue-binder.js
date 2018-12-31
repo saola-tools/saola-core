@@ -9,23 +9,23 @@ function JobqueueBinder(params={}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
-  let sandboxName = params.sandboxName;
+  const sandboxName = params.sandboxName;
 
   L.has('silly') && L.log('silly', T.add({ sandboxName }).toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start in sandbox <{sandboxName}>'
   }));
 
-  let jqCfg = lodash.get(params, ['profileConfig', constx.FRAMEWORK.NAME, 'jobqueue'], {});
+  const jqCfg = lodash.get(params, ['profileConfig', constx.FRAMEWORK.NAME, 'jobqueue'], {});
 
   let jobqueueMasterName = null;
-  let getJobqueueMasterName = function() {
+  function getJobqueueMasterName() {
     return jobqueueMasterName = jobqueueMasterName ||
         jqCfg.pluginId && [jqCfg.pluginId, "jobqueueMaster"].join(chores.getSeparator());
   }
 
   let jobqueueMaster = null;
-  let getJobQueueMaster = function() {
+  function getJobQueueMaster() {
     return jobqueueMaster = jobqueueMaster ||
         getJobqueueMasterName() && params.injectedHandlers[getJobqueueMasterName()];
   }
@@ -33,7 +33,7 @@ function JobqueueBinder(params={}) {
   Object.defineProperties(this, {
     enabled: {
       get: function() {
-        let enabled = jqCfg.enabled !== false && getJobQueueMaster() != null;
+        const enabled = jqCfg.enabled !== false && getJobQueueMaster() != null;
         L.has('dunce') && L.log('dunce', T.add({ enabled, sandboxName }).toMessage({
           text: ' - jobqueueMaster in sandbox <{sandboxName}> status (enabled): {enabled}'
         }));

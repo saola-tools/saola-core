@@ -9,16 +9,16 @@ const nodash = require('../utils/nodash');
 const blockRef = chores.getBlockRef(__filename);
 
 function ScriptRenderer(params={}) {
-  let loggingFactory = params.loggingFactory.branch(blockRef);
-  let L = loggingFactory.getLogger();
-  let T = loggingFactory.getTracer();
+  const loggingFactory = params.loggingFactory.branch(blockRef);
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
 
-  let defaultOpts = lodash.assign({
+  const defaultOpts = lodash.assign({
     logger: L,
     tracer: T
   }, lodash.pick(params, ['schemaValidator']));
@@ -39,7 +39,7 @@ function AbstractOutlet(params) {
   }
 
   this.render = function(state, output) {
-    let self = this;
+    const self = this;
     switch(state) {
       case 'error':
       self._send(JSON.stringify({
@@ -109,7 +109,7 @@ function WebSocketOutlet(params) {
   AbstractOutlet.apply(this, arguments);
 
   params = params || {};
-  let {logger: L, tracer: T, ws} = params;
+  const {logger: L, tracer: T, ws} = params;
 
   assert(lodash.isObject(L));
   assert(lodash.isObject(T));
@@ -145,13 +145,13 @@ ScriptRenderer.argumentSchema = {
 
 module.exports = ScriptRenderer;
 
-let standardizeOutput = function(schemaValidator, output, isError) {
-  let outputArray = lodash.filter(nodash.arrayify(output), function(outputObject) {
+function standardizeOutput(schemaValidator, output, isError) {
+  const outputArray = lodash.filter(nodash.arrayify(output), function(outputObject) {
     return lodash.isObject(outputObject) && !lodash.isEmpty(outputObject);
   });
-  let result = schemaValidator.validate(outputArray, constx.WEBSOCKET.DETAILS.SCHEMA);
+  const result = schemaValidator.validate(outputArray, constx.WEBSOCKET.DETAILS.SCHEMA);
   if (!result.valid) {
-    outputArray = [{
+    return [{
       type: 'json',
       title: isError ? constx.WEBSOCKET.MSG_ON.FAILED : constx.WEBSOCKET.MSG_ON.COMPLETED,
       data: output

@@ -22,19 +22,19 @@ function LoggingWrapper(sectorName) {
   let __tracer = null;
   this.getTracer = function() {
     if (__tracer == null) {
-      let parentTracer = LogTracer.ROOT;
+      const parentTracer = LogTracer.ROOT;
       __tracer = parentTracer.branch({
         key: constx.TRACER.SECTOR.ID_FIELD,
         value: LogTracer.getLogID()
       });
 
-      let blockInfo = {
+      const blockInfo = {
         parentKey: parentTracer.key,
         parentValue: parentTracer.value
       }
       blockInfo[constx.TRACER.SECTOR.NAME_FIELD] = sectorName;
 
-      let rootLogger = this.getLogger();
+      const rootLogger = this.getLogger();
       rootLogger.has(CHECK) && rootLogger.log(CHECK, __tracer.add(blockInfo)
           .toMessage({ tags: [ FRAMEWORK_METADATA ] }));
     }

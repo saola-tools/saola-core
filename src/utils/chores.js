@@ -29,7 +29,7 @@ const store = {
 const chores = {};
 
 chores.assertOk = function () {
-  for(let k=0; k<arguments.length; k++) {
+  for(const k in arguments) {
     assert.ok(arguments[k], util.format('The argument #%s evaluated to a falsy value', k));
   }
 }
@@ -57,16 +57,15 @@ chores.loadPackageInfo = function(pkgRootPath) {
 };
 
 chores.getFirstDefinedValue = function() {
-  let val = undefined;
-  for(let i=0; i<arguments.length; i++) {
-    val = arguments[i];
-    if (val !== undefined && val !== null) break;
+  for(const i in arguments) {
+    const val = arguments[i];
+    if (val !== undefined && val !== null) return val;
   }
-  return val;
+  return undefined;
 }
 
 chores.isOwnOrInheritedProperty = function(object, property) {
-  for(let propName in object) {
+  for(const propName in object) {
     if (propName === property) return true;
   }
   return object.hasOwnProperty(property);
@@ -74,7 +73,7 @@ chores.isOwnOrInheritedProperty = function(object, property) {
 
 chores.pickProperty = function(propName, containers, propDefault) {
   if (!lodash.isString(propName) || !lodash.isArray(containers)) return null;
-  for(let i=0; i<containers.length; i++) {
+  for(const i in containers) {
     if (lodash.isObject(containers[i]) && containers[i][propName]) {
       return containers[i][propName];
     }
@@ -83,7 +82,7 @@ chores.pickProperty = function(propName, containers, propDefault) {
 };
 
 chores.deepFreeze = function (o) {
-  let self = this;
+  const self = this;
   Object.freeze(o);
   Object.getOwnPropertyNames(o).forEach(function (prop) {
     if (o.hasOwnProperty(prop)
@@ -101,21 +100,18 @@ chores.fileExists = function(filepath) {
 
 chores.filterFiles = function(dir, filter, filenames) {
   filenames = filenames || [];
-  let regex = (filter) ? new RegExp(filter) : null;
-  let files;
+  const regex = (filter) ? new RegExp(filter) : null;
   try {
-    files = fs.readdirSync(dir);
-  } catch (err) {
-    files = [];
-  }
-  for (let i in files) {
-    if ((regex) ? regex.test(files[i]) : true) {
-      let name = dir + '/' + files[i];
-      if (fs.statSync(name).isFile()) {
-        filenames.push(files[i]);
+    const files = fs.readdirSync(dir);
+    for (const i in files) {
+      if ((regex) ? regex.test(files[i]) : true) {
+        const name = dir + '/' + files[i];
+        if (fs.statSync(name).isFile()) {
+          filenames.push(files[i]);
+        }
       }
     }
-  }
+  } catch (err) {}
   return filenames;
 };
 
@@ -169,9 +165,9 @@ chores.assertDir = function(appName) {
 }
 
 chores.homedir = (typeof os.homedir === 'function') ? os.homedir : function() {
-  let env = process.env;
-  let home = env.HOME;
-  let user = env.LOGNAME || env.USER || env.LNAME || env.USERNAME;
+  const env = process.env;
+  const home = env.HOME;
+  const user = env.LOGNAME || env.USER || env.LNAME || env.USERNAME;
 
   if (process.platform === 'win32') {
     return env.USERPROFILE || env.HOMEDRIVE + env.HOMEPATH || home || null;
@@ -211,9 +207,9 @@ chores.extractCodeByPattern = function(patterns, name) {
 }
 
 chores.getComponentDir = function(pluginRef, componentType) {
-  let compDir = lodash.get(pluginRef, ['presets', 'componentDir'], {});
+  const compDir = lodash.get(pluginRef, ['presets', 'componentDir'], {});
   if (componentType) {
-    compDir = compDir[componentType] || constx[componentType].SCRIPT_DIR;
+    return compDir[componentType] || constx[componentType].SCRIPT_DIR;
   }
   return compDir;
 }
@@ -330,7 +326,7 @@ chores.isUpgradeSupported = function(label) {
 }
 
 function isAnyOfTuplesSatistied(tuples) {
-  for(let i=0; i<tuples.length; i++) {
+  for(const i in tuples) {
     if (isAllOfLabelsSatisfied(tuples[i])) return true;
   }
   return false;
@@ -362,7 +358,7 @@ chores.getValidator = function() {
 }
 
 chores.validate = function(object, schema) {
-  let result = this.getValidator().validate(object, schema);
+  const result = this.getValidator().validate(object, schema);
   if (typeof result.ok === 'boolean') {
     result.valid = result.ok;
   }
@@ -380,7 +376,7 @@ chores.extractObjectInfo = function(data, opts) {
   function detect(data, level=2) {
     if (typeof level !== "number" || level < 0) level = 0;
     let info = undefined;
-    let type = typeof(data);
+    const type = typeof(data);
     switch(type) {
       case "boolean":
       case "number":
@@ -397,14 +393,14 @@ chores.extractObjectInfo = function(data, opts) {
         } else if (Array.isArray(data)) {
           info = [];
           if (level > 0) {
-            for(let i in data) {
+            for(const i in data) {
               info.push(detect(data[i], level - 1));
             }
           }
         } else {
           info = {};
           if (level > 0) {
-            for(let field in data) {
+            for(const field in data) {
               info[field] = detect(data[field], level - 1);
             }
           }
@@ -434,7 +430,7 @@ chores.isVersionSatisfied = function (version, versionMask) {
     if (lodash.isArray(versionMask)) {
       ok = ok || (versionMask.indexOf(version) >= 0);
       if (ok) return ok;
-      for(let i in versionMask) {
+      for(const i in versionMask) {
         ok = ok || semver.satisfies(version, versionMask[i]);
         if (ok) return ok;
       }
