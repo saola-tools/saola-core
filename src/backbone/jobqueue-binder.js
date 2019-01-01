@@ -17,16 +17,15 @@ function JobqueueBinder(params={}) {
   }));
 
   const jqCfg = lodash.get(params, ['profileConfig', constx.FRAMEWORK.NAME, 'jobqueue'], {});
+  const store = { jobqueueMasterName: null, jobqueueMaster: null }
 
-  let jobqueueMasterName = null;
   function getJobqueueMasterName() {
-    return jobqueueMasterName = jobqueueMasterName ||
+    return store.jobqueueMasterName = store.jobqueueMasterName ||
         jqCfg.pluginId && [jqCfg.pluginId, "jobqueueMaster"].join(chores.getSeparator());
   }
 
-  let jobqueueMaster = null;
   function getJobQueueMaster() {
-    return jobqueueMaster = jobqueueMaster ||
+    return store.jobqueueMaster = store.jobqueueMaster ||
         getJobqueueMasterName() && params.injectedHandlers[getJobqueueMasterName()];
   }
 
