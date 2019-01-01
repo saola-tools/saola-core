@@ -7,6 +7,7 @@ const Injektor = require('injektor');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
 const errors = require('../utils/errors');
+const nodash = require('../utils/nodash');
 const RunhookManager = require('./runhook-manager');
 const blockRef = chores.getBlockRef(__filename);
 
@@ -23,18 +24,17 @@ function SandboxManager(params={}) {
     text: ' + constructor start ...'
   }));
 
-  let managerMap = {};
-  let serviceMap = {};
-  let triggerMap = {};
-
+  const managerMap = {};
   chores.loadServiceByNames(managerMap, __dirname, DEFAULT_SERVICES);
-
-  params.pluginLoader.loadServices(serviceMap);
-  params.pluginLoader.loadTriggers(triggerMap);
-
   const managerNames = lodash.keys(managerMap);
-  serviceMap = lodash.omit(serviceMap, managerNames);
-  triggerMap = lodash.omit(triggerMap, managerNames);
+
+  const serviceMap = {};
+  params.pluginLoader.loadServices(serviceMap);
+  chores.kickOutOf(serviceMap, managerNames);
+
+  const triggerMap = {};
+  params.pluginLoader.loadTriggers(triggerMap);
+  chores.kickOutOf(triggerMap, managerNames);
 
   const sandboxNames = params.sandboxNames;
   const sandboxConfig = params.sandboxConfig;
@@ -377,10 +377,7 @@ function pickSandboxServiceHelp(serviceName, blocks) {
   const self = this;
   const serviceObject = self.getSandboxService(serviceName);
   if (lodash.isObject(serviceObject) && lodash.isFunction(serviceObject.getServiceHelp)) {
-    let serviceHelp = serviceObject.getServiceHelp();
-    if (lodash.isObject(serviceHelp) && !lodash.isArray(serviceHelp)) {
-      serviceHelp = [serviceHelp];
-    }
+    const serviceHelp = nodash.arrayify(serviceObject.getServiceHelp());
     if (lodash.isArray(serviceHelp)) {
       lodash.forEach(serviceHelp, function(serviceInfo) {
         if (lodash.isString(serviceInfo.title)) {

@@ -64,6 +64,14 @@ chores.getFirstDefinedValue = function() {
   return undefined;
 }
 
+chores.kickOutOf = function(map, excludedNames) {
+  if (lodash.isObject(map) && lodash.isArray(excludedNames)) {
+    lodash.forEach(excludedNames, function(name) {
+      if (name in map) delete map[name];
+    });
+  }
+}
+
 chores.isOwnOrInheritedProperty = function(object, property) {
   for(const propName in object) {
     if (propName === property) return true;
