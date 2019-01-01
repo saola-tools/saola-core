@@ -21,13 +21,8 @@ function PluginLoader(params={}) {
     text: ' + constructor start ...'
   }));
 
-  lodash.forEach(params.pluginRefs, function(pluginRef) {
-    pluginRef.pathDir = pluginRef.path;
-    return pluginRef;
-  });
-
   L.has('dunce') && L.log('dunce', T.add(params).toMessage({
-    text: ' - pluginRefs: ${pluginRefs}'
+    text: ' - pluginLoader start with pluginRefs: ${pluginRefs}'
   }));
 
   this.loadMetadata = function(metadataMap) {
@@ -123,7 +118,7 @@ function loadScriptEntries(CTX, scriptMap, scriptType, scriptContext, pluginRoot
   const {L, T, schemaValidator} = CTX || this;
 
   const scriptSubDir = chores.getComponentDir(pluginRootDir, scriptType);
-  const scriptFolder = path.join(pluginRootDir.pathDir, scriptSubDir);
+  const scriptFolder = path.join(pluginRootDir.path, scriptSubDir);
   L.has('dunce') && L.log('dunce', T.add({
     scriptKey: constx[scriptType].ROOT_KEY,
     scriptFolder: scriptFolder
@@ -140,7 +135,7 @@ function loadScriptEntries(CTX, scriptMap, scriptType, scriptContext, pluginRoot
 function loadScriptEntry(CTX, scriptMap, scriptType, scriptSubDir, scriptFile, scriptContext, pluginRootDir) {
   const {L, T, issueInspector, nameResolver, schemaValidator} = CTX || this;
   const opStatus = lodash.assign({ type: scriptType, file: scriptFile, subDir: scriptSubDir }, pluginRootDir);
-  const filepath = path.join(pluginRootDir.pathDir, scriptSubDir, scriptFile);
+  const filepath = path.join(pluginRootDir.path, scriptSubDir, scriptFile);
   try {
     const scriptInit = loader(filepath, { stopWhenError: true });
     if (lodash.isFunction(scriptInit)) {
@@ -249,7 +244,7 @@ function loadMetainfEntries(CTX, metainfMap, pluginRootDir) {
   const {L, T, schemaValidator} = CTX = CTX || this;
   const metainfType = 'METAINF';
   const metainfSubDir = chores.getComponentDir(pluginRootDir, metainfType);
-  const metainfFolder = path.join(pluginRootDir.pathDir, metainfSubDir);
+  const metainfFolder = path.join(pluginRootDir.path, metainfSubDir);
   L.has('dunce') && L.log('dunce', T.add({ metainfKey: constx[metainfType].ROOT_KEY, metainfFolder }).toMessage({
     text: ' - load ${metainfKey}s from folder: ${metainfFolder}'
   }));
@@ -263,7 +258,7 @@ function loadMetainfEntry(CTX, metainfMap, metainfSubDir, schemaFile, pluginRoot
   const {L, T, issueInspector, nameResolver, schemaValidator} = CTX || this;
   const metainfType = 'METAINF';
   const opStatus = lodash.assign({ type: 'METAINF', file: schemaFile, subDir: metainfSubDir }, pluginRootDir);
-  const filepath = path.join(pluginRootDir.pathDir, metainfSubDir, schemaFile);
+  const filepath = path.join(pluginRootDir.path, metainfSubDir, schemaFile);
   try {
     const metainfObject = loader(filepath, { stopWhenError: true });
     const output = validateMetainf(CTX, metainfObject, metainfType);
@@ -342,7 +337,7 @@ function loadGadgetEntries(CTX, gadgetMap, gadgetType, pluginRootDir) {
   const {L, T, schemaValidator} = CTX || this;
 
   const gadgetSubDir = chores.getComponentDir(pluginRootDir, gadgetType);
-  const gadgetFolder = path.join(pluginRootDir.pathDir, gadgetSubDir);
+  const gadgetFolder = path.join(pluginRootDir.path, gadgetSubDir);
   L.has('dunce') && L.log('dunce', T.add({
     gadgetKey: constx[gadgetType].ROOT_KEY,
     gadgetFolder: gadgetFolder
@@ -359,7 +354,7 @@ function loadGadgetEntries(CTX, gadgetMap, gadgetType, pluginRootDir) {
 function loadGadgetEntry(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, pluginRootDir) {
   const {L, T, issueInspector, schemaValidator} = CTX = CTX || this;
   const opStatus = lodash.assign({ type: gadgetType, file: gadgetFile, subDir: gadgetSubDir }, pluginRootDir);
-  const filepath = path.join(pluginRootDir.pathDir, gadgetSubDir, gadgetFile);
+  const filepath = path.join(pluginRootDir.path, gadgetSubDir, gadgetFile);
   try {
     const gadgetConstructor = loader(filepath, { stopWhenError: true });
     L.has('dunce') && L.log('dunce', T.add({ filepath }).toMessage({
