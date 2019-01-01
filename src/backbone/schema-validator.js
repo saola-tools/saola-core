@@ -8,7 +8,7 @@ function SchemaValidator(params={}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
-  const store = { validator: null };
+  const _ref_ = { validator: null };
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
@@ -16,8 +16,8 @@ function SchemaValidator(params={}) {
   }));
 
   this.validate = function(object, schema) {
-    store.validator = store.validator || chores.getValidator();
-    const result = store.validator.validate(object, schema);
+    _ref_.validator = _ref_.validator || chores.getValidator();
+    const result = _ref_.validator.validate(object, schema);
     if (typeof result.ok === 'boolean') {
       result.valid = result.ok;
     }
