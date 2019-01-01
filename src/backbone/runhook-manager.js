@@ -42,7 +42,7 @@ function RunhookManager(params={}) {
    */
   function buildRunhookInstance(command, runhookId) {
     runhookId = runhookId || command.requestId;
-    let customized = {
+    const customized = {
       loggingFactory: params.loggingFactory.branch(command.name, runhookId)
     }
     if (command.package && !chores.isSpecialPlugin(command.package)) {

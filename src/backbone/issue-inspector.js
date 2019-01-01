@@ -1,6 +1,7 @@
 'use strict';
 
 const lodash = require('lodash');
+const path = require('path');
 const Chalk = require('../utils/chalk');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
@@ -182,7 +183,7 @@ function IssueInspector(params={}) {
             case 'ROUTINE':
             case 'SERVICE':
             case 'TRIGGER': {
-              console.error(chalk.errorMessage('--> [%s:%s] - %s in (%s%s):'), fsv.type, fsv.name, fsv.file, fsv.pathDir, fsv.subDir);
+              console.error(chalk.errorMessage('--> [%s:%s] - %s in (%s):'), fsv.type, fsv.name, fsv.file, path.join(fsv.path, fsv.subDir));
               console.error(chalk.errorStack("  " + fsv.stack));
               break;
             }
