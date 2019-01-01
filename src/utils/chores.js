@@ -383,7 +383,6 @@ chores.argumentsToArray = function(args, l, r) {
 chores.extractObjectInfo = function(data, opts) {
   function detect(data, level=2) {
     if (typeof level !== "number" || level < 0) level = 0;
-    let info = undefined;
     const type = typeof(data);
     switch(type) {
       case "boolean":
@@ -392,31 +391,33 @@ chores.extractObjectInfo = function(data, opts) {
       case "symbol":
       case "function":
       case "undefined": {
-        info = type;
-        break;
+        return type;
       }
       case "object": {
         if (data === null) {
-          info = "null";
-        } else if (Array.isArray(data)) {
-          info = [];
+          return "null";
+        }
+        if (Array.isArray(data)) {
+          const info = [];
           if (level > 0) {
             for(const i in data) {
               info.push(detect(data[i], level - 1));
             }
           }
+          return info;
         } else {
-          info = {};
+          const info = {};
           if (level > 0) {
             for(const field in data) {
               info[field] = detect(data[field], level - 1);
             }
           }
+          return info;
         }
         break;
       }
     }
-    return info;
+    return undefined;
   }
   return detect(data, opts && opts.level);
 }
@@ -427,24 +428,19 @@ chores.isVersionLessThan = function (version1, version2) {
 }
 
 chores.isVersionSatisfied = function (version, versionMask) {
-  let ok = false;
   if (semver.valid(version)) {
     if (lodash.isString(versionMask)) {
-      ok = ok || (version === versionMask);
-      if (ok) return ok;
-      ok = ok || semver.satisfies(version, versionMask);
-      if (ok) return ok;
+      if (version === versionMask) return true;
+      if (semver.satisfies(version, versionMask)) return true;
     }
     if (lodash.isArray(versionMask)) {
-      ok = ok || (versionMask.indexOf(version) >= 0);
-      if (ok) return ok;
+      if (versionMask.indexOf(version) >= 0) return true;
       for(const i in versionMask) {
-        ok = ok || semver.satisfies(version, versionMask[i]);
-        if (ok) return ok;
+        if (semver.satisfies(version, versionMask[i])) return true;
       }
     }
   }
-  return ok;
+  return false;
 }
 
 module.exports = chores;
