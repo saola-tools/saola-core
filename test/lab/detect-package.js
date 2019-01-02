@@ -16,8 +16,28 @@ console.log('Location: %s', locatePackage({issueInspector}, {
 }, 'application'));
 
 console.log('Location: %s', locatePackage({issueInspector}, {
+  name: 'locating-package-json',
+  path: path.join(__dirname, '../app/locating-package-json/sub')
+}, 'application'));
+
+console.log('Location: %s', locatePackage({issueInspector}, {
+  name: 'locating-package-json',
+  path: path.join(__dirname, '../app/locating-package-json/sub/sub')
+}, 'application'));
+
+console.log('Location: %s', locatePackage({issueInspector}, {
   name: 'locating-package-json-foo',
   path: path.join(__dirname, '../app/locating-package-json/foo')
+}, 'application'));
+
+console.log('Location: %s', locatePackage({issueInspector}, {
+  name: 'locating-package-json-foo',
+  path: path.join(__dirname, '../app/locating-package-json/foo/sub')
+}, 'application'));
+
+console.log('Location: %s', locatePackage({issueInspector}, {
+  name: 'locating-package-json-foo',
+  path: path.join(__dirname, '../app/locating-package-json/foo/sub/sub')
 }, 'application'));
 
 console.log('Location: %s', locatePackage({issueInspector}, {
@@ -32,7 +52,7 @@ console.log('Location: %s', locatePackage({issueInspector}, {
 
 console.log('Location: %s', locatePackage({issueInspector}, {
   name: 'locating-package-json-bar',
-  path: path.join(__dirname, '../app/locating-package-json/bar/sub/server')
+  path: path.join(__dirname, '../app/locating-package-json/bar/sub/start')
 }, 'application'));
 
 console.log('Location: %s', locatePackage({issueInspector}, {
@@ -42,7 +62,7 @@ console.log('Location: %s', locatePackage({issueInspector}, {
 
 console.log('Location: %s', locatePackage({issueInspector}, {
   name: 'locating-package-json-bar',
-  path: path.join(__dirname, '../app/locating-package-json/bar/sub/sub/sub/client')
+  path: path.join(__dirname, '../app/locating-package-json/bar/sub/sub/sub/start')
 }, 'application'));
 
 issueInspector.barrier();
