@@ -56,18 +56,19 @@ function readVariable(ctx, appLabel, varName) {
     util.format('NODE_%s_%s', appLabel, varName),
     util.format('NODE_%s_%s', 'DEVEBOT', varName)
   ];
-  let value, label;
-  for(label of labels) {
-    value = envbox.getEnv(label);
+  for(const label of labels) {
+    const value = envbox.getEnv(label);
     L.has('dunce') && L.log('dunce', T.add({ label, value }).toMessage({
       text: ' - Get value of ${label}: ${value}'
     }));
-    if (value) break;
+    if (value) {
+      L.has('dunce') && L.log('dunce', T.add({ label: labels[0], value }).toMessage({
+        text: ' - Final value of ${label}: ${value}'
+      }));
+      return value;
+    }
   }
-  L.has('dunce') && L.log('dunce', T.add({ label: labels[0], value }).toMessage({
-    text: ' - Final value of ${label}: ${value}'
-  }));
-  return value;
+  return undefined;
 }
 
 function loadConfig(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
@@ -390,20 +391,18 @@ function modernizeConfig(ctx, configType, configStore, crateInfo, bridgeManifest
 }
 
 function modernizeConfigBlock(ctx, configStore, configPath, manifestBlock, moduleType) {
-  let result = null;
   if (manifestBlock) {
     const moduleVersion = manifestBlock.version;
     if (moduleVersion) {
       const manifestPath = ['manifest', constx.MANIFEST.DEFAULT_ROOT_NAME];
       const manifestObject = lodash.get(manifestBlock, manifestPath);
-      result = applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifestObject);
+      return applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifestObject);
     }
   }
-  return result;
+  return null;
 }
 
 function applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifest) {
-  let result = null;
   if (manifest && manifest.migration && manifest.enabled !== false) {
     const configNode = lodash.get(configStore, configPath);
     if (lodash.isObject(configNode)) {
@@ -411,7 +410,7 @@ function applyManifestMigration(ctx, configStore, configPath, moduleVersion, man
       if (chores.isVersionLessThan(configVersion, moduleVersion)) {
         const configMeta = lodash.get(configNode, [CONFIG_METADATA_BLOCK]);
         const configData = lodash.omit(configNode, [CONFIG_METADATA_BLOCK]);
-        result = { migrated: false, configVersion, moduleVersion, steps: {} };
+        const result = { migrated: false, configVersion, moduleVersion, steps: {} };
         for(const ruleName in manifest.migration) {
           const rule = manifest.migration[ruleName];
           if (rule.enabled === false) {
@@ -439,10 +438,11 @@ function applyManifestMigration(ctx, configStore, configPath, moduleVersion, man
             result.steps[ruleName] = 'empty_output';
           }
         }
+        return result;
       }
     }
   }
-  return result;
+  return null;
 }
 
 function ModernizingResultCollector() {
