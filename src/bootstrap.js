@@ -128,37 +128,35 @@ function appLoader(params={}) {
   const contextManager = new ContextManager({ issueInspector });
   contextManager.addDefaultFeatures(params.defaultFeatures);
 
-  const app = {};
+  const _app_ = {};
+  const _ref_ = {};
 
-  let _config;
-  Object.defineProperty(app, 'config', {
+  Object.defineProperty(_app_, 'config', {
     get: function() {
-      if (_config == undefined || _config == null) {
-        _config = configLoader.load();
-        _config.appName = appName;
-        _config.appInfo = appInfo;
-        _config.bridgeRefs = bridgeRefList;
-        _config.pluginRefs = [].concat(appRef || [], pluginRefList, devebotRef);
+      if (_ref_.config == undefined || _ref_.config == null) {
+        _ref_.config = configLoader.load();
+        _ref_.config.appName = appName;
+        _ref_.config.appInfo = appInfo;
+        _ref_.config.bridgeRefs = bridgeRefList;
+        _ref_.config.pluginRefs = [].concat(appRef || [], pluginRefList, devebotRef);
       }
-      return _config;
+      return _ref_.config;
     },
     set: function(value) {}
   });
 
-  let _runner;
-  Object.defineProperty(app, 'runner', {
+  Object.defineProperty(_app_, 'runner', {
     get: function() {
       const args = { configObject: this.config, contextManager, issueInspector, stateInspector, nameResolver };
-      return _runner = _runner || new Runner(args);
+      return _ref_.runner = _ref_.runner || new Runner(args);
     },
     set: function(value) {}
   });
 
-  let _server;
-  Object.defineProperty(app, 'server', {
+  Object.defineProperty(_app_, 'server', {
     get: function() {
       const args = { configObject: this.config, contextManager, issueInspector, stateInspector, nameResolver };
-      return _server = _server || new Server(args);
+      return _ref_.server = _ref_.server || new Server(args);
     },
     set: function(value) {}
   });
@@ -168,7 +166,7 @@ function appLoader(params={}) {
     text: ' - Application loading has done'
   }));
 
-  return app;
+  return _app_;
 }
 
 const ATTRS = ['libRootPaths', 'pluginRefs', 'bridgeRefs'];
