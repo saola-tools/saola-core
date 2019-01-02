@@ -70,7 +70,7 @@ function Server(params={}) {
     cert: fs.readFileSync(tunnelCfg.crt_file)
   }, processRequest) : http.createServer(processRequest);
 
-  const rhythm = new RepeatedTimer({
+  const tictac = new RepeatedTimer({
     loggingFactory: loggingFactory,
     period: 60 * 1000,
     target: function() {
@@ -87,7 +87,7 @@ function Server(params={}) {
     }));
     return Promise.resolve().then(function() {
       if (mode == 0) return Promise.resolve();
-      if (mode == 1) return rhythm.start();
+      if (mode == 1) return tictac.start();
       return new Promise(function(onResolved, onRejected) {
         const serverHost = lodash.get(frameworkCfg, ['host'], '0.0.0.0');
         const serverPort = lodash.get(frameworkCfg, ['port'], 17779);
@@ -117,7 +117,6 @@ function Server(params={}) {
 
   this.open = this.start; // alias
 
-  let serverCloseEvent;
   this.stop = function() {
     L.has('silly') && L.log('silly', T.toMessage({
       tags: [ blockRef, 'close()' ],
@@ -131,18 +130,19 @@ function Server(params={}) {
         text: 'triggers have stopped'
       }));
       if (mode == 0) return Promise.resolve();
-      if (mode == 1) return rhythm.stop();
+      if (mode == 1) return tictac.stop();
       return new Promise(function(onResolved, onRejected) {
-        let timeoutHandler = setTimeout(function() {
+        const timeoutHandler = setTimeout(function() {
           L.has('dunce') && L.log('dunce', 'Timeout closing Server');
           onRejected();
         }, 60000);
-        if (typeof(serverCloseEvent) === 'function') {
-          server.removeListener("close", serverCloseEvent);
-        }
-        server.on("close", serverCloseEvent = function() {
+        const serverCloseEvent = function() {
           L.has('dunce') && L.log('dunce', 'HTTP Server is invoked');
-        });
+          if (server && lodash.isFunction(serverCloseEvent)) {
+            server.removeListener("close", serverCloseEvent);
+          }
+        }
+        server.on("close", serverCloseEvent);
         server.close(function() {
           L.has('dunce') && L.log('dunce', 'HTTP Server has been closed');
           clearTimeout(timeoutHandler);
