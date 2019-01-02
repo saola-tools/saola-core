@@ -349,12 +349,7 @@ function checkSandboxConstraintsOfAppbox(ref, result, config, schema) {
     lodash.forEach(crateSchema.bridgeDepends, function(depName) {
       extractedCfg.bridges[depName] = lodash.get(config, ["bridges", depName, crateName]);
     });
-    let r = null;
-    try {
-      r = checkConstraints(extractedCfg);
-    } catch (error) {
-      r = { ok: false, reason: 'application.checkConstraints() raises an error' }
-    }
+    const r = applyCheckConstraints(checkConstraints, extractedCfg, crateName);
     result.push(customizeSandboxResult(r, crateSchema.crateScope, 'constraints'));
   }
 }
@@ -369,10 +364,7 @@ function checkSandboxConstraintsOfPlugin(ref, result, config, schema, crateName)
     extractedCfg.plugins[crateName] = crateConfig;
     lodash.forEach(crateSchema.pluginDepends, function(depName) {
       if (depName === crateName) {
-        const r = { ok: false, reason: {
-          pluginName: crateName,
-          message: 'plugin depends on itself'
-        } };
+        const r = { ok: false, reason: { pluginName: crateName, message: 'plugin depends on itself' } };
         result.push(customizeSandboxResult(r, crateSchema.crateScope, 'constraints'));
       }
       extractedCfg.plugins[depName] = config.plugins[depName];
@@ -380,16 +372,17 @@ function checkSandboxConstraintsOfPlugin(ref, result, config, schema, crateName)
     lodash.forEach(crateSchema.bridgeDepends, function(depName) {
       extractedCfg.bridges[depName] = lodash.get(config, ["bridges", depName, crateName]);
     });
-    let r = null;
-    try {
-      r = checkConstraints(extractedCfg);
-    } catch (error) {
-      r = {
-        ok: false,
-        reason: util.format('plugins[%s].checkConstraints() raises an error', crateName)
-      }
-    }
+    const r = applyCheckConstraints(checkConstraints, extractedCfg, crateName);
     result.push(customizeSandboxResult(r, crateSchema.crateScope, 'constraints'));
+  }
+}
+
+function applyCheckConstraints(checkConstraints, extractedCfg, crateName) {
+  try {
+    return checkConstraints(extractedCfg);
+  } catch (error) {
+    const moduleLabel = (crateName !== 'application') ? 'plugins[' + crateName + ']' : crateName;
+    return { ok: false, reason: util.format('%s.checkConstraints() raises an error', moduleLabel) }
   }
 }
 
