@@ -11,11 +11,10 @@ function _logit(L, level) {
   L && L.has(level) && L.log.apply(Array.prototype.slice.call(arguments, 1));
 }
 
-function loader(name, opts) {
-  opts = opts || {};
-  let modref = {};
+function loader(name, opts = {}) {
+  const _ref_ = { pkg: {} };
   try {
-    modref = require(name);
+    _ref_.pkg = require(name);
     _logit(opts.logger, 'debug', ' - file %s is loading ... ok', name);
   } catch(err) {
     if (err.code) {
@@ -32,7 +31,7 @@ function loader(name, opts) {
       throw err;
     }
   }
-  return modref;
+  return _ref_.pkg;
 };
 
 module.exports = loader;
