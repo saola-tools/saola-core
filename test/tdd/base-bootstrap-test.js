@@ -12,6 +12,7 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
 var rewire = require('rewire');
+var sinon = require('sinon');
 
 describe('tdd:devebot:base:bootstrap', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -1042,6 +1043,58 @@ describe('tdd:devebot:base:bootstrap', function() {
         path: lab.getAppHome(appName),
       }, issueInspector);
       assert.isNull(manifest);
+    });
+
+    it('raise an issue if manifest is invalid', function() {
+      var issueInspector = { collect: sinon.stub() }
+      var appName = 'invalid-manifest-schema';
+      var manifest = loadManifest({
+        type: 'application',
+        name: appName,
+        path: lab.getAppHome(appName),
+      }, issueInspector);
+      // returned manifest object
+      assert.isObject(lodash.get(manifest, ['config', 'migration']));
+      assert.isString(lodash.get(manifest, ['config', 'validation', 'schema']));
+      // issueInspector.collect
+      assert.isTrue(issueInspector.collect.calledOnce);
+      var collectArgs = lodash.cloneDeep(issueInspector.collect.firstCall.args);
+      assert.lengthOf(collectArgs, 1);
+      var collectArg = collectArgs[0];
+      collectArg.stack = JSON.parse(collectArg.stack);
+      assert.deepEqual(collectArg, {
+        "stage": "manifest",
+        "type": "application",
+        "name": "invalid-manifest-schema",
+        "hasError": true,
+        "stack": [
+          {
+              "keyword": "type",
+              "dataPath": ".config.validation.schema",
+              "schemaPath": "#/properties/config/properties/validation/properties/schema/type",
+              "params": {
+                  "type": "object"
+              },
+              "message": "should be object"
+          },
+          {
+              "keyword": "type",
+              "dataPath": ".config.validation.schema",
+              "schemaPath": "#/type",
+              "params": {
+                  "type": "object"
+              },
+              "message": "should be object"
+          },
+          {
+              "keyword": "oneOf",
+              "dataPath": ".config.validation.schema",
+              "schemaPath": "#/properties/config/properties/validation/properties/schema/oneOf",
+              "params": {},
+              "message": "should match exactly one schema in oneOf"
+          }
+        ]
+      });
     });
   });
 
