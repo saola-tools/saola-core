@@ -138,11 +138,10 @@ function EnvironmentCollection(params={}) {
   const store = { env: {}, namespace: params.namespace || 'DEVEBOT' };
 
   function getLabel(name, scope) {
-    let ns = 'DEVEBOT';
-    if (scope !== 'framework') {
-      ns = store.namespace || 'DEVEBOT';
+    if (scope === 'framework') {
+      return 'DEVEBOT_' + name;
     }
-    return ns + '_' + name;
+    return (store.namespace || 'DEVEBOT') + '_' + name;
   }
 
   function getValue(name, scope) {
@@ -261,11 +260,12 @@ function EnvironmentCollection(params={}) {
     printInfo(chalk.heading1('[+] Environment variables:'));
     lodash.forOwn(definition, function(info, label) {
       if (info && info.scope && excl.indexOf(info.scope) >= 0) return;
-      let envMsg = util.format(' |> %s: %s', chalk.envName(getLabel(label, info.scope)), info.description);
+      const envMsg = util.format(' |> %s: %s', chalk.envName(getLabel(label, info.scope)), info.description);
       if (info && info.defaultValue != null) {
-        envMsg += util.format(' (default: %s)', chalk.defaultValue(JSON.stringify(info.defaultValue)));
+        printInfo(envMsg + util.format(' (default: %s)', chalk.defaultValue(JSON.stringify(info.defaultValue))));
+      } else {
+        printInfo(envMsg);
       }
-      printInfo(envMsg);
       if (info && info.scope) {
         printInfo('    - %s: %s', chalk.envAttrName('scope'), chalk.envAttrValue(info.scope));
       }
