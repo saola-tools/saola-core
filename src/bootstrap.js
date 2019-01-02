@@ -46,7 +46,8 @@ function appLoader(params={}) {
   const appName = params.appName || appInfo.name || constx.FRAMEWORK.NAME + '-application';
   const appOptions = {
     privateProfile: params.privateProfile || params.privateProfiles,
-    privateSandbox: params.privateSandbox || params.privateSandboxes
+    privateSandbox: params.privateSandbox || params.privateSandboxes,
+    privateTexture: params.privateTexture || params.privateTextures,
   };
 
   L.has('dunce') && L.log('dunce', T.add({ appName }).toMessage({

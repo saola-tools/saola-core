@@ -100,6 +100,12 @@ module.exports = {
             "privateSandboxes": {
               "$ref": "#/definitions/contextConfigSchema"
             },
+            "privateTexture": {
+              "$ref": "#/definitions/contextConfigSchema"
+            },
+            "privateTextures": {
+              "$ref": "#/definitions/contextConfigSchema"
+            },
             "defaultFeatures": {
               "type": "array",
               "items": {
