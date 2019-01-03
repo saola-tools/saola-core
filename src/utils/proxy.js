@@ -24,30 +24,42 @@ const trapNames = [
 
 function BeanProxy(rootTarget, handler, options) {
   function createProxy(target, path) {
-    const context = { rootTarget, path };
-    const realTraps = {};
+    const context = { root: rootTarget, path };
+    const namespace = chainify(path);
+    const wrappedHandler = {};
     for (const trapName of trapNames) {
-      const nameIndex = nameIndexOf[trapName], trap = handler[trapName];
+      const trap = handler[trapName];
       if (isFunction(trap)) {
-        realTraps[trapName] = function () {
+        const nameIndex = nameIndexOf[trapName];
+        wrappedHandler[trapName] = function () {
           const name = isNumber(nameIndex) ? arguments[nameIndex] : null;
-          context.nest = function (nestedTarget) {
-            if (isUndefined(nestedTarget)) {
-              nestedTarget = isString(name) ? rootTarget : {};
+          context.slug = namespace;
+          if (isString(name)) {
+            context.slug = namespace && (namespace + '.' + name) || name;
+          }
+          context.wrap = function (wrappedTarget) {
+            if (isUndefined(wrappedTarget)) {
+              wrappedTarget = isString(name) ? rootTarget : {};
             }
-            const nestedPath = isString(name) ? [].concat(path, name) : path;
-            return createProxy(nestedTarget, nestedPath);
+            const wrappedPath = isString(name) ? [].concat(path, name) : path;
+            return createProxy(wrappedTarget, wrappedPath);
           }
           return trap.apply(context, arguments);
         }
       }
     }
-    return new Proxy(target, realTraps);
+    return new Proxy(target, wrappedHandler);
   }
   return createProxy(rootTarget, extractPath(options));
 }
 
 module.exports = BeanProxy;
+
+function chainify(path) {
+  if (isString(path)) return path;
+  if (Array.isArray(path)) return path.join('.');
+  return null;
+}
 
 function extractPath(options) {
   return options && options.path ? toPath(options.path) : [];

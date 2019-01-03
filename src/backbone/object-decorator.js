@@ -147,7 +147,7 @@ function wrapObject(refs, object, opts) {
       }));
       if (chores.isOwnOrInheritedProperty(target, property)) {
         if (lodash.isFunction(node) || lodash.isObject(node)) {
-          return this.nest(node);
+          return this.wrap(node);
         }
       }
       return node;
@@ -197,7 +197,7 @@ function wrapObject(refs, object, opts) {
       const node = cached[methodPath].method.apply(thisArg, argList);
       if (cached[methodPath].spread && !isPromise(node)) {
         if (lodash.isFunction(node) || lodash.isObject(node)) {
-          return this.nest(node);
+          return this.wrap(node);
         }
       }
       return node;
@@ -679,7 +679,7 @@ function detectRequestId(argumentsList) {
 
 function isProxyRecursive(texture) {
   if (!texture) return false;
-  const fields = ['recursive', 'spread', 'outspread', 'nested'];
+  const fields = ['recursive', 'spread', 'outspread', 'nested', 'wrapped'];
   for(const i in fields) {
     if (texture[fields[i]]) return true;
   }

@@ -88,7 +88,7 @@ describe('tdd:devebot:utils:proxy', function() {
     });
   });
 
-  describe('BeanProxy ~ nested proxy', function() {
+  describe('BeanProxy ~ wrapped proxy', function() {
     var BeanConstructor = function() {
       this.factor = 1.1;
       this.calc = function(cost) {
@@ -108,13 +108,13 @@ describe('tdd:devebot:utils:proxy', function() {
         }
       }
     }
-    it('should create a chain of nested proxies using internal nest() method (1)', function() {
+    it('should create a chain of wrapped proxies using internal wrap() method (1)', function() {
       var beanObject = new BeanConstructor();
       var beanProxy = new BeanProxy(beanObject, {
         get(target, property, receiver) {
           let node = target[property];
           if (lodash.isFunction(node) || lodash.isObject(node)) {
-            return this.nest(node);
+            return this.wrap(node);
           }
           return node;
         },
@@ -125,15 +125,18 @@ describe('tdd:devebot:utils:proxy', function() {
         }
       });
       assert.isObject(beanProxy.product);
+      assert.notEqual(beanProxy.product, beanProxy.product);
       assert.isUndefined(beanProxy.product.unknown);
       assert.isObject(beanProxy.product.attrs);
+      assert.notEqual(beanProxy.product.attrs, beanProxy.product.attrs);
       assert.isObject(beanProxy.product.attrs.price);
       assert.isArray(beanProxy.product.attrs.price.tags);
+      assert.notEqual(beanProxy.product.attrs.price.tags, beanProxy.product.attrs.price.tags);
       assert.isNumber(beanProxy.product.attrs.price.discount);
       assert.isFunction(beanProxy.product.attrs.price.calc);
       assert.equal(beanProxy.product.attrs.price.calc(100), 108);
     });
-    it('should create a chain of nested proxies using internal nest() method (2)', function() {
+    it('should create a chain of wrapped proxies using internal wrap() method (2)', function() {
       var beanObject = new BeanConstructor();
       var beanProxy = new BeanProxy(beanObject, {
         get(target, property, receiver) {
@@ -143,10 +146,10 @@ describe('tdd:devebot:utils:proxy', function() {
           }
           let node = parent[property];
           if (lodash.isFunction(node)) {
-            return this.nest(node);
+            return this.wrap(node);
           }
           if (lodash.isObject(node) && !lodash.isArray(node)) {
-            return this.nest();
+            return this.wrap();
           }
           return node;
         },
@@ -195,7 +198,7 @@ describe('tdd:devebot:utils:proxy', function() {
         get(target, property, receiver) {
           let node = target[property];
           if (lodash.isFunction(node) || lodash.isObject(node)) {
-            return this.nest(node);
+            return this.wrap(node);
           }
           return node;
         },
@@ -237,7 +240,7 @@ describe('tdd:devebot:utils:proxy', function() {
         get(target, property, receiver) {
           let node = target[property];
           if (lodash.isFunction(node) || lodash.isObject(node)) {
-            return this.nest(node);
+            return this.wrap(node);
           }
           return node;
         },
@@ -245,7 +248,7 @@ describe('tdd:devebot:utils:proxy', function() {
           requestTags.push(this.path);
           let node = target.apply(thisArg, argumentsList);
           if (lodash.isFunction(node) || lodash.isObject(node)) {
-            return this.nest(node);
+            return this.wrap(node);
           }
           return node;
         }
@@ -257,6 +260,70 @@ describe('tdd:devebot:utils:proxy', function() {
         ["product","attrs","price","getInstance"],
         ["product","attrs","price","getInstance","calc"],
       ]);
+    });
+
+    it('should provide a solution to cache the hierarchical structure', function() {
+      var BeanConstructor = function() {
+        this.factor = 1.1;
+        this.calc = function(unit, amount) {
+          return this.factor * this.product.attrs.price.getInstance().calc(unit, amount);
+        }
+        this.self = function() {
+          return this;
+        }
+        this.product = {
+          attrs: {
+            price: {
+              getInstance: function() {
+                return {
+                  discount: 0.1,
+                  tax: 0.2,
+                  calc: function(unit, amount) {
+                    amount = amount || 1;
+                    return amount * unit * (1-this.discount) * (1+this.tax);
+                  },
+                  tags: ['tax', 'discount']
+                }
+              }
+            }
+          },
+          tags: ['product', 'price']
+        }
+        this.product.self = function() {
+          return this;
+        }
+      }
+      var beanCached = {};
+      var beanObject = new BeanConstructor();
+      var beanProxy = new BeanProxy(beanObject, {
+        get(target, property, receiver) {
+          let node = target[property];
+          if (chores.isOwnOrInheritedProperty(target, property)) {
+            if (lodash.isFunction(node) || lodash.isObject(node)) {
+              if (this.slug) {
+                beanCached[this.slug] = beanCached[this.slug] || this.wrap(node);
+                return beanCached[this.slug];
+              }
+              return this.wrap(node);
+            }
+          }
+          return node;
+        },
+        apply(target, thisArg, argumentsList) {
+          let node = target.apply(thisArg, argumentsList);
+          if (node === thisArg) return node;
+          if (lodash.isFunction(node) || lodash.isObject(node)) {
+            return this.wrap(node);
+          }
+          return node;
+        }
+      });
+      assert.equal(beanProxy.product, beanProxy.product);
+      assert.equal(beanProxy.product.attrs, beanProxy.product.attrs);
+      assert.equal(beanProxy.product.tags, beanProxy.product.tags);
+      assert.equal(beanProxy.self(), beanProxy);
+      assert.equal(beanProxy.product.self(), beanProxy.product);
+      assert.equal(beanProxy.product.self().attrs, beanProxy.product.attrs);
     });
   });
 
@@ -295,14 +362,14 @@ describe('tdd:devebot:utils:proxy', function() {
       get(target, property, receiver) {
         let node = target[property];
         if (lodash.isFunction(node) || lodash.isObject(node)) {
-          return this.nest(node);
+          return this.wrap(node);
         }
         return node;
       },
       apply(target, thisArg, argumentsList) {
         let node = target.apply(thisArg, argumentsList);
         if (lodash.isFunction(node) || lodash.isObject(node)) {
-          return this.nest(node);
+          return this.wrap(node);
         }
         return node;
       }
@@ -312,7 +379,7 @@ describe('tdd:devebot:utils:proxy', function() {
         let node = target[property];
         if (chores.isOwnOrInheritedProperty(target, property)) {
           if (lodash.isFunction(node) || lodash.isObject(node)) {
-            return this.nest(node);
+            return this.wrap(node);
           }
         }
         return node;
@@ -320,7 +387,7 @@ describe('tdd:devebot:utils:proxy', function() {
       apply(target, thisArg, argumentsList) {
         let node = target.apply(thisArg, argumentsList);
         if (lodash.isFunction(node) || lodash.isObject(node)) {
-          return this.nest(node);
+          return this.wrap(node);
         }
         return node;
       }
