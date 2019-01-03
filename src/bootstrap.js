@@ -474,8 +474,8 @@ bootstrap.require = function(packageName) {
   return null;
 };
 
-function locatePackage(ctx, pkgInfo, pkgType) {
-  chores.assertOk(ctx, ctx.issueInspector, pkgInfo, pkgInfo.path, pkgInfo.name);
+function locatePackage(ctx, pkgInfo) {
+  chores.assertOk(ctx, ctx.issueInspector, pkgInfo, pkgInfo.name, pkgInfo.type, pkgInfo.path);
   try {
     const entrypoint = require.resolve(pkgInfo.path);
     let absolutePath = path.dirname(entrypoint);
@@ -508,7 +508,7 @@ function locatePackage(ctx, pkgInfo, pkgType) {
   } catch (err) {
     ctx.issueInspector.collect({
       stage: 'bootstrap',
-      type: pkgType,
+      type: pkgInfo.type,
       name: pkgInfo.name,
       hasError: true,
       stack: err.stack

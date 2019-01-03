@@ -122,60 +122,69 @@ describe('tdd:devebot:base:bootstrap', function() {
       var providedPkg = lab.getAppHome('locating-package-json');
       var detectedPkg = locatePackage({issueInspector}, {
         name: 'locating-package-json',
+        type: 'application',
         path: providedPkg
-      }, 'application');
+      });
       assert.equal(detectedPkg, providedPkg);
     });
 
     it('locate a deep packages with default [main] script files (index.js)', function() {
       var detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: 'locating-package-json-foo',
+        type: 'application',
         path: lab.getAppHome('locating-package-json/foo')
-      }, 'application'));
+      }));
       assert.equal(detectedPkg, '/test/app/locating-package-json/foo');
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: 'locating-package-json-foo',
+        type: 'application',
         path: lab.getAppHome('locating-package-json/foo/sub')
-      }, 'application'));
+      }));
       assert.equal(detectedPkg, '/test/app/locating-package-json/foo');
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: 'locating-package-json-foo',
+        type: 'application',
         path: lab.getAppHome('locating-package-json/foo/sub/sub')
-      }, 'application'));
+      }));
       assert.equal(detectedPkg, '/test/app/locating-package-json/foo/sub/sub');
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: 'locating-package-json-foo',
+        type: 'application',
         path: lab.getAppHome('locating-package-json/foo/sub/sub/sub')
-      }, 'application'));
+      }));
       assert.equal(detectedPkg, '/test/app/locating-package-json/foo/sub/sub');
     });
 
     it('locate a deep packages with customized [main] script files', function() {
       var detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: 'locating-package-json-bar',
+        type: 'application',
         path: lab.getAppHome('locating-package-json/bar')
-      }, 'application'));
+      }));
       assert.equal(detectedPkg, '/test/app/locating-package-json/bar');
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: 'locating-package-json-bar',
+        type: 'application',
         path: lab.getAppHome('locating-package-json/bar/sub/start')
-      }, 'application'));
+      }));
       assert.equal(detectedPkg, '/test/app/locating-package-json/bar');
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: 'locating-package-json-bar',
+        type: 'application',
         path: lab.getAppHome('locating-package-json/bar/sub/sub')
-      }, 'application'));
+      }));
       assert.equal(detectedPkg, '/test/app/locating-package-json/bar/sub/sub');
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: 'locating-package-json-bar',
+        type: 'application',
         path: lab.getAppHome('locating-package-json/bar/sub/sub/sub/start')
-      }, 'application'));
+      }));
       assert.equal(detectedPkg, '/test/app/locating-package-json/bar/sub/sub');
     });
   });
