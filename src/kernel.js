@@ -27,7 +27,7 @@ function Kernel(params = {}) {
   }));
 
   // init the default parameters
-  const { configObject, contextManager, issueInspector, stateInspector, nameResolver } = params;
+  const { configObject, manifestHandler, contextManager, issueInspector, stateInspector, nameResolver } = params;
 
   // create injektor instance
   const injektor = new Injektor(chores.injektorOptions);

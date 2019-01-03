@@ -21,11 +21,12 @@ const CONFIG_METADATA_BLOCK = '__metadata__';
 const RELOADING_FORCED = true;
 
 function ConfigLoader(params={}) {
-  const {appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver} = params;
+  const { appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs } = params
+  const { issueInspector, stateInspector, nameResolver, manifestHandler } = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();
-  const CTX = { L, T, issueInspector, stateInspector, nameResolver };
+  const CTX = { L, T, issueInspector, stateInspector, nameResolver, manifestHandler };
   const label = chores.stringLabelCase(appName);
 
   L.has('silly') && L.log('silly', T.add({ appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, label }).toMessage({

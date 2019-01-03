@@ -8,6 +8,7 @@ const minimist = require('minimist');
 const appinfoLoader = require('./backbone/appinfo-loader');
 const IssueInspector = require('./backbone/issue-inspector');
 const StateInspector = require('./backbone/state-inspector');
+const ManifestHandler = require('./backbone/manifest-handler');
 const ConfigLoader = require('./backbone/config-loader');
 const ContextManager = require('./backbone/context-manager');
 const LoggingWrapper = require('./backbone/logging-wrapper');
@@ -120,8 +121,13 @@ function appLoader(params={}) {
 
   stateInspector.register({ nameResolver, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
 
-  const configLoader = new ConfigLoader({appName, appOptions, appRef, devebotRef,
-    pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs, issueInspector, stateInspector, nameResolver
+  const manifestHandler = new ManifestHandler({ issueInspector,
+    appRef, devebotRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,
+  });
+
+  const configLoader = new ConfigLoader({appName, appOptions,
+    appRef, devebotRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,
+    issueInspector, stateInspector, nameResolver, manifestHandler
   });
 
   const contextManager = new ContextManager({ issueInspector });
@@ -146,7 +152,7 @@ function appLoader(params={}) {
 
   Object.defineProperty(_app_, 'runner', {
     get: function() {
-      const args = { configObject: this.config, contextManager, issueInspector, stateInspector, nameResolver };
+      const args = { configObject: this.config, manifestHandler, contextManager, issueInspector, stateInspector, nameResolver };
       return _ref_.runner = _ref_.runner || new Runner(args);
     },
     set: function(value) {}
@@ -154,7 +160,7 @@ function appLoader(params={}) {
 
   Object.defineProperty(_app_, 'server', {
     get: function() {
-      const args = { configObject: this.config, contextManager, issueInspector, stateInspector, nameResolver };
+      const args = { configObject: this.config, manifestHandler, contextManager, issueInspector, stateInspector, nameResolver };
       return _ref_.server = _ref_.server || new Server(args);
     },
     set: function(value) {}

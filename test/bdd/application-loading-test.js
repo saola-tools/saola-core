@@ -7,7 +7,6 @@ var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('bdd:devebot:application-loading-test');
 var assert = require('chai').assert;
-var expect = require('chai').expect;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
@@ -73,6 +72,7 @@ describe('bdd:devebot:application', function() {
         chores.toFullname("devebot", "bootstrap"),
         chores.toFullname("devebot", "appinfoLoader"),
         chores.toFullname("devebot", "nameResolver"),
+        chores.toFullname("devebot", "manifestHandler"),
         chores.toFullname("devebot", "configLoader"),
         chores.toFullname("devebot", "contextManager"),
         chores.toFullname("devebot", "kernel"),
