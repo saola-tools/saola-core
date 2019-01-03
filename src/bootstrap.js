@@ -76,18 +76,16 @@ function appLoader(params={}) {
     path: topRootPath
   };
 
-  lodash.forOwn(params.pluginRefs, function(ref) {
-    ref.type = 'plugin';
-    if (!chores.isUpgradeSupported('manifest-refiner')) return;
-    ref.manifest = loadManifest(ref, issueInspector);
-    ref.version = loadPackageVersion(ref.path);
-  });
-  lodash.forOwn(params.bridgeRefs, function(ref) {
-    ref.type = 'bridge';
-    if (!chores.isUpgradeSupported('manifest-refiner')) return;
-    ref.manifest = loadManifest(ref, issueInspector);
-    ref.version = loadPackageVersion(ref.path);
-  });
+  if (chores.isUpgradeSupported('manifest-refiner')) {
+    lodash.forOwn(params.pluginRefs, function(ref) {
+      ref.manifest = loadManifest(ref, issueInspector);
+      ref.version = loadPackageVersion(ref.path);
+    });
+    lodash.forOwn(params.bridgeRefs, function(ref) {
+      ref.manifest = loadManifest(ref, issueInspector);
+      ref.version = loadPackageVersion(ref.path);
+    });
+  }
 
   // declare user-defined environment variables
   const currentEnvNames = envbox.getEnvNames();
@@ -335,12 +333,14 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
 
   const bridgeInfos = lodash.map(bridgeNames, function(bridgeName) {
     const item = lodash.isString(bridgeName) ? { name: bridgeName, path: bridgeName } : bridgeName;
+    item.type = 'bridge';
     if (!chores.isUpgradeSupported('presets')) { return item }
     item.path = locatePackage(CTX, item, 'bridge');
     return item;
   });
   const pluginInfos = lodash.map(pluginNames, function(pluginName) {
     const item = lodash.isString(pluginName) ? { name: pluginName, path: pluginName } : pluginName;
+    item.type = 'plugin';
     if (!chores.isUpgradeSupported('presets')) { return item }
     item.path = locatePackage(CTX, item, 'plugin');
     return item;
@@ -388,11 +388,12 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
     if (!chores.isUpgradeSupported('presets')) {
       context.bridgeRefs[bridgeInfo.name] = {
         name: bridgeInfo.name,
+        type: bridgeInfo.type,
         path: locatePackage(CTX, bridgeInfo, 'bridge')
       }
       return;
     }
-    const inc = lodash.pick(bridgeInfo, ['name', 'path', 'presets']);
+    const inc = lodash.pick(bridgeInfo, ['name', 'type', 'path', 'presets']);
     context.bridgeRefs[bridgeInfo.path] = lodash.assign(context.bridgeRefs[bridgeInfo.path], inc);
   });
 
@@ -400,11 +401,12 @@ function expandExtensions(accumulator, pluginNames, bridgeNames) {
     if (!chores.isUpgradeSupported('presets')) {
       context.pluginRefs[pluginInfo.name] = {
         name: pluginInfo.name,
+        type: pluginInfo.type,
         path: locatePackage(CTX, pluginInfo, 'plugin')
       }
       return;
     }
-    const inc = lodash.pick(pluginInfo, ['name', 'path', 'presets']);
+    const inc = lodash.pick(pluginInfo, ['name', 'type', 'path', 'presets']);
     context.pluginRefs[pluginInfo.path] = lodash.assign(context.pluginRefs[pluginInfo.path], inc);
   });
 

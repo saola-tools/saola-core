@@ -217,6 +217,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "pluginRefs": {
             "/test/lib/plugin1": {
               "name": "plugin1",
+              "type": "plugin",
               "path": "/test/lib/plugin1",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -226,6 +227,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin2": {
               "name": "plugin2",
+              "type": "plugin",
               "path": "/test/lib/plugin2",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -237,10 +239,12 @@ describe('tdd:devebot:base:bootstrap', function() {
           "bridgeRefs": {
             "/test/lib/bridge1": {
               "name": "bridge1",
+              "type": "bridge",
               "path": "/test/lib/bridge1"
             },
             "/test/lib/bridge2": {
               "name": "bridge2",
+              "type": "bridge",
               "path": "/test/lib/bridge2"
             }
           }
@@ -249,12 +253,12 @@ describe('tdd:devebot:base:bootstrap', function() {
         assert.deepEqual(output, {
           libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1' },
-            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2' }
+            'plugin1': { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
+            'plugin2': { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
+            'bridge1': { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
+            'bridge2': { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' }
           }
         });
       }
@@ -279,12 +283,14 @@ describe('tdd:devebot:base:bootstrap', function() {
           pluginRefs: {},
           bridgeRefs: {
             '/test/lib/bridge1': {
-              name: 'bridge1',
-              path: '/test/lib/bridge1'
+              "name": "bridge1",
+              "type": "bridge",
+              "path": "/test/lib/bridge1"
             },
             '/test/lib/bridge2': {
-              name: 'bridge2',
-              path: '/test/lib/bridge2'
+              "name": "bridge2",
+              "type": "bridge",
+              "path": "/test/lib/bridge2"
             }
           }
         });
@@ -293,8 +299,8 @@ describe('tdd:devebot:base:bootstrap', function() {
           libRootPaths: [],
           pluginRefs: {},
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
+            'bridge1': { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
+            'bridge2': { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' }
           }
         });
       }
@@ -336,6 +342,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "pluginRefs": {
             "/test/lib/plugin1": {
               "name": "plugin1",
+              "type": "plugin",
               "path": "/test/lib/plugin1",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -345,6 +352,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin2": {
               "name": "plugin2",
+              "type": "plugin",
               "path": "/test/lib/plugin2",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -354,6 +362,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin3": {
               "name": "plugin3",
+              "type": "plugin",
               "path": "/test/lib/plugin3",
               "presets": {},
               "bridgeDepends": [],
@@ -363,10 +372,12 @@ describe('tdd:devebot:base:bootstrap', function() {
           "bridgeRefs": {
             "/test/lib/bridge1": {
               "name": "bridge1",
+              "type": "bridge",
               "path": "/test/lib/bridge1"
             },
             "/test/lib/bridge2": {
               "name": "bridge2",
+              "type": "bridge",
               "path": "/test/lib/bridge2"
             }
           }
@@ -375,13 +386,13 @@ describe('tdd:devebot:base:bootstrap', function() {
         assert.deepEqual(output, {
           libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1' },
-            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2' },
-            'plugin3': { name: 'plugin3', path: '/test/lib/plugin3' }
+            'plugin1': { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
+            'plugin2': { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' },
+            'plugin3': { name: 'plugin3', type: 'plugin', path: '/test/lib/plugin3' }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
+            'bridge1': { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
+            'bridge2': { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' }
           }
         });
       }
@@ -412,6 +423,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "pluginRefs": {
             "/test/lib/sub-plugin1": {
               "name": "sub-plugin1",
+              "type": "plugin",
               "path": "/test/lib/sub-plugin1",
               "presets": {},
               "bridgeDepends": [ "bridge1", "bridge2" ],
@@ -419,6 +431,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/sub-plugin2": {
               "name": "sub-plugin2",
+              "type": "plugin",
               "path": "/test/lib/sub-plugin2",
               "presets": {},
               "bridgeDepends": [ "bridge2", "bridge3" ],
@@ -426,6 +439,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin1": {
               "name": "plugin1",
+              "type": "plugin",
               "path": "/test/lib/plugin1",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -435,6 +449,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin2": {
               "name": "plugin2",
+              "type": "plugin",
               "path": "/test/lib/plugin2",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -444,6 +459,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin3": {
               "name": "plugin3",
+              "type": "plugin",
               "path": "/test/lib/plugin3",
               "presets": {},
               "bridgeDepends": [],
@@ -453,14 +469,17 @@ describe('tdd:devebot:base:bootstrap', function() {
           "bridgeRefs": {
             "/test/lib/bridge1": {
               "name": "bridge1",
+              "type": "bridge",
               "path": "/test/lib/bridge1"
             },
             "/test/lib/bridge2": {
               "name": "bridge2",
+              "type": "bridge",
               "path": "/test/lib/bridge2"
             },
             "/test/lib/bridge3": {
               "name": "bridge3",
+              "type": "bridge",
               "path": "/test/lib/bridge3"
             }
           }
@@ -477,17 +496,17 @@ describe('tdd:devebot:base:bootstrap', function() {
             ],
           pluginRefs:
             {
-              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1' },
-              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2' },
-              plugin1: { name: 'plugin1', path: '/test/lib/plugin1' },
-              plugin2: { name: 'plugin2', path: '/test/lib/plugin2' },
-              plugin3: { name: 'plugin3', path: '/test/lib/plugin3' }
+              'sub-plugin1': { name: 'sub-plugin1', type: 'plugin', path: '/test/lib/sub-plugin1' },
+              'sub-plugin2': { name: 'sub-plugin2', type: 'plugin', path: '/test/lib/sub-plugin2' },
+              plugin1: { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
+              plugin2: { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' },
+              plugin3: { name: 'plugin3', type: 'plugin', path: '/test/lib/plugin3' }
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', path: '/test/lib/bridge1' },
-              bridge2: { name: 'bridge2', path: '/test/lib/bridge2' },
-              bridge3: { name: 'bridge3', path: '/test/lib/bridge3' }
+              bridge1: { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
+              bridge2: { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' },
+              bridge3: { name: 'bridge3', type: 'bridge', path: '/test/lib/bridge3' }
             }
         });
       }
@@ -552,6 +571,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "pluginRefs": {
             "/test/lib/sub-plugin1": {
               "name": "sub-plugin1",
+              "type": "plugin",
               "path": "/test/lib/sub-plugin1",
               "presets": {},
               "bridgeDepends": [ "bridge1", "bridge2" ],
@@ -559,6 +579,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin1": {
               "name": "plugin1",
+              "type": "plugin",
               "path": "/test/lib/plugin1",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -568,6 +589,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin2": {
               "name": "plugin2",
+              "type": "plugin",
               "path": "/test/lib/plugin2",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -577,6 +599,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/sub-plugin2": {
               "name": "sub-plugin2",
+              "type": "plugin",
               "path": "/test/lib/sub-plugin2",
               "presets": {},
               "bridgeDepends": [ "bridge2", "bridge3" ],
@@ -584,6 +607,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin3": {
               "name": "plugin3",
+              "type": "plugin",
               "path": "/test/lib/plugin3",
               "presets": {},
               "bridgeDepends": [],
@@ -591,6 +615,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin4": {
               "name": "plugin4",
+              "type": "plugin",
               "path": "/test/lib/plugin4",
               "presets": {},
               "bridgeDepends": [],
@@ -600,18 +625,22 @@ describe('tdd:devebot:base:bootstrap', function() {
           "bridgeRefs": {
             "/test/lib/bridge1": {
               "name": "bridge1",
+              "type": "bridge",
               "path": "/test/lib/bridge1"
             },
             "/test/lib/bridge2": {
               "name": "bridge2",
+              "type": "bridge",
               "path": "/test/lib/bridge2"
             },
             "/test/lib/bridge3": {
               "name": "bridge3",
+              "type": "bridge",
               "path": "/test/lib/bridge3"
             },
             "/test/lib/bridge4": {
               "name": "bridge4",
+              "type": "bridge",
               "path": "/test/lib/bridge4"
             }
           }
@@ -629,19 +658,19 @@ describe('tdd:devebot:base:bootstrap', function() {
             ],
           pluginRefs:
             {
-              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1' },
-              plugin1: { name: 'plugin1', path: '/test/lib/plugin1' },
-              plugin2: { name: 'plugin2', path: '/test/lib/plugin2' },
-              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2' },
-              plugin3: { name: 'plugin3', path: '/test/lib/plugin3' },
-              plugin4: { name: 'plugin4', path: '/test/lib/plugin4' }
+              'sub-plugin1': { name: 'sub-plugin1', type: 'plugin', path: '/test/lib/sub-plugin1' },
+              plugin1: { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
+              plugin2: { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' },
+              'sub-plugin2': { name: 'sub-plugin2', type: 'plugin', path: '/test/lib/sub-plugin2' },
+              plugin3: { name: 'plugin3', type: 'plugin', path: '/test/lib/plugin3' },
+              plugin4: { name: 'plugin4', type: 'plugin', path: '/test/lib/plugin4' }
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', path: '/test/lib/bridge1' },
-              bridge2: { name: 'bridge2', path: '/test/lib/bridge2' },
-              bridge3: { name: 'bridge3', path: '/test/lib/bridge3' },
-              bridge4: { name: 'bridge4', path: '/test/lib/bridge4' }
+              bridge1: { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
+              bridge2: { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' },
+              bridge3: { name: 'bridge3', type: 'bridge', path: '/test/lib/bridge3' },
+              bridge4: { name: 'bridge4', type: 'bridge', path: '/test/lib/bridge4' }
             }
         });
       }
@@ -987,6 +1016,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           "pluginRefs": {
             "/test/lib/sub-plugin1": {
               "name": "sub-plugin1",
+              "type": "plugin",
               "path": "/test/lib/sub-plugin1",
               "presets": {},
               "bridgeDepends": [ "bridge1", "bridge2" ],
@@ -994,6 +1024,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/sub-plugin2": {
               "name": "sub-plugin2",
+              "type": "plugin",
               "path": "/test/lib/sub-plugin2",
               "presets": {},
               "bridgeDepends": [ "bridge2", "bridge3" ],
@@ -1001,6 +1032,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin1": {
               "name": "plugin1",
+              "type": "plugin",
               "path": "/test/lib/plugin1",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -1010,6 +1042,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin2": {
               "name": "plugin2",
+              "type": "plugin",
               "path": "/test/lib/plugin2",
               "presets": {
                 "configTags": "bridge[dialect-bridge]"
@@ -1019,6 +1052,7 @@ describe('tdd:devebot:base:bootstrap', function() {
             },
             "/test/lib/plugin3": {
               "name": "plugin3",
+              "type": "plugin",
               "path": "/test/lib/plugin3",
               "presets": {},
               "bridgeDepends": [],
@@ -1028,14 +1062,17 @@ describe('tdd:devebot:base:bootstrap', function() {
           "bridgeRefs": {
             "/test/lib/bridge1": {
               "name": "bridge1",
+              "type": "bridge",
               "path": "/test/lib/bridge1"
             },
             "/test/lib/bridge2": {
               "name": "bridge2",
+              "type": "bridge",
               "path": "/test/lib/bridge2"
             },
             "/test/lib/bridge3": {
               "name": "bridge3",
+              "type": "bridge",
               "path": "/test/lib/bridge3"
             }
           }
@@ -1052,17 +1089,17 @@ describe('tdd:devebot:base:bootstrap', function() {
             ],
           pluginRefs:
             {
-              'sub-plugin1': { name: 'sub-plugin1', path: '/test/lib/sub-plugin1' },
-              'sub-plugin2': { name: 'sub-plugin2', path: '/test/lib/sub-plugin2' },
-              plugin1: { name: 'plugin1', path: '/test/lib/plugin1' },
-              plugin2: { name: 'plugin2', path: '/test/lib/plugin2' },
-              plugin3: { name: 'plugin3', path: '/test/lib/plugin3' }
+              'sub-plugin1': { name: 'sub-plugin1', type: 'plugin', path: '/test/lib/sub-plugin1' },
+              'sub-plugin2': { name: 'sub-plugin2', type: 'plugin', path: '/test/lib/sub-plugin2' },
+              plugin1: { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
+              plugin2: { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' },
+              plugin3: { name: 'plugin3', type: 'plugin', path: '/test/lib/plugin3' }
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', path: '/test/lib/bridge1' },
-              bridge2: { name: 'bridge2', path: '/test/lib/bridge2' },
-              bridge3: { name: 'bridge3', path: '/test/lib/bridge3' }
+              bridge1: { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
+              bridge2: { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' },
+              bridge3: { name: 'bridge3', type: 'bridge', path: '/test/lib/bridge3' }
             }
         });
       }
