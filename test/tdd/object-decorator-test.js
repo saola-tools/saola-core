@@ -383,10 +383,6 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
       // verify wrapped bean
       assert.notEqual(wrappedBean, mockedBean);
-      assert.notEqual(wrappedBean.method1, mockedBean.method1);
-      assert.notEqual(wrappedBean.method2, mockedBean.method2);
-      assert.equal(wrappedBean.method1, wrappedBean.method1);
-      assert.equal(wrappedBean.method2, wrappedBean.method2);
       // invoke method1() 3 times
       lodash.range(3).forEach(function() {
         wrappedBean.method1();
@@ -607,6 +603,34 @@ describe('tdd:devebot:core:object-decorator', function() {
         return ('requestId' in item && item.methodName === 'getRate');
       });
       assert.equal(logState_getRate.length, 0);
+    });
+
+    it('should skip wrapping the result of method call that returns the owner', function() {
+      var textureOfBean = {
+        methods: {
+          parent: { child: { self: lodash.cloneDeep(DEFAULT_TEXTURE) } }
+        }
+      }
+      var mockedBean = {
+        parent: { child: { self: function() {
+          return this;
+        } } }
+      }
+      var wrappedBean = wrapObject(refs, mockedBean, {
+        textureOfBean: textureOfBean,
+        objectName: 'originalBean'
+      });
+
+      assert.notEqual(wrappedBean, mockedBean);
+      assert.notEqual(wrappedBean.parent, mockedBean.parent);
+      assert.notEqual(wrappedBean.parent.child, mockedBean.parent.child);
+
+      assert.equal(wrappedBean.parent, wrappedBean.parent);
+      assert.equal(wrappedBean.parent.child, wrappedBean.parent.child);
+      assert.equal(wrappedBean.parent.child.self, wrappedBean.parent.child.self);
+
+      assert.isFunction(wrappedBean.parent.child.self);
+      assert.equal(wrappedBean.parent.child, wrappedBean.parent.child.self());
     });
 
     function createWrappedBean(textureOpts) {

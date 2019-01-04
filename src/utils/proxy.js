@@ -25,14 +25,14 @@ const trapNames = [
 function BeanProxy(target, handler, opts = {}) {
   function createProxy(beanTarget, path) {
     const pathString = chainify(path);
-    const sharedContext = opts.IsContextShared ? { root: target, path } : null;
+    const sharedContext = opts.isContextShared ? { root: target, path } : null;
     const wrappedHandler = {};
     for (const trapName of trapNames) {
       const trap = handler[trapName];
       if (isFunction(trap)) {
         const nameIndex = nameIndexOf[trapName];
         wrappedHandler[trapName] = function () {
-          const context = opts.IsContextShared ? sharedContext : { root: target, path };
+          const context = opts.isContextShared ? sharedContext : { root: target, path };
           const name = isNumber(nameIndex) ? arguments[nameIndex] : null;
           context.slug = pathString;
           if (isString(name)) {

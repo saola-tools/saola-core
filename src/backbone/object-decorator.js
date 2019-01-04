@@ -201,6 +201,7 @@ function wrapObject(refs, object, opts) {
         };
       }
       const node = cached[methodPath].method.apply(thisArg, argList);
+      if (node === thisArg) return node;
       if (cached[methodPath].spread && !isPromise(node)) {
         if (lodash.isFunction(node) || lodash.isObject(node)) {
           return this.wrap(node);
