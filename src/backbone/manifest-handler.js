@@ -8,7 +8,7 @@ const LoggingWrapper = require('./logging-wrapper');
 const blockRef = chores.getBlockRef(__filename);
 
 function ManifestHandler(params={}) {
-  const {issueInspector, appRef, devebotRef, pluginRefs, bridgeRefs} = params;
+  const {nameResolver, issueInspector, appRef, devebotRef, pluginRefs, bridgeRefs} = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();

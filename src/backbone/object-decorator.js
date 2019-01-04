@@ -136,6 +136,7 @@ function wrapObject(refs, object, opts) {
   opts = opts || {};
   refs = refs || {};
   const {L, T} = refs;
+  const cachedFields = {};
   const cached = {};
   return new BeanProxy(object, {
     get(target, property, receiver) {
@@ -147,6 +148,11 @@ function wrapObject(refs, object, opts) {
       }));
       if (chores.isOwnOrInheritedProperty(target, property)) {
         if (lodash.isFunction(node) || lodash.isObject(node)) {
+          const lane = this.slug;
+          if (lane) {
+            cachedFields[lane] = cachedFields[lane] || this.wrap(node);
+            return cachedFields[lane];
+          }
           return this.wrap(node);
         }
       }

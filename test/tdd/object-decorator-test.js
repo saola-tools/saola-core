@@ -383,6 +383,10 @@ describe('tdd:devebot:core:object-decorator', function() {
       });
       // verify wrapped bean
       assert.notEqual(wrappedBean, mockedBean);
+      assert.notEqual(wrappedBean.method1, mockedBean.method1);
+      assert.notEqual(wrappedBean.method2, mockedBean.method2);
+      assert.equal(wrappedBean.method1, wrappedBean.method1);
+      assert.equal(wrappedBean.method2, wrappedBean.method2);
       // invoke method1() 3 times
       lodash.range(3).forEach(function() {
         wrappedBean.method1();

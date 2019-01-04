@@ -22,24 +22,25 @@ const trapNames = [
   'ownKeys',
 ].concat(Object.keys(nameIndexOf))
 
-function BeanProxy(rootTarget, handler, options) {
-  function createProxy(target, path) {
-    const context = { root: rootTarget, path };
-    const namespace = chainify(path);
+function BeanProxy(target, handler, opts = {}) {
+  function createProxy(beanTarget, path) {
+    const pathString = chainify(path);
+    const sharedContext = opts.IsContextShared ? { root: target, path } : null;
     const wrappedHandler = {};
     for (const trapName of trapNames) {
       const trap = handler[trapName];
       if (isFunction(trap)) {
         const nameIndex = nameIndexOf[trapName];
         wrappedHandler[trapName] = function () {
+          const context = opts.IsContextShared ? sharedContext : { root: target, path };
           const name = isNumber(nameIndex) ? arguments[nameIndex] : null;
-          context.slug = namespace;
+          context.slug = pathString;
           if (isString(name)) {
-            context.slug = namespace && (namespace + '.' + name) || name;
+            context.slug = pathString && (pathString + '.' + name) || name;
           }
           context.wrap = function (wrappedTarget) {
             if (isUndefined(wrappedTarget)) {
-              wrappedTarget = isString(name) ? rootTarget : {};
+              wrappedTarget = isString(name) ? target : {};
             }
             const wrappedPath = isString(name) ? [].concat(path, name) : path;
             return createProxy(wrappedTarget, wrappedPath);
@@ -48,9 +49,9 @@ function BeanProxy(rootTarget, handler, options) {
         }
       }
     }
-    return new Proxy(target, wrappedHandler);
+    return new Proxy(beanTarget, wrappedHandler);
   }
-  return createProxy(rootTarget, extractPath(options));
+  return createProxy(target, extractPath(opts));
 }
 
 module.exports = BeanProxy;

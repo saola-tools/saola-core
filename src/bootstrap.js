@@ -121,13 +121,13 @@ function appLoader(params={}) {
 
   stateInspector.register({ nameResolver, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
 
-  const manifestHandler = new ManifestHandler({ issueInspector,
+  const manifestHandler = new ManifestHandler({ nameResolver, issueInspector,
     appRef, devebotRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,
   });
 
-  const configLoader = new ConfigLoader({appName, appOptions,
+  const configLoader = new ConfigLoader({ appName, appOptions,
     appRef, devebotRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,
-    issueInspector, stateInspector, nameResolver, manifestHandler
+    nameResolver, issueInspector, stateInspector, manifestHandler
   });
 
   const contextManager = new ContextManager({ issueInspector });
