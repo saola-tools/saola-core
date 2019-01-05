@@ -31,6 +31,7 @@ module.exports = {
             "required": ["host", "port"]
           }
         },
+        "required": ["server"],
       }
     }
   }
