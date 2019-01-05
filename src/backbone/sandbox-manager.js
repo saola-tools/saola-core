@@ -391,11 +391,11 @@ function pickSandboxServiceHelp(serviceName, blocks) {
 
 function SandboxRegistry(params = {}) {
   const {injektor, isExcluded, excludedServices} = params;
-  this.defineService = function(name, construktor, context) {
+  this.defineService = function(serviceName, construktor, context) {
     context = context || {};
-    const info = injektor.parseName(name, context);
+    const info = injektor.parseName(serviceName, context);
     if (info.scope === constx.FRAMEWORK.NAME) {
-      const RestrictedError = errors.createConstructor('RestrictedDevebotError');
+      const RestrictedError = errors.assertConstructor('RestrictedDevebotError');
       throw new RestrictedError(util.format('dependency scope [%s] is restricted', constx.FRAMEWORK.NAME));
     }
     const exceptions = [];
@@ -404,10 +404,10 @@ function SandboxRegistry(params = {}) {
       exceptions: exceptions
     });
     if (fullname != null) {
-      const DuplicatedError = errors.createConstructor('DuplicatedDevebotError');
+      const DuplicatedError = errors.assertConstructor('DuplicatedDevebotError');
       throw new DuplicatedError('dependency item is duplicated');
     }
-    injektor.defineService(name, construktor, context);
+    injektor.defineService(serviceName, construktor, context);
   };
   this.lookupService = function(serviceName, context) {
     context = context || {};

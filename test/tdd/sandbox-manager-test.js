@@ -7,6 +7,7 @@ var Injektor = Devebot.require('injektor');
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
+var errors = Devebot.require('errors');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:sandbox-manager');
 var assert = require('chai').assert;
 var path = require('path');
@@ -14,6 +15,8 @@ var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
+var rewire = require('rewire');
+var sinon = require('sinon');
 
 describe('tdd:devebot:core:sandbox-manager', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -155,6 +158,107 @@ describe('tdd:devebot:core:sandbox-manager', function() {
 
     after(function() {
       LogTracer.clearStringifyInterceptors();
+    });
+  });
+
+  describe('SandboxRegistry', function() {
+    var SandboxManager = rewire(lab.getDevebotModule('backbone/sandbox-manager'));
+    var SandboxRegistry = SandboxManager.__get__('SandboxRegistry');
+
+    function SampleService() {}
+    var serviceName = 'sampleService';
+    var context = { scope: 'testing' };
+    var serviceFullname = [context.scope, serviceName].join(chores.getSeparator());
+
+    before(function() {
+    });
+
+    it('defineService() - RestrictedDevebotError', function() {
+      var context = { scope: 'devebot' };
+
+      var injektor = new Injektor({ separator: chores.getSeparator() });
+      var _parseName = sinon.spy(injektor, 'parseName');
+      var _resolveName = sinon.spy(injektor, 'resolveName');
+      var _defineService = sinon.spy(injektor, 'defineService');
+
+      var sandboxRegistry = new SandboxRegistry({ injektor });
+
+      assert.throws(function() {
+        sandboxRegistry.defineService(serviceName, SampleService, context);
+      }, errors.assertConstructor('RestrictedDevebotError'));
+
+      assert.isTrue(_parseName.calledOnce);
+      assert.isTrue(_resolveName.notCalled);
+      assert.isTrue(_defineService.notCalled);
+    });
+
+    it('defineService() - DuplicatedDevebotError', function() {
+      var injektor = new Injektor({ separator: chores.getSeparator() });
+      injektor.registerObject(serviceFullname, {});
+
+      var _parseName = sinon.spy(injektor, 'parseName');
+      var _resolveName = sinon.spy(injektor, 'resolveName');
+      var _defineService = sinon.spy(injektor, 'defineService');
+
+      var sandboxRegistry = new SandboxRegistry({ injektor });
+
+      assert.throws(function() {
+        sandboxRegistry.defineService(serviceName, SampleService, context);
+      }, errors.assertConstructor('DuplicatedDevebotError'));
+
+      assert.isTrue(_parseName.calledOnce);
+      assert.isTrue(_resolveName.calledOnce);
+      assert.isTrue(_defineService.notCalled);
+    });
+
+    it('defineService() - [scope in context]', function() {
+      var injektor = new Injektor({ separator: chores.getSeparator() });
+      var _parseName = sinon.spy(injektor, 'parseName');
+      var _resolveName = sinon.spy(injektor, 'resolveName');
+      var _defineService = sinon.spy(injektor, 'defineService');
+
+      var sandboxRegistry = new SandboxRegistry({ injektor });
+
+      sandboxRegistry.defineService(serviceName, SampleService, context);
+
+      assert.isTrue(_parseName.calledOnce);
+      assert.equal(_parseName.firstCall.args[0], serviceName);
+      assert.deepEqual(_parseName.firstCall.args[1], context);
+
+      assert.isTrue(_resolveName.calledOnce);
+      assert.equal(_resolveName.firstCall.args[0], serviceName);
+      assert.equal(lodash.get(_resolveName.firstCall.args, [1, 'scope']), context.scope);
+      assert.isArray(lodash.get(_resolveName.firstCall.args, [1, 'exceptions']));
+
+      assert.isTrue(_defineService.calledOnce);
+      assert.equal(_defineService.firstCall.args[0], serviceName);
+      assert.equal(_defineService.firstCall.args[1], SampleService);
+      assert.deepEqual(_defineService.firstCall.args[2], context);
+    });
+
+    it('defineService() - [name contains scope]', function() {
+      var injektor = new Injektor({ separator: chores.getSeparator() });
+      var _parseName = sinon.spy(injektor, 'parseName');
+      var _resolveName = sinon.spy(injektor, 'resolveName');
+      var _defineService = sinon.spy(injektor, 'defineService');
+
+      var sandboxRegistry = new SandboxRegistry({ injektor });
+
+      sandboxRegistry.defineService(serviceFullname, SampleService);
+
+      assert.isTrue(_parseName.calledOnce);
+      assert.equal(_parseName.firstCall.args[0], serviceFullname);
+      assert.deepEqual(_parseName.firstCall.args[1], {});
+
+      assert.isTrue(_resolveName.calledOnce);
+      assert.equal(_resolveName.firstCall.args[0], serviceFullname);
+      assert.isUndefined(lodash.get(_resolveName.firstCall.args, [1, 'scope']));
+      assert.isArray(lodash.get(_resolveName.firstCall.args, [1, 'exceptions']));
+
+      assert.isTrue(_defineService.calledOnce);
+      assert.equal(_defineService.firstCall.args[0], serviceFullname);
+      assert.equal(_defineService.firstCall.args[1], SampleService);
+      assert.deepEqual(_defineService.firstCall.args[2], {});
     });
   });
 
