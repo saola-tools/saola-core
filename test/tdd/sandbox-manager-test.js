@@ -258,7 +258,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       assert.isTrue(_defineService.calledOnce);
       assert.equal(_defineService.firstCall.args[0], serviceFullname);
       assert.equal(_defineService.firstCall.args[1], SampleService);
-      assert.deepEqual(_defineService.firstCall.args[2], {});
+      assert.deepEqual(_defineService.firstCall.args[2], undefined);
     });
   });
 
