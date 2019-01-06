@@ -211,6 +211,18 @@ describe('tdd:devebot:utils:chores', function() {
     })
   });
 
+  describe('isVersionLessThan()', function() {
+    it('will return null with invalid version values', function () {
+      assert.isNull(chores.isVersionLessThan('1.2.3', 'a.b.c'));
+      assert.isNull(chores.isVersionLessThan('a.b.c', '1.2.3'));
+    });
+    it('should compare versions correctly', function () {
+      assert.isTrue(chores.isVersionLessThan('1.2.2', '1.2.3'));
+      assert.isFalse(chores.isVersionLessThan('1.2.3', '1.2.3'));
+      assert.isFalse(chores.isVersionLessThan('1.2.4', '1.2.3'));
+    });
+  });
+
   describe('isVersionSatisfied()', function() {
     it('version/version-mask is invalid', function () {
       assert.isFalse(chores.isVersionSatisfied(null, '~1.2.3'));
