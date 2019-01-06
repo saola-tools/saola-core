@@ -415,7 +415,7 @@ function SandboxRegistry(params = {}) {
     validateBeanName(beanName, context);
     injektor.defineService(beanName, construktor, context);
   };
-  this.lookupService = function(serviceName, context) {
+  this.lookup = function(serviceName, context) {
     context = context || {};
     const exceptions = [];
     const fullname = injektor.resolveName(serviceName, {
@@ -427,4 +427,6 @@ function SandboxRegistry(params = {}) {
     if (lodash.isArray(excludedServices) && excludedServices.indexOf(fullname) >= 0) return null;
     return injektor.lookup(serviceName, context);
   }
+  // @deprecated
+  this.lookupService = this.lookup;
 };

@@ -173,6 +173,59 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     before(function() {
     });
 
+    it('make sure that deprecated methods are available', function() {
+      var injektor = new Injektor({ separator: chores.getSeparator() });
+      var sandboxRegistry = new SandboxRegistry({ injektor });
+      assert.isFunction(sandboxRegistry.lookupService);
+    });
+
+    it('lookup() - retrieves beans properly', function() {
+      var bean1 = {}, bean2 = {};
+      var injektor = new Injektor({ separator: chores.getSeparator() });
+      injektor.registerObject('bean1', bean1);
+      injektor.registerObject('bean2', bean2, context);
+
+      var sandboxRegistry = new SandboxRegistry({ injektor });
+
+      assert.isNull(sandboxRegistry.lookup('bean0'));
+      assert.isNull(sandboxRegistry.lookup('testing/bean1'));
+      assert.deepEqual(sandboxRegistry.lookup('bean1'), bean1);
+      assert.deepEqual(sandboxRegistry.lookup('bean2'), bean2);
+      assert.deepEqual(sandboxRegistry.lookup('testing/bean2'), bean2);
+    });
+
+    it('lookup() - isExcluded() is supported', function() {
+      var context = { scope: 'devebot' }
+      var bean1 = {}, bean2 = {}, bean3 = {};
+      var injektor = new Injektor({ separator: chores.getSeparator() });
+      injektor.registerObject('devebot-co-sample', bean1);
+      injektor.registerObject('example', bean2, context);
+      injektor.registerObject('testing/example', bean3);
+      var isExcluded = function(beanFullName) {
+        return (typeof beanFullName !== 'string') || (beanFullName.match(/devebot/));
+      }
+      var sandboxRegistry = new SandboxRegistry({ injektor, isExcluded });
+      assert.isNull(sandboxRegistry.lookup('devebot-co-sample'));
+      assert.isNull(sandboxRegistry.lookup('example'));
+      assert.isNull(sandboxRegistry.lookup('devebot/example'));
+      assert.deepEqual(sandboxRegistry.lookup('testing/example'), bean3);
+    });
+
+    it('lookup() - excludedServices list is supported', function() {
+      var context = { scope: 'devebot' }
+      var bean1 = {}, bean2 = {}, bean3 = {};
+      var injektor = new Injektor({ separator: chores.getSeparator() });
+      injektor.registerObject('devebot-co-sample', bean1);
+      injektor.registerObject('example', bean2, context);
+      injektor.registerObject('testing/example', bean3);
+      var excludedServices = ['devebot/example'];
+      var sandboxRegistry = new SandboxRegistry({ injektor, excludedServices });
+      assert.deepEqual(sandboxRegistry.lookup('devebot-co-sample'), bean1);
+      assert.isNull(sandboxRegistry.lookup('example'));
+      assert.isNull(sandboxRegistry.lookup('devebot/example'));
+      assert.deepEqual(sandboxRegistry.lookup('testing/example'), bean3);
+    });
+
     it('defineService() - RestrictedDevebotError', function() {
       var context = { scope: 'devebot' };
 
