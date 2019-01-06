@@ -61,7 +61,7 @@ function appLoader(params={}) {
   }
   if (lodash.isString(appRef.path)) {
     appRef.manifest = loadManifest(appRef, issueInspector);
-    appRef.version = loadPackageVersion(appRef.path);
+    appRef.version = loadPackageVersion(appRef);
     if (!chores.isUpgradeSupported('manifest-refiner')) {
       delete appRef.manifest;
       delete appRef.version;
@@ -80,11 +80,11 @@ function appLoader(params={}) {
   if (chores.isUpgradeSupported('manifest-refiner')) {
     lodash.forOwn(params.pluginRefs, function(ref) {
       ref.manifest = loadManifest(ref, issueInspector);
-      ref.version = loadPackageVersion(ref.path);
+      ref.version = loadPackageVersion(ref);
     });
     lodash.forOwn(params.bridgeRefs, function(ref) {
       ref.manifest = loadManifest(ref, issueInspector);
-      ref.version = loadPackageVersion(ref.path);
+      ref.version = loadPackageVersion(ref);
     });
   }
 
@@ -532,8 +532,9 @@ function loadPackageJson(pkgRootPath) {
   }
 }
 
-function loadPackageVersion(pkgRootPath) {
-  const pkgInfo = loadPackageJson(pkgRootPath);
+function loadPackageVersion(pkgRef) {
+  chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name);
+  const pkgInfo = loadPackageJson(pkgRef.path);
   return pkgInfo && pkgInfo.version;
 }
 
