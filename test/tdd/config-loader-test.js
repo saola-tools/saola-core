@@ -498,7 +498,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
-            "__metadata__": {
+            "__manifest__": {
               "version": "1.2.9",
               "note": "extended fields are reserved",
             },
@@ -506,7 +506,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin2": {
             "host": "localhost",
             "port": 17722,
-            "__metadata__": {
+            "__manifest__": {
               "version": "1.3.1",
               "note": "extended fields are reserved",
             },
@@ -514,7 +514,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin3": {
             "host": "localhost",
             "port": 17723,
-            "__metadata__": {
+            "__manifest__": {
               "version": "1.4.5",
               "note": "extended fields are reserved",
             },
@@ -637,7 +637,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.0",
               "note": "extended fields are reserved",
             },
@@ -645,7 +645,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin2": {
             "host": "localhost",
             "port": 17722,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.1",
               "note": "extended fields are reserved",
             },
@@ -658,7 +658,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin1/bridge1#connector",
                 "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.0",
                   "note": "extended fields are reserved",
                 },
@@ -671,7 +671,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin2/bridge2#connector",
                 "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.1",
                   "note": "extended fields are reserved",
                 },
@@ -738,7 +738,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.0",
               "note": "extended fields are reserved",
             },
@@ -746,7 +746,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin2": {
             "host": "localhost",
             "port": 17722,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.1",
               "note": "extended fields are reserved",
             },
@@ -759,7 +759,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin1/bridge1#connector",
                 "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.0",
                   "note": "extended fields are reserved",
                 },
@@ -772,7 +772,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin2/bridge2#connector",
                 "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.1",
                   "note": "extended fields are reserved",
                 },
@@ -787,7 +787,7 @@ describe('tdd:devebot:core:config-loader', function() {
       assert.isFalse(bridgeTransform1.called);
     });
 
-    it('keep configure unchange if __metadata__ not found', function() {
+    it('keep configure unchange if __manifest__ block not found', function() {
       var configType = 'sandbox';
       var configStore = {
         "plugins": {
@@ -798,7 +798,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin2": {
             "host": "localhost",
             "port": 17722,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.1",
               "note": "extended fields are reserved",
             }
@@ -820,7 +820,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin2/bridge2#connector",
                 "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.1",
                   "note": "extended fields are reserved",
                 },
@@ -919,7 +919,7 @@ describe('tdd:devebot:core:config-loader', function() {
               "host": "localhost",
               "port": 17722,
             },
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.2",
               "note": "extended fields are reserved",
             },
@@ -940,7 +940,7 @@ describe('tdd:devebot:core:config-loader', function() {
               "connector": {
                 "name": "subPlugin2/bridge2#connector",
                 "path": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.2",
                   "note": "extended fields are reserved",
                 },
@@ -964,7 +964,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.9",
               "note": "extended fields are reserved",
             },
@@ -972,7 +972,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin2": {
             "host": "localhost",
             "port": 17722,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.2",
               "note": "extended fields are reserved",
             }
@@ -985,7 +985,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin1/bridge1#connector",
                 "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.9",
                   "note": "extended fields are reserved",
                 },
@@ -998,7 +998,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin2/bridge2#connector",
                 "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.2",
                   "note": "extended fields are reserved",
                 },
@@ -1091,7 +1091,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin1": {
             "host": "localhost",
             "port": 17721,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.9",
               "note": "extended fields are reserved",
             },
@@ -1099,7 +1099,7 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin2": {
             "host": "localhost",
             "port": 17722,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.2",
               "note": "extended fields are reserved",
             },
@@ -1112,7 +1112,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin1/bridge1#connector",
                 "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.9",
                   "note": "extended fields are reserved",
                 },
@@ -1125,7 +1125,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin2/bridge2#connector",
                 "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.2",
                   "note": "extended fields are reserved",
                 },
@@ -1149,14 +1149,14 @@ describe('tdd:devebot:core:config-loader', function() {
           "subPlugin1": {
             host: "localhost",
             port: 17721,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.0"
             },
           },
           "subPlugin2": {
             host: "localhost",
             port: 17722,
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.0"
             },
           },
@@ -1168,7 +1168,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin1/bridge1#connector",
                 "refPath": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.0"
                 }
               }
@@ -1180,7 +1180,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "subPlugin2/bridge2#connector",
                 "refPath": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.1"
                 }
               }
@@ -1192,7 +1192,7 @@ describe('tdd:devebot:core:config-loader', function() {
                 "refName": "application/bridge4#instance",
                 "refPath": "sandbox -> bridges -> bridge4 -> application -> instance",
                 "refType": "dialect",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.2"
                 }
               }
@@ -1293,7 +1293,7 @@ describe('tdd:devebot:core:config-loader', function() {
               host: "localhost",
               port: 17721,
             },
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.1"
             },
           },
@@ -1302,7 +1302,7 @@ describe('tdd:devebot:core:config-loader', function() {
               host: "localhost",
               port: 17722,
             },
-            "__metadata__": {
+            "__manifest__": {
               "version": "0.1.2"
             },
           },
@@ -1313,7 +1313,7 @@ describe('tdd:devebot:core:config-loader', function() {
               "connector": {
                 "name": "subPlugin1/bridge1#connector",
                 "path": "sandbox -> bridges -> bridge1 -> subPlugin1 -> connector",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.1"
                 }
               }
@@ -1324,7 +1324,7 @@ describe('tdd:devebot:core:config-loader', function() {
               "connector": {
                 "name": "subPlugin2/bridge2#connector",
                 "path": "sandbox -> bridges -> bridge2 -> subPlugin2 -> connector",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.2"
                 }
               }
@@ -1335,7 +1335,7 @@ describe('tdd:devebot:core:config-loader', function() {
               "instance": {
                 "name": "application/bridge4#instance",
                 "path": "sandbox -> bridges -> bridge4 -> application -> instance",
-                "__metadata__": {
+                "__manifest__": {
                   "version": "0.1.4"
                 }
               }

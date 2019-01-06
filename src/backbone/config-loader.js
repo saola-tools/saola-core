@@ -17,7 +17,7 @@ const CONFIG_PROFILE_NAME = 'profile';
 const CONFIG_SANDBOX_NAME = 'sandbox';
 const CONFIG_TEXTURE_NAME = 'texture';
 const CONFIG_TYPES = [CONFIG_PROFILE_NAME, CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME];
-const CONFIG_METADATA_BLOCK = '__metadata__';
+const CONFIG_METADATA_BLOCK = '__manifest__';
 const RELOADING_FORCED = true;
 
 function ConfigLoader(params={}) {

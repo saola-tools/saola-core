@@ -3,7 +3,7 @@ module.exports = {
     "host": "0.0.0.0",
     "port": 17700,
     "verbose": false,
-    "__metadata__": {
+    "__manifest__": {
       "version": "0.0.1",
     },
   },
@@ -12,7 +12,7 @@ module.exports = {
       "host": "0.0.0.0",
       "port": 17701,
       "verbose": false,
-      "__metadata__": {
+      "__manifest__": {
         "version": "0.1.1",
       },
     },
@@ -20,7 +20,7 @@ module.exports = {
       "host": "0.0.0.0",
       "port": 17702,
       "verbose": false,
-      "__metadata__": {
+      "__manifest__": {
         "version": "0.1.1",
       },
     },
@@ -28,7 +28,7 @@ module.exports = {
       "host": "0.0.0.0",
       "port": 17703,
       "verbose": false,
-      "__metadata__": {
+      "__manifest__": {
         "version": "0.1.1",
       },
     },
@@ -36,7 +36,7 @@ module.exports = {
       "host": "0.0.0.0",
       "port": 17704,
       "verbose": false,
-      "__metadata__": {
+      "__manifest__": {
         "version": "0.1.1",
       },
     }
