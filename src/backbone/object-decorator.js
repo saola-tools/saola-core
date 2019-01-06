@@ -97,14 +97,13 @@ ObjectDecorator.argumentSchema = {
 module.exports = ObjectDecorator;
 
 function determineOptionValue(fieldName, conditional, opts) {
-  let value = false;
   if (opts) {
-    value = (conditional.indexOf(opts.gadgetType) >= 0);
     if (fieldName in opts) {
-      value = opts[fieldName];
+      return opts[fieldName];
     }
+    return (conditional.indexOf(opts.gadgetType) >= 0);
   }
-  return value;
+  return false;
 }
 
 function wrapConstructor(refs, constructor, opts) {
@@ -305,17 +304,15 @@ function MockingInterceptor(params) {
 }
 
 function getMockingGenerator(texture, thisArg, argumentsList) {
-  let generate = null;
   for(const name in texture.mocking.mappings) {
     const rule = texture.mocking.mappings[name];
     if (!lodash.isFunction(rule.selector)) continue;
     if (!lodash.isFunction(rule.generate)) continue;
     if (rule.selector.apply(thisArg, argumentsList)) {
-      generate = rule.generate;
-      break;
+      return rule.generate;
     }
   }
-  return generate;
+  return null;
 }
 
 function LoggingInterceptor(params={}) {

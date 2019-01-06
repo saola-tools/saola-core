@@ -231,10 +231,8 @@ function buildBridgeDialect(ctx, dialectOpts) {
   }));
 
   function dialectConstructor(kwargs = {}) {
-    let newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', dialectName], null);
-    if (newFeatures === null) {
-      newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', bridgeCode], {});
-    }
+    const newFeatures = lodash.get(kwargs, ['profileConfig', 'newFeatures', dialectName], null) ||
+        lodash.get(kwargs, ['profileConfig', 'newFeatures', bridgeCode], {});
 
     if (newFeatures.logoliteEnabled !== false) {
       const loggingFactory = kwargs.loggingFactory.branch(sectorRef);
