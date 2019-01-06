@@ -484,24 +484,25 @@ function locatePackage(ctx, pkgInfo) {
   chores.assertOk(ctx, ctx.issueInspector, pkgInfo, pkgInfo.name, pkgInfo.type, pkgInfo.path);
   try {
     const entrypoint = require.resolve(pkgInfo.path);
-    let absolutePath = path.dirname(entrypoint);
-    let pkg = loadPackageJson(absolutePath);
-    while (pkg === null) {
-      const parentPath = path.dirname(absolutePath);
-      if (parentPath === absolutePath) break;
-      absolutePath = parentPath;
-      pkg = loadPackageJson(absolutePath);
+    const buf = {};
+    buf.packagePath = path.dirname(entrypoint);
+    buf.packageJson = loadPackageJson(buf.packagePath);
+    while (buf.packageJson === null) {
+      const parentPath = path.dirname(buf.packagePath);
+      if (parentPath === buf.packagePath) break;
+      buf.packagePath = parentPath;
+      buf.packageJson = loadPackageJson(buf.packagePath);
     }
-    if (pkg && typeof pkg === 'object') {
-      if (typeof pkg.main === 'string') {
-        const verifiedPath = require.resolve(path.join(absolutePath, pkg.main));
+    if (buf.packageJson && typeof buf.packageJson === 'object') {
+      if (typeof buf.packageJson.main === 'string') {
+        const verifiedPath = require.resolve(path.join(buf.packagePath, buf.packageJson.main));
         if (verifiedPath !== entrypoint) {
           const MismatchedMainError = errors.assertConstructor('PackageError');
           throw new MismatchedMainError("package.json file's [main] attribute is mismatched");
         }
       }
       if (typeof pkgInfo.name === 'string') {
-        if (pkgInfo.name !== pkg.name) {
+        if (pkgInfo.name !== buf.packageJson.name) {
           const MismatchedNameError = errors.assertConstructor('PackageError');
           throw new MismatchedNameError('package name is different with provided name');
         }
@@ -510,7 +511,7 @@ function locatePackage(ctx, pkgInfo) {
       const InvalidPackageError = errors.assertConstructor('PackageError');
       throw new InvalidPackageError('package.json file is not found or has invalid format');
     }
-    return absolutePath;
+    return buf.packagePath;
   } catch (err) {
     ctx.issueInspector.collect({
       stage: 'bootstrap',
@@ -538,15 +539,7 @@ function loadPackageVersion(pkgRootPath) {
 
 function loadManifest(pkgRef, issueInspector) {
   chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name, issueInspector);
-  let manifest = null;
-  try {
-    manifest = require(pkgRef.path).manifest;
-    if (!manifest) {
-      manifest = require(path.join(pkgRef.path, '/manifest.js'));
-    }
-  } catch (err) {
-    manifest = null;
-  }
+  const manifest = safeloadManifest(pkgRef.path);
   if (!lodash.isEmpty(manifest)) {
     const result = chores.validate(manifest, constx.MANIFEST.SCHEMA_OBJECT);
     if (!result.ok) {
@@ -560,6 +553,16 @@ function loadManifest(pkgRef, issueInspector) {
     }
   }
   return manifest;
+}
+
+function safeloadManifest(pkgPath) {
+  try {
+    const manifest = require(pkgPath).manifest;
+    if (manifest) return manifest;
+    return require(path.join(pkgPath, '/manifest.js'));
+  } catch (err) {
+    return null;
+  }
 }
 
 module.exports = global[constx.FRAMEWORK.NAME] = global[FRAMEWORK_CAPNAME] = bootstrap;
