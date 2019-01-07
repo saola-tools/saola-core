@@ -138,14 +138,18 @@ module.exports = Kernel;
 
 //-----------------------------------------------------------------------------
 
-function extractBridgeSchema(ref, bridgeRefs, bridgeMetadata, bridgeSchema) {
-  const { nameResolver } = ref;
-  bridgeSchema = bridgeSchema || {};
+function extractBridgeSchema(ref, bridgeRefs, bridgeMetadata) {
+  const bridgeSchema = {};
   if (!chores.isUpgradeSupported('manifest-refiner')) {
     lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
       bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
     });
   }
+  return combineBridgeSchema(ref, bridgeRefs, bridgeSchema);
+}
+
+function combineBridgeSchema(ref, bridgeRefs, bridgeSchema = {}) {
+  const { nameResolver } = ref;
   lodash.forEach(bridgeRefs, function(bridgeRef) {
     let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
     if (!chores.isUpgradeSupported('refining-name-resolver')) {
@@ -225,9 +229,8 @@ function customizeBridgeResult(result, bridgeCode, pluginName, dialectName) {
 
 const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
-function extractPluginSchema(ref, pluginRefs, pluginMetadata, pluginSchema) {
-  const { L, T, nameResolver } = ref;
-  pluginSchema = pluginSchema || {};
+function extractPluginSchema(ref, pluginRefs, pluginMetadata) {
+  const pluginSchema = {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
   if (!chores.isUpgradeSupported('manifest-refiner')) {
@@ -243,6 +246,12 @@ function extractPluginSchema(ref, pluginRefs, pluginMetadata, pluginSchema) {
       }
     });
   }
+  return combinePluginSchema(ref, pluginRefs, pluginSchema);
+}
+
+function combinePluginSchema(ref, pluginRefs, pluginSchema = {}) {
+  const { L, T, nameResolver } = ref;
+  
   lodash.forEach(pluginRefs, function(pluginRef) {
     let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
     if (!chores.isUpgradeSupported('refining-name-resolver')) {
