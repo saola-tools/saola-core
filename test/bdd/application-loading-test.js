@@ -17,7 +17,8 @@ describe('bdd:devebot:application', function() {
 
   before(function() {
     envmask.setup({
-      LOGOLITE_ALWAYS_ENABLED: 'all'
+      LOGOLITE_ALWAYS_ENABLED: 'all',
+      LOGOLITE_ALWAYS_MUTED: 'all',
     });
     LogConfig.reset();
   });

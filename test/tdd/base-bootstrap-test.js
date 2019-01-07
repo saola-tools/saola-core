@@ -99,8 +99,9 @@ describe('tdd:devebot:base:bootstrap', function() {
   describe('require()', function() {
     var pkgs = {
       chores: path.join(lab.getDevebotHome(), 'lib/utils/chores.js'),
+      errors: path.join(lab.getDevebotHome(), 'lib/utils/errors.js'),
       loader: path.join(lab.getDevebotHome(), 'lib/utils/loader.js'),
-      pinbug: path.join(lab.getDevebotHome(), 'lib/utils/pinbug.js')
+      pinbug: path.join(lab.getDevebotHome(), 'lib/utils/pinbug.js'),
     }
     lodash.forEach([ 'injektor', 'logolite', 'schemato', 'semver' ], function(pkgName) {
       pkgs[pkgName] = pkgName;

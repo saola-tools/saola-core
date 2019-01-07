@@ -493,15 +493,15 @@ function locatePackage({issueInspector} = {}, pkgInfo) {
       buf.packagePath = parentPath;
       buf.packageJson = loadPackageJson(buf.packagePath);
     }
-    if (buf.packageJson && typeof buf.packageJson === 'object') {
-      if (typeof buf.packageJson.main === 'string') {
+    if (nodash.isObject(buf.packageJson)) {
+      if (nodash.isString(buf.packageJson.main)) {
         const verifiedPath = require.resolve(path.join(buf.packagePath, buf.packageJson.main));
         if (verifiedPath !== entrypoint) {
           const MismatchedMainError = errors.assertConstructor('PackageError');
           throw new MismatchedMainError("package.json file's [main] attribute is mismatched");
         }
       }
-      if (typeof pkgInfo.name === 'string') {
+      if (nodash.isString(pkgInfo.name)) {
         if (pkgInfo.name !== buf.packageJson.name) {
           const MismatchedNameError = errors.assertConstructor('PackageError');
           throw new MismatchedNameError('package name is different with provided name');

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-npm test
+npm run clean-build
+npm run test-without-rebuilding
 DEVEBOT_UPGRADE_DISABLED=presets npm run test-without-rebuilding
 DEVEBOT_UPGRADE_DISABLED=bridge-full-ref npm run test-without-rebuilding
 DEVEBOT_UPGRADE_DISABLED=bridge-full-ref,presets npm run test-without-rebuilding
