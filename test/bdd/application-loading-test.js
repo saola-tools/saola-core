@@ -147,6 +147,8 @@ describe('bdd:devebot:application', function() {
           var metadata = lodash.map(moduleStats.metadata, function(item) {
             return item && item.blockName
           });
+          // block 'bootstrap' appears 3 times
+          metadata = lodash.uniq(metadata);
           false && console.log(JSON.stringify(metadata, null, 2));
           assert.includeMembers(metadata, devebotScopes);
           assert.includeMembers(metadata, plugin1Scopes);

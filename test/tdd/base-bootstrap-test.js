@@ -46,7 +46,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       }]);
 
       var app = bootstrap.launchApplication({
-        appRootPath: lab.getAppHome('default')
+        appRootPath: lab.getAppHome('fullapp')
       });
 
       false && console.log(loggingStore);
