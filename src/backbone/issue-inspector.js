@@ -82,6 +82,10 @@ function IssueInspector(params={}) {
               }
             }
           }
+          if (fsv.stage === 'package-version') {
+            console.error(chalk.errorMessage("--> [%s:%s] cannot read the version, package.json not found or does not contain 'version'."), fsv.type, fsv.name);
+            return;
+          }
           if (fsv.stage === 'manifest') {
             switch(fsv.type) {
               case 'appbox':

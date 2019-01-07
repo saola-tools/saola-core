@@ -480,8 +480,8 @@ bootstrap.require = function(packageName) {
   return null;
 };
 
-function locatePackage(ctx, pkgInfo) {
-  chores.assertOk(ctx, ctx.issueInspector, pkgInfo, pkgInfo.name, pkgInfo.type, pkgInfo.path);
+function locatePackage({issueInspector} = {}, pkgInfo) {
+  chores.assertOk(issueInspector, pkgInfo, pkgInfo.name, pkgInfo.type, pkgInfo.path);
   try {
     const entrypoint = require.resolve(pkgInfo.path);
     const buf = {};
@@ -513,11 +513,11 @@ function locatePackage(ctx, pkgInfo) {
     }
     return buf.packagePath;
   } catch (err) {
-    ctx.issueInspector.collect({
+    issueInspector.collect({
+      hasError: true,
       stage: 'bootstrap',
       type: pkgInfo.type,
       name: pkgInfo.name,
-      hasError: true,
       stack: err.stack
     });
     return null;
@@ -532,10 +532,19 @@ function loadPackageJson(pkgRootPath) {
   }
 }
 
-function loadPackageVersion(pkgRef) {
+function loadPackageVersion(pkgRef, issueInspector) {
   chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name);
   const pkgInfo = loadPackageJson(pkgRef.path);
-  return pkgInfo && pkgInfo.version;
+  const version = pkgInfo && pkgInfo.version;
+  if (!nodash.isString(version)) {
+    issueInspector && issueInspector.collect({
+      hasError: true,
+      stage: 'package-version',
+      type: pkgRef.type,
+      name: pkgRef.name,
+    });
+  }
+  return version;
 }
 
 function loadManifest(pkgRef, issueInspector) {
@@ -544,11 +553,11 @@ function loadManifest(pkgRef, issueInspector) {
   if (!lodash.isEmpty(manifest)) {
     const result = chores.validate(manifest, constx.MANIFEST.SCHEMA_OBJECT);
     if (!result.ok) {
-      issueInspector.collect({
+      issueInspector && issueInspector.collect({
+        hasError: true,
         stage: 'manifest',
         type: pkgRef.type,
         name: pkgRef.name,
-        hasError: true,
         stack: JSON.stringify(result.errors, null, 4)
       });
     }
