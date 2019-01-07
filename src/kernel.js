@@ -67,7 +67,9 @@ function Kernel(params = {}) {
       }));
     }
 
-    const bridgeSchema = extractBridgeSchema(CTX, configObject.bridgeRefs, bridgeMetadata);
+    const bridgeSchemaBuff = extractBridgeSchema(CTX, bridgeMetadata);
+
+    const bridgeSchema = combineBridgeSchema(CTX, configObject.bridgeRefs, bridgeSchemaBuff);
 
     const bridgeConfig = lodash.get(configObject, ['sandbox', 'mixture', 'bridges'], {});
 
@@ -84,7 +86,9 @@ function Kernel(params = {}) {
       }));
     }
 
-    const pluginSchema = extractPluginSchema(CTX, configObject.pluginRefs, pluginMetadata);
+    const pluginSchemaBuff = extractPluginSchema(CTX, pluginMetadata);
+
+    const pluginSchema = combinePluginSchema(CTX, configObject.pluginRefs, pluginSchemaBuff);
 
     const pluginConfig = {
       profile: lodash.get(configObject, ['profile', 'mixture'], {}),
@@ -138,14 +142,14 @@ module.exports = Kernel;
 
 //-----------------------------------------------------------------------------
 
-function extractBridgeSchema(ref, bridgeRefs, bridgeMetadata) {
+function extractBridgeSchema(ref, bridgeMetadata) {
   const bridgeSchema = {};
   if (!chores.isUpgradeSupported('manifest-refiner')) {
     lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
       bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
     });
   }
-  return combineBridgeSchema(ref, bridgeRefs, bridgeSchema);
+  return bridgeSchema;
 }
 
 function combineBridgeSchema(ref, bridgeRefs, bridgeSchema = {}) {
@@ -229,7 +233,7 @@ function customizeBridgeResult(result, bridgeCode, pluginName, dialectName) {
 
 const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
-function extractPluginSchema(ref, pluginRefs, pluginMetadata) {
+function extractPluginSchema(ref, pluginMetadata) {
   const pluginSchema = {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
@@ -246,12 +250,13 @@ function extractPluginSchema(ref, pluginRefs, pluginMetadata) {
       }
     });
   }
-  return combinePluginSchema(ref, pluginRefs, pluginSchema);
+  return pluginSchema;
 }
 
 function combinePluginSchema(ref, pluginRefs, pluginSchema = {}) {
   const { L, T, nameResolver } = ref;
-  
+  pluginSchema.profile = pluginSchema.profile || {};
+  pluginSchema.sandbox = pluginSchema.sandbox || {};
   lodash.forEach(pluginRefs, function(pluginRef) {
     let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
     if (!chores.isUpgradeSupported('refining-name-resolver')) {

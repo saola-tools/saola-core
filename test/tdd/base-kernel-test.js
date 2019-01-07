@@ -34,6 +34,7 @@ describe('tdd:devebot:base:kernel', function() {
   describe('extractPluginSchema()', function() {
     var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
     var extractPluginSchema = rewiredKernel.__get__('extractPluginSchema');
+    var combinePluginSchema = rewiredKernel.__get__('combinePluginSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
@@ -115,7 +116,7 @@ describe('tdd:devebot:base:kernel', function() {
         }
       ];
 
-      var pluginSchema = extractPluginSchema(C, pluginRefs);
+      var pluginSchema = combinePluginSchema(C, pluginRefs);
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
       assert.deepEqual(pluginSchema, {
         "profile": {},
@@ -342,7 +343,7 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       };
-      var pluginSchema = extractPluginSchema(C, pluginRefs);
+      var pluginSchema = combinePluginSchema(C, pluginRefs);
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
       assert.deepEqual(pluginSchema, expectedPluginSchema);
     });
@@ -452,7 +453,7 @@ describe('tdd:devebot:base:kernel', function() {
         }
       ];
 
-      var pluginSchema = extractPluginSchema(C, pluginRefs, pluginMetadata);
+      var pluginSchema = combinePluginSchema(C, pluginRefs, extractPluginSchema(C, pluginMetadata));
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
       assert.deepEqual(pluginSchema, {
         "profile": {},
@@ -699,7 +700,7 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       };
-      var pluginSchema = extractPluginSchema(C, pluginRefs, pluginMetadata);
+      var pluginSchema = combinePluginSchema(C, pluginRefs, extractPluginSchema(C, pluginMetadata));
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
       assert.deepEqual(pluginSchema, expectedPluginSchema);
     });
@@ -969,6 +970,7 @@ describe('tdd:devebot:base:kernel', function() {
   describe('extractBridgeSchema()', function() {
     var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
     var extractBridgeSchema = rewiredKernel.__get__('extractBridgeSchema');
+    var combineBridgeSchema = rewiredKernel.__get__('combineBridgeSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var nameResolver = lab.getNameResolver([], [
       'bridge1', 'bridge2', 'bridge3', 'bridge4', 'devebot-co-connector1', 'devebot-co-connector2'
@@ -1117,7 +1119,7 @@ describe('tdd:devebot:base:kernel', function() {
         },
       }
 
-      var bridgeSchema = extractBridgeSchema(CTX, bridgeRefs, bridgeMetadata);
+      var bridgeSchema = combineBridgeSchema(CTX, bridgeRefs, extractBridgeSchema(CTX, bridgeMetadata));
 
       false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);
@@ -1206,7 +1208,7 @@ describe('tdd:devebot:base:kernel', function() {
         },
       })
 
-      var bridgeSchema = extractBridgeSchema(CTX, bridgeRefs);
+      var bridgeSchema = combineBridgeSchema(CTX, bridgeRefs);
 
       false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);
