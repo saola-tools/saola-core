@@ -5,6 +5,7 @@ var constx = require('../lib/utils/constx');
 var errors = require('../lib/utils/errors');
 var debugx = require('../lib/utils/pinbug')('devebot:test:lab');
 var NameResolver = require('../lib/backbone/name-resolver');
+var ManifestHandler = require('../lib/backbone/manifest-handler');
 var issueInspector = require('../lib/backbone/issue-inspector').instance;
 var stateInspector = require('../lib/backbone/state-inspector').instance;
 var LogConfig = require('logolite').LogConfig;
@@ -195,11 +196,14 @@ lab.createKernel = function(appName) {
     console.log('==/ createKernel() ========');
   }
 
-  let nameResolver = new NameResolver({issueInspector, 
+  var nameResolver = new NameResolver({issueInspector, 
+    pluginRefs: _config.pluginRefs, bridgeRefs: _config.bridgeRefs});
+
+  var manifestHandler = new ManifestHandler({nameResolver, 
     pluginRefs: _config.pluginRefs, bridgeRefs: _config.bridgeRefs});
 
   var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
-  return new Kernel({configObject: _config, issueInspector, stateInspector, nameResolver});
+  return new Kernel({configObject: _config, issueInspector, stateInspector, nameResolver, manifestHandler});
 }
 
 lab.createBasicServices = function(appName, injectedObjects) {
