@@ -13,7 +13,8 @@ var envmask = EnvMask.instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
 
-var SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
+var rewiredManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
+var SELECTED_FIELDS = rewiredManifestHandler.__get__('SELECTED_FIELDS');
 
 describe('tdd:devebot:base:kernel', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -546,7 +547,7 @@ describe('tdd:devebot:base:kernel', function() {
       false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);
     });
-      });
+  });
 
   describe('validate config/schemas', function() {
     before(function() {
