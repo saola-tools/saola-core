@@ -37,9 +37,6 @@ describe('tdd:devebot:base:kernel', function() {
   describe('extractPluginSchema()', function() {
     var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
     var extractPluginSchema = rewiredKernel.__get__('extractPluginSchema');
-    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
-    var L = loggingFactory.getLogger();
-    var T = loggingFactory.getTracer();
 
     beforeEach(function() {
       stepEnv.reset();
@@ -56,9 +53,6 @@ describe('tdd:devebot:base:kernel', function() {
         'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
         'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
       });
-      var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
-      var C = {L, T, schemaValidator, nameResolver, SELECTED_FIELDS: SELECTED_FIELDS};
-      // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
       var pluginMetadata = {
         "devebot-dp-wrapper1/sandbox": {
           "default": {
@@ -99,64 +93,8 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       }
-      var pluginRefs = [
-        {
-          "type": "plugin",
-          "name": "devebot-dp-wrapper1",
-          "path": lab.getLibHome('devebot-dp-wrapper1'),
-          "presets": {},
-          "bridgeDepends": [],
-          "pluginDepends": [],
-          "manifest": {
-            "config": {
-              "migration": {},
-              "validation": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "host": {
-                      "type": "string"
-                    },
-                    "port": {
-                      "type": "number"
-                    },
-                  },
-                  "required": [ "host", "port" ]
-                },
-              },
-            },
-          },
-        },
-        {
-          "type": "plugin",
-          "name": "devebot-dp-wrapper2",
-          "path": lab.getLibHome('devebot-dp-wrapper2'),
-          "presets": {},
-          "bridgeDepends": [],
-          "pluginDepends": [],
-          "manifest": {
-            "config": {
-              "migration": {},
-              "validation": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "host": {
-                      "type": "string"
-                    },
-                    "port": {
-                      "type": "number"
-                    },
-                  },
-                  "required": [ "host", "port" ]
-                },
-              },
-            },
-          },
-        }
-      ];
 
-      var pluginSchema = extractPluginSchema(C, pluginMetadata);
+      var pluginSchema = extractPluginSchema(SELECTED_FIELDS, pluginMetadata);
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
       assert.deepEqual(pluginSchema, {
         "profile": {},
@@ -200,12 +138,6 @@ describe('tdd:devebot:base:kernel', function() {
         'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
         'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
       });
-      var nameResolver = lab.getNameResolver([
-        'sub-plugin1', 'sub-plugin2', 'plugin1', 'plugin2', 'plugin3'
-      ], [
-        "bridge1", "bridge2", "bridge3"
-      ]);
-      var C = {L, T, schemaValidator, nameResolver, SELECTED_FIELDS: SELECTED_FIELDS};
       var pluginMetadata = {
         "application/sandbox": {
           "default": {
@@ -285,52 +217,6 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       }
-      var pluginRefs = [
-        {
-          "type": "plugin",
-          "name": "sub-plugin1",
-          "path": lab.getLibHome('sub-plugin1'),
-          "presets": {},
-          "bridgeDepends": [ "bridge1", "bridge2" ],
-          "pluginDepends": [ "plugin1", "plugin2" ]
-        },
-        {
-          "type": "plugin",
-          "name": "sub-plugin2",
-          "path": lab.getLibHome('sub-plugin2'),
-          "presets": {},
-          "bridgeDepends": [ "bridge2", "bridge3" ],
-          "pluginDepends": [ "plugin2", "plugin3" ]
-        },
-        {
-          "type": "plugin",
-          "name": "plugin1",
-          "path": "/test/lib/plugin1",
-          "presets": {
-            "configTags": "bridge[dialect-bridge]"
-          },
-          "bridgeDepends": [ "bridge1", "bridge2" ],
-          "pluginDepends": []
-        },
-        {
-          "type": "plugin",
-          "name": "plugin2",
-          "path": "/test/lib/plugin2",
-          "presets": {
-            "configTags": "bridge[dialect-bridge]"
-          },
-          "bridgeDepends": [ "bridge1", "bridge2" ],
-          "pluginDepends": []
-        },
-        {
-          "type": "plugin",
-          "name": "plugin3",
-          "path": "/test/lib/plugin3",
-          "presets": {},
-          "bridgeDepends": [],
-          "pluginDepends": []
-        }
-      ];
       var expectedPluginSchema = {
         "profile": {},
         "sandbox": {
@@ -389,7 +275,7 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       };
-      var pluginSchema = extractPluginSchema(C, pluginMetadata);
+      var pluginSchema = extractPluginSchema(SELECTED_FIELDS, pluginMetadata);
       false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
       assert.deepEqual(pluginSchema, expectedPluginSchema);
     });
@@ -398,13 +284,6 @@ describe('tdd:devebot:base:kernel', function() {
   describe('extractBridgeSchema()', function() {
     var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
     var extractBridgeSchema = rewiredKernel.__get__('extractBridgeSchema');
-    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
-    var nameResolver = lab.getNameResolver([], [
-      'bridge1', 'bridge2', 'bridge3', 'bridge4', 'devebot-co-connector1', 'devebot-co-connector2'
-    ]);
-    var L = loggingFactory.getLogger();
-    var T = loggingFactory.getTracer();
-    var CTX = {L, T, schemaValidator, nameResolver, SELECTED_FIELDS: SELECTED_FIELDS};
 
     var expectedSchema = {
       "bridge1": {},
@@ -457,46 +336,7 @@ describe('tdd:devebot:base:kernel', function() {
         'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
         'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
       });
-      var bridgeRefs = lodash.values({
-        "/test/lib/bridge1": {
-          "name": "bridge1",
-          "type": "bridge",
-          "path": "/test/lib/bridge1",
-        },
-        "/test/lib/bridge2": {
-          "name": "bridge2",
-          "type": "bridge",
-          "path": "/test/lib/bridge2",
-          "presets": {
-            "schemaValidation": false
-          },
-        },
-        "/test/lib/bridge3": {
-          "name": "bridge3",
-          "type": "bridge",
-          "path": "/test/lib/bridge3",
-        },
-        "/test/lib/bridge4": {
-          "name": "bridge4",
-          "type": "bridge",
-          "path": "/test/lib/bridge4",
-          "presets": {
-            "schemaValidation": false
-          },
-        },
-        "/test/lib/devebot-co-connector1": {
-          "name": "devebot-co-connector1",
-          "type": "bridge",
-          "path": "/test/lib/devebot-co-connector1"
-        },
-        "/test/lib/devebot-co-connector2": {
-          "name": "devebot-co-connector2",
-          "type": "bridge",
-          "path": "/test/lib/devebot-co-connector2"
-        },
-      })
-
-      var  bridgeMetadata = {
+      var bridgeMetadata = {
         "bridge1": {
           "name": "bridge1"
         },
@@ -542,7 +382,7 @@ describe('tdd:devebot:base:kernel', function() {
         },
       }
 
-      var bridgeSchema = extractBridgeSchema(CTX, bridgeMetadata);
+      var bridgeSchema = extractBridgeSchema(SELECTED_FIELDS, bridgeMetadata);
 
       false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);

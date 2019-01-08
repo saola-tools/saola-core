@@ -52,8 +52,7 @@ function Kernel(params = {}) {
   });
 
   if (chores.isUpgradeSupported('metadata-refiner')) {
-    const CTX = { SELECTED_FIELDS: manifestHandler.SELECTED_FIELDS };
-
+    const SELECTED_FIELDS = manifestHandler.SELECTED_FIELDS;
     // validate bridge's configures
     const bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
     const bridgeMetadata = bridgeLoader.loadMetadata();
@@ -61,7 +60,7 @@ function Kernel(params = {}) {
       tags: [ blockRef, 'bridge-config-schema-input' ],
       text: " - bridge's metadata: ${metadata}"
     }));
-    const bridgeSchema = extractBridgeSchema(CTX, bridgeMetadata);
+    const bridgeSchema = extractBridgeSchema(SELECTED_FIELDS, bridgeMetadata);
 
     // validate plugin's configures
     const pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
@@ -70,7 +69,7 @@ function Kernel(params = {}) {
       tags: [ blockRef, 'plugin-config-schema-input' ],
       text: " - plugin's metadata: ${metadata}"
     }));
-    const pluginSchema = extractPluginSchema(CTX, pluginMetadata);
+    const pluginSchema = extractPluginSchema(SELECTED_FIELDS, pluginMetadata);
 
     const result = manifestHandler.validateConfig(configObject, bridgeSchema, pluginSchema);
     issueInspector.collect(result).barrier({ invoker: blockRef, footmark: 'metadata-validating' });
@@ -117,19 +116,17 @@ module.exports = Kernel;
 
 //-----------------------------------------------------------------------------
 
-function extractBridgeSchema(ref, bridgeMetadata) {
-  const { SELECTED_FIELDS } = ref;
+function extractBridgeSchema(selectedFields, bridgeMetadata) {
   const bridgeSchema = {};
   lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
-    bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
+    bridgeSchema[bridgeCode] = lodash.pick(metadata, selectedFields);
   });
   return bridgeSchema;
 }
 
 //-----------------------------------------------------------------------------
 
-function extractPluginSchema(ref, pluginMetadata) {
-  const { SELECTED_FIELDS } = ref;
+function extractPluginSchema(selectedFields, pluginMetadata) {
   const pluginSchema = {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
@@ -137,10 +134,10 @@ function extractPluginSchema(ref, pluginMetadata) {
     const def = metainf && metainf.default || {};
     if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
       if (chores.isSpecialPlugin(def.pluginCode)) {
-        pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+        pluginSchema[def.type][def.pluginCode] = lodash.pick(def, selectedFields);
       } else {
         pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
-        pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+        pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, selectedFields);
       }
     }
   });
