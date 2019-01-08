@@ -3,8 +3,6 @@
 const lodash = require('lodash');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
-const envbox = require('../utils/envbox');
-const nodash = require('../utils/nodash');
 const LoggingWrapper = require('./logging-wrapper');
 const blockRef = chores.getBlockRef(__filename);
 
@@ -24,12 +22,17 @@ function ManifestHandler(params={}) {
 
   this.SELECTED_FIELDS = SELECTED_FIELDS;
 
-  this.validateBridgeConfig = function (bridgeConfig, bridgeSchema, result) {
-    return validateBridgeConfig(C, bridgeConfig, combineBridgeSchema(C, bridgeRefs, bridgeSchema), result);
-  }
+  this.validateConfig = function (configStore, bridgeSchema, pluginSchema, result = []) {
+    const bridgeConfig = lodash.get(configStore, ['sandbox', 'mixture', 'bridges'], {});
+    validateBridgeConfig(C, bridgeConfig, combineBridgeSchema(C, bridgeRefs, bridgeSchema), result);
 
-  this.validatePluginConfig = function(pluginConfig, pluginSchema, result) {
-    return validatePluginConfig(C, pluginConfig, combinePluginSchema(C, pluginRefs, pluginSchema), result);
+    const pluginConfig = {
+      profile: lodash.get(configStore, ['profile', 'mixture'], {}),
+      sandbox: lodash.pick(lodash.get(configStore, ['sandbox', 'mixture'], {}), ['application', 'plugins'])
+    }
+    validatePluginConfig(C, pluginConfig, combinePluginSchema(C, pluginRefs, pluginSchema), result);
+
+    return result;
   }
 
   L.has('silly') && L.log('silly', T.toMessage({
