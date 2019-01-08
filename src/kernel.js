@@ -51,35 +51,33 @@ function Kernel(params = {}) {
     injektor.defineService(serviceName, constructor, chores.injektorContext);
   });
 
-  if (chores.isUpgradeSupported(['manifest-refiner'], ['metadata-refiner'])) {
-    const schemaValidator = injektor.lookup('schemaValidator', chores.injektorContext);
-    const CTX = {L, T, nameResolver, schemaValidator, SELECTED_FIELDS: manifestHandler.SELECTED_FIELDS };
-    const result = [];
+  if (chores.isUpgradeSupported('metadata-refiner')) {
+    const CTX = { SELECTED_FIELDS: manifestHandler.SELECTED_FIELDS };
 
     // validate bridge's configures
-    let bridgeMetadata = null;
-    if (chores.isUpgradeSupported('metadata-refiner')) {
-      const bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
-      bridgeMetadata = bridgeLoader.loadMetadata();
-      L.has('silly') && L.log('silly', T.add({ metadata: bridgeMetadata }).toMessage({
-        tags: [ blockRef, 'bridge-config-schema-input' ],
-        text: " - bridge's metadata: ${metadata}"
-      }));
-    }
+    const bridgeLoader = injektor.lookup('bridgeLoader', chores.injektorContext);
+    const bridgeMetadata = bridgeLoader.loadMetadata();
+    L.has('silly') && L.log('silly', T.add({ metadata: bridgeMetadata }).toMessage({
+      tags: [ blockRef, 'bridge-config-schema-input' ],
+      text: " - bridge's metadata: ${metadata}"
+    }));
+    const bridgeSchema = extractBridgeSchema(CTX, bridgeMetadata);
 
     // validate plugin's configures
-    let pluginMetadata = null;
-    if (chores.isUpgradeSupported('metadata-refiner')) {
-      const pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
-      pluginMetadata = pluginLoader.loadMetadata();
-      L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
-        tags: [ blockRef, 'plugin-config-schema-input' ],
-        text: " - plugin's metadata: ${metadata}"
-      }));
-    }
+    const pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
+    const pluginMetadata = pluginLoader.loadMetadata();
+    L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
+      tags: [ blockRef, 'plugin-config-schema-input' ],
+      text: " - plugin's metadata: ${metadata}"
+    }));
+    const pluginSchema = extractPluginSchema(CTX, pluginMetadata);
 
-    manifestHandler.validateConfig(configObject, extractBridgeSchema(CTX, bridgeMetadata), extractPluginSchema(CTX, pluginMetadata), result);
+    const result = manifestHandler.validateConfig(configObject, bridgeSchema, pluginSchema);
+    issueInspector.collect(result).barrier({ invoker: blockRef, footmark: 'metadata-validating' });
+  }
 
+  if (chores.isUpgradeSupported('manifest-refiner')) {
+    const result = manifestHandler.validateConfig(configObject);
     issueInspector.collect(result).barrier({ invoker: blockRef, footmark: 'metadata-validating' });
   }
 
@@ -122,11 +120,9 @@ module.exports = Kernel;
 function extractBridgeSchema(ref, bridgeMetadata) {
   const { SELECTED_FIELDS } = ref;
   const bridgeSchema = {};
-  if (!chores.isUpgradeSupported('manifest-refiner')) {
-    lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
-      bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
-    });
-  }
+  lodash.forOwn(bridgeMetadata, function(metadata, bridgeCode) {
+    bridgeSchema[bridgeCode] = lodash.pick(metadata, SELECTED_FIELDS);
+  });
   return bridgeSchema;
 }
 
@@ -137,18 +133,16 @@ function extractPluginSchema(ref, pluginMetadata) {
   const pluginSchema = {};
   pluginSchema.profile = pluginSchema.profile || {};
   pluginSchema.sandbox = pluginSchema.sandbox || {};
-  if (!chores.isUpgradeSupported('manifest-refiner')) {
-    lodash.forOwn(pluginMetadata, function(metainf, key) {
-      const def = metainf && metainf.default || {};
-      if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
-        if (chores.isSpecialPlugin(def.pluginCode)) {
-          pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
-        } else {
-          pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
-          pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
-        }
+  lodash.forOwn(pluginMetadata, function(metainf, key) {
+    const def = metainf && metainf.default || {};
+    if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
+      if (chores.isSpecialPlugin(def.pluginCode)) {
+        pluginSchema[def.type][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
+      } else {
+        pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
+        pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, SELECTED_FIELDS);
       }
-    });
-  }
+    }
+  });
   return pluginSchema;
 }
