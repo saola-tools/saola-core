@@ -573,7 +573,7 @@ describe('tdd:devebot:base:kernel', function() {
           allTags: [ chores.toFullname('devebot', 'manifestHandler'), 'validate-plugin-config-by-schema' ],
           storeTo: 'pluginData'
         }, {
-          allTags: [ chores.toFullname('devebot', 'kernel'), 'validating-config-by-schema-result' ],
+          allTags: [ chores.toFullname('devebot', 'manifestHandler'), 'validating-config-by-schema-result' ],
           storeTo: 'outputValidation'
         }, {
           allTags: [ chores.toFullname('devebot', 'issueInspector'), 'examine', 'metadata-validating' ],

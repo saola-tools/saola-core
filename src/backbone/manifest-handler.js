@@ -32,6 +32,12 @@ function ManifestHandler(params={}) {
     }
     validatePluginConfig(C, pluginConfig, combinePluginSchema(C, pluginRefs, pluginSchema), result);
 
+    // summarize validating result
+    L.has('silly') && L.log('silly', T.add({ result }).toMessage({
+      tags: [ blockRef, 'validating-config-by-schema-result' ],
+      text: ' - Validating sandbox configuration using schemas'
+    }));
+
     return result;
   }
 
