@@ -67,13 +67,9 @@ function Kernel(params = {}) {
       }));
     }
 
-    const bridgeSchemaBuff = extractBridgeSchema(CTX, bridgeMetadata);
-
-    const bridgeSchema = manifestHandler.combineBridgeSchema(configObject.bridgeRefs, bridgeSchemaBuff);
-
     const bridgeConfig = lodash.get(configObject, ['sandbox', 'mixture', 'bridges'], {});
 
-    manifestHandler.validateBridgeConfig(bridgeConfig, bridgeSchema, result);
+    manifestHandler.validateBridgeConfig(bridgeConfig, extractBridgeSchema(CTX, bridgeMetadata), result);
 
     // validate plugin's configures
     let pluginMetadata = null;
@@ -86,16 +82,12 @@ function Kernel(params = {}) {
       }));
     }
 
-    const pluginSchemaBuff = extractPluginSchema(CTX, pluginMetadata);
-
-    const pluginSchema = manifestHandler.combinePluginSchema(configObject.pluginRefs, pluginSchemaBuff);
-
     const pluginConfig = {
       profile: lodash.get(configObject, ['profile', 'mixture'], {}),
       sandbox: lodash.pick(lodash.get(configObject, ['sandbox', 'mixture'], {}), ['application', 'plugins'])
     }
 
-    manifestHandler.validatePluginConfig(pluginConfig, pluginSchema, result);
+    manifestHandler.validatePluginConfig(pluginConfig, extractPluginSchema(CTX, pluginMetadata), result);
 
     // summarize validating result
     L.has('silly') && L.log('silly', T.add({ result }).toMessage({

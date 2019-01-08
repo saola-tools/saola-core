@@ -11,7 +11,7 @@ const blockRef = chores.getBlockRef(__filename);
 const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
 function ManifestHandler(params={}) {
-  const {nameResolver, issueInspector, pluginRefs, bridgeRefs} = params;
+  const {nameResolver, pluginRefs, bridgeRefs} = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();
@@ -24,20 +24,12 @@ function ManifestHandler(params={}) {
 
   this.SELECTED_FIELDS = SELECTED_FIELDS;
 
-  this.combineBridgeSchema = function(bridgeRefs, bridgeSchema) {
-    return combineBridgeSchema(C, bridgeRefs, bridgeSchema);
-  }
-
   this.validateBridgeConfig = function (bridgeConfig, bridgeSchema, result) {
-    return validateBridgeConfig(C, bridgeConfig, bridgeSchema, result);
-  }
-
-  this.combinePluginSchema = function(pluginRefs, pluginSchema) {
-    return combinePluginSchema(C, pluginRefs, pluginSchema);
+    return validateBridgeConfig(C, bridgeConfig, combineBridgeSchema(C, bridgeRefs, bridgeSchema), result);
   }
 
   this.validatePluginConfig = function(pluginConfig, pluginSchema, result) {
-    return validatePluginConfig(C, pluginConfig, pluginSchema, result);
+    return validatePluginConfig(C, pluginConfig, combinePluginSchema(C, pluginRefs, pluginSchema), result);
   }
 
   L.has('silly') && L.log('silly', T.toMessage({
