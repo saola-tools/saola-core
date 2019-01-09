@@ -22,6 +22,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
+    issueInspector.reset();
   });
 
   describe('loadMetadata()', function() {

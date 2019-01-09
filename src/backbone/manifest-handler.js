@@ -1,6 +1,7 @@
 'use strict';
 
 const lodash = require('lodash');
+const path = require('path');
 const chores = require('../utils/chores');
 const constx = require('../utils/constx');
 const LoggingWrapper = require('./logging-wrapper');
@@ -9,7 +10,7 @@ const blockRef = chores.getBlockRef(__filename);
 const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
 function ManifestHandler(params={}) {
-  const {nameResolver, pluginRefs, bridgeRefs} = params;
+  const {nameResolver, issueInspector, pluginRefs, bridgeRefs} = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();
@@ -19,6 +20,19 @@ function ManifestHandler(params={}) {
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor start ...'
   }));
+
+  if (chores.isUpgradeSupported('manifest-refiner')) {
+    lodash.forOwn(pluginRefs, function(ref) {
+      if (ref.type === 'framework') return;
+      if (!lodash.isString(ref.path)) return;
+      ref.manifest = loadManifest(ref, issueInspector);
+      ref.version = loadPackageVersion(ref);
+    });
+    lodash.forOwn(bridgeRefs, function(ref) {
+      ref.manifest = loadManifest(ref, issueInspector);
+      ref.version = loadPackageVersion(ref);
+    });
+  }
 
   this.SELECTED_FIELDS = SELECTED_FIELDS;
 
@@ -307,4 +321,49 @@ function customizeSandboxResult(result, crateScope, validationType) {
     }
   }
   return output;
+}
+
+//-----------------------------------------------------------------------------
+
+function loadPackageVersion(pkgRef, issueInspector) {
+  chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name);
+  const pkgInfo = chores.loadPackageInfo(pkgRef.path);
+  const version = pkgInfo && pkgInfo.version;
+  if (!lodash.isString(version)) {
+    issueInspector && issueInspector.collect({
+      hasError: true,
+      stage: 'package-version',
+      type: pkgRef.type,
+      name: pkgRef.name,
+    });
+  }
+  return version;
+}
+
+function loadManifest(pkgRef, issueInspector) {
+  chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name, issueInspector);
+  const manifest = safeloadManifest(pkgRef.path);
+  if (!lodash.isEmpty(manifest)) {
+    const result = chores.validate(manifest, constx.MANIFEST.SCHEMA_OBJECT);
+    if (!result.ok) {
+      issueInspector && issueInspector.collect({
+        hasError: true,
+        stage: 'manifest',
+        type: pkgRef.type,
+        name: pkgRef.name,
+        stack: JSON.stringify(result.errors, null, 4)
+      });
+    }
+  }
+  return manifest;
+}
+
+function safeloadManifest(pkgPath) {
+  try {
+    const manifest = require(pkgPath).manifest;
+    if (manifest) return manifest;
+    return require(path.join(pkgPath, '/manifest.js'));
+  } catch (err) {
+    return null;
+  }
 }

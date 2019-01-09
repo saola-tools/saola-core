@@ -13,11 +13,12 @@ var envmask = EnvMask.instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
 
-describe('tdd:devebot:base:kernel', function() {
+describe('tdd:devebot:core:manifest-handler', function() {
   this.timeout(lab.getDefaultTimeout());
 
   var stepEnv = new EnvMask();
   var issueInspector = lab.getIssueInspector();
+  var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
 
   before(function() {
     envmask.setup({
@@ -32,8 +33,7 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('extractPluginSchema()', function() {
-    var rewiredManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
-    var combinePluginSchema = rewiredManifestHandler.__get__('combinePluginSchema');
+    var combinePluginSchema = ManifestHandler.__get__('combinePluginSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
@@ -349,8 +349,7 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('validatePluginConfig()', function() {
-    var rewiredManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
-    var checkSandboxConstraintsOfCrates = rewiredManifestHandler.__get__('checkSandboxConstraintsOfCrates');
+    var checkSandboxConstraintsOfCrates = ManifestHandler.__get__('checkSandboxConstraintsOfCrates');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
@@ -610,8 +609,7 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('extractBridgeSchema()', function() {
-    var rewiredManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
-    var combineBridgeSchema = rewiredManifestHandler.__get__('combineBridgeSchema');
+    var combineBridgeSchema = ManifestHandler.__get__('combineBridgeSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var nameResolver = lab.getNameResolver([], [
       'bridge1', 'bridge2', 'bridge3', 'bridge4', 'devebot-co-connector1', 'devebot-co-connector2'
@@ -761,8 +759,7 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('validateBridgeConfig()', function() {
-    var rewiredManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
-    var validateBridgeConfig = rewiredManifestHandler.__get__('validateBridgeConfig');
+    var validateBridgeConfig = ManifestHandler.__get__('validateBridgeConfig');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
@@ -932,6 +929,85 @@ describe('tdd:devebot:base:kernel', function() {
           "hasError": false
         }
       ]);
+    });
+  });
+
+  describe('loadManifest()', function() {
+    var loadManifest = ManifestHandler.__get__('loadManifest');
+    assert.isFunction(loadManifest);
+
+    it('load manifest of modules properly', function() {
+      var appName = 'setting-with-metadata';
+      var manifest = loadManifest({
+        type: 'application',
+        name: appName,
+        path: lab.getAppHome(appName),
+      }, issueInspector);
+      assert.isObject(lodash.get(manifest, ['config', 'migration']));
+      assert.isObject(lodash.get(manifest, ['config', 'validation', 'schema']));
+      assert.isFunction(lodash.get(manifest, ['config', 'validation', 'checkConstraints']));
+    });
+
+    it('return null if manifest not found', function() {
+      var appName = 'plugin-reference-alias';
+      var manifest = loadManifest({
+        type: 'application',
+        name: appName,
+        path: lab.getAppHome(appName),
+      }, issueInspector);
+      assert.isNull(manifest);
+    });
+
+    it('raise an issue if manifest is invalid', function() {
+      var issueInspector = { collect: sinon.stub() }
+      var appName = 'invalid-manifest-schema';
+      var manifest = loadManifest({
+        type: 'application',
+        name: appName,
+        path: lab.getAppHome(appName),
+      }, issueInspector);
+      // returned manifest object
+      assert.isObject(lodash.get(manifest, ['config', 'migration']));
+      assert.isString(lodash.get(manifest, ['config', 'validation', 'schema']));
+      // issueInspector.collect
+      assert.isTrue(issueInspector.collect.calledOnce);
+      var collectArgs = lodash.cloneDeep(issueInspector.collect.firstCall.args);
+      assert.lengthOf(collectArgs, 1);
+      var collectArg = collectArgs[0];
+      collectArg.stack = JSON.parse(collectArg.stack);
+      assert.deepEqual(collectArg, {
+        "stage": "manifest",
+        "type": "application",
+        "name": "invalid-manifest-schema",
+        "hasError": true,
+        "stack": [
+          {
+              "keyword": "type",
+              "dataPath": ".config.validation.schema",
+              "schemaPath": "#/properties/config/properties/validation/properties/schema/type",
+              "params": {
+                  "type": "object"
+              },
+              "message": "should be object"
+          },
+          {
+              "keyword": "type",
+              "dataPath": ".config.validation.schema",
+              "schemaPath": "#/type",
+              "params": {
+                  "type": "object"
+              },
+              "message": "should be object"
+          },
+          {
+              "keyword": "oneOf",
+              "dataPath": ".config.validation.schema",
+              "schemaPath": "#/properties/config/properties/validation/properties/schema/oneOf",
+              "params": {},
+              "message": "should match exactly one schema in oneOf"
+          }
+        ]
+      });
     });
   });
 

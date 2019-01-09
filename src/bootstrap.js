@@ -59,14 +59,6 @@ function appLoader(params={}) {
   if (lodash.isString(appRootPath)) {
     appRef.path = appRootPath;
   }
-  if (lodash.isString(appRef.path)) {
-    appRef.manifest = loadManifest(appRef, issueInspector);
-    appRef.version = loadPackageVersion(appRef);
-    if (!chores.isUpgradeSupported('manifest-refiner')) {
-      delete appRef.manifest;
-      delete appRef.version;
-    }
-  }
   if (lodash.isObject(params.presets)) {
     appRef.presets = lodash.cloneDeep(params.presets);
   }
@@ -76,17 +68,6 @@ function appLoader(params={}) {
     name: constx.FRAMEWORK.NAME,
     path: topRootPath
   };
-
-  if (chores.isUpgradeSupported('manifest-refiner')) {
-    lodash.forOwn(params.pluginRefs, function(ref) {
-      ref.manifest = loadManifest(ref, issueInspector);
-      ref.version = loadPackageVersion(ref);
-    });
-    lodash.forOwn(params.bridgeRefs, function(ref) {
-      ref.manifest = loadManifest(ref, issueInspector);
-      ref.version = loadPackageVersion(ref);
-    });
-  }
 
   // declare user-defined environment variables
   const currentEnvNames = envbox.getEnvNames();
@@ -518,49 +499,6 @@ function locatePackage({issueInspector} = {}, pkgInfo) {
       name: pkgInfo.name,
       stack: err.stack
     });
-    return null;
-  }
-}
-
-function loadPackageVersion(pkgRef, issueInspector) {
-  chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name);
-  const pkgInfo = chores.loadPackageInfo(pkgRef.path);
-  const version = pkgInfo && pkgInfo.version;
-  if (!nodash.isString(version)) {
-    issueInspector && issueInspector.collect({
-      hasError: true,
-      stage: 'package-version',
-      type: pkgRef.type,
-      name: pkgRef.name,
-    });
-  }
-  return version;
-}
-
-function loadManifest(pkgRef, issueInspector) {
-  chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name, issueInspector);
-  const manifest = safeloadManifest(pkgRef.path);
-  if (!lodash.isEmpty(manifest)) {
-    const result = chores.validate(manifest, constx.MANIFEST.SCHEMA_OBJECT);
-    if (!result.ok) {
-      issueInspector && issueInspector.collect({
-        hasError: true,
-        stage: 'manifest',
-        type: pkgRef.type,
-        name: pkgRef.name,
-        stack: JSON.stringify(result.errors, null, 4)
-      });
-    }
-  }
-  return manifest;
-}
-
-function safeloadManifest(pkgPath) {
-  try {
-    const manifest = require(pkgPath).manifest;
-    if (manifest) return manifest;
-    return require(path.join(pkgPath, '/manifest.js'));
-  } catch (err) {
     return null;
   }
 }

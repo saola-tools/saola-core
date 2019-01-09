@@ -23,6 +23,7 @@ describe('tdd:devebot:core:plugin-loader', function() {
       LOGOLITE_ALWAYS_MUTED: 'all'
     });
     LogConfig.reset();
+    issueInspector.reset();
   });
 
   describe('loadRoutines()', function() {
