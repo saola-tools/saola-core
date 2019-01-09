@@ -8,10 +8,11 @@ const nodash = require('../utils/nodash');
 const blockRef = chores.getBlockRef(__filename);
 
 function NameResolver(params={}) {
+  const {issueInspector, bridgeRefs, pluginRefs} = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();
-  const CTX = {L, T, issueInspector: params.issueInspector};
+  const CTX = {L, T, issueInspector};
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
@@ -21,14 +22,14 @@ function NameResolver(params={}) {
   const absoluteAliasMap = {}, relativeAliasMap = {};
 
   function _getAbsoluteAliasMap() {
-    absoluteAliasMap.plugin = absoluteAliasMap.plugin || buildAbsoluteAliasMap(params.pluginRefs);
-    absoluteAliasMap.bridge = absoluteAliasMap.bridge || buildAbsoluteAliasMap(params.bridgeRefs);
+    absoluteAliasMap.plugin = absoluteAliasMap.plugin || buildAbsoluteAliasMap(pluginRefs);
+    absoluteAliasMap.bridge = absoluteAliasMap.bridge || buildAbsoluteAliasMap(bridgeRefs);
     return absoluteAliasMap;
   }
 
   function _getRelativeAliasMap() {
-    relativeAliasMap.plugin = relativeAliasMap.plugin || buildRelativeAliasMap(params.pluginRefs);
-    relativeAliasMap.bridge = relativeAliasMap.bridge || buildRelativeAliasMap(params.bridgeRefs);
+    relativeAliasMap.plugin = relativeAliasMap.plugin || buildRelativeAliasMap(pluginRefs);
+    relativeAliasMap.bridge = relativeAliasMap.bridge || buildRelativeAliasMap(bridgeRefs);
     return relativeAliasMap;
   }
 
@@ -90,8 +91,8 @@ function NameResolver(params={}) {
     this.getDefaultAlias = this.getAliasBy.bind(this, 'codeInCamel');
   }
 
-  extractAliasNames(CTX, 'plugin', params.pluginRefs);
-  extractAliasNames(CTX, 'bridge', params.bridgeRefs);
+  extractAliasNames(CTX, 'plugin', pluginRefs);
+  extractAliasNames(CTX, 'bridge', bridgeRefs);
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-end' ],
