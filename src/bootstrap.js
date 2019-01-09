@@ -96,13 +96,14 @@ function appLoader(params={}) {
     ownershipLabel: util.format('<owned-by-%s>', appName)
   });
 
-  const bridgeRefList = lodash.values(params.bridgeRefs);
-  const pluginRefList = [].concat(appRef, lodash.values(params.pluginRefs), devebotRef);
+  const bridgeList = lodash.values(params.bridgeRefs);
+  const pluginList = lodash.values(params.pluginRefs);
+  const bundleList = [].concat(appRef, pluginList, devebotRef);
 
-  const nameResolver = new NameResolver({ issueInspector, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
-  const manifestHandler = new ManifestHandler({ nameResolver, issueInspector, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
+  const nameResolver = new NameResolver({ issueInspector, bridgeRefs: bridgeList, pluginRefs: pluginList });
+  const manifestHandler = new ManifestHandler({ nameResolver, issueInspector, bridgeRefs: bridgeList, pluginRefs: bundleList });
 
-  stateInspector.register({ nameResolver, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
+  stateInspector.register({ nameResolver, pluginRefs: bundleList, bridgeRefs: bridgeList });
 
   const configLoader = new ConfigLoader({ appName, appOptions,
     appRef, devebotRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,
@@ -121,8 +122,8 @@ function appLoader(params={}) {
         _ref_.config = configLoader.load();
         _ref_.config.appName = appName;
         _ref_.config.appInfo = appInfo;
-        _ref_.config.bridgeRefs = bridgeRefList;
-        _ref_.config.pluginRefs = pluginRefList;
+        _ref_.config.bridgeRefs = bridgeList;
+        _ref_.config.pluginRefs = bundleList;
       }
       return _ref_.config;
     },

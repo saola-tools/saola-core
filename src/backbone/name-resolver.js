@@ -160,7 +160,6 @@ function hasSupportFields(moduleRef) {
 function extractAliasNames(ctx, type, moduleRefs) {
   const {issueInspector} = ctx;
   function buildSupportFields(moduleRef) {
-    if (chores.isSpecialPlugin(moduleRef.type)) return;
     const info = chores.extractCodeByPattern(LIB_NAME_PATTERNS[type], moduleRef.name);
     if (info.i >= 0) {
       moduleRef.code = info.code;
