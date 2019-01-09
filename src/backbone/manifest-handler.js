@@ -23,7 +23,7 @@ function ManifestHandler(params={}) {
 
   if (chores.isUpgradeSupported('manifest-refiner')) {
     lodash.forOwn(pluginRefs, function(ref) {
-      if (ref.type === 'framework') return;
+      if (chores.isFrameworkBundle(ref)) return;
       if (!lodash.isString(ref.path)) return;
       ref.manifest = loadManifest(ref, issueInspector);
       ref.version = loadPackageVersion(ref);

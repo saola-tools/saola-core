@@ -197,8 +197,21 @@ chores.homedir = (typeof os.homedir === 'function') ? os.homedir : function() {
 
 const SPECIAL_BUNDLES = ['application', 'framework', constx.FRAMEWORK.NAME];
 
-chores.isSpecialPlugin = function(bundleCode) {
-  return (SPECIAL_BUNDLES.indexOf(bundleCode) >= 0);
+chores.isSpecialPlugin = function(bundle) {
+  return (SPECIAL_BUNDLES.indexOf(_getBundleType(bundle)) >= 0);
+}
+
+chores.isAppboxBundle = function(bundle) {
+  return _getBundleType(bundle) === 'application';
+}
+
+chores.isFrameworkBundle = function(bundle) {
+  const type = _getBundleType(bundle);
+  return type === 'framework' || type === 'devebot';
+}
+
+function _getBundleType(bundle) {
+  return lodash.isString(bundle) && bundle || lodash.isObject(bundle) && bundle.type;
 }
 
 chores.extractCodeByPattern = function(patterns, name) {
