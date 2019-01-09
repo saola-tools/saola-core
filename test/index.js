@@ -85,7 +85,7 @@ var lab = module.exports = {
     return 60000;
   },
   getFrameworkInfo: function() {
-    return chores.loadPackageInfo(this.getDevebotHome());
+    return chores.loadPackageInfo(this.getDevebotHome(), constx.APPINFO.FIELDS, {});
   },
   getIssueInspector: function() {
     return issueInspector;

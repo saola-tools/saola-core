@@ -17,14 +17,14 @@ function appinfoLoader(appRootPath, libRootPaths, topRootPath) {
     L.log('dunce', ' - load the framework package at: %s', topRootPath);
   }
 
-  const appInfo = chores.loadPackageInfo(appRootPath);
+  const appInfo = chores.loadPackageInfo(appRootPath, constx.APPINFO.FIELDS, {});
 
   if (!lodash.isArray(libRootPaths)) libRootPaths = [];
   appInfo.layerware = libRootPaths.map(function(libRootPath) {
-    return chores.loadPackageInfo(libRootPath);
+    return chores.loadPackageInfo(libRootPath, constx.APPINFO.FIELDS, {});
   });
 
-  appInfo.framework = chores.loadPackageInfo(topRootPath);
+  appInfo.framework = chores.loadPackageInfo(topRootPath, constx.APPINFO.FIELDS, {});
 
   L.has('dunce') && L.log('dunce', ' - appInfo object: %s', JSON.stringify(appInfo, null, 2));
 

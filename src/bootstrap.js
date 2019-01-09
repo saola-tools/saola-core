@@ -56,7 +56,7 @@ function appLoader(params={}) {
   }));
 
   const appRef = { type: 'application', name: appName };
-  if (!lodash.isEmpty(appRootPath)) {
+  if (lodash.isString(appRootPath)) {
     appRef.path = appRootPath;
   }
   if (lodash.isString(appRef.path)) {
@@ -118,10 +118,9 @@ function appLoader(params={}) {
   const pluginRefList = lodash.values(params.pluginRefs);
   const bridgeRefList = lodash.values(params.bridgeRefs);
   const nameResolver = new NameResolver({ issueInspector, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
+  const manifestHandler = new ManifestHandler({ nameResolver, issueInspector, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
 
   stateInspector.register({ nameResolver, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
-
-  const manifestHandler = new ManifestHandler({ nameResolver, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
 
   const configLoader = new ConfigLoader({ appName, appOptions,
     appRef, devebotRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,
@@ -484,12 +483,12 @@ function locatePackage({issueInspector} = {}, pkgInfo) {
     const entrypoint = require.resolve(pkgInfo.path);
     const buf = {};
     buf.packagePath = path.dirname(entrypoint);
-    buf.packageJson = loadPackageJson(buf.packagePath);
+    buf.packageJson = chores.loadPackageInfo(buf.packagePath);
     while (buf.packageJson === null) {
       const parentPath = path.dirname(buf.packagePath);
       if (parentPath === buf.packagePath) break;
       buf.packagePath = parentPath;
-      buf.packageJson = loadPackageJson(buf.packagePath);
+      buf.packageJson = chores.loadPackageInfo(buf.packagePath);
     }
     if (nodash.isObject(buf.packageJson)) {
       if (nodash.isString(buf.packageJson.main)) {
@@ -522,17 +521,9 @@ function locatePackage({issueInspector} = {}, pkgInfo) {
   }
 }
 
-function loadPackageJson(pkgRootPath) {
-  try {
-    return JSON.parse(fs.readFileSync(path.join(pkgRootPath, '/package.json'), 'utf8'));
-  } catch(err) {
-    return null;
-  }
-}
-
 function loadPackageVersion(pkgRef, issueInspector) {
   chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name);
-  const pkgInfo = loadPackageJson(pkgRef.path);
+  const pkgInfo = chores.loadPackageInfo(pkgRef.path);
   const version = pkgInfo && pkgInfo.version;
   if (!nodash.isString(version)) {
     issueInspector && issueInspector.collect({

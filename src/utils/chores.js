@@ -47,12 +47,15 @@ chores.formatTemplate = function(tmpl, data) {
   return format(tmpl, data);
 }
 
-chores.loadPackageInfo = function(pkgRootPath) {
+chores.loadPackageInfo = function(pkgRootPath, selectedFieldNames, defaultInfo) {
   try {
-    return lodash.pick(JSON.parse(fs.readFileSync(pkgRootPath + '/package.json', 'utf8')),
-      constx.APPINFO.FIELDS);
+    const pkgJson = JSON.parse(fs.readFileSync(path.join(pkgRootPath, '/package.json'), 'utf8'));
+    if (lodash.isArray(selectedFieldNames)) {
+      return lodash.pick(pkgJson, selectedFieldNames);
+    }
+    return pkgJson;
   } catch(err) {
-    return {};
+    return defaultInfo || null;
   }
 };
 
