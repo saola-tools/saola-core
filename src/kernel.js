@@ -64,14 +64,14 @@ function Kernel(params = {}) {
 
     // validate plugin's configures
     const pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
-    const pluginMetadata = pluginLoader.loadMetadata();
-    L.has('silly') && L.log('silly', T.add({ metadata: pluginMetadata }).toMessage({
+    const bundleMetadata = pluginLoader.loadMetadata();
+    L.has('silly') && L.log('silly', T.add({ metadata: bundleMetadata }).toMessage({
       tags: [ blockRef, 'plugin-config-schema-input' ],
       text: " - plugin's metadata: ${metadata}"
     }));
-    const pluginSchema = extractPluginSchema(SELECTED_FIELDS, pluginMetadata);
+    const bundleSchema = extractBundleSchema(SELECTED_FIELDS, bundleMetadata);
 
-    const result = manifestHandler.validateConfig(configObject, bridgeSchema, pluginSchema);
+    const result = manifestHandler.validateConfig(configObject, bridgeSchema, bundleSchema);
     issueInspector.collect(result).barrier({ invoker: blockRef, footmark: 'metadata-validating' });
   }
 
@@ -126,20 +126,20 @@ function extractBridgeSchema(selectedFields, bridgeMetadata) {
 
 //-----------------------------------------------------------------------------
 
-function extractPluginSchema(selectedFields, pluginMetadata) {
-  const pluginSchema = {};
-  pluginSchema.profile = pluginSchema.profile || {};
-  pluginSchema.sandbox = pluginSchema.sandbox || {};
-  lodash.forOwn(pluginMetadata, function(metainf, key) {
+function extractBundleSchema(selectedFields, bundleMetadata) {
+  const bundleSchema = {};
+  bundleSchema.profile = bundleSchema.profile || {};
+  bundleSchema.sandbox = bundleSchema.sandbox || {};
+  lodash.forOwn(bundleMetadata, function(metainf, key) {
     const def = metainf && metainf.default || {};
     if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
       if (chores.isSpecialPlugin(def.pluginCode)) {
-        pluginSchema[def.type][def.pluginCode] = lodash.pick(def, selectedFields);
+        bundleSchema[def.type][def.pluginCode] = lodash.pick(def, selectedFields);
       } else {
-        pluginSchema[def.type]['plugins'] = pluginSchema[def.type]['plugins'] || {};
-        pluginSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, selectedFields);
+        bundleSchema[def.type]['plugins'] = bundleSchema[def.type]['plugins'] || {};
+        bundleSchema[def.type]['plugins'][def.pluginCode] = lodash.pick(def, selectedFields);
       }
     }
   });
-  return pluginSchema;
+  return bundleSchema;
 }

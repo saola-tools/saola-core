@@ -32,8 +32,8 @@ describe('tdd:devebot:core:manifest-handler', function() {
     chores.clearCache();
   });
 
-  describe('extractPluginSchema()', function() {
-    var combinePluginSchema = ManifestHandler.__get__('combinePluginSchema');
+  describe('extractBundleSchema()', function() {
+    var combineBundleSchema = ManifestHandler.__get__('combineBundleSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
@@ -56,7 +56,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
       var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
       var C = {L, T, schemaValidator, nameResolver};
       // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
-      var pluginRefs = [
+      var bundleList = [
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper1",
@@ -115,9 +115,9 @@ describe('tdd:devebot:core:manifest-handler', function() {
         }
       ];
 
-      var pluginSchema = combinePluginSchema(C, pluginRefs);
-      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
-      assert.deepEqual(pluginSchema, {
+      var bundleSchema = combineBundleSchema(C, bundleList);
+      false && console.log('bundleSchema: %s', JSON.stringify(bundleSchema, null, 2));
+      assert.deepEqual(bundleSchema, {
         "profile": {},
         "sandbox": {
           "plugins": {
@@ -171,7 +171,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
         "bridge1", "bridge2", "bridge3"
       ]);
       var C = {L, T, schemaValidator, nameResolver};
-      var pluginRefs = [
+      var bundleList = [
         {
           "type": "application",
           "name": "fullapp",
@@ -278,7 +278,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
           "pluginDepends": [],
         }
       ];
-      var expectedPluginSchema = {
+      var expectedBundleSchema = {
         "profile": {},
         "sandbox": {
           "application": {
@@ -342,13 +342,13 @@ describe('tdd:devebot:core:manifest-handler', function() {
           }
         }
       };
-      var pluginSchema = combinePluginSchema(C, pluginRefs);
-      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
-      assert.deepEqual(pluginSchema, expectedPluginSchema);
+      var bundleSchema = combineBundleSchema(C, bundleList);
+      false && console.log('bundleSchema: %s', JSON.stringify(bundleSchema, null, 2));
+      assert.deepEqual(bundleSchema, expectedBundleSchema);
     });
   });
 
-  describe('validatePluginConfig()', function() {
+  describe('validateBundleConfig()', function() {
     var checkSandboxConstraintsOfCrates = ManifestHandler.__get__('checkSandboxConstraintsOfCrates');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
@@ -673,7 +673,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
         'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner',
         'DEVEBOT_UPGRADE_DISABLED': 'metadata-refiner'
       });
-      var bridgeRefs = lodash.values({
+      var bridgeList = lodash.values({
         "/test/lib/bridge1": {
           "name": "bridge1",
           "type": "bridge",
@@ -751,7 +751,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
         },
       })
 
-      var bridgeSchema = combineBridgeSchema(CTX, bridgeRefs);
+      var bridgeSchema = combineBridgeSchema(CTX, bridgeList);
 
       false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);

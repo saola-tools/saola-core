@@ -10,7 +10,7 @@ const blockRef = chores.getBlockRef(__filename);
 const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
 
 function ManifestHandler(params={}) {
-  const {nameResolver, issueInspector, pluginRefs, bridgeRefs} = params;
+  const {nameResolver, issueInspector, bridgeList, bundleList} = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();
@@ -22,13 +22,13 @@ function ManifestHandler(params={}) {
   }));
 
   if (chores.isUpgradeSupported('manifest-refiner')) {
-    lodash.forOwn(pluginRefs, function(ref) {
+    lodash.forOwn(bundleList, function(ref) {
       if (chores.isFrameworkBundle(ref)) return;
       if (!lodash.isString(ref.path)) return;
       ref.manifest = loadManifest(ref, issueInspector);
       ref.version = loadPackageVersion(ref);
     });
-    lodash.forOwn(bridgeRefs, function(ref) {
+    lodash.forOwn(bridgeList, function(ref) {
       ref.manifest = loadManifest(ref, issueInspector);
       ref.version = loadPackageVersion(ref);
     });
@@ -36,15 +36,15 @@ function ManifestHandler(params={}) {
 
   this.SELECTED_FIELDS = SELECTED_FIELDS;
 
-  this.validateConfig = function (configStore, bridgeSchema, pluginSchema, result = []) {
+  this.validateConfig = function (configStore, bridgeSchema, bundleSchema, result = []) {
     const bridgeConfig = lodash.get(configStore, ['sandbox', 'mixture', 'bridges'], {});
-    validateBridgeConfig(C, bridgeConfig, combineBridgeSchema(C, bridgeRefs, bridgeSchema), result);
+    validateBridgeConfig(C, bridgeConfig, combineBridgeSchema(C, bridgeList, bridgeSchema), result);
 
-    const pluginConfig = {
+    const bundleConfig = {
       profile: lodash.get(configStore, ['profile', 'mixture'], {}),
       sandbox: lodash.pick(lodash.get(configStore, ['sandbox', 'mixture'], {}), ['application', 'plugins'])
     }
-    validatePluginConfig(C, pluginConfig, combinePluginSchema(C, pluginRefs, pluginSchema), result);
+    validateBundleConfig(C, bundleConfig, combineBundleSchema(C, bundleList, bundleSchema), result);
 
     // summarize validating result
     L.has('silly') && L.log('silly', T.add({ result }).toMessage({
@@ -78,9 +78,9 @@ module.exports = ManifestHandler;
 
 //-----------------------------------------------------------------------------
 
-function combineBridgeSchema(ref, bridgeRefs, bridgeSchema = {}) {
+function combineBridgeSchema(ref, bridgeList, bridgeSchema = {}) {
   const { nameResolver } = ref;
-  lodash.forEach(bridgeRefs, function(bridgeRef) {
+  lodash.forEach(bridgeList, function(bridgeRef) {
     let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
     if (!chores.isUpgradeSupported('refining-name-resolver')) {
       bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
@@ -157,56 +157,56 @@ function customizeBridgeResult(result, bridgeCode, pluginName, dialectName) {
 
 //-----------------------------------------------------------------------------
 
-function combinePluginSchema(ref, pluginRefs, pluginSchema = {}) {
+function combineBundleSchema(ref, bundleList, bundleSchema = {}) {
   const { L, T, nameResolver } = ref;
-  pluginSchema.profile = pluginSchema.profile || {};
-  pluginSchema.sandbox = pluginSchema.sandbox || {};
-  lodash.forEach(pluginRefs, function(pluginRef) {
-    let pluginCode = nameResolver.getDefaultAliasOf(pluginRef.name, pluginRef.type);
+  bundleSchema.profile = bundleSchema.profile || {};
+  bundleSchema.sandbox = bundleSchema.sandbox || {};
+  lodash.forEach(bundleList, function(bundleRef) {
+    let pluginCode = nameResolver.getDefaultAliasOf(bundleRef.name, bundleRef.type);
     if (!chores.isUpgradeSupported('refining-name-resolver')) {
-      pluginCode = nameResolver.getDefaultAlias(pluginRef);
+      pluginCode = nameResolver.getDefaultAlias(bundleRef);
     }
     if (chores.isUpgradeSupported('manifest-refiner')) {
       const configType = 'sandbox';
-      let validationBlock = lodash.get(pluginRef, ['manifest', constx.MANIFEST.DEFAULT_ROOT_NAME, 'validation']);
+      let validationBlock = lodash.get(bundleRef, ['manifest', constx.MANIFEST.DEFAULT_ROOT_NAME, 'validation']);
       if (lodash.isObject(validationBlock)) {
         validationBlock = lodash.pick(validationBlock, SELECTED_FIELDS);
-        validationBlock.crateScope = nameResolver.getOriginalNameOf(pluginRef.name, pluginRef.type);
+        validationBlock.crateScope = nameResolver.getOriginalNameOf(bundleRef.name, bundleRef.type);
         if (chores.isSpecialPlugin(pluginCode)) {
-          pluginSchema[configType][pluginCode] = validationBlock;
+          bundleSchema[configType][pluginCode] = validationBlock;
         } else {
-          pluginSchema[configType]['plugins'] = pluginSchema[configType]['plugins'] || {};
-          pluginSchema[configType]['plugins'][pluginCode] = validationBlock;
+          bundleSchema[configType]['plugins'] = bundleSchema[configType]['plugins'] || {};
+          bundleSchema[configType]['plugins'][pluginCode] = validationBlock;
         }
       }
     }
     // apply 'schemaValidation' option from presets for plugins
-    if (pluginRef.presets && pluginRef.presets.schemaValidation === false) {
+    if (bundleRef.presets && bundleRef.presets.schemaValidation === false) {
       if (!chores.isSpecialPlugin(pluginCode)) {
         lodash.forEach(['profile', 'sandbox'], function(configType) {
-          lodash.set(pluginSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
+          lodash.set(bundleSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
         });
       }
     }
-    // apply 'pluginDepends' & 'bridgeDepends' to pluginSchema
+    // apply 'pluginDepends' & 'bridgeDepends' to bundleSchema
     lodash.forEach(['bridgeDepends', 'pluginDepends'], function(depType) {
-      if (lodash.isArray(pluginRef[depType])) {
-        lodash.set(pluginSchema, ['sandbox', 'plugins', pluginCode, depType], pluginRef[depType]);
+      if (lodash.isArray(bundleRef[depType])) {
+        lodash.set(bundleSchema, ['sandbox', 'plugins', pluginCode, depType], bundleRef[depType]);
       }
     });
   });
-  return pluginSchema;
+  return bundleSchema;
 }
 
-function validatePluginConfig(ref, pluginConfig, pluginSchema, result) {
+function validateBundleConfig(ref, bundleConfig, bundleSchema, result) {
   const { L, T } = ref;
-  L.has('silly') && L.log('silly', T.add({ pluginConfig, pluginSchema }).toMessage({
-    tags: [ blockRef, 'validate-plugin-config-by-schema' ],
+  L.has('silly') && L.log('silly', T.add({ bundleConfig, bundleSchema }).toMessage({
+    tags: [ blockRef, 'validate-bundle-config-by-schema' ],
     text: ' - Synchronize the structure of configuration data and schemas'
   }));
   result = result || [];
-  validateSandboxSchemaOfCrates(ref, result, pluginConfig.sandbox, pluginSchema.sandbox);
-  checkSandboxConstraintsOfCrates(ref, result, pluginConfig.sandbox, pluginSchema.sandbox);
+  validateSandboxSchemaOfCrates(ref, result, bundleConfig.sandbox, bundleSchema.sandbox);
+  checkSandboxConstraintsOfCrates(ref, result, bundleConfig.sandbox, bundleSchema.sandbox);
 }
 
 function validateSandboxSchemaOfCrates(ref, result, config, schema) {
@@ -232,7 +232,7 @@ function validateSandboxSchemaOfCrate(ref, result, crateConfig, crateSchema, cra
     result.push(customizeSandboxResult(r, crateSchema.crateScope, 'schema'));
   } else {
     L.has('silly') && L.log('silly', T.add({ crateName, crateConfig, crateSchema }).toMessage({
-      tags: [ blockRef, 'validate-plugin-config-by-schema-skipped' ],
+      tags: [ blockRef, 'validate-bundle-config-by-schema-skipped' ],
       text: ' - Validating sandboxConfig[${crateName}] is skipped'
     }));
   }

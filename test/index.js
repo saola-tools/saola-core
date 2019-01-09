@@ -200,7 +200,7 @@ lab.createKernel = function(appName) {
     pluginRefs: _config.pluginRefs, bridgeRefs: _config.bridgeRefs});
 
   var manifestHandler = new ManifestHandler({nameResolver, 
-    pluginRefs: _config.pluginRefs, bridgeRefs: _config.bridgeRefs});
+    bundleList: _config.pluginRefs, bridgeList: _config.bridgeRefs});
 
   var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
   return new Kernel({configObject: _config, issueInspector, stateInspector, nameResolver, manifestHandler});

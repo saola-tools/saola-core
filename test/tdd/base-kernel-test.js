@@ -34,9 +34,9 @@ describe('tdd:devebot:base:kernel', function() {
     chores.clearCache();
   });
 
-  describe('extractPluginSchema()', function() {
+  describe('extractBundleSchema()', function() {
     var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
-    var extractPluginSchema = rewiredKernel.__get__('extractPluginSchema');
+    var extractBundleSchema = rewiredKernel.__get__('extractBundleSchema');
 
     beforeEach(function() {
       stepEnv.reset();
@@ -53,7 +53,7 @@ describe('tdd:devebot:base:kernel', function() {
         'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
         'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
       });
-      var pluginMetadata = {
+      var bundleMetadata = {
         "devebot-dp-wrapper1/sandbox": {
           "default": {
             "crateScope": "devebot-dp-wrapper1",
@@ -94,9 +94,9 @@ describe('tdd:devebot:base:kernel', function() {
         }
       }
 
-      var pluginSchema = extractPluginSchema(SELECTED_FIELDS, pluginMetadata);
-      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
-      assert.deepEqual(pluginSchema, {
+      var bundleSchema = extractBundleSchema(SELECTED_FIELDS, bundleMetadata);
+      false && console.log('bundleSchema: %s', JSON.stringify(bundleSchema, null, 2));
+      assert.deepEqual(bundleSchema, {
         "profile": {},
         "sandbox": {
           "plugins": {
@@ -138,7 +138,7 @@ describe('tdd:devebot:base:kernel', function() {
         'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
         'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
       });
-      var pluginMetadata = {
+      var bundleMetadata = {
         "application/sandbox": {
           "default": {
             "crateScope": "application",
@@ -217,7 +217,7 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       }
-      var expectedPluginSchema = {
+      var expectedBundleSchema = {
         "profile": {},
         "sandbox": {
           "application": {
@@ -275,9 +275,9 @@ describe('tdd:devebot:base:kernel', function() {
           }
         }
       };
-      var pluginSchema = extractPluginSchema(SELECTED_FIELDS, pluginMetadata);
-      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
-      assert.deepEqual(pluginSchema, expectedPluginSchema);
+      var bundleSchema = extractBundleSchema(SELECTED_FIELDS, bundleMetadata);
+      false && console.log('bundleSchema: %s', JSON.stringify(bundleSchema, null, 2));
+      assert.deepEqual(bundleSchema, expectedBundleSchema);
     });
   });
 
@@ -410,7 +410,7 @@ describe('tdd:devebot:base:kernel', function() {
           allTags: [ chores.toFullname('devebot', 'manifestHandler'), 'validate-bridge-config-by-schema' ],
           storeTo: 'bridgeData'
         }, {
-          allTags: [ chores.toFullname('devebot', 'manifestHandler'), 'validate-plugin-config-by-schema' ],
+          allTags: [ chores.toFullname('devebot', 'manifestHandler'), 'validate-bundle-config-by-schema' ],
           storeTo: 'pluginData'
         }, {
           allTags: [ chores.toFullname('devebot', 'manifestHandler'), 'validating-config-by-schema-result' ],
@@ -439,18 +439,18 @@ describe('tdd:devebot:base:kernel', function() {
 
       var kernel = lab.createKernel('fullapp');
 
-      var pluginMetadata = lodash.get(loggingStore, 'pluginInput.0.metadata', {});
-      false && console.log('pluginMetadata: %s', JSON.stringify(pluginMetadata, null, 2));
+      var bundleMetadata = lodash.get(loggingStore, 'pluginInput.0.metadata', {});
+      false && console.log('bundleMetadata: %s', JSON.stringify(bundleMetadata, null, 2));
 
       var bridgeConfig = lodash.get(loggingStore, 'bridgeData.0.bridgeConfig', {});
       var bridgeSchema = lodash.get(loggingStore, 'bridgeData.0.bridgeSchema', {});
       false && console.log('bridgeConfig: %s', JSON.stringify(bridgeConfig, null, 2));
       false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
 
-      var pluginConfig = lodash.get(loggingStore, 'pluginData.0.pluginConfig', {});
-      var pluginSchema = lodash.get(loggingStore, 'pluginData.0.pluginSchema', {});
-      false && console.log('pluginConfig: %s', JSON.stringify(pluginConfig, null, 2));
-      false && console.log('pluginSchema: %s', JSON.stringify(pluginSchema, null, 2));
+      var bundleConfig = lodash.get(loggingStore, 'pluginData.0.bundleConfig', {});
+      var bundleSchema = lodash.get(loggingStore, 'pluginData.0.bundleSchema', {});
+      false && console.log('bundleConfig: %s', JSON.stringify(bundleConfig, null, 2));
+      false && console.log('bundleSchema: %s', JSON.stringify(bundleSchema, null, 2));
 
       var result = lodash.get(loggingStore, 'outputValidation.0.result', []);
       false && lodash.forEach(result, function(item) {
@@ -591,7 +591,7 @@ describe('tdd:devebot:base:kernel', function() {
 
       assert.deepInclude(bridgeConfig, expectedBridges);
 
-      assert.deepInclude(pluginConfig.sandbox, {
+      assert.deepInclude(bundleConfig.sandbox, {
         "application": {
           "host": "0.0.0.0",
           "port": 17700,
@@ -643,7 +643,7 @@ describe('tdd:devebot:base:kernel', function() {
         }
       });
 
-      var expectedPluginSchemaSandbox = {
+      var expectedBundleSchemaSandbox = {
         "application": {
           "crateScope": "application",
           "schema": {
@@ -710,16 +710,16 @@ describe('tdd:devebot:base:kernel', function() {
         }
       };
       if (!chores.isUpgradeSupported('presets')) {
-        lodash.forEach(lodash.keys(expectedPluginSchemaSandbox.plugins), function(pluginName) {
-          let plugin = lodash.omit(expectedPluginSchemaSandbox.plugins[pluginName], ['bridgeDepends', 'pluginDepends']);
+        lodash.forEach(lodash.keys(expectedBundleSchemaSandbox.plugins), function(pluginName) {
+          let plugin = lodash.omit(expectedBundleSchemaSandbox.plugins[pluginName], ['bridgeDepends', 'pluginDepends']);
           if (lodash.isEmpty(plugin)) {
-            delete expectedPluginSchemaSandbox.plugins[pluginName];
+            delete expectedBundleSchemaSandbox.plugins[pluginName];
           } else {
-            expectedPluginSchemaSandbox.plugins[pluginName] = plugin;
+            expectedBundleSchemaSandbox.plugins[pluginName] = plugin;
           }
         });
       }
-      assert.deepInclude(pluginSchema.sandbox, expectedPluginSchemaSandbox);
+      assert.deepInclude(bundleSchema.sandbox, expectedBundleSchemaSandbox);
 
       // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
       if (true) {

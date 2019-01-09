@@ -101,7 +101,7 @@ function appLoader(params={}) {
   const bundleList = [].concat(appRef, pluginList, devebotRef);
 
   const nameResolver = new NameResolver({ issueInspector, bridgeRefs: bridgeList, pluginRefs: pluginList });
-  const manifestHandler = new ManifestHandler({ nameResolver, issueInspector, bridgeRefs: bridgeList, pluginRefs: bundleList });
+  const manifestHandler = new ManifestHandler({ nameResolver, issueInspector, bridgeList, bundleList });
 
   stateInspector.register({ nameResolver, pluginRefs: bundleList, bridgeRefs: bridgeList });
 
