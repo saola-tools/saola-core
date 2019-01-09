@@ -96,13 +96,13 @@ var lab = module.exports = {
   getNameResolver: function(pluginDescriptors, bridgeDescriptors) {
     return new NameResolver({
       issueInspector,
-      bridgeRefs: lodash.map(bridgeDescriptors, function(descriptor) {
+      bridgeList: lodash.map(bridgeDescriptors, function(descriptor) {
         if (lodash.isString(descriptor)) {
           descriptor = { name: descriptor, path: lab.getLibHome(descriptor) }
         }
         return descriptor;
       }),
-      pluginRefs: lodash.map(pluginDescriptors, function(descriptor) {
+      pluginList: lodash.map(pluginDescriptors, function(descriptor) {
         if (lodash.isString(descriptor)) {
           descriptor = { name: descriptor, path: lab.getLibHome(descriptor) }
         }
@@ -128,8 +128,10 @@ var _initInjectedObjects = function(appName, injectedObjects) {
     profileConfig: {},
     textureNames: [],
     textureConfig: {},
+    bridgeList: [],
+    pluginList: [],
     bridgeRefs: [],
-    pluginRefs: []
+    pluginRefs: [],
   };
   if (appName) {
     var app = lab.getApp(appName);
@@ -148,8 +150,8 @@ var _initInjectedObjects = function(appName, injectedObjects) {
         }
       }
     }
-    injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
-    injectedObjects.pluginRefs = app.config.pluginRefs || [];
+    injectedObjects.bridgeList = injectedObjects.bridgeRefs = app.config.bridgeRefs || [];
+    injectedObjects.pluginList = injectedObjects.pluginRefs = app.config.pluginRefs || [];
   }
   injectedObjects.issueInspector = issueInspector;
   return injectedObjects;
@@ -197,7 +199,7 @@ lab.createKernel = function(appName) {
   }
 
   var nameResolver = new NameResolver({issueInspector, 
-    pluginRefs: _config.pluginRefs, bridgeRefs: _config.bridgeRefs});
+    pluginList: _config.pluginRefs, bridgeList: _config.bridgeRefs});
 
   var manifestHandler = new ManifestHandler({nameResolver, 
     bundleList: _config.pluginRefs, bridgeList: _config.bridgeRefs});
@@ -264,8 +266,10 @@ lab.createRunhookManager = function(appName, injectedObjects) {
   injectedObjects = lodash.assign({
     appName: appName || 'unknown',
     appInfo: {},
-    pluginRefs: [],
+    bridgeList: [],
+    pluginList: [],
     bridgeRefs: [],
+    pluginRefs: [],
     injectedHandlers: {}
   }, injectedObjects);
   if (appName) {
@@ -277,8 +281,8 @@ lab.createRunhookManager = function(appName, injectedObjects) {
       injectedObjects[name + 'Name'] = app.config[name].names.join(',');
       injectedObjects[name + 'Config'] = app.config[name].mixture;
     })
-    injectedObjects.pluginRefs = app.config.pluginRefs;
-    injectedObjects.bridgeRefs = app.config.bridgeRefs;
+    injectedObjects.bridgeList = injectedObjects.bridgeRefs = app.config.bridgeRefs;
+    injectedObjects.pluginList = injectedObjects.pluginRefs = app.config.pluginRefs;
     injectedObjects.injectedHandlers = {};
   }
   injectedObjects.issueInspector = issueInspector;
@@ -298,8 +302,10 @@ lab.createSandboxManager = function(appName, injectedObjects) {
     profileConfig: {},
     sandboxNames: [ 'default' ],
     sandboxConfig: {},
+    bridgeList: [],
+    pluginList: [],
     bridgeRefs: [],
-    pluginRefs: []
+    pluginRefs: [],
   }, injectedObjects);
   if (appName) {
     var app = lab.getApp(appName);
@@ -310,8 +316,8 @@ lab.createSandboxManager = function(appName, injectedObjects) {
       injectedObjects[name + 'Names'] = app.config[name].names;
       injectedObjects[name + 'Config'] = app.config[name].mixture;
     })
-    injectedObjects.bridgeRefs = app.config.bridgeRefs;
-    injectedObjects.pluginRefs = app.config.pluginRefs;
+    injectedObjects.bridgeList = injectedObjects.bridgeRefs = app.config.bridgeRefs;
+    injectedObjects.pluginList = injectedObjects.pluginRefs = app.config.pluginRefs;
   }
   injectedObjects.issueInspector = issueInspector;
   var injektor = new Injektor({ separator: chores.getSeparator() });

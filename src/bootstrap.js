@@ -100,7 +100,7 @@ function appLoader(params={}) {
   const pluginList = lodash.values(params.pluginRefs);
   const bundleList = [].concat(appRef, pluginList, devebotRef);
 
-  const nameResolver = new NameResolver({ issueInspector, bridgeRefs: bridgeList, pluginRefs: pluginList });
+  const nameResolver = new NameResolver({ issueInspector, bridgeList, pluginList });
   const manifestHandler = new ManifestHandler({ nameResolver, issueInspector, bridgeList, bundleList });
 
   stateInspector.register({ nameResolver, pluginRefs: bundleList, bridgeRefs: bridgeList });

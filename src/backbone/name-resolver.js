@@ -8,7 +8,7 @@ const nodash = require('../utils/nodash');
 const blockRef = chores.getBlockRef(__filename);
 
 function NameResolver(params={}) {
-  const {issueInspector, bridgeRefs, pluginRefs} = params;
+  const {issueInspector, bridgeList, pluginList} = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();
@@ -22,14 +22,14 @@ function NameResolver(params={}) {
   const absoluteAliasMap = {}, relativeAliasMap = {};
 
   function _getAbsoluteAliasMap() {
-    absoluteAliasMap.plugin = absoluteAliasMap.plugin || buildAbsoluteAliasMap(pluginRefs);
-    absoluteAliasMap.bridge = absoluteAliasMap.bridge || buildAbsoluteAliasMap(bridgeRefs);
+    absoluteAliasMap.plugin = absoluteAliasMap.plugin || buildAbsoluteAliasMap(pluginList);
+    absoluteAliasMap.bridge = absoluteAliasMap.bridge || buildAbsoluteAliasMap(bridgeList);
     return absoluteAliasMap;
   }
 
   function _getRelativeAliasMap() {
-    relativeAliasMap.plugin = relativeAliasMap.plugin || buildRelativeAliasMap(pluginRefs);
-    relativeAliasMap.bridge = relativeAliasMap.bridge || buildRelativeAliasMap(bridgeRefs);
+    relativeAliasMap.plugin = relativeAliasMap.plugin || buildRelativeAliasMap(pluginList);
+    relativeAliasMap.bridge = relativeAliasMap.bridge || buildRelativeAliasMap(bridgeList);
     return relativeAliasMap;
   }
 
@@ -91,8 +91,8 @@ function NameResolver(params={}) {
     this.getDefaultAlias = this.getAliasBy.bind(this, 'codeInCamel');
   }
 
-  extractAliasNames(CTX, 'plugin', pluginRefs);
-  extractAliasNames(CTX, 'bridge', bridgeRefs);
+  extractAliasNames(CTX, 'plugin', pluginList);
+  extractAliasNames(CTX, 'bridge', bridgeList);
 
   L.has('silly') && L.log('silly', T.toMessage({
     tags: [ blockRef, 'constructor-end' ],
@@ -107,7 +107,7 @@ NameResolver.argumentSchema = {
     "issueInspector": {
       "type": "object"
     },
-    "pluginRefs": {
+    "pluginList": {
       "type": "array",
       "items": {
         "type": "object",
@@ -122,7 +122,7 @@ NameResolver.argumentSchema = {
         "required": ["name"]
       }
     },
-    "bridgeRefs": {
+    "bridgeList": {
       "type": "array",
       "items": {
         "type": "object",

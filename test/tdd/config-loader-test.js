@@ -54,8 +54,8 @@ describe('tdd:devebot:core:config-loader', function() {
 
   var nameResolver = new NameResolver({
     issueInspector,
-    pluginRefs: lodash.values(pluginRefs),
-    bridgeRefs: lodash.values(bridgeRefs)
+    pluginList: lodash.values(pluginRefs),
+    bridgeList: lodash.values(bridgeRefs)
   });
 
   describe('transformConfig(): standardizing loaded configuration data', function() {
