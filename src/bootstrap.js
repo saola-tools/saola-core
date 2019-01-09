@@ -103,7 +103,7 @@ function appLoader(params={}) {
   const nameResolver = new NameResolver({ issueInspector, bridgeList, pluginList });
   const manifestHandler = new ManifestHandler({ nameResolver, issueInspector, bridgeList, bundleList });
 
-  stateInspector.register({ nameResolver, pluginRefs: bundleList, bridgeRefs: bridgeList });
+  stateInspector.register({ nameResolver, bridgeList, pluginList });
 
   const configLoader = new ConfigLoader({ appName, appOptions,
     appRef, devebotRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,

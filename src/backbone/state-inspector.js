@@ -59,21 +59,21 @@ function StateInspector(params={}) {
 
   this.examine = function(opts) {
     assert(lodash.isObject(services.nameResolver));
-    assert(lodash.isArray(services.pluginRefs));
-    assert(lodash.isArray(services.bridgeRefs));
+    assert(lodash.isArray(services.bridgeList));
+    assert(lodash.isArray(services.pluginList));
 
     // extract bridge names
-    const bridgeNames = lodash.map(services.bridgeRefs, 'name');
+    const bridgeNames = lodash.map(services.bridgeList, 'name');
     L.has('debug') && L.log('debug', T.add({bridgeNames}).toMessage({
       tags: [ blockRef, 'examine', 'bridge-names'],
       text: ' - bridge names: ${bridgeNames}'
     }));
 
     // extract plugin names
-    const pluginRefs = lodash.filter(services.pluginRefs, function(pluginRef) {
+    const pluginList = lodash.filter(services.pluginList, function(pluginRef) {
       return pluginRef.type === 'plugin';
     });
-    const pluginNames = lodash.map(pluginRefs, 'name');
+    const pluginNames = lodash.map(pluginList, 'name');
     L.has('debug') && L.log('debug', T.add({pluginNames}).toMessage({
       tags: [ blockRef, 'examine', 'plugin-names'],
       text: ' - plugin names: ${pluginNames}'
