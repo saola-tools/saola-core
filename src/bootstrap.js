@@ -132,16 +132,32 @@ function appLoader(params={}) {
 
   Object.defineProperty(_app_, 'runner', {
     get: function() {
-      const args = { configObject: this.config, manifestHandler, contextManager, issueInspector, stateInspector, nameResolver };
-      return _ref_.runner = _ref_.runner || new Runner(args);
+      return _ref_.runner = _ref_.runner || new Runner({
+        configObject: this.config,
+        bridgeList,
+        bundleList,
+        contextManager,
+        issueInspector,
+        stateInspector,
+        nameResolver,
+        manifestHandler,
+      });
     },
     set: function(value) {}
   });
 
   Object.defineProperty(_app_, 'server', {
     get: function() {
-      const args = { configObject: this.config, manifestHandler, contextManager, issueInspector, stateInspector, nameResolver };
-      return _ref_.server = _ref_.server || new Server(args);
+      return _ref_.server = _ref_.server || new Server({
+        configObject: this.config,
+        bridgeList,
+        bundleList,
+        contextManager,
+        issueInspector,
+        stateInspector,
+        nameResolver,
+        manifestHandler,
+      });
     },
     set: function(value) {}
   });

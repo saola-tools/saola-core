@@ -22,23 +22,23 @@ function PluginLoader(params={}) {
   }));
 
   L.has('dunce') && L.log('dunce', T.add(params).toMessage({
-    text: ' - pluginLoader start with pluginRefs: ${pluginRefs}'
+    text: ' - pluginLoader start with bundleList: ${bundleList}'
   }));
 
   this.loadMetadata = function(metadataMap) {
-    return loadAllMetainfs(CTX, metadataMap, params.pluginRefs);
+    return loadAllMetainfs(CTX, metadataMap, params.bundleList);
   }
 
   this.loadRoutines = function(routineMap, routineContext) {
-    return loadAllScripts(CTX, routineMap, 'ROUTINE', routineContext, params.pluginRefs);
+    return loadAllScripts(CTX, routineMap, 'ROUTINE', routineContext, params.bundleList);
   };
 
   this.loadServices = function(serviceMap) {
-    return loadAllGadgets(CTX, serviceMap, 'SERVICE', params.pluginRefs);
+    return loadAllGadgets(CTX, serviceMap, 'SERVICE', params.bundleList);
   };
 
   this.loadTriggers = function(triggerMap) {
-    return loadAllGadgets(CTX, triggerMap, 'TRIGGER', params.pluginRefs);
+    return loadAllGadgets(CTX, triggerMap, 'TRIGGER', params.bundleList);
   };
 
   L.has('silly') && L.log('silly', T.toMessage({
@@ -51,7 +51,7 @@ PluginLoader.argumentSchema = {
   "$id": "pluginLoader",
   "type": "object",
   "properties": {
-    "pluginRefs": {
+    "bundleList": {
       "type": "array",
       "items": {
         "type": "object",

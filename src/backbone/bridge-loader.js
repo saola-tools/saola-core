@@ -20,18 +20,18 @@ function BridgeLoader(params={}) {
   }));
 
   L.has('dunce') && L.log('dunce', T.add(params).toMessage({
-    text: ' + bridgeLoader start with bridgeRefs: ${bridgeRefs}'
+    text: ' + bridgeLoader start with bridgeList: ${bridgeList}'
   }));
 
   this.loadDialects = function(dialectMap, dialectOptions, optType) {
     dialectMap = dialectMap || {};
-    lodash.defaultsDeep(dialectMap, buildBridgeDialects(CTX, params.bridgeRefs, dialectOptions, optType));
+    lodash.defaultsDeep(dialectMap, buildBridgeDialects(CTX, params.bridgeList, dialectOptions, optType));
     return dialectMap;
   };
 
   this.loadMetadata = function(metadataMap, dialectOptions) {
     metadataMap = metadataMap || {};
-    const bridgeDescriptors = loadBridgeConstructors(CTX, params.bridgeRefs);
+    const bridgeDescriptors = loadBridgeConstructors(CTX, params.bridgeList);
     lodash.defaultsDeep(metadataMap, lodash.mapValues(bridgeDescriptors, function(entrypoint) {
       const construktor = lodash.get(entrypoint, "construktor", {});
       const metadata = construktor.devebotMetadata || construktor.metainf || construktor.metadata || {};
@@ -51,7 +51,7 @@ BridgeLoader.argumentSchema = {
   "$id": "bridgeLoader",
   "type": "object",
   "properties": {
-    "bridgeRefs": {
+    "bridgeList": {
       "type": "array",
       "items": {
         "type": "object",
@@ -138,21 +138,21 @@ function loadBridgeContructor(ctx, bridgeRef) {
   return result;
 };
 
-function loadBridgeConstructors(ctx, bridgeRefs) {
+function loadBridgeConstructors(ctx, bridgeList) {
   const {L, T} = ctx;
 
-  bridgeRefs = lodash.isArray(bridgeRefs) ? bridgeRefs : [];
+  bridgeList = lodash.isArray(bridgeList) ? bridgeList : [];
 
-  bridgeRefs = lodash.filter(bridgeRefs, function(bridgeRef) {
+  bridgeList = lodash.filter(bridgeList, function(bridgeRef) {
     return lodash.isString(bridgeRef.name) && lodash.isString(bridgeRef.path);
   });
 
-  L.has('dunce') && L.log('dunce', T.add({ bridgeRefs }).toMessage({
-    text: ' - load a list of bridge constructors: ${bridgeRefs}'
+  L.has('dunce') && L.log('dunce', T.add({ bridgeList }).toMessage({
+    text: ' - load a list of bridge constructors: ${bridgeList}'
   }));
 
   const bridgeConstructors = {};
-  bridgeRefs.forEach(function(bridgeRef) {
+  bridgeList.forEach(function(bridgeRef) {
     lodash.assign(bridgeConstructors, loadBridgeContructor(ctx, bridgeRef));
   });
 
@@ -318,16 +318,16 @@ function buildBridgeDialect(ctx, dialectOpts) {
   return result;
 };
 
-function buildBridgeDialects(ctx, bridgeRefs, dialectOptions, optType) {
+function buildBridgeDialects(ctx, bridgeList, dialectOptions, optType) {
   const {L, T, nameResolver} = ctx;
 
   optType = (lodash.isNumber(optType)) ? optType : 0;
 
-  L.has('silly') && L.log('silly', T.add({ bridgeRefs }).toMessage({
-    text: ' - bridgeDialects will be built: ${bridgeRefs}'
+  L.has('silly') && L.log('silly', T.add({ bridgeList }).toMessage({
+    text: ' - bridgeDialects will be built: ${bridgeList}'
   }));
 
-  const bridgeConstructors = loadBridgeConstructors(ctx, bridgeRefs);
+  const bridgeConstructors = loadBridgeConstructors(ctx, bridgeList);
 
   if (lodash.isEmpty(dialectOptions)) {
     L.has('silly') && L.log('silly', T.toMessage({

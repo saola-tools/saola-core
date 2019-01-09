@@ -27,16 +27,18 @@ function Kernel(params = {}) {
   }));
 
   // init the default parameters
-  const { configObject, manifestHandler, contextManager, issueInspector, stateInspector, nameResolver } = params;
+  const { configObject, bridgeList, bundleList, manifestHandler, contextManager, issueInspector, stateInspector, nameResolver } = params;
 
   // create injektor instance
   const injektor = new Injektor(chores.injektorOptions);
 
-  ['appName', 'appInfo', 'bridgeRefs', 'pluginRefs'].forEach(function(refName) {
+  ['appName', 'appInfo'].forEach(function(refName) {
     injektor.registerObject(refName, configObject[refName], chores.injektorContext);
   });
 
   injektor
+    .registerObject('bridgeList', bridgeList, chores.injektorContext)
+    .registerObject('bundleList', bundleList, chores.injektorContext)
     .registerObject('contextManager', contextManager, chores.injektorContext)
     .registerObject('issueInspector', issueInspector, chores.injektorContext)
     .registerObject('nameResolver', nameResolver, chores.injektorContext)
