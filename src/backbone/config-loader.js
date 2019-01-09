@@ -152,13 +152,13 @@ function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef,
     libRefs.push(devebotRef);
   }
 
-  const packetRefs = {};
-  if (appRef && appRef.path) packetRefs[appRef.path] = appRef;
-  lodash.assign(packetRefs, pluginRefs);
-  if (devebotRef && devebotRef.path) packetRefs[devebotRef.path] = devebotRef;
+  const bundleRefs = {};
+  if (appRef && appRef.path) bundleRefs[appRef.path] = appRef;
+  lodash.assign(bundleRefs, pluginRefs);
+  if (devebotRef && devebotRef.path) bundleRefs[devebotRef.path] = devebotRef;
 
   let bridgeManifests = extractConfigManifest(ctx, bridgeRefs);
-  let pluginManifests = extractConfigManifest(ctx, packetRefs);
+  let pluginManifests = extractConfigManifest(ctx, bundleRefs);
   if (!chores.isUpgradeSupported('manifest-refiner')) {
     bridgeManifests = pluginManifests = undefined;
   }

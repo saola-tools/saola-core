@@ -115,8 +115,9 @@ function appLoader(params={}) {
     ownershipLabel: util.format('<owned-by-%s>', appName)
   });
 
-  const pluginRefList = lodash.values(params.pluginRefs);
   const bridgeRefList = lodash.values(params.bridgeRefs);
+  const pluginRefList = [].concat(appRef, lodash.values(params.pluginRefs), devebotRef);
+
   const nameResolver = new NameResolver({ issueInspector, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
   const manifestHandler = new ManifestHandler({ nameResolver, issueInspector, pluginRefs: pluginRefList, bridgeRefs: bridgeRefList });
 
@@ -140,7 +141,7 @@ function appLoader(params={}) {
         _ref_.config.appName = appName;
         _ref_.config.appInfo = appInfo;
         _ref_.config.bridgeRefs = bridgeRefList;
-        _ref_.config.pluginRefs = [].concat(appRef || [], pluginRefList, devebotRef);
+        _ref_.config.pluginRefs = pluginRefList;
       }
       return _ref_.config;
     },

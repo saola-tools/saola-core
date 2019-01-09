@@ -62,17 +62,21 @@ function StateInspector(params={}) {
     assert(lodash.isArray(services.pluginRefs));
     assert(lodash.isArray(services.bridgeRefs));
 
-    // extract plugin names, bridge names
-    const pluginNames = lodash.map(services.pluginRefs, 'name');
-    L.has('debug') && L.log('debug', T.add({pluginNames}).toMessage({
-      tags: [ blockRef, 'examine', 'plugin-names'],
-      text: ' - plugin names: ${pluginNames}'
-    }));
-
+    // extract bridge names
     const bridgeNames = lodash.map(services.bridgeRefs, 'name');
     L.has('debug') && L.log('debug', T.add({bridgeNames}).toMessage({
       tags: [ blockRef, 'examine', 'bridge-names'],
       text: ' - bridge names: ${bridgeNames}'
+    }));
+
+    // extract plugin names
+    const pluginRefs = lodash.filter(services.pluginRefs, function(pluginRef) {
+      return pluginRef.type === 'plugin';
+    });
+    const pluginNames = lodash.map(pluginRefs, 'name');
+    L.has('debug') && L.log('debug', T.add({pluginNames}).toMessage({
+      tags: [ blockRef, 'examine', 'plugin-names'],
+      text: ' - plugin names: ${pluginNames}'
     }));
 
     const summary = { config: { sandbox: { plugins: {}, bridges: {} } } };

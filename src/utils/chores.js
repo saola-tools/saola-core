@@ -195,10 +195,10 @@ chores.homedir = (typeof os.homedir === 'function') ? os.homedir : function() {
   return home || null;
 };
 
-const SPECIAL_PLUGINS = ['application', constx.FRAMEWORK.NAME];
+const SPECIAL_BUNDLES = ['application', 'framework', constx.FRAMEWORK.NAME];
 
-chores.isSpecialPlugin = function(pluginCode) {
-  return (SPECIAL_PLUGINS.indexOf(pluginCode) >= 0);
+chores.isSpecialPlugin = function(bundleCode) {
+  return (SPECIAL_BUNDLES.indexOf(bundleCode) >= 0);
 }
 
 chores.extractCodeByPattern = function(patterns, name) {
