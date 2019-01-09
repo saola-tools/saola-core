@@ -1,13 +1,66 @@
 #!/usr/bin/env bash
 
+let "COUNT=0"
 npm run clean-build
+
+echo -e "\n\n"
+echo "------------------------------------------------------------------"
+echo -e "\n\n"
+
+let "COUNT=COUNT+1"
+echo "[${COUNT}] Default environment variables";
 npm run test-without-rebuilding
-DEVEBOT_UPGRADE_DISABLED=presets npm run test-without-rebuilding
-DEVEBOT_UPGRADE_DISABLED=bridge-full-ref npm run test-without-rebuilding
-DEVEBOT_UPGRADE_DISABLED=bridge-full-ref,presets npm run test-without-rebuilding
-DEVEBOT_UPGRADE_DISABLED=standardizing-config npm run test-without-rebuilding
-DEVEBOT_UPGRADE_DISABLED=standardizing-config,bridge-full-ref npm run test-without-rebuilding
-DEVEBOT_UPGRADE_DISABLED=standardizing-config,bridge-full-ref,presets npm run test-without-rebuilding
-DEVEBOT_UPGRADE_DISABLED=gadget-around-log npm run test-without-rebuilding
-DEVEBOT_UPGRADE_DISABLED=refining-name-resolver,simplify-name-resolver npm run test-without-rebuilding
-DEVEBOT_UPGRADE_ENABLED=metadata-refiner DEVEBOT_UPGRADE_DISABLED=manifest-refiner npm run test-without-rebuilding
+
+let "COUNT=COUNT+1"
+UPGRADE_ENABLED=
+UPGRADE_DISABLED=presets
+echo "[${COUNT}] UPGRADE_ENABLED:${UPGRADE_ENABLED:-(empty)} - UPGRADE_DISABLED:${UPGRADE_DISABLED:-(empty)}";
+DEVEBOT_UPGRADE_ENABLED=${UPGRADE_ENABLED} DEVEBOT_UPGRADE_DISABLED=${UPGRADE_DISABLED} npm run test-without-rebuilding
+
+let "COUNT=COUNT+1"
+UPGRADE_ENABLED=
+UPGRADE_DISABLED=bridge-full-ref
+echo "[${COUNT}] UPGRADE_ENABLED:${UPGRADE_ENABLED:-(empty)} - UPGRADE_DISABLED:${UPGRADE_DISABLED:-(empty)}";
+DEVEBOT_UPGRADE_ENABLED=${UPGRADE_ENABLED} DEVEBOT_UPGRADE_DISABLED=${UPGRADE_DISABLED} npm run test-without-rebuilding
+
+let "COUNT=COUNT+1"
+UPGRADE_ENABLED=
+UPGRADE_DISABLED=bridge-full-ref,presets
+echo "[${COUNT}] UPGRADE_ENABLED:${UPGRADE_ENABLED:-(empty)} - UPGRADE_DISABLED:${UPGRADE_DISABLED:-(empty)}";
+DEVEBOT_UPGRADE_ENABLED=${UPGRADE_ENABLED} DEVEBOT_UPGRADE_DISABLED=${UPGRADE_DISABLED} npm run test-without-rebuilding
+
+let "COUNT=COUNT+1"
+UPGRADE_ENABLED=
+UPGRADE_DISABLED=standardizing-config
+echo "[${COUNT}] UPGRADE_ENABLED:${UPGRADE_ENABLED:-(empty)} - UPGRADE_DISABLED:${UPGRADE_DISABLED:-(empty)}";
+DEVEBOT_UPGRADE_ENABLED=${UPGRADE_ENABLED} DEVEBOT_UPGRADE_DISABLED=${UPGRADE_DISABLED} npm run test-without-rebuilding
+
+let "COUNT=COUNT+1"
+UPGRADE_ENABLED=
+UPGRADE_DISABLED=standardizing-config,bridge-full-ref
+echo "[${COUNT}] UPGRADE_ENABLED:${UPGRADE_ENABLED:-(empty)} - UPGRADE_DISABLED:${UPGRADE_DISABLED:-(empty)}";
+DEVEBOT_UPGRADE_ENABLED=${UPGRADE_ENABLED} DEVEBOT_UPGRADE_DISABLED=${UPGRADE_DISABLED} npm run test-without-rebuilding
+
+let "COUNT=COUNT+1"
+UPGRADE_ENABLED=
+UPGRADE_DISABLED=standardizing-config,bridge-full-ref,presets
+echo "[${COUNT}] UPGRADE_ENABLED:${UPGRADE_ENABLED:-(empty)} - UPGRADE_DISABLED:${UPGRADE_DISABLED:-(empty)}";
+DEVEBOT_UPGRADE_ENABLED=${UPGRADE_ENABLED} DEVEBOT_UPGRADE_DISABLED=${UPGRADE_DISABLED} npm run test-without-rebuilding
+
+let "COUNT=COUNT+1"
+UPGRADE_ENABLED=
+UPGRADE_DISABLED=gadget-around-log
+echo "[${COUNT}] UPGRADE_ENABLED:${UPGRADE_ENABLED:-(empty)} - UPGRADE_DISABLED:${UPGRADE_DISABLED:-(empty)}";
+DEVEBOT_UPGRADE_ENABLED=${UPGRADE_ENABLED} DEVEBOT_UPGRADE_DISABLED=${UPGRADE_DISABLED} npm run test-without-rebuilding
+
+let "COUNT=COUNT+1"
+UPGRADE_ENABLED=
+UPGRADE_DISABLED=refining-name-resolver,simplify-name-resolver
+echo "[${COUNT}] UPGRADE_ENABLED:${UPGRADE_ENABLED:-(empty)} - UPGRADE_DISABLED:${UPGRADE_DISABLED:-(empty)}";
+DEVEBOT_UPGRADE_ENABLED=${UPGRADE_ENABLED} DEVEBOT_UPGRADE_DISABLED=${UPGRADE_DISABLED} npm run test-without-rebuilding
+
+let "COUNT=COUNT+1"
+UPGRADE_ENABLED=metadata-refiner
+UPGRADE_DISABLED=manifest-refiner
+echo "[${COUNT}] UPGRADE_ENABLED:${UPGRADE_ENABLED:-(empty)} - UPGRADE_DISABLED:${UPGRADE_DISABLED:-(empty)}";
+DEVEBOT_UPGRADE_ENABLED=${UPGRADE_ENABLED} DEVEBOT_UPGRADE_DISABLED=${UPGRADE_DISABLED} npm run test-without-rebuilding
