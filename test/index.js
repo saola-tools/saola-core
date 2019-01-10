@@ -122,21 +122,29 @@ var lab = module.exports = {
 
 var _initInjectedObjects = function(appName, injectedObjects) {
   injectedObjects = injectedObjects || {
-    appName: appName,
+    appName: appName || 'unknown',
     appInfo: {},
-    profileNames: [],
+    profileNames: [ 'default' ],
     profileConfig: {},
-    textureNames: [],
+    sandboxNames: [ 'default' ],
+    sandboxConfig: {},
+    textureNames: [ 'default' ],
     textureConfig: {},
     bridgeList: [],
     bundleList: [],
     pluginList: [],
+    injectedHandlers: {},
   };
   if (appName) {
     var app = lab.getApp(appName);
     injectedObjects.appName = app.config.appName || injectedObjects.appName;
     injectedObjects.appInfo = app.config.appInfo || injectedObjects.appInfo;
-    injectedObjects.profileConfig = app.config.profile || {
+    lodash.forEach(['profile', 'sandbox', 'texture'], function(name) {
+      injectedObjects[name + 'Names'] = app.config[name].names;
+      injectedObjects[name + 'Name'] = app.config[name].names.join(',');
+      injectedObjects[name + 'Config'] = app.config[name].mixture;
+    })
+    injectedObjects.profileConfig = injectedObjects.profileConfig || {
       logger: {
         transports: {
           console: {
@@ -150,10 +158,17 @@ var _initInjectedObjects = function(appName, injectedObjects) {
       }
     }
     injectedObjects.bridgeList = app.config.bridgeList || [];
-    injectedObjects.bundleList = injectedObjects.pluginList = app.config.bundleList || [];
+    injectedObjects.bundleList = app.config.bundleList || [];
+    injectedObjects.pluginList = _extractPluginList(injectedObjects.bundleList);
   }
   injectedObjects.issueInspector = issueInspector;
   return injectedObjects;
+}
+
+var _extractPluginList = function(bundleList) {
+  return lodash.filter(bundleList, function(bundleInfo) {
+    return bundleInfo.type === 'plugin';
+  })
 }
 
 var _attachInjectedObjects = function(injektor, injectedObjects) {
@@ -270,30 +285,8 @@ lab.createProcessManager = function(appName, injectedObjects) {
 }
 
 lab.createRunhookManager = function(appName, injectedObjects) {
-  injectedObjects = lodash.assign({
-    appName: appName || 'unknown',
-    appInfo: {},
-    bridgeList: [],
-    bundleList: [],
-    pluginList: [],
-    injectedHandlers: {}
-  }, injectedObjects);
-  if (appName) {
-    var app = lab.getApp(appName);
-    injectedObjects.appName = app.config.appName;
-    injectedObjects.appInfo = app.config.appInfo;
-    lodash.forEach(['profile', 'sandbox', 'texture'], function(name) {
-      injectedObjects[name + 'Names'] = app.config[name].names;
-      injectedObjects[name + 'Name'] = app.config[name].names.join(',');
-      injectedObjects[name + 'Config'] = app.config[name].mixture;
-    })
-    injectedObjects.bridgeList = app.config.bridgeList;
-    injectedObjects.bundleList = injectedObjects.pluginList = app.config.bundleList;
-    injectedObjects.injectedHandlers = {};
-  }
-  injectedObjects.issueInspector = issueInspector;
   var injektor = new Injektor({ separator: chores.getSeparator() });
-  _attachInjectedObjects(injektor, injectedObjects);
+  _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
     'runhook-manager', 'bundle-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator', 'jobqueue-binder'
   ]);
@@ -301,32 +294,8 @@ lab.createRunhookManager = function(appName, injectedObjects) {
 }
 
 lab.createSandboxManager = function(appName, injectedObjects) {
-  injectedObjects = lodash.assign({
-    appName: appName || 'unknown',
-    appInfo: {},
-    profileNames: [ 'default' ],
-    profileConfig: {},
-    sandboxNames: [ 'default' ],
-    sandboxConfig: {},
-    bridgeList: [],
-    bundleList: [],
-    pluginList: [],
-  }, injectedObjects);
-  if (appName) {
-    var app = lab.getApp(appName);
-    false && console.log('[%s].config: %s', appName, JSON.stringify(app.config, null, 2));
-    injectedObjects.appName = app.config.appName;
-    injectedObjects.appInfo = app.config.appInfo;
-    lodash.forEach(['profile', 'sandbox', 'texture'], function(name) {
-      injectedObjects[name + 'Names'] = app.config[name].names;
-      injectedObjects[name + 'Config'] = app.config[name].mixture;
-    })
-    injectedObjects.bridgeList = app.config.bridgeList;
-    injectedObjects.bundleList = injectedObjects.pluginList = app.config.bundleList;
-  }
-  injectedObjects.issueInspector = issueInspector;
   var injektor = new Injektor({ separator: chores.getSeparator() });
-  _attachInjectedObjects(injektor, injectedObjects);
+  _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
     'context-manager', 'sandbox-manager', 'bridge-loader', 'bundle-loader', 'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver', 'process-manager'
   ]);
