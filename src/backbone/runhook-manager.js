@@ -45,7 +45,7 @@ function RunhookManager(params={}) {
     const customized = {
       loggingFactory: params.loggingFactory.branch(command.name, runhookId)
     }
-    if (command.package && !chores.isSpecialPlugin(command.package)) {
+    if (command.package && !chores.isSpecialBundle(command.package)) {
       if (params.injectedServices && params.injectedServices[command.package]) {
         customized.injectedServices = params.injectedServices[command.package];
       }

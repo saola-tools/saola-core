@@ -133,7 +133,7 @@ function extractBundleSchema(selectedFields, bundleMetadata) {
   lodash.forOwn(bundleMetadata, function(metainf, key) {
     const def = metainf && metainf.default || {};
     if (def.pluginCode && ['profile', 'sandbox'].indexOf(def.type) >= 0) {
-      if (chores.isSpecialPlugin(def.pluginCode)) {
+      if (chores.isSpecialBundle(def.pluginCode)) {
         bundleSchema[def.type][def.pluginCode] = lodash.pick(def, selectedFields);
       } else {
         bundleSchema[def.type]['plugins'] = bundleSchema[def.type]['plugins'] || {};

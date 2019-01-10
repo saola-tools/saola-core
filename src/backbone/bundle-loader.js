@@ -419,7 +419,7 @@ function buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, wrapperName, plu
     // resolve plugin configuration path
     if (newFeatures.sandboxConfig !== false) {
       kwargs = getWrappedParams(kwargs);
-      if (chores.isSpecialPlugin(pluginRootDir.type)) {
+      if (chores.isSpecialBundle(pluginRootDir.type)) {
         kwargs.sandboxConfig = lodash.get(kwargs, ['sandboxConfig', pluginCode], {});
       } else {
         kwargs.sandboxConfig = lodash.get(kwargs, ['sandboxConfig', 'plugins', pluginCode], {});

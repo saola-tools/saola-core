@@ -197,7 +197,7 @@ chores.homedir = (typeof os.homedir === 'function') ? os.homedir : function() {
 
 const SPECIAL_BUNDLES = ['application', 'framework', constx.FRAMEWORK.NAME];
 
-chores.isSpecialPlugin = function(bundle) {
+chores.isSpecialBundle = function(bundle) {
   return (SPECIAL_BUNDLES.indexOf(_getBundleType(bundle)) >= 0);
 }
 

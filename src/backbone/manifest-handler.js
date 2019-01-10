@@ -172,7 +172,7 @@ function combineBundleSchema(ref, bundleList, bundleSchema = {}) {
       if (lodash.isObject(validationBlock)) {
         validationBlock = lodash.pick(validationBlock, SELECTED_FIELDS);
         validationBlock.crateScope = nameResolver.getOriginalNameOf(bundleRef.name, bundleRef.type);
-        if (chores.isSpecialPlugin(pluginCode)) {
+        if (chores.isSpecialBundle(pluginCode)) {
           bundleSchema[configType][pluginCode] = validationBlock;
         } else {
           bundleSchema[configType]['plugins'] = bundleSchema[configType]['plugins'] || {};
@@ -182,7 +182,7 @@ function combineBundleSchema(ref, bundleList, bundleSchema = {}) {
     }
     // apply 'schemaValidation' option from presets for plugins
     if (bundleRef.presets && bundleRef.presets.schemaValidation === false) {
-      if (!chores.isSpecialPlugin(pluginCode)) {
+      if (!chores.isSpecialBundle(pluginCode)) {
         lodash.forEach(['profile', 'sandbox'], function(configType) {
           lodash.set(bundleSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
         });
@@ -310,7 +310,7 @@ function customizeSandboxResult(result, crateScope, validationType) {
   const output = {};
   output.stage = 'config/' + validationType;
   output.name = crateScope;
-  output.type = chores.isSpecialPlugin(crateScope) ? crateScope : 'plugin';
+  output.type = chores.isSpecialBundle(crateScope) ? crateScope : 'plugin';
   output.hasError = result.ok !== true;
   if (!result.ok) {
     if (result.errors) {

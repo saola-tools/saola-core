@@ -644,7 +644,7 @@ function getPluginFullname({pluginName, gadgetType, gadgetName}) {
 function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) {
   const rootToBean = [];
   if (pluginCode) {
-    if (chores.isSpecialPlugin(pluginCode)) {
+    if (chores.isSpecialBundle(pluginCode)) {
       rootToBean.push(pluginCode);
     } else {
       rootToBean.push('plugins', pluginCode);
