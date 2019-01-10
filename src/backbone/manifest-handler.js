@@ -22,13 +22,13 @@ function ManifestHandler(params={}) {
   }));
 
   if (chores.isUpgradeSupported('manifest-refiner')) {
-    lodash.forOwn(bundleList, function(ref) {
-      if (chores.isFrameworkBundle(ref)) return;
-      if (!lodash.isString(ref.path)) return;
+    lodash.forOwn(bridgeList, function(ref) {
       ref.manifest = loadManifest(ref, issueInspector);
       ref.version = loadPackageVersion(ref);
     });
-    lodash.forOwn(bridgeList, function(ref) {
+    lodash.forOwn(bundleList, function(ref) {
+      if (chores.isFrameworkBundle(ref)) return;
+      if (!lodash.isString(ref.path)) return;
       ref.manifest = loadManifest(ref, issueInspector);
       ref.version = loadPackageVersion(ref);
     });

@@ -75,11 +75,6 @@ function Kernel(params = {}) {
     issueInspector.collect(result).barrier({ invoker: blockRef, footmark: 'metadata-validating' });
   }
 
-  if (chores.isUpgradeSupported('manifest-refiner')) {
-    const result = manifestHandler.validateConfig(configObject);
-    issueInspector.collect(result).barrier({ invoker: blockRef, footmark: 'metadata-validating' });
-  }
-
   // initialize plugins, bridges, sandboxManager
   const sandboxManager = injektor.lookup('sandboxManager', chores.injektorContext);
 

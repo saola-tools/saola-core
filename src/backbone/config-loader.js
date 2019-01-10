@@ -35,8 +35,15 @@ function ConfigLoader(params={}) {
   }));
 
   this.load = function() {
-    return loadConfig.bind(null, CTX, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs)
+    const configObject = loadConfig.bind(null, CTX, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs)
         .apply(null, CONFIG_VAR_NAMES.map(readVariable.bind(null, CTX, label)));
+    if (chores.isUpgradeSupported('manifest-refiner')) {
+      if (manifestHandler) {
+        const result = manifestHandler.validateConfig(configObject);
+        issueInspector.collect(result).barrier({ invoker: blockRef, footmark: 'metadata-validating' });
+      }
+    }
+    return configObject;
   }
 
   L.has('silly') && L.log('silly', T.toMessage({

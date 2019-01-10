@@ -9,6 +9,7 @@ var assert = require('chai').assert;
 var path = require('path');
 var ConfigLoader = require(lab.getDevebotModule('backbone/config-loader'));
 var NameResolver = require(lab.getDevebotModule('backbone/name-resolver'));
+var ManifestHandler = require(lab.getDevebotModule('backbone/manifest-handler'));
 var envmask = require('envmask').instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
@@ -54,8 +55,15 @@ describe('tdd:devebot:core:config-loader', function() {
 
   var nameResolver = new NameResolver({
     issueInspector,
+    bridgeList: lodash.values(bridgeRefs),
     pluginList: lodash.values(pluginRefs),
-    bridgeList: lodash.values(bridgeRefs)
+  });
+
+  var manifestHandler = new ManifestHandler({
+    issueInspector,
+    bridgeList: lodash.values(bridgeRefs),
+    bundleList: lodash.concat(appRef, lodash.values(pluginRefs), devebotRef),
+    nameResolver,
   });
 
   describe('transformConfig(): standardizing loaded configuration data', function() {
@@ -1351,6 +1359,192 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
+  describe('convertPreciseConfig(): bridge configure transformation', function() {
+    before(function() {
+      envmask.setup({
+        NODE_ENV: 'test',
+        DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
+        DEVEBOT_CONFIG_ENV: 'dev'
+      });
+    });
+
+    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var convertPreciseConfig = ConfigLoader.__get__('convertPreciseConfig');
+    var RELOADING_FORCED = ConfigLoader.__get__('RELOADING_FORCED');
+
+    it('transform sandboxConfig.bridges from application', function() {
+      var sandboxConfig = {
+        "plugins": {
+          "plugin1": {},
+          "plugin2": {}
+        },
+        "bridges": {
+          "bridge1": {
+            "plugin1": {
+              "anyname1a": {
+                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
+              },
+              "anyname1c": {
+                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
+              }
+            }
+          },
+          "bridge2": {
+            "plugin2": {
+              "anyname2b": {
+                "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
+              }
+            }
+          }
+        }
+      };
+      var exptectedConfig = {
+        "plugins": {
+          "plugin1": {},
+          "plugin2": {}
+        },
+        "bridges": {
+          "bridge1": {
+            "plugin1": {
+              "anyname1a": {
+                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
+              },
+              "anyname1c": {
+                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
+              }
+            }
+          },
+          "bridge2": {
+            "plugin2": {
+              "anyname2b": {
+                "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
+              }
+            }
+          }
+        }
+      };
+      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, 'application');
+      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      assert.deepInclude(convertedCfg, exptectedConfig);
+    });
+
+    it('transform sandboxConfig.bridges from a plugin (without name)', function() {
+      var sandboxConfig = {
+        "plugins": {
+          "plugin1": {},
+          "plugin2": {}
+        },
+        "bridges": {
+          "anyname1a": {
+            "bridge1": {
+              "refPath": "sandbox -> bridge1 -> anyname1a"
+            }
+          },
+          "anyname1c": {
+            "bridge1": {
+              "refPath": "sandbox -> bridge1 -> anyname1c"
+            }
+          },
+          "anyname2b": {
+            "bridge2": {
+              "refPath": "sandbox -> bridge2 -> anyname2b"
+            }
+          }
+        }
+      };
+      var exptectedConfig = lodash.cloneDeep(sandboxConfig);
+      if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
+        exptectedConfig.bridges = {
+          "bridge1": {
+            "*": {
+              "anyname1a": {
+                "refPath": "sandbox -> bridge1 -> anyname1a"
+              },
+              "anyname1c": {
+                "refPath": "sandbox -> bridge1 -> anyname1c"
+              }
+            }
+          },
+          "bridge2": {
+            "*": {
+              "anyname2b": {
+                "refPath": "sandbox -> bridge2 -> anyname2b"
+              }
+            }
+          }
+        };
+        if (!RELOADING_FORCED) {
+          exptectedConfig.bridges.__status__ = true;
+        }
+      }
+      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, 'plugin', null, {
+        configTags: ['bridge[dialect-bridge]']
+      });
+      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      assert.deepInclude(convertedCfg, exptectedConfig);
+    });
+
+    it('transform sandboxConfig.bridges from a named plugin', function() {
+      var sandboxConfig = {
+        "plugins": {
+          "plugin1": {},
+          "plugin2": {}
+        },
+        "bridges": {
+          "anyname1a": {
+            "bridge1": {
+              "refPath": "sandbox -> bridge1 -> anyname1a"
+            }
+          },
+          "anyname1b": {
+            "bridge1": {
+              "refPath": "sandbox -> bridge1 -> anyname1b"
+            }
+          },
+          "anyname3a": {
+            "bridge3": {
+              "refPath": "sandbox -> bridge3 -> anyname3a"
+            }
+          }
+        }
+      };
+      var exptectedConfig = lodash.cloneDeep(sandboxConfig);
+      if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
+        exptectedConfig.bridges = {
+          "bridge1": {
+            "plugin1": {
+              "anyname1a": {
+                "refPath": "sandbox -> bridge1 -> anyname1a"
+              },
+              "anyname1b": {
+                "refPath": "sandbox -> bridge1 -> anyname1b"
+              }
+            }
+          },
+          "bridge3": {
+            "plugin1": {
+              "anyname3a": {
+                "refPath": "sandbox -> bridge3 -> anyname3a"
+              }
+            }
+          }
+        };
+        if (!RELOADING_FORCED) {
+          exptectedConfig.bridges.__status__ = true;
+        }
+      }
+      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
+        configTags: 'bridge[dialect-bridge]'
+      });
+      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      assert.deepInclude(convertedCfg, exptectedConfig);
+    });
+
+    after(function() {
+      envmask.reset();
+    });
+  });
+
   describe('ConfigLoader.load(): default configuration (without profile & sandbox)', function() {
     it('load configuration of nothing (empty loader)', function() {
       // appName: null, appOptions: null, appRootDir: null, libRootDirs: null
@@ -1827,192 +2021,6 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('convertPreciseConfig(): bridge configure transformation', function() {
-    before(function() {
-      envmask.setup({
-        NODE_ENV: 'test',
-        DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
-        DEVEBOT_CONFIG_ENV: 'dev'
-      });
-    });
-
-    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
-    var convertPreciseConfig = ConfigLoader.__get__('convertPreciseConfig');
-    var RELOADING_FORCED = ConfigLoader.__get__('RELOADING_FORCED');
-
-    it('transform sandboxConfig.bridges from application', function() {
-      var sandboxConfig = {
-        "plugins": {
-          "plugin1": {},
-          "plugin2": {}
-        },
-        "bridges": {
-          "bridge1": {
-            "plugin1": {
-              "anyname1a": {
-                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
-              },
-              "anyname1c": {
-                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
-              }
-            }
-          },
-          "bridge2": {
-            "plugin2": {
-              "anyname2b": {
-                "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
-              }
-            }
-          }
-        }
-      };
-      var exptectedConfig = {
-        "plugins": {
-          "plugin1": {},
-          "plugin2": {}
-        },
-        "bridges": {
-          "bridge1": {
-            "plugin1": {
-              "anyname1a": {
-                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1a"
-              },
-              "anyname1c": {
-                "refPath": "sandbox -> bridge1 -> plugin1 -> anyname1c"
-              }
-            }
-          },
-          "bridge2": {
-            "plugin2": {
-              "anyname2b": {
-                "refPath": "sandbox -> bridge2 -> plugin2 -> anyname2b"
-              }
-            }
-          }
-        }
-      };
-      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, 'application');
-      false && console.log(JSON.stringify(convertedCfg, null, 2));
-      assert.deepInclude(convertedCfg, exptectedConfig);
-    });
-
-    it('transform sandboxConfig.bridges from a plugin (without name)', function() {
-      var sandboxConfig = {
-        "plugins": {
-          "plugin1": {},
-          "plugin2": {}
-        },
-        "bridges": {
-          "anyname1a": {
-            "bridge1": {
-              "refPath": "sandbox -> bridge1 -> anyname1a"
-            }
-          },
-          "anyname1c": {
-            "bridge1": {
-              "refPath": "sandbox -> bridge1 -> anyname1c"
-            }
-          },
-          "anyname2b": {
-            "bridge2": {
-              "refPath": "sandbox -> bridge2 -> anyname2b"
-            }
-          }
-        }
-      };
-      var exptectedConfig = lodash.cloneDeep(sandboxConfig);
-      if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
-        exptectedConfig.bridges = {
-          "bridge1": {
-            "*": {
-              "anyname1a": {
-                "refPath": "sandbox -> bridge1 -> anyname1a"
-              },
-              "anyname1c": {
-                "refPath": "sandbox -> bridge1 -> anyname1c"
-              }
-            }
-          },
-          "bridge2": {
-            "*": {
-              "anyname2b": {
-                "refPath": "sandbox -> bridge2 -> anyname2b"
-              }
-            }
-          }
-        };
-        if (!RELOADING_FORCED) {
-          exptectedConfig.bridges.__status__ = true;
-        }
-      }
-      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, 'plugin', null, {
-        configTags: ['bridge[dialect-bridge]']
-      });
-      false && console.log(JSON.stringify(convertedCfg, null, 2));
-      assert.deepInclude(convertedCfg, exptectedConfig);
-    });
-
-    it('transform sandboxConfig.bridges from a named plugin', function() {
-      var sandboxConfig = {
-        "plugins": {
-          "plugin1": {},
-          "plugin2": {}
-        },
-        "bridges": {
-          "anyname1a": {
-            "bridge1": {
-              "refPath": "sandbox -> bridge1 -> anyname1a"
-            }
-          },
-          "anyname1b": {
-            "bridge1": {
-              "refPath": "sandbox -> bridge1 -> anyname1b"
-            }
-          },
-          "anyname3a": {
-            "bridge3": {
-              "refPath": "sandbox -> bridge3 -> anyname3a"
-            }
-          }
-        }
-      };
-      var exptectedConfig = lodash.cloneDeep(sandboxConfig);
-      if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
-        exptectedConfig.bridges = {
-          "bridge1": {
-            "plugin1": {
-              "anyname1a": {
-                "refPath": "sandbox -> bridge1 -> anyname1a"
-              },
-              "anyname1b": {
-                "refPath": "sandbox -> bridge1 -> anyname1b"
-              }
-            }
-          },
-          "bridge3": {
-            "plugin1": {
-              "anyname3a": {
-                "refPath": "sandbox -> bridge3 -> anyname3a"
-              }
-            }
-          }
-        };
-        if (!RELOADING_FORCED) {
-          exptectedConfig.bridges.__status__ = true;
-        }
-      }
-      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, 'plugin', 'plugin1', {
-        configTags: 'bridge[dialect-bridge]'
-      });
-      false && console.log(JSON.stringify(convertedCfg, null, 2));
-      assert.deepInclude(convertedCfg, exptectedConfig);
-    });
-
-    after(function() {
-      envmask.reset();
-    });
-  });
-
   describe('ConfigLoader.load(): change PROFILE/SANDBOX labels', function() {
     before(function() {
       envmask.setup({
@@ -2035,7 +2043,7 @@ describe('tdd:devebot:core:config-loader', function() {
     it('load application configuration with multiple private sandboxes', function() {
       var cfgLoader = new ConfigLoader({appName: 'app', appOptions: {
         privateSandboxes: ['bs1', 'bs2']
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver, manifestHandler});
       var config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -2057,6 +2065,11 @@ describe('tdd:devebot:core:config-loader', function() {
       );
 
       // Sandbox configuration
+      // Sandbox overriden order: 
+      //   [devebot]/sandbox
+      //    <- [lib:plugin1]/sandbox
+      //    <- [lib:plugin2]/sandbox
+      //    <- [app:default]/sandbox <- [app:external]/sandbox
       assert.deepEqual(
         lodash.get(config,"sandbox.default"),
         lodash.merge({},

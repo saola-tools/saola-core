@@ -33,10 +33,6 @@ function appLoader(params={}) {
     text: ' + application loading start ...'
   }));
 
-  L.has('dunce') && L.log('dunce', T.add({ context: params }).toMessage({
-    text: ' * application parameters: ${context}'
-  }));
-
   const appRootPath = params.appRootPath;
   const libRootPaths = lodash.map(params.pluginRefs, function(pluginRef) {
     return pluginRef.path;
