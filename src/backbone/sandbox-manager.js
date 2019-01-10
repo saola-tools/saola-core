@@ -29,11 +29,11 @@ function SandboxManager(params={}) {
   const managerNames = lodash.keys(managerMap);
 
   const serviceMap = {};
-  params.pluginLoader.loadServices(serviceMap);
+  params.bundleLoader.loadServices(serviceMap);
   chores.kickOutOf(serviceMap, managerNames);
 
   const triggerMap = {};
-  params.pluginLoader.loadTriggers(triggerMap);
+  params.bundleLoader.loadTriggers(triggerMap);
   chores.kickOutOf(triggerMap, managerNames);
 
   const sandboxNames = params.sandboxNames;
@@ -170,7 +170,7 @@ function SandboxManager(params={}) {
   });
 
   const runhookInjektor = new Injektor(chores.injektorOptions);
-  const RUNHOOK_DEPENDENCIES = [ 'pluginLoader' ].concat(COPIED_DEPENDENCIES);
+  const RUNHOOK_DEPENDENCIES = [ 'bundleLoader' ].concat(COPIED_DEPENDENCIES);
   RUNHOOK_DEPENDENCIES.forEach(function(refName) {
     runhookInjektor.registerObject(refName, params[refName], chores.injektorContext);
   });
@@ -304,7 +304,7 @@ SandboxManager.argumentSchema = {
     "bridgeLoader": {
       "type": "object"
     },
-    "pluginLoader": {
+    "bundleLoader": {
       "type": "object"
     },
     "sandboxNames": {

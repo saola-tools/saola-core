@@ -8,7 +8,7 @@ const constx = require('../utils/constx');
 const loader = require('../utils/loader');
 const blockRef = chores.getBlockRef(__filename);
 
-function PluginLoader(params={}) {
+function BundleLoader(params={}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
@@ -22,7 +22,7 @@ function PluginLoader(params={}) {
   }));
 
   L.has('dunce') && L.log('dunce', T.add(params).toMessage({
-    text: ' - pluginLoader start with bundleList: ${bundleList}'
+    text: ' - bundleLoader start with bundleList: ${bundleList}'
   }));
 
   this.loadMetadata = function(metadataMap) {
@@ -47,8 +47,8 @@ function PluginLoader(params={}) {
   }));
 }
 
-PluginLoader.argumentSchema = {
-  "$id": "pluginLoader",
+BundleLoader.argumentSchema = {
+  "$id": "bundleLoader",
   "type": "object",
   "properties": {
     "bundleList": {
@@ -84,7 +84,7 @@ PluginLoader.argumentSchema = {
   }
 };
 
-module.exports = PluginLoader;
+module.exports = BundleLoader;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
 

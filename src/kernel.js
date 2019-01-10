@@ -12,7 +12,7 @@ const blockRef = chores.getBlockRef(__filename);
 const CONSTRUCTORS = {};
 chores.loadServiceByNames(CONSTRUCTORS, path.join(__dirname, 'backbone'), [
   'sandbox-manager', 'schema-validator', 'script-executor', 'script-renderer',
-  'security-manager', 'bridge-loader', 'plugin-loader',
+  'security-manager', 'bridge-loader', 'bundle-loader',
   'object-decorator', 'logging-factory', 'process-manager',
 ]);
 
@@ -63,8 +63,8 @@ function Kernel(params = {}) {
     const bridgeSchema = extractBridgeSchema(SELECTED_FIELDS, bridgeMetadata);
 
     // validate plugin's configures
-    const pluginLoader = injektor.lookup('pluginLoader', chores.injektorContext);
-    const bundleMetadata = pluginLoader.loadMetadata();
+    const bundleLoader = injektor.lookup('bundleLoader', chores.injektorContext);
+    const bundleMetadata = bundleLoader.loadMetadata();
     L.has('silly') && L.log('silly', T.add({ metadata: bundleMetadata }).toMessage({
       tags: [ blockRef, 'plugin-config-schema-input' ],
       text: " - plugin's metadata: ${metadata}"

@@ -4,7 +4,7 @@ var lab = require('../index');
 var Devebot = lab.getDevebot();
 var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
-var debugx = Devebot.require('pinbug')('tdd:devebot:core:plugin-loader');
+var debugx = Devebot.require('pinbug')('tdd:devebot:core:bundle-loader');
 var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
@@ -12,7 +12,7 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
 
-describe('tdd:devebot:core:plugin-loader', function() {
+describe('tdd:devebot:core:bundle-loader', function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();
@@ -28,16 +28,16 @@ describe('tdd:devebot:core:plugin-loader', function() {
 
   describe('loadRoutines()', function() {
     it('load routines from empty application', function() {
-      var pluginLoader = lab.createPluginLoader();
+      var bundleLoader = lab.createBundleLoader();
       var routineMap = {};
-      pluginLoader.loadRoutines(routineMap);
+      bundleLoader.loadRoutines(routineMap);
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
       assert.deepEqual(routineMap, {});
     });
     it('load routines from simplest application', function() {
-      var pluginLoader = lab.createPluginLoader('simple');
+      var bundleLoader = lab.createBundleLoader('simple');
       var originMap = {};
-      pluginLoader.loadRoutines(originMap);
+      bundleLoader.loadRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(originMap, null, 2));
       var routineMap = lab.simplifyRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
@@ -136,9 +136,9 @@ describe('tdd:devebot:core:plugin-loader', function() {
       assert.deepEqual(routineMap, expectedMap);
     });
     it('load routines from complete application', function() {
-      var pluginLoader = lab.createPluginLoader('fullapp');
+      var bundleLoader = lab.createBundleLoader('fullapp');
       var originMap = {};
-      pluginLoader.loadRoutines(originMap);
+      bundleLoader.loadRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(originMap, null, 2));
       var routineMap = lab.simplifyRoutines(originMap);
       false && console.log('routineMap: ', JSON.stringify(routineMap, null, 2));
@@ -355,23 +355,23 @@ describe('tdd:devebot:core:plugin-loader', function() {
       if (!chores.isUpgradeSupported('metadata-refiner')) this.skip();
     });
     it('load schemas from empty application', function() {
-      var pluginLoader = lab.createPluginLoader();
+      var bundleLoader = lab.createBundleLoader();
       var metadataMap = {};
-      pluginLoader.loadMetadata(metadataMap);
+      bundleLoader.loadMetadata(metadataMap);
       false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
       assert.deepEqual(metadataMap, {});
     });
     it('load schemas from simplest application', function() {
-      var pluginLoader = lab.createPluginLoader('simple');
+      var bundleLoader = lab.createBundleLoader('simple');
       var metadataMap = {};
-      pluginLoader.loadMetadata(metadataMap);
+      bundleLoader.loadMetadata(metadataMap);
       false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
       assert.deepEqual(metadataMap, {});
     });
     it('load all of valid schemas from complete application', function() {
-      var pluginLoader = lab.createPluginLoader('fullapp');
+      var bundleLoader = lab.createBundleLoader('fullapp');
       var metadataMap = {};
-      pluginLoader.loadMetadata(metadataMap);
+      bundleLoader.loadMetadata(metadataMap);
       issueInspector.barrier({exitOnError: true});
       false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
       var expectedMap = {};
@@ -442,23 +442,23 @@ describe('tdd:devebot:core:plugin-loader', function() {
 
   describe('loadServices()', function() {
     it('load services from empty application', function() {
-      var pluginLoader = lab.createPluginLoader();
+      var bundleLoader = lab.createBundleLoader();
       var serviceMap = {};
-      pluginLoader.loadServices(serviceMap);
+      bundleLoader.loadServices(serviceMap);
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       assert.deepEqual(serviceMap, {});
     });
     it('load services from simplest application', function() {
-      var pluginLoader = lab.createPluginLoader('simple');
+      var bundleLoader = lab.createBundleLoader('simple');
       var serviceMap = {};
-      pluginLoader.loadServices(serviceMap);
+      bundleLoader.loadServices(serviceMap);
       false && console.log('serviceMap: ', JSON.stringify(serviceMap, null, 2));
       assert.deepEqual(serviceMap, {});
     });
     it('load all of valid services from complete application', function() {
-      var pluginLoader = lab.createPluginLoader('fullapp');
+      var bundleLoader = lab.createBundleLoader('fullapp');
       var originMap = {};
-      pluginLoader.loadServices(originMap);
+      bundleLoader.loadServices(originMap);
       issueInspector.barrier({exitOnError: true});
       false && console.log('serviceMap: ', util.inspect(originMap, { depth: 5 }));
       var serviceMap = lodash.mapValues(originMap, function(service) {
@@ -629,23 +629,23 @@ describe('tdd:devebot:core:plugin-loader', function() {
 
   describe('loadTriggers()', function() {
     it('load triggers from empty application', function() {
-      var pluginLoader = lab.createPluginLoader();
+      var bundleLoader = lab.createBundleLoader();
       var triggerMap = {};
-      pluginLoader.loadTriggers(triggerMap);
+      bundleLoader.loadTriggers(triggerMap);
       false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
       assert.deepEqual(triggerMap, {});
     });
     it('load triggers from simplest application', function() {
-      var pluginLoader = lab.createPluginLoader('simple');
+      var bundleLoader = lab.createBundleLoader('simple');
       var triggerMap = {};
-      pluginLoader.loadTriggers(triggerMap);
+      bundleLoader.loadTriggers(triggerMap);
       false && console.log('triggerMap: ', JSON.stringify(triggerMap, null, 2));
       assert.deepEqual(triggerMap, {});
     });
     it('load all of valid triggers from complete application', function() {
-      var pluginLoader = lab.createPluginLoader('fullapp');
+      var bundleLoader = lab.createBundleLoader('fullapp');
       var originMap = {};
-      pluginLoader.loadTriggers(originMap);
+      bundleLoader.loadTriggers(originMap);
       issueInspector.barrier({exitOnError: true});
       false && console.log('triggerMap: ', util.inspect(originMap, { depth: 5 }));
       var triggerMap = lodash.mapValues(originMap, function(trigger) {

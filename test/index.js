@@ -243,13 +243,13 @@ lab.createBridgeLoader = function(appName, injectedObjects) {
   return injektor.lookup('bridgeLoader');
 }
 
-lab.createPluginLoader = function(appName, injectedObjects) {
+lab.createBundleLoader = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
-    'plugin-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator'
+    'bundle-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator'
   ]);
-  return injektor.lookup('pluginLoader');
+  return injektor.lookup('bundleLoader');
 }
 
 lab.createProcessManager = function(appName, injectedObjects) {
@@ -295,7 +295,7 @@ lab.createRunhookManager = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'runhook-manager', 'plugin-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator', 'jobqueue-binder'
+    'runhook-manager', 'bundle-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator', 'jobqueue-binder'
   ]);
   return injektor.lookup('runhookManager');
 }
@@ -328,7 +328,7 @@ lab.createSandboxManager = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
-    'context-manager', 'sandbox-manager', 'bridge-loader', 'plugin-loader', 'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver', 'process-manager'
+    'context-manager', 'sandbox-manager', 'bridge-loader', 'bundle-loader', 'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver', 'process-manager'
   ]);
   return injektor.lookup('sandboxManager');
 }

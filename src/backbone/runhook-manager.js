@@ -292,7 +292,7 @@ function RunhookManager(params={}) {
     return { update: function() {} }
   }
 
-  params.pluginLoader.loadRoutines(routineMap, predefinedContext ? runhookInstance : {});
+  params.bundleLoader.loadRoutines(routineMap, predefinedContext ? runhookInstance : {});
 
   lodash.forOwn(getRunhooks(), function(value, key) {
     routineStore.registerObject(value.name, value.object, { scope: value.crateScope });
@@ -335,7 +335,7 @@ RunhookManager.argumentSchema = {
     "jobqueueBinder": {
       "type": "object"
     },
-    "pluginLoader": {
+    "bundleLoader": {
       "type": "object"
     },
     "schemaValidator": {
