@@ -133,9 +133,11 @@ function appLoader(params={}) {
   Object.defineProperty(_app_, 'runner', {
     get: function() {
       return _ref_.runner = _ref_.runner || new Runner({
-        configObject: this.config,
+        appName,
+        appInfo,
         bridgeList,
         bundleList,
+        configObject: this.config,
         contextManager,
         issueInspector,
         stateInspector,
@@ -149,9 +151,11 @@ function appLoader(params={}) {
   Object.defineProperty(_app_, 'server', {
     get: function() {
       return _ref_.server = _ref_.server || new Server({
-        configObject: this.config,
+        appName,
+        appInfo,
         bridgeList,
         bundleList,
+        configObject: this.config,
         contextManager,
         issueInspector,
         stateInspector,
