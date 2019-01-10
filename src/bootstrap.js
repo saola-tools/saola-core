@@ -122,8 +122,12 @@ function appLoader(params={}) {
         _ref_.config = configLoader.load();
         _ref_.config.appName = appName;
         _ref_.config.appInfo = appInfo;
-        _ref_.config.bridgeRefs = bridgeList;
-        _ref_.config.pluginRefs = bundleList;
+        _ref_.config.bridgeList = bridgeList;
+        _ref_.config.bundleList = bundleList;
+        if (!chores.isUpgradeSupported('config-extended-fields')) {
+          _ref_.config.bridgeRefs = bridgeList; // @Deprecated
+          _ref_.config.pluginRefs = bundleList; // @Deprecated
+        }
       }
       return _ref_.config;
     },

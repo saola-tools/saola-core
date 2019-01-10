@@ -14,6 +14,14 @@ var envmask = require('envmask').instance;
 var rewire = require('rewire');
 var sinon = require('sinon');
 
+var CONFIG_EXTENDED_FIELDS = [
+  'profile', 'sandbox', 'texture',
+  'appName', 'appInfo', 'bridgeList', 'bundleList',
+];
+if (!chores.isUpgradeSupported('config-extended-fields')) {
+  CONFIG_EXTENDED_FIELDS.push('bridgeRefs', 'pluginRefs');
+}
+
 describe('tdd:devebot:base:bootstrap', function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -691,16 +699,14 @@ describe('tdd:devebot:base:bootstrap', function() {
     var assertAppConfig = function(app) {
       var cfg = app.config;
       false && console.log('SHOW [app.config]: ', cfg);
-      assert.hasAllKeys(cfg, [
-        'profile', 'sandbox', 'texture', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
-      ]);
+      assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
       assert.equal(cfg.appName, 'devebot-application');
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
       });
-      assert.sameDeepMembers(cfg.bridgeRefs, []);
-      assert.sameDeepMembers(lodash.map(cfg.pluginRefs, item => {
+      assert.sameDeepMembers(cfg.bridgeList, []);
+      assert.sameDeepMembers(lodash.map(cfg.bundleList, item => {
         return lodash.pick(item, ['type', 'name'])
       }), [{
         type: 'application',
@@ -733,8 +739,8 @@ describe('tdd:devebot:base:bootstrap', function() {
         layerware: [],
         framework: lab.getFrameworkInfo()
       });
-      assert.sameDeepMembers(cfg.bridgeRefs, []);
-      assert.sameDeepMembers(cfg.pluginRefs, [
+      assert.sameDeepMembers(cfg.bridgeList, []);
+      assert.sameDeepMembers(cfg.bundleList, [
         {
           "name": "devebot-application",
           "type": "application",
@@ -766,9 +772,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       false && console.log('fullapp app.config: ', JSON.stringify(app.config, null, 2));
       var cfg = replaceObjectFields(app.config, DEFAULT_CONTEXT);
       false && console.log('fullapp cfg: ', JSON.stringify(cfg, null, 2));
-      assert.hasAllKeys(cfg, [
-        'profile', 'sandbox', 'texture', 'appName', 'appInfo', 'bridgeRefs', 'pluginRefs'
-      ]);
+      assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
       // verify appInfo
       assert.equal(cfg.appName, 'fullapp');
       assert.deepEqual(cfg.appInfo, {
@@ -890,7 +894,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           return lodash.omit(ref, ["manifest", "version"]);
         })
       }
-      assert.sameDeepMembers(cfg.bridgeRefs, expectedBridgeRefs);
+      assert.sameDeepMembers(cfg.bridgeList, expectedBridgeRefs);
       // verify pluginRefs
       var expectedPluginRefs = [
         {
@@ -985,7 +989,7 @@ describe('tdd:devebot:base:bootstrap', function() {
           return lodash.omit(ref, ["manifest", "version"]);
         })
       }
-      assert.sameDeepMembers(cfg.pluginRefs, expectedPluginRefs);
+      assert.sameDeepMembers(cfg.bundleList, expectedPluginRefs);
     });
   });
 

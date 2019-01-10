@@ -149,8 +149,8 @@ var _initInjectedObjects = function(appName, injectedObjects) {
         }
       }
     }
-    injectedObjects.bridgeList = app.config.bridgeRefs || [];
-    injectedObjects.bundleList = injectedObjects.pluginList = app.config.pluginRefs || [];
+    injectedObjects.bridgeList = app.config.bridgeList || [];
+    injectedObjects.bundleList = injectedObjects.pluginList = app.config.bundleList || [];
   }
   injectedObjects.issueInspector = issueInspector;
   return injectedObjects;
@@ -198,16 +198,16 @@ lab.createKernel = function(appName) {
   }
 
   var nameResolver = new NameResolver({issueInspector, 
-    pluginList: _config.pluginRefs, bridgeList: _config.bridgeRefs});
+    pluginList: _config.bundleList, bridgeList: _config.bridgeList});
 
   var manifestHandler = new ManifestHandler({nameResolver, 
-    bundleList: _config.pluginRefs, bridgeList: _config.bridgeRefs});
+    bundleList: _config.bundleList, bridgeList: _config.bridgeList});
 
   var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
   return new Kernel({
     configObject: _config,
-    bridgeList: _config.bridgeRefs,
-    bundleList: _config.pluginRefs,
+    bridgeList: _config.bridgeList,
+    bundleList: _config.bundleList,
     issueInspector,
     stateInspector,
     nameResolver,
@@ -287,8 +287,8 @@ lab.createRunhookManager = function(appName, injectedObjects) {
       injectedObjects[name + 'Name'] = app.config[name].names.join(',');
       injectedObjects[name + 'Config'] = app.config[name].mixture;
     })
-    injectedObjects.bridgeList = app.config.bridgeRefs;
-    injectedObjects.bundleList = injectedObjects.pluginList = app.config.pluginRefs;
+    injectedObjects.bridgeList = app.config.bridgeList;
+    injectedObjects.bundleList = injectedObjects.pluginList = app.config.bundleList;
     injectedObjects.injectedHandlers = {};
   }
   injectedObjects.issueInspector = issueInspector;
@@ -321,8 +321,8 @@ lab.createSandboxManager = function(appName, injectedObjects) {
       injectedObjects[name + 'Names'] = app.config[name].names;
       injectedObjects[name + 'Config'] = app.config[name].mixture;
     })
-    injectedObjects.bridgeList = app.config.bridgeRefs;
-    injectedObjects.bundleList = injectedObjects.pluginList = app.config.pluginRefs;
+    injectedObjects.bridgeList = app.config.bridgeList;
+    injectedObjects.bundleList = injectedObjects.pluginList = app.config.bundleList;
   }
   injectedObjects.issueInspector = issueInspector;
   var injektor = new Injektor({ separator: chores.getSeparator() });

@@ -523,6 +523,7 @@ module.exports = {
     'simplify-name-resolver',
     'refining-name-resolver',
     'bean-decorator',
+    // 'config-extended-fields',
     // 'metadata-refiner',
     'manifest-refiner',
   ]
