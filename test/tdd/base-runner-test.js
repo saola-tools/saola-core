@@ -13,11 +13,9 @@ var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
-var rewire = require('rewire');
-var Runner = rewire(lab.getDevebotModule('runner'));
+var Runner = lab.acquireDevebotModule('runner');
 var WsServerMock = Runner.__get__("WsServerMock");
 var WsClientMock = Runner.__get__("WsClientMock");
-var sinon = require('sinon');
 
 describe.skip('tdd:devebot:base:runner', function() {
   this.timeout(lab.getDefaultTimeout());

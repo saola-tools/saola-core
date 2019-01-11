@@ -9,12 +9,11 @@ var LoggingFactory = require(lab.getDevebotModule('backbone/logging-factory'));
 var LogAdapter = require('logolite').LogAdapter;
 var MockLogger = require('logolite').MockLogger;
 var envmask = require('envmask').instance;
-var rewire = require('rewire');
 
 describe('tdd:devebot:core:logging-factory', function() {
 
   describe('logging backward compatible', function() {
-    var LoggingFactory = rewire(lab.getDevebotModule('backbone/logging-factory'));
+    var LoggingFactory = lab.acquireDevebotModule('backbone/logging-factory');
     var transformLoggingLabels = LoggingFactory.__get__('transformLoggingLabels');
     assert.isNotNull(transformLoggingLabels);
     

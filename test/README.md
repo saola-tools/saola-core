@@ -14,7 +14,7 @@ Replace by:
 chores.isUpgradeSupported($1)
 ```
 
-### Replace `rewireDevebotModule`
+### Replace `acquireDevebotModule`
 
 Search pattern:
 
@@ -25,5 +25,5 @@ rewire\(lab\.getDevebotModule\('(.*)'\)\)
 Replace by:
 
 ```plain
-lab.rewireDevebotModule('$1')
+lab.acquireDevebotModule('$1')
 ```

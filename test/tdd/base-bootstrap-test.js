@@ -11,8 +11,6 @@ var bootstrap = require(lab.getDevebotModule('bootstrap'));
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
-var rewire = require('rewire');
-var sinon = require('sinon');
 
 var CONFIG_EXTENDED_FIELDS = [
   'profile', 'sandbox', 'texture',
@@ -123,7 +121,7 @@ describe('tdd:devebot:base:bootstrap', function() {
 
   describe('locatePackage()', function() {
     var issueInspector = lab.getIssueInspector();
-    var bootstrap = rewire(lab.getDevebotModule('bootstrap'));
+    var bootstrap = lab.acquireDevebotModule('bootstrap');
     var locatePackage = bootstrap.__get__('locatePackage');
     assert.isFunction(locatePackage);
 
@@ -199,7 +197,7 @@ describe('tdd:devebot:base:bootstrap', function() {
   });
 
   describe('expandExtensions()', function() {
-    var bootstrap = rewire(path.join(lab.getDevebotHome(), 'lib/bootstrap'));
+    var bootstrap = lab.acquireDevebotModule('bootstrap');
     var expandExtensions = bootstrap.__get__('expandExtensions');
     assert.isFunction(expandExtensions);
 

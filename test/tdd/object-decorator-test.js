@@ -11,7 +11,6 @@ var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
-var rewire = require('rewire');
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:object-decorator', function() {
@@ -27,7 +26,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('wrapMethod()', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var wrapMethod = ObjectDecorator.__get__('wrapMethod');
     var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
     var refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() }
@@ -216,7 +215,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('wrapConstructor()', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
     var wrapConstructor = ObjectDecorator.__get__('wrapConstructor');
     var wrapObject = sinon.stub().callsFake(function(refs, object, opts) {
@@ -358,7 +357,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('wrapObject()', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
     var wrapObject = ObjectDecorator.__get__('wrapObject');
     var wrapMethod = sinon.spy(ObjectDecorator.__get__('wrapMethod'));
@@ -1134,7 +1133,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('LoggingInterceptor', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var LoggingInterceptor = ObjectDecorator.__get__('LoggingInterceptor');
     var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
 
@@ -2754,7 +2753,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('LoggingInterceptor', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var LoggingInterceptor = ObjectDecorator.__get__('LoggingInterceptor');
     var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
 
@@ -2937,7 +2936,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('MockingInterceptor', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var MockingInterceptor = ObjectDecorator.__get__('MockingInterceptor');
 
     it('mocking will be skipped if texture.enabled is false', function() {
@@ -3223,7 +3222,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('getTextureByPath()', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
     var getTextureByPath = ObjectDecorator.__get__('getTextureByPath');
     var textureOfBean = {
@@ -3294,7 +3293,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('getTextureOfBridge()', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
     var getTextureOfBridge = ObjectDecorator.__get__('getTextureOfBridge');
     var textureStore = {
@@ -3332,7 +3331,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('getTextureOfPlugin()', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
     var getTextureOfPlugin = ObjectDecorator.__get__('getTextureOfPlugin');
     var textureStore = {
@@ -3430,7 +3429,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('detectRequestId()', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var detectRequestId = ObjectDecorator.__get__('detectRequestId');
     it('should keep safety with any kind of arguments', function() {
       assert.doesNotThrow(function() {
@@ -3452,7 +3451,7 @@ describe('tdd:devebot:core:object-decorator', function() {
   });
 
   describe('extractStreamId()', function() {
-    var ObjectDecorator = rewire(lab.getDevebotModule('backbone/object-decorator'));
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
     var extractStreamId = ObjectDecorator.__get__('extractStreamId');
     var appInfo = {
       name: 'example',

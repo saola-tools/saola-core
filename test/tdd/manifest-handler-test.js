@@ -10,7 +10,6 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var EnvMask = require('envmask');
 var envmask = EnvMask.instance;
-var rewire = require('rewire');
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:manifest-handler', function() {
@@ -32,7 +31,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('.validateConfig()', function() {
-    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
+    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
     var combineBridgeSchema = lab.stubModuleFunction(ManifestHandler, 'combineBridgeSchema');
     var validateBridgeConfig = lab.stubModuleFunction(ManifestHandler, 'validateBridgeConfig');
     var combineBundleSchema = lab.stubModuleFunction(ManifestHandler, 'combineBundleSchema');
@@ -219,7 +218,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('extractBundleSchema()', function() {
-    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
+    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
     var combineBundleSchema = ManifestHandler.__get__('combineBundleSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
@@ -536,7 +535,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('validateBundleConfig()', function() {
-    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
+    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
     var checkSandboxConstraintsOfCrates = ManifestHandler.__get__('checkSandboxConstraintsOfCrates');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
@@ -797,7 +796,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('extractBridgeSchema()', function() {
-    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
+    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
     var combineBridgeSchema = ManifestHandler.__get__('combineBridgeSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var nameResolver = lab.getNameResolver([], [
@@ -948,7 +947,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('validateBridgeConfig()', function() {
-    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
+    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
     var validateBridgeConfig = ManifestHandler.__get__('validateBridgeConfig');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
@@ -1123,7 +1122,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('loadManifest()', function() {
-    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
+    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
     var loadManifest = ManifestHandler.__get__('loadManifest');
     assert.isFunction(loadManifest);
 

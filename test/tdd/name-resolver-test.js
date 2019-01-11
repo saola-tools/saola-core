@@ -5,7 +5,6 @@ var Devebot = lab.getDevebot();
 var chores = Devebot.require('chores');
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:name-resolver');
 var assert = require('chai').assert;
-var rewire = require('rewire');
 
 describe('tdd:devebot:core:name-resolver', function() {
   var loggingFactory = lab.createLoggingFactoryMock();
@@ -15,7 +14,7 @@ describe('tdd:devebot:core:name-resolver', function() {
   }
 
   describe('standardizing loaded configuration data', function() {
-    var NameResolver = rewire(lab.getDevebotModule('backbone/name-resolver'));
+    var NameResolver = lab.acquireDevebotModule('backbone/name-resolver');
     var extractAliasNames = NameResolver.__get__('extractAliasNames');
     var buildAbsoluteAliasMap = NameResolver.__get__('buildAbsoluteAliasMap');
     var buildRelativeAliasMap = NameResolver.__get__('buildRelativeAliasMap');

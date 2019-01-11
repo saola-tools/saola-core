@@ -10,11 +10,9 @@ var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var EnvMask = require('envmask');
 var envmask = EnvMask.instance;
-var rewire = require('rewire');
-var sinon = require('sinon');
 
-var rewiredManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
-var SELECTED_FIELDS = rewiredManifestHandler.__get__('SELECTED_FIELDS');
+var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
+var SELECTED_FIELDS = ManifestHandler.__get__('SELECTED_FIELDS');
 
 describe('tdd:devebot:base:kernel', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -35,8 +33,8 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('extractBundleSchema()', function() {
-    var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
-    var extractBundleSchema = rewiredKernel.__get__('extractBundleSchema');
+    var Kernel = lab.acquireDevebotModule('kernel');
+    var extractBundleSchema = Kernel.__get__('extractBundleSchema');
 
     beforeEach(function() {
       stepEnv.reset();
@@ -282,8 +280,8 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   describe('extractBridgeSchema()', function() {
-    var rewiredKernel = rewire(lab.getDevebotModule('kernel'));
-    var extractBridgeSchema = rewiredKernel.__get__('extractBridgeSchema');
+    var Kernel = lab.acquireDevebotModule('kernel');
+    var extractBridgeSchema = Kernel.__get__('extractBridgeSchema');
 
     var expectedSchema = {
       "bridge1": {},

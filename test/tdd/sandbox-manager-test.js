@@ -15,7 +15,6 @@ var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
-var rewire = require('rewire');
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:sandbox-manager', function() {
@@ -162,7 +161,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
   });
 
   describe('SandboxRegistry', function() {
-    var SandboxManager = rewire(lab.getDevebotModule('backbone/sandbox-manager'));
+    var SandboxManager = lab.acquireDevebotModule('backbone/sandbox-manager');
     var SandboxRegistry = SandboxManager.__get__('SandboxRegistry');
 
     function SampleService() {}

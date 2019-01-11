@@ -11,7 +11,6 @@ var ConfigLoader = require(lab.getDevebotModule('backbone/config-loader'));
 var NameResolver = require(lab.getDevebotModule('backbone/name-resolver'));
 var ManifestHandler = require(lab.getDevebotModule('backbone/manifest-handler'));
 var envmask = require('envmask').instance;
-var rewire = require('rewire');
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:config-loader', function() {
@@ -67,11 +66,11 @@ describe('tdd:devebot:core:config-loader', function() {
   });
 
   describe('transformConfig(): standardizing loaded configuration data', function() {
-    var NameResolver = rewire(lab.getDevebotModule('backbone/name-resolver'));
+    var NameResolver = lab.acquireDevebotModule('backbone/name-resolver');
     var extractAliasNames = NameResolver.__get__('extractAliasNames');
     var buildAbsoluteAliasMap = NameResolver.__get__('buildAbsoluteAliasMap');
     var buildRelativeAliasMap = NameResolver.__get__('buildRelativeAliasMap');
-    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
     var applyAliasMap = ConfigLoader.__get__('applyAliasMap');
     var doAliasMap = ConfigLoader.__get__('doAliasMap');
     var transformConfig = ConfigLoader.__get__('transformConfig');
@@ -311,7 +310,7 @@ describe('tdd:devebot:core:config-loader', function() {
   });
 
   describe('extractConfigManifest()', function() {
-    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
     var extractConfigManifest = ConfigLoader.__get__('extractConfigManifest');
     var nameResolver = lab.getNameResolver(['sub-plugin1', 'sub-plugin2'], ['sub-bridge1', 'sub-bridge2', 'devebot-co-vps']);
     var ctx = { nameResolver: nameResolver }
@@ -488,7 +487,7 @@ describe('tdd:devebot:core:config-loader', function() {
   });
 
   describe('applyManifestMigration()', function() {
-    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
     var applyManifestMigration = ConfigLoader.__get__('applyManifestMigration');
     var nameResolver = lab.getNameResolver(['sub-plugin1', 'sub-plugin2', 'sub-plugin3'], []);
     var loggingFactory = lab.createLoggingFactoryMock();
@@ -610,7 +609,7 @@ describe('tdd:devebot:core:config-loader', function() {
   });
 
   describe('modernizeConfig(): upgrade the old configuration to current version', function() {
-    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
     var modernizeConfig = ConfigLoader.__get__('modernizeConfig');
     var nameResolver = lab.getNameResolver(['simple-plugin'], ['simple-bridge']);
     var loggingFactory = lab.createLoggingFactoryMock();
@@ -1368,7 +1367,7 @@ describe('tdd:devebot:core:config-loader', function() {
       });
     });
 
-    var ConfigLoader = rewire(lab.getDevebotModule('backbone/config-loader'));
+    var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
     var convertPreciseConfig = ConfigLoader.__get__('convertPreciseConfig');
     var RELOADING_FORCED = ConfigLoader.__get__('RELOADING_FORCED');
 

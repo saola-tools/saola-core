@@ -183,7 +183,7 @@ lab.requireDevebotModule = function(moduleLocation) {
   return require(this.getDevebotModule(moduleLocation));
 }
 
-lab.rewireDevebotModule = function(moduleLocation) {
+lab.acquireDevebotModule = function(moduleLocation) {
   return rewire(this.getDevebotModule(moduleLocation));
 }
 

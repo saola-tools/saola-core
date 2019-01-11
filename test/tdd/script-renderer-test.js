@@ -9,7 +9,6 @@ var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envmask = require('envmask').instance;
-var rewire = require('rewire');
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:script-renderer', function() {
@@ -29,7 +28,7 @@ describe('tdd:devebot:core:script-renderer', function() {
   });
 
   describe('WebSocketOutlet', function() {
-    var ScriptRenderer = rewire(lab.getDevebotModule('backbone/script-renderer'));
+    var ScriptRenderer = lab.acquireDevebotModule('backbone/script-renderer');
     var WebSocketOutlet = ScriptRenderer.__get__('WebSocketOutlet');
     var ws = { send: function() {} };
     var outlet = new WebSocketOutlet({
@@ -216,7 +215,7 @@ describe('tdd:devebot:core:script-renderer', function() {
   });
 
   describe('standardizeOutput()', function() {
-    var ScriptRenderer = rewire(lab.getDevebotModule('backbone/script-renderer'));
+    var ScriptRenderer = lab.acquireDevebotModule('backbone/script-renderer');
     var standardizeOutput = ScriptRenderer.__get__('standardizeOutput');
 
     var jsonOutput = {
