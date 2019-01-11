@@ -1544,6 +1544,41 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
+  describe('ConfigLoader.load(): propagates a method call to local functions', function() {
+    var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
+    var loadConfig = lab.stubModuleFunction(ConfigLoader, 'loadConfig');
+    var validateConfig = sinon.spy(manifestHandler, 'validateConfig');
+
+    var appName = appRef.name;
+
+    var configLoader = new ConfigLoader({
+      appName, appRef, devebotRef, pluginRefs, bridgeRefs,
+      nameResolver, issueInspector, stateInspector, manifestHandler
+    });
+
+    beforeEach(function() {
+      loadConfig.reset();
+      validateConfig.resetHistory();
+    });
+
+    it("dispatch a function call to other functions properly (popular case)", function() {
+      // prepare a call
+      var expectedConfig = { profile: { mixture: {} }, sandbox: { mixture: { application: {} } } };
+      loadConfig.returns(lodash.cloneDeep(expectedConfig));
+      // make the request
+      var configStore = configLoader.load();
+      // verify results
+      assert.deepEqual(configStore, expectedConfig);
+      // verify arguments
+      assert.isTrue(loadConfig.calledOnce);
+      if (chores.isUpgradeSupported('manifest-refiner')) {
+        assert.isTrue(validateConfig.calledOnce);
+      } else {
+        assert.isFalse(validateConfig.called);
+      }
+    });
+  });
+
   describe('ConfigLoader.load(): default configuration (without profile & sandbox)', function() {
     it('load configuration of nothing (empty loader)', function() {
       // appName: null, appOptions: null, appRootDir: null, libRootDirs: null
