@@ -18,7 +18,6 @@ describe('tdd:devebot:core:manifest-handler', function() {
 
   var stepEnv = new EnvMask();
   var issueInspector = lab.getIssueInspector();
-  var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
 
   before(function() {
     envmask.setup({
@@ -32,7 +31,195 @@ describe('tdd:devebot:core:manifest-handler', function() {
     chores.clearCache();
   });
 
+  describe('.validateConfig()', function() {
+    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
+    var combineBridgeSchema = lab.stubModuleFunction(ManifestHandler, 'combineBridgeSchema');
+    var validateBridgeConfig = lab.stubModuleFunction(ManifestHandler, 'validateBridgeConfig');
+    var combineBundleSchema = lab.stubModuleFunction(ManifestHandler, 'combineBundleSchema');
+    var validateBundleConfig = lab.stubModuleFunction(ManifestHandler, 'validateBundleConfig');
+    var bridgeList = [];
+    var bundleList = [];
+    var pluginList = lab.extractPluginList(bundleList);
+    var nameResolver = lab.getNameResolver(lodash.map(pluginList, 'name'), lodash.map(bridgeList, 'name'));
+
+    var manifestHandler = new ManifestHandler({
+      nameResolver, issueInspector, bridgeList, bundleList
+    });
+
+    beforeEach(function() {
+      combineBridgeSchema.reset();
+      validateBridgeConfig.reset();
+      combineBundleSchema.reset();
+      validateBundleConfig.reset();
+    });
+
+    it("should return empty result if method is invoked without arguments", function() {
+      combineBridgeSchema.returns({});
+      combineBundleSchema.returns({});
+      var result = manifestHandler.validateConfig();
+      // verify output
+      assert.isArray(result);
+      assert.lengthOf(result, 0);
+      // verify invocations
+      assert.isTrue(combineBridgeSchema.calledOnce);
+      assert.isTrue(validateBridgeConfig.calledOnce);
+      assert.isTrue(combineBundleSchema.calledOnce);
+      assert.isTrue(validateBundleConfig.calledOnce);
+      // verify arguments
+      assert.lengthOf(validateBridgeConfig.firstCall.args, 4);
+      var bridgeConfig = validateBridgeConfig.firstCall.args[1];
+      assert.deepEqual(bridgeConfig, {});
+      assert.lengthOf(validateBundleConfig.firstCall.args, 4);
+      var pluginConfig = validateBundleConfig.firstCall.args[1];
+      assert.deepEqual(pluginConfig, { profile: {}, sandbox: {} });
+    });
+
+    it("dispatch a function call to other functions properly (popular case)", function() {
+      combineBridgeSchema.returns({});
+      combineBundleSchema.returns({});
+      var configStore = {
+        "sandbox": {
+          "mixture": {
+            "application": {
+              "contextPath": "path/to/appbox"
+            },
+            "plugins": {
+              "subPlugin1": {
+                "host": "127.0.0.1",
+                "port": 17701
+              },
+              "subPlugin2": {
+                "host": "127.0.0.1",
+                "port": 17702
+              },
+              "plugin1": {
+                "total": 1
+              },
+              "plugin2": {
+                "total": 2
+              },
+              "plugin3": {
+                "total": 3
+              }
+            },
+            "bridges": {
+              "bridge1": {
+                "subPlugin1": {
+                  "instance": {
+                    "total": 1
+                  }
+                }
+              },
+              "bridge2": {
+                "subPlugin1": {
+                  "instance": {
+                    "total": 2
+                  }
+                },
+                "subPlugin2": {
+                  "instance": {
+                    "total": 2
+                  }
+                }
+              },
+              "bridge3": {
+                "subPlugin2": {
+                  "instance": {
+                    "total": 3
+                  }
+                },
+                "application": {
+                  "instance": {
+                    "total": 3
+                  }
+                }
+              },
+            }
+          }
+        }
+      };
+      var result = manifestHandler.validateConfig(configStore);
+      // verify output
+      assert.isArray(result);
+      assert.lengthOf(result, 0);
+      // verify invocations
+      assert.isTrue(combineBridgeSchema.calledOnce);
+      assert.isTrue(validateBridgeConfig.calledOnce);
+      assert.isTrue(combineBundleSchema.calledOnce);
+      assert.isTrue(validateBundleConfig.calledOnce);
+      // verify arguments
+      assert.lengthOf(validateBridgeConfig.firstCall.args, 4);
+      var bridgeConfig = validateBridgeConfig.firstCall.args[1];
+      assert.deepEqual(bridgeConfig, {
+        "bridge1": {
+          "subPlugin1": {
+            "instance": {
+              "total": 1
+            }
+          }
+        },
+        "bridge2": {
+          "subPlugin1": {
+            "instance": {
+              "total": 2
+            }
+          },
+          "subPlugin2": {
+            "instance": {
+              "total": 2
+            }
+          }
+        },
+        "bridge3": {
+          "subPlugin2": {
+            "instance": {
+              "total": 3
+            }
+          },
+          "application": {
+            "instance": {
+              "total": 3
+            }
+          }
+        },
+      });
+      assert.lengthOf(validateBundleConfig.firstCall.args, 4);
+      var pluginConfig = validateBundleConfig.firstCall.args[1];
+      assert.deepEqual(pluginConfig, {
+        profile: {},
+        sandbox: {
+          "application": {
+            "contextPath": "path/to/appbox"
+          },
+          "plugins": {
+            "subPlugin1": {
+              "host": "127.0.0.1",
+              "port": 17701
+            },
+            "subPlugin2": {
+              "host": "127.0.0.1",
+              "port": 17702
+            },
+            "plugin1": {
+              "total": 1
+            },
+            "plugin2": {
+              "total": 2
+            },
+            "plugin3": {
+              "total": 3
+            }
+          }
+        }
+      });
+    });
+
+    after(function() {
+    });
+  });
+
   describe('extractBundleSchema()', function() {
+    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
     var combineBundleSchema = ManifestHandler.__get__('combineBundleSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
@@ -349,6 +536,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('validateBundleConfig()', function() {
+    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
     var checkSandboxConstraintsOfCrates = ManifestHandler.__get__('checkSandboxConstraintsOfCrates');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
@@ -609,6 +797,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('extractBridgeSchema()', function() {
+    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
     var combineBridgeSchema = ManifestHandler.__get__('combineBridgeSchema');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var nameResolver = lab.getNameResolver([], [
@@ -759,6 +948,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('validateBridgeConfig()', function() {
+    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
     var validateBridgeConfig = ManifestHandler.__get__('validateBridgeConfig');
     var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
     var L = loggingFactory.getLogger();
@@ -933,6 +1123,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   describe('loadManifest()', function() {
+    var ManifestHandler = rewire(lab.getDevebotModule('backbone/manifest-handler'));
     var loadManifest = ManifestHandler.__get__('loadManifest');
     assert.isFunction(loadManifest);
 

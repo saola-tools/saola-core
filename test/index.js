@@ -159,16 +159,10 @@ var _initInjectedObjects = function(appName, injectedObjects) {
     }
     injectedObjects.bridgeList = app.config.bridgeList || [];
     injectedObjects.bundleList = app.config.bundleList || [];
-    injectedObjects.pluginList = _extractPluginList(injectedObjects.bundleList);
+    injectedObjects.pluginList = lab.extractPluginList(injectedObjects.bundleList);
   }
   injectedObjects.issueInspector = issueInspector;
   return injectedObjects;
-}
-
-var _extractPluginList = function(bundleList) {
-  return lodash.filter(bundleList, function(bundleInfo) {
-    return bundleInfo.type === 'plugin';
-  })
 }
 
 var _attachInjectedObjects = function(injektor, injectedObjects) {
@@ -192,6 +186,12 @@ lab.initBackboneService = function(serviceName, injectedObjects) {
     injektor.defineService(name, constructor, chores.injektorContext);
   });
   return injektor.lookup(chores.stringCamelCase(serviceName));
+}
+
+lab.extractPluginList = function(bundleList) {
+  return lodash.filter(bundleList, function(bundleInfo) {
+    return bundleInfo.type === 'plugin';
+  })
 }
 
 lab.getContextManager = function(appName) {
@@ -346,6 +346,13 @@ function LoggingFactoryMock(params) {
 
 lab.createLoggingFactoryMock = function(params) {
   return new LoggingFactoryMock(params);
+}
+
+lab.stubModuleFunction = function(rewiredModule, functionName) {
+  var originFunction = rewiredModule.__get__(functionName);
+  var stubFunction = sinon.stub();
+  rewiredModule.__set__(functionName, stubFunction);
+  return stubFunction;
 }
 
 lab.isUpgradeSupported = function(features) {
