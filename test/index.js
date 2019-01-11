@@ -14,6 +14,7 @@ var lodash = require('lodash');
 var path = require('path');
 var Injektor = require('injektor');
 var freshy = require('freshy');
+var rewire = require('rewire');
 var sinon = require('sinon');
 
 // EventEmitter memory leak detecting
@@ -176,6 +177,14 @@ var _loadBackboneServices = function(injektor, names) {
   lodash.forOwn(chores.loadServiceByNames({}, bbPath, names), function(constructor, name) {
     injektor.defineService(name, constructor, chores.injektorContext);
   });
+}
+
+lab.requireDevebotModule = function(moduleLocation) {
+  return require(this.getDevebotModule(moduleLocation));
+}
+
+lab.rewireDevebotModule = function(moduleLocation) {
+  return rewire(this.getDevebotModule(moduleLocation));
 }
 
 lab.initBackboneService = function(serviceName, injectedObjects) {

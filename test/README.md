@@ -10,6 +10,20 @@ chores\.isUpgradeSupported\(\[('[a-zA-Z-]*')\]\)
 
 Replace by:
 
-```regexp
+```plain
 chores.isUpgradeSupported($1)
+```
+
+### Replace `rewireDevebotModule`
+
+Search pattern:
+
+```regexp
+rewire\(lab\.getDevebotModule\('(.*)'\)\)
+```
+
+Replace by:
+
+```plain
+lab.rewireDevebotModule('$1')
 ```
