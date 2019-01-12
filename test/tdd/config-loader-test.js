@@ -10,7 +10,8 @@ var path = require('path');
 var ConfigLoader = require(lab.getDevebotModule('backbone/config-loader'));
 var NameResolver = require(lab.getDevebotModule('backbone/name-resolver'));
 var ManifestHandler = require(lab.getDevebotModule('backbone/manifest-handler'));
-var envmask = require('envmask').instance;
+var EnvMask = require('envmask');
+var envmask = EnvMask.instance;
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:config-loader', function() {
@@ -63,6 +64,62 @@ describe('tdd:devebot:core:config-loader', function() {
     bridgeList: lodash.values(bridgeRefs),
     bundleList: lodash.concat(appRef, lodash.values(pluginRefs), devebotRef),
     nameResolver,
+  });
+
+  var stepEnv = new EnvMask();
+
+  describe('readVariable(): read environment variables', function() {
+    var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
+    var readVariable = ConfigLoader.__get__('readVariable');
+    assert.isFunction(readVariable);
+
+    beforeEach(function() {
+      stepEnv.reset();
+      chores.clearCache();
+    });
+
+    it('should return undefined if the associated environment variables not found', function() {
+      assert.isUndefined(readVariable(CTX, 'EXAMPLE_APP', 'CONFIG_DIR'));
+    });
+
+    it('should extract value from the first environment variable', function() {
+      stepEnv.setup({
+        'EXAMPLE_APP_CONFIG_DIR': 'val#1',
+        'DEVEBOT_CONFIG_DIR': 'val#2',
+        'NODE_EXAMPLE_APP_CONFIG_DIR': 'val#3',
+        'NODE_DEVEBOT_CONFIG_DIR': 'val#4',
+      });
+      assert.equal(readVariable(CTX, 'EXAMPLE_APP', 'CONFIG_DIR'), 'val#1');
+    });
+
+    it('should extract value from the second environment variable', function() {
+      stepEnv.setup({
+        'DEVEBOT_CONFIG_DIR': 'val#2',
+        'NODE_EXAMPLE_APP_CONFIG_DIR': 'val#3',
+        'NODE_DEVEBOT_CONFIG_DIR': 'val#4',
+      });
+      assert.equal(readVariable(CTX, 'EXAMPLE_APP', 'CONFIG_DIR'), 'val#2');
+    });
+
+    it('should extract value from the third environment variable', function() {
+      stepEnv.setup({
+        'NODE_EXAMPLE_APP_CONFIG_DIR': 'val#3',
+        'NODE_DEVEBOT_CONFIG_DIR': 'val#4',
+      });
+      assert.equal(readVariable(CTX, 'EXAMPLE_APP', 'CONFIG_DIR'), 'val#3');
+    });
+
+    it('should extract value from the fourth environment variable', function() {
+      stepEnv.setup({
+        'NODE_DEVEBOT_CONFIG_DIR': 'val#4',
+      });
+      assert.equal(readVariable(CTX, 'EXAMPLE_APP', 'CONFIG_DIR'), 'val#4');
+    });
+
+    after(function() {
+      stepEnv.reset();
+      chores.clearCache();
+    });
   });
 
   describe('transformConfig(): standardizing loaded configuration data', function() {

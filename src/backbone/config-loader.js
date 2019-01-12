@@ -21,7 +21,7 @@ const CONFIG_METADATA_BLOCK = '__manifest__';
 const RELOADING_FORCED = true;
 
 function ConfigLoader(params={}) {
-  const { options, appRef, devebotRef, pluginRefs, bridgeRefs } = params
+  const { options, appRef, devebotRef, pluginRefs, bridgeRefs } = params;
   const { issueInspector, stateInspector, nameResolver, manifestHandler } = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
@@ -67,9 +67,6 @@ function readVariable(ctx = {}, appLabel, varName) {
   ];
   for(const label of labels) {
     const value = envbox.getEnv(label);
-    L.has('dunce') && L.log('dunce', T.add({ label, value }).toMessage({
-      text: ' - Get value of ${label}: ${value}'
-    }));
     if (value) {
       L.has('dunce') && L.log('dunce', T.add({ label: labels[0], value }).toMessage({
         text: ' - Final value of ${label}: ${value}'
