@@ -21,21 +21,22 @@ const CONFIG_METADATA_BLOCK = '__manifest__';
 const RELOADING_FORCED = true;
 
 function ConfigLoader(params={}) {
-  const { appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs } = params
+  const { options, appRef, devebotRef, pluginRefs, bridgeRefs } = params
   const { issueInspector, stateInspector, nameResolver, manifestHandler } = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();
   const CTX = { L, T, issueInspector, stateInspector, nameResolver, manifestHandler };
+  const appName = appRef && appRef.name;
   const label = chores.stringLabelCase(appName);
 
-  L.has('silly') && L.log('silly', T.add({ appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, label }).toMessage({
+  L.has('silly') && L.log('silly', T.add({ appName, options, appRef, devebotRef, pluginRefs, bridgeRefs, label }).toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + Config of application (${appName}) is loaded in name: ${label}'
   }));
 
   this.load = function() {
-    const configObject = loadConfig.bind(null, CTX, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs)
+    const configObject = loadConfig.bind(null, CTX, appName, options, appRef, devebotRef, pluginRefs, bridgeRefs)
         .apply(null, CONFIG_VAR_NAMES.map(readVariable.bind(null, CTX, label)));
     if (chores.isUpgradeSupported('manifest-refiner')) {
       if (manifestHandler) {
@@ -56,8 +57,8 @@ module.exports = ConfigLoader;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
 
-function readVariable(ctx, appLabel, varName) {
-  const { L, T } = ctx || this;
+function readVariable(ctx = {}, appLabel, varName) {
+  const { L, T } = ctx;
   const labels = [
     util.format('%s_%s', appLabel, varName),
     util.format('%s_%s', 'DEVEBOT', varName),
@@ -79,8 +80,8 @@ function readVariable(ctx, appLabel, varName) {
   return undefined;
 }
 
-function loadConfig(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
-  const { L, T, issueInspector, stateInspector, nameResolver } = ctx || this;
+function loadConfig(ctx = {}, appName, options, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
+  const { L, T, issueInspector, stateInspector, nameResolver } = ctx;
 
   const aliasesOf = buildConfigTypeAliases();
   L.has('silly') && L.log('silly', T.add({ aliasesOf }).toMessage({
@@ -90,7 +91,7 @@ function loadConfig(ctx, appName, appOptions, appRef, devebotRef, pluginRefs, br
 
   const config = {};
 
-  const tileNames = buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName);
+  const tileNames = buildConfigTileNames(ctx, options, profileName, sandboxName, textureName);
   L.has('dunce') && L.log('dunce', T.add({ tileNames }).toMessage({
     text: ' + included names: ${tileNames}'
   }));
@@ -128,30 +129,28 @@ function buildConfigTypeAliases() {
   return ALIASES_OF;
 }
 
-function buildConfigTileNames(ctx, appOptions, profileName, sandboxName, textureName) {
-  appOptions = appOptions || {};
-
+function buildConfigTileNames(ctx, options = {}, profileName, sandboxName, textureName) {
   const tileNames = {};
   tileNames[CONFIG_PROFILE_NAME] = standardizeNames(ctx, profileName);
   tileNames[CONFIG_SANDBOX_NAME] = standardizeNames(ctx, sandboxName);
   tileNames[CONFIG_TEXTURE_NAME] = standardizeNames(ctx, textureName);
 
-  const appProfiles = standardizeNames(ctx, appOptions.privateProfile || appOptions.privateProfiles);
+  const appProfiles = standardizeNames(ctx, options.privateProfile || options.privateProfiles);
   tileNames[CONFIG_PROFILE_NAME] = lodash.concat(
     lodash.difference(tileNames[CONFIG_PROFILE_NAME], appProfiles), appProfiles);
 
-  const appSandboxes = standardizeNames(ctx, appOptions.privateSandbox || appOptions.privateSandboxes);
+  const appSandboxes = standardizeNames(ctx, options.privateSandbox || options.privateSandboxes);
   tileNames[CONFIG_SANDBOX_NAME] = lodash.concat(
     lodash.difference(tileNames[CONFIG_SANDBOX_NAME], appSandboxes), appSandboxes);
 
-  const appTextures = standardizeNames(ctx, appOptions.privateTexture || appOptions.privateTextures);
+  const appTextures = standardizeNames(ctx, options.privateTexture || options.privateTextures);
   tileNames[CONFIG_TEXTURE_NAME] = lodash.concat(
     lodash.difference(tileNames[CONFIG_TEXTURE_NAME], appTextures), appTextures);
 
   return tileNames;
 }
 
-function loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
+function loadConfigOfModules(ctx = {}, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
   const { L, T, nameResolver } = ctx;
 
   const libRefs = lodash.values(pluginRefs);

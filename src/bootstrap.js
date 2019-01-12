@@ -41,7 +41,7 @@ function appLoader(params={}) {
 
   const appInfo = appinfoLoader(appRootPath, libRootPaths, topRootPath);
   const appName = params.appName || appInfo.name || constx.FRAMEWORK.NAME + '-application';
-  const appOptions = {
+  const options = {
     privateProfile: params.privateProfile || params.privateProfiles,
     privateSandbox: params.privateSandbox || params.privateSandboxes,
     privateTexture: params.privateTexture || params.privateTextures,
@@ -101,7 +101,7 @@ function appLoader(params={}) {
 
   stateInspector.register({ nameResolver, bridgeList, pluginList });
 
-  const configLoader = new ConfigLoader({ appName, appOptions,
+  const configLoader = new ConfigLoader({ options,
     appRef, devebotRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,
     nameResolver, issueInspector, stateInspector, manifestHandler
   });
@@ -447,8 +447,7 @@ bootstrap.parseArguments = function(active) {
   return this.initialize('actions', { enabled: active, forced: true });
 }
 
-bootstrap.initialize = function(action, options) {
-  options = options || {};
+bootstrap.initialize = function(action, options = {}) {
   if (['actions', 'tasks'].indexOf(action) >= 0) {
     if (options.enabled !== false) {
       const argv = minimist(process.argv.slice(2));
