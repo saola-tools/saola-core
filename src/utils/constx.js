@@ -515,16 +515,46 @@ module.exports = {
       }
     }
   },
-  UPGRADE_ENABLED: [
-    'presets',
-    'bridge-full-ref',
-    'standardizing-config',
-    'gadget-around-log',
-    'simplify-name-resolver',
-    'refining-name-resolver',
-    'bean-decorator',
-    // 'config-extended-fields',
-    // 'metadata-refiner',
-    'manifest-refiner',
+  UPGRADE_TAGS: [
+    {
+      tag: 'presets',
+      enabled: true,
+    },
+    {
+      tag: 'bridge-full-ref',
+      enabled: true,
+    },
+    {
+      tag: 'standardizing-config',
+      enabled: true,
+    },
+    {
+      tag: 'gadget-around-log',
+      enabled: true,
+    },
+    {
+      tag: 'simplify-name-resolver',
+      enabled: true,
+    },
+    {
+      tag: 'refining-name-resolver',
+      enabled: true,
+    },
+    {
+      tag: 'bean-decorator',
+      enabled: true,
+    },
+    {
+      tag: 'config-extended-fields',
+      enabled: false,
+    },
+    {
+      tag: 'metadata-refiner',
+      enabled: false,
+    },
+    {
+      tag: 'manifest-refiner',
+      enabled: true,
+    },
   ]
 };

@@ -256,4 +256,23 @@ describe('tdd:devebot:utils:chores', function() {
       assert.equal(chores.getFirstDefinedValue(undefined, false, 'abc.xyz'), false);
     })
   });
+
+  describe('DEFAULT_UPGRADE_ENABLED', function() {
+    var chores = lab.acquireDevebotModule('utils/chores');
+    var DEFAULT_UPGRADE_ENABLED = chores.__get__('DEFAULT_UPGRADE_ENABLED');
+    it('fix the list of upgrade tags', function() {
+      assert.sameMembers(DEFAULT_UPGRADE_ENABLED, [
+        'presets',
+        'bridge-full-ref',
+        'standardizing-config',
+        'gadget-around-log',
+        'simplify-name-resolver',
+        'refining-name-resolver',
+        'bean-decorator',
+        // 'config-extended-fields',
+        // 'metadata-refiner',
+        'manifest-refiner',
+      ]);
+    })
+  });
 });

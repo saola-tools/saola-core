@@ -369,9 +369,17 @@ function isAllOfLabelsSatisfied(labels) {
 
 function checkUpgradeSupported(label) {
   if (store.upgradeDisabled.indexOf(label) >= 0) return false;
-  if (constx.UPGRADE_ENABLED.indexOf(label) >= 0) return true;
+  if (DEFAULT_UPGRADE_ENABLED.indexOf(label) >= 0) return true;
   return (store.upgradeEnabled.indexOf(label) >= 0);
 }
+
+const DEFAULT_UPGRADE_ENABLED = constx.UPGRADE_TAGS
+  .filter(function(def) {
+    return def.enabled !== false;
+  })
+  .map(function(def) {
+    return def.tag;
+  });
 
 chores.dateToString = function(d) {
   return d.toISOString().replace(/[:-]/g, '').replace(/[T.]/g, '-');
