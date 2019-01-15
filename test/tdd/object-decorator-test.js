@@ -835,7 +835,7 @@ describe('tdd:devebot:core:object-decorator', function() {
       var objectDecorator = new ObjectDecorator({
         appInfo: {},
         profileConfig: {},
-        textureConfig: {},
+        textureConfig: textureConfig,
         loggingFactory: loggingFactory,
         nameResolver: nameResolver,
         issueInspector: issueInspector,
@@ -1046,6 +1046,124 @@ describe('tdd:devebot:core:object-decorator', function() {
         return ('requestId' in item && item.methodName === 'method2');
       });
       assert.equal(logState_method2.length, 5 * 2);
+    });
+  });
+
+  describe('wrapPluginGadget(): propagates a method call to local functions', function() {
+    var loggingFactory = lab.createLoggingFactoryMock();
+    var nameResolver = lab.getNameResolver(['simple-plugin'], []);
+    var issueInspector = {};
+    var schemaValidator = {};
+
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
+    var DEFAULT_TEXTURE = ObjectDecorator.__get__('DEFAULT_TEXTURE');
+    var extractStreamId = lab.spyModuleFunction(ObjectDecorator, 'extractStreamId');
+    var getTextureOfPlugin = lab.spyModuleFunction(ObjectDecorator, 'getTextureOfPlugin');
+    var getPluginFullname = lab.spyModuleFunction(ObjectDecorator, 'getPluginFullname');
+    var determineOptionValue = lab.spyModuleFunction(ObjectDecorator, 'determineOptionValue');
+    var wrapConstructor = lab.stubModuleFunction(ObjectDecorator, 'wrapConstructor');
+
+    // define Constructor
+    var mockedBean = {
+      method1: sinon.stub(),
+      method2: sinon.stub()
+    }
+    var MockedConstructor = function() {
+      this.method1 = mockedBean.method1
+      this.method2 = mockedBean.method2
+    }
+
+    it('propagates a method call to local functions properly (popular case)', function() {
+      var appInfo = {
+        name: 'example-application',
+        version: '0.17.7',
+      }
+      var profileConfig = {
+        decorator: {
+          logging: {
+            enabled: true,
+            streamIdExpression: "#{version}"
+          }
+        }
+      }
+      var methodTexture = lodash.assign({}, DEFAULT_TEXTURE);
+      var textureConfig = {
+        plugins: {
+          "simplePlugin": {
+            services: {
+              "originalBean": {
+                methods: {
+                  method1: methodTexture,
+                }
+              }
+            }
+          }
+        }
+      }
+      var objectDecorator = new ObjectDecorator({
+        appInfo: appInfo,
+        profileConfig: profileConfig,
+        textureConfig: textureConfig,
+        loggingFactory: loggingFactory,
+        nameResolver: nameResolver,
+        issueInspector: issueInspector,
+        schemaValidator: schemaValidator
+      });
+
+      var WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
+        pluginName: 'simple-plugin',
+        gadgetType: 'services',
+        gadgetName: 'originalBean',
+        useDefaultTexture: false,
+      });
+
+      // verify extractStreamId() call
+      assert.isTrue(extractStreamId.calledOnce);
+      var esidArgs = extractStreamId.firstCall.args;
+      assert.lengthOf(esidArgs, 3);
+      assert.equal(esidArgs[0], profileConfig.decorator.logging);
+      assert.equal(esidArgs[1], appInfo);
+      assert.isString(esidArgs[2]);
+
+      // verify getTextureOfPlugin() call
+      assert.isTrue(getTextureOfPlugin.calledOnce);
+      var gtobArgs = getTextureOfPlugin.firstCall.args[0];
+      assert.deepEqual(gtobArgs, {
+        textureStore: textureConfig,
+        pluginCode: 'simplePlugin',
+        gadgetType: 'services',
+        gadgetName: 'originalBean',
+      });
+      var textureOfBean = getTextureOfPlugin.returnValues[0];
+
+      // verify getPluginFullname() call
+      assert.isTrue(getPluginFullname.calledOnce);
+      var gbfnArgs = getPluginFullname.firstCall.args[0];
+      assert.deepEqual(gbfnArgs, {
+        pluginName: 'simple-plugin',
+        gadgetName: 'originalBean',
+      });
+      var gbfnResult = getPluginFullname.returnValues[0];
+      assert.equal(gbfnResult, 'simple-plugin/originalBean');
+
+      // verify determineOptionValue() call
+      assert.isTrue(determineOptionValue.calledTwice);
+
+      // verify wrapConstructor() call
+      assert.isTrue(wrapConstructor.calledOnce);
+      assert.lengthOf(wrapConstructor.firstCall.args, 3);
+      var argContext = wrapConstructor.firstCall.args[0];
+      assert.isObject(argContext);
+      assert.equal(argContext.issueInspector, issueInspector);
+      assert.equal(argContext.schemaValidator, schemaValidator);
+      var argConstructor = wrapConstructor.firstCall.args[1];
+      assert.equal(argConstructor, MockedConstructor);
+      var argOptions = wrapConstructor.firstCall.args[2];
+      assert.equal(argOptions.textureOfBean, textureOfBean);
+      assert.equal(argOptions.objectName, 'simple-plugin/originalBean');
+      assert.isString(argOptions.streamId);
+      assert.equal(argOptions.supportAllMethods, true);
+      assert.equal(argOptions.useDefaultTexture, false);
     });
   });
 
