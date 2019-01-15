@@ -199,12 +199,8 @@ function RunhookManager(params={}) {
     if (mode !== 'remote' || params.jobqueueBinder.enabled === false) {
       const progressMeter = self.createProgressMeter({
         progress: function(completed, total, data) {
-          let percent = -1;
-          if (lodash.isNumber(total) && total > 0 &&
-              lodash.isNumber(completed) && completed >= 0 &&
-              completed <= total) {
-            percent = (total === 100) ? completed : lodash.round((completed * 100) / total);
-          }
+          const ok = lodash.isNumber(total) && total > 0 && lodash.isNumber(completed) && completed >= 0 && completed <= total;
+          const percent = ok ? ((total === 100) ? completed : lodash.round((completed * 100) / total)) : -1;
           context.outlet && context.outlet.render('progress', { progress: percent, data: data });
         }
       });

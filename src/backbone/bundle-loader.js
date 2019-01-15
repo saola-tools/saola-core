@@ -401,11 +401,10 @@ function buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, wrapperName, plu
   const uniqueName = [pluginName, wrapperName].join(chores.getSeparator());
   const referenceAlias = lodash.get(pluginRootDir, ['presets', 'referenceAlias'], {});
 
-  function wrapperConstructor(kwargs) {
-    kwargs = kwargs || {};
-    let kwargsRef = null;
+  function wrapperConstructor(kwargs = {}) {
+    const _ref_ = { kwargs: null };
     function getWrappedParams(kwargs) {
-      return kwargsRef = kwargsRef || lodash.clone(kwargs) || {};
+      return _ref_.kwargs = _ref_.kwargs || lodash.clone(kwargs) || {};
     }
     // crateScope & componentName
     kwargs.packageName = pluginRootDir.name;
