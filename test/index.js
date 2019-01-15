@@ -357,11 +357,16 @@ lab.createLoggingFactoryMock = function(params) {
   return new LoggingFactoryMock(params);
 }
 
+lab.spyModuleFunction = function(rewiredModule, functionName) {
+  var proxyFunction = sinon.spy(rewiredModule.__get__(functionName));
+  rewiredModule.__set__(functionName, proxyFunction);
+  return proxyFunction;
+}
+
 lab.stubModuleFunction = function(rewiredModule, functionName) {
-  var originFunction = rewiredModule.__get__(functionName);
-  var stubFunction = sinon.stub();
-  rewiredModule.__set__(functionName, stubFunction);
-  return stubFunction;
+  var proxyFunction = sinon.stub();
+  rewiredModule.__set__(functionName, proxyFunction);
+  return proxyFunction;
 }
 
 lab.isUpgradeSupported = function(features) {

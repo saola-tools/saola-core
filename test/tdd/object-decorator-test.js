@@ -809,6 +809,83 @@ describe('tdd:devebot:core:object-decorator', function() {
     })
   });
 
+  describe('wrapBridgeDialect(): propagates a method call to local functions', function() {
+    var loggingFactory = lab.createLoggingFactoryMock();
+    var nameResolver = lab.getNameResolver(['simple-plugin'], ['simple-bridge']);
+    var issueInspector = {};
+    var schemaValidator = {};
+
+    var ObjectDecorator = lab.acquireDevebotModule('backbone/object-decorator');
+    var getTextureOfBridge = lab.spyModuleFunction(ObjectDecorator, 'getTextureOfBridge');
+    var getBridgeFullname = lab.spyModuleFunction(ObjectDecorator, 'getBridgeFullname');
+    var wrapConstructor = lab.stubModuleFunction(ObjectDecorator, 'wrapConstructor');
+
+    // define Constructor
+    var mockedBean = {
+      method1: sinon.stub(),
+      method2: sinon.stub()
+    }
+    var MockedConstructor = function() {
+      this.method1 = mockedBean.method1
+      this.method2 = mockedBean.method2
+    }
+
+    it('propagates a method call to local functions properly (popular case)', function() {
+      var textureConfig = {};
+      var objectDecorator = new ObjectDecorator({
+        appInfo: {},
+        profileConfig: {},
+        textureConfig: {},
+        loggingFactory: loggingFactory,
+        nameResolver: nameResolver,
+        issueInspector: issueInspector,
+        schemaValidator: schemaValidator
+      });
+
+      var WrappedConstructor = objectDecorator.wrapBridgeDialect(MockedConstructor, {
+        pluginName: 'simple-plugin',
+        bridgeName: 'simple-bridge',
+        dialectName: 'connector',
+        useDefaultTexture: false,
+      });
+
+      assert.isTrue(getTextureOfBridge.calledOnce);
+      var gtobArgs = getTextureOfBridge.firstCall.args[0];
+      assert.deepEqual(gtobArgs, {
+        textureStore: textureConfig,
+        pluginCode: 'simplePlugin',
+        bridgeCode: 'simpleBridge',
+        dialectName: 'connector',
+      });
+      var textureOfBean = getTextureOfBridge.returnValues[0];
+
+      assert.isTrue(getBridgeFullname.calledOnce);
+      var gbfnArgs = getBridgeFullname.firstCall.args[0];
+      assert.deepEqual(gbfnArgs, {
+        pluginName: 'simple-plugin',
+        bridgeCode: 'simpleBridge',
+        dialectName: 'connector',
+      });
+      var gbfnResult = getBridgeFullname.returnValues[0];
+      assert.equal(gbfnResult, 'simple-plugin/simpleBridge#connector');
+
+      assert.isTrue(wrapConstructor.calledOnce);
+      assert.lengthOf(wrapConstructor.firstCall.args, 3);
+      var argContext = wrapConstructor.firstCall.args[0];
+      assert.isObject(argContext);
+      assert.equal(argContext.issueInspector, issueInspector);
+      assert.equal(argContext.schemaValidator, schemaValidator);
+      var argConstructor = wrapConstructor.firstCall.args[1];
+      assert.equal(argConstructor, MockedConstructor);
+      var argOptions = wrapConstructor.firstCall.args[2];
+      assert.equal(argOptions.textureOfBean, textureOfBean);
+      assert.equal(argOptions.objectName, 'simple-plugin/simpleBridge#connector');
+      assert.isString(argOptions.streamId);
+      assert.isUndefined(argOptions.supportAllMethods);
+      assert.equal(argOptions.useDefaultTexture, false);
+    });
+  });
+
   describe('wrapBridgeDialect()', function() {
     var loggingFactory = lab.createLoggingFactoryMock();
     var nameResolver = lab.getNameResolver(['simple-plugin'], ['simple-bridge']);

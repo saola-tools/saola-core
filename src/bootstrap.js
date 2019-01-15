@@ -248,7 +248,7 @@ function registerLayerware(context, pluginNames, bridgeNames) {
       accumulator.libRootPaths = accumulator.libRootPaths || [];
       accumulator.libRootPaths.push(context.layerRootPath);
     }
-  
+
     if (!chores.isUpgradeSupported('presets')) {
       return expandExtensions(accumulator, pluginNames, bridgeNames);
     }
