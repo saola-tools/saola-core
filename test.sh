@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 let "COUNT=0"
-npm run clean-build
+npm run build
 
-echo -e "\n\n"
+echo -e "\n"
 echo "------------------------------------------------------------------"
-echo -e "\n\n"
+echo -e "\n"
 
 let "COUNT=COUNT+1"
 echo "[${COUNT}] Default environment variables";

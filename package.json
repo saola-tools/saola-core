@@ -14,16 +14,16 @@
     "lib/"
   ],
   "scripts": {
-    "build": "babel ./src -d ./lib",
     "clean": "rm -rf ./lib",
-    "clean-build": "npm run clean && npm run build",
-    "prepublish": "BABEL_ENV=${DEVEBOT_BABEL_ENV:-production} npm run clean-build",
-    "pretest": "BABEL_ENV=${DEVEBOT_BABEL_ENV:-test} npm run clean-build",
+    "build-without-cleaning": "babel ./src -d ./lib",
+    "build": "npm run clean && npm run build-without-cleaning",
+    "prepublish": "BABEL_ENV=${DEVEBOT_BABEL_ENV:-production} npm run build",
+    "pretest": "BABEL_ENV=${DEVEBOT_BABEL_ENV:-test} npm run build",
     "prove": "mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js",
     "test": "npm run prove",
     "test-publish": "npm run prepublish && npm run prove",
     "test-without-rebuilding": "mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js --reporter dot",
-    "test-to-reports": "npm run clean-build && mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js --reporter mochawesome --reporter-options reportDir=test-reports,reportFilename=index"
+    "test-to-reports": "npm run build && mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js --reporter mochawesome --reporter-options reportDir=test-reports,reportFilename=index"
   },
   "repository": {
     "type": "git",
