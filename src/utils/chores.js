@@ -17,6 +17,14 @@ const envbox = require('./envbox');
 const nodash = require('./nodash');
 const getenv = require('./getenv');
 
+const codetags = require('codetags')
+  .initialize({
+    namespace: constx.FRAMEWORK.NAME,
+    POSITIVE_TAGS: 'UPGRADE_ENABLED',
+    NEGATIVE_TAGS: 'UPGRADE_DISABLED',
+  })
+  .register(constx.UPGRADE_TAGS);
+
 const store = {
   defaultScope: getenv('DEVEBOT_DEFAULT_SCOPE', constx.FRAMEWORK.NAME),
   injektorOptions: {
@@ -333,53 +341,12 @@ chores.isVerboseForced = function(moduleId, cfg) {
 }
 
 chores.clearCache = function() {
-  store.upgradeDisabled = null;
-  store.upgradeEnabled = null;
   envbox.clearCache();
+  codetags.clearCache();
   return this;
 }
 
-chores.isUpgradeSupported = function(label) {
-  if (!store.upgradeDisabled) {
-    store.upgradeDisabled = envbox.getEnv('UPGRADE_DISABLED');
-  }
-  if (!store.upgradeEnabled) {
-    store.upgradeEnabled = envbox.getEnv('UPGRADE_ENABLED');
-  }
-  return isAnyOfTuplesSatistied(arguments);
-}
-
-function isAnyOfTuplesSatistied(tuples) {
-  for(const i in tuples) {
-    if (isAllOfLabelsSatisfied(tuples[i])) return true;
-  }
-  return false;
-}
-
-function isAllOfLabelsSatisfied(labels) {
-  if (!labels) return false;
-  if (nodash.isArray(labels)) {
-    for(const k in labels) {
-      if (!checkUpgradeSupported(labels[k])) return false;
-    }
-    return true;
-  }
-  return checkUpgradeSupported(labels);
-}
-
-function checkUpgradeSupported(label) {
-  if (store.upgradeDisabled.indexOf(label) >= 0) return false;
-  if (DEFAULT_UPGRADE_ENABLED.indexOf(label) >= 0) return true;
-  return (store.upgradeEnabled.indexOf(label) >= 0);
-}
-
-const DEFAULT_UPGRADE_ENABLED = constx.UPGRADE_TAGS
-  .filter(function(def) {
-    return def.enabled !== false;
-  })
-  .map(function(def) {
-    return def.tag;
-  });
+chores.isUpgradeSupported = codetags.isActive.bind(codetags);
 
 chores.dateToString = function(d) {
   return d.toISOString().replace(/[:-]/g, '').replace(/[T.]/g, '-');

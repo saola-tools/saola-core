@@ -187,6 +187,10 @@ lab.acquireDevebotModule = function(moduleLocation) {
   return rewire(this.getDevebotModule(moduleLocation));
 }
 
+lab.acquire = function(moduleName) {
+  return rewire(moduleName);
+}
+
 lab.initBackboneService = function(serviceName, injectedObjects) {
   var bbPath = path.join(lab.getDevebotHome(), 'lib/backbone');
   var injektor = new Injektor({ separator: chores.getSeparator() });

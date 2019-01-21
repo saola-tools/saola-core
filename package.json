@@ -45,6 +45,7 @@
   "homepage": "https://github.com/devebot/devebot#readme",
   "dependencies": {
     "bluebird": "^3.5.1",
+    "codetags": "^0.1.0",
     "injektor": "^0.1.17",
     "lodash": "^4.17.10",
     "logolite": "^0.1.7",

@@ -519,10 +519,12 @@ module.exports = {
     {
       tag: 'presets',
       enabled: true,
+      golive: '1.0.0',
     },
     {
       tag: 'bridge-full-ref',
       enabled: true,
+      golive: '0.2.10',
     },
     {
       tag: 'standardizing-config',
@@ -531,30 +533,37 @@ module.exports = {
     {
       tag: 'gadget-around-log',
       enabled: true,
+      golive: '0.2.10',
     },
     {
       tag: 'simplify-name-resolver',
       enabled: true,
+      golive: '1.0.0',
     },
     {
       tag: 'refining-name-resolver',
       enabled: true,
+      golive: '1.0.0',
     },
     {
       tag: 'bean-decorator',
       enabled: true,
+      golive: '1.0.0',
     },
     {
       tag: 'config-extended-fields',
       enabled: false,
+      golive: '0.2.10',
     },
     {
       tag: 'metadata-refiner',
       enabled: false,
+      golive: '1.0.0',
     },
     {
       tag: 'manifest-refiner',
       enabled: true,
+      golive: '1.0.0',
     },
   ]
 };

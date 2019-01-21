@@ -176,41 +176,6 @@ describe('tdd:devebot:utils:chores', function() {
     })
   });
 
-  describe('isUpgradeSupported()', function() {
-    beforeEach(function() {
-      envmask.setup({
-        DEVEBOT_UPGRADE_ENABLED: "abc, def, xyz",
-        DEVEBOT_UPGRADE_DISABLED: "disabled",
-      })
-      chores.clearCache();
-    })
-    it('An arguments-list presents the OR conditional operator', function() {
-      assert.isTrue(chores.isUpgradeSupported('abc'));
-      assert.isTrue(chores.isUpgradeSupported('abc', 'xyz'));
-      assert.isTrue(chores.isUpgradeSupported('abc', 'disabled'));
-      assert.isTrue(chores.isUpgradeSupported('disabled', 'abc'));
-      assert.isTrue(chores.isUpgradeSupported('abc', 'nil'));
-      assert.isTrue(chores.isUpgradeSupported('undefined', 'abc', 'nil'));
-      assert.isFalse(chores.isUpgradeSupported());
-      assert.isFalse(chores.isUpgradeSupported('disabled'));
-      assert.isFalse(chores.isUpgradeSupported('nil'));
-      assert.isFalse(chores.isUpgradeSupported('nil', 'disabled'));
-      assert.isFalse(chores.isUpgradeSupported('nil', 'disabled', 'abc.xyz'));
-    })
-    it('An array argument presents the AND conditional operator', function() {
-      assert.isTrue(chores.isUpgradeSupported(['abc', 'xyz'], 'nil'));
-      assert.isTrue(chores.isUpgradeSupported(['abc', 'xyz'], null));
-      assert.isFalse(chores.isUpgradeSupported(['abc', 'nil']));
-      assert.isFalse(chores.isUpgradeSupported(['abc', 'def', 'nil']));
-      assert.isFalse(chores.isUpgradeSupported(['abc', 'def', 'disabled']));
-      assert.isFalse(chores.isUpgradeSupported(['abc', '123'], ['def', '456']));
-    })
-    after(function() {
-      envmask.reset();
-      chores.clearCache();
-    })
-  });
-
   describe('isVersionLessThan()', function() {
     it('will return null with invalid version values', function () {
       assert.isNull(chores.isVersionLessThan('1.2.3', 'a.b.c'));
@@ -254,25 +219,6 @@ describe('tdd:devebot:utils:chores', function() {
       assert.equal(chores.getFirstDefinedValue(undefined, null, 1024, 'hello'), 1024);
       assert.equal(chores.getFirstDefinedValue(null, undefined, 'hello world'), 'hello world');
       assert.equal(chores.getFirstDefinedValue(undefined, false, 'abc.xyz'), false);
-    })
-  });
-
-  describe('DEFAULT_UPGRADE_ENABLED', function() {
-    var chores = lab.acquireDevebotModule('utils/chores');
-    var DEFAULT_UPGRADE_ENABLED = chores.__get__('DEFAULT_UPGRADE_ENABLED');
-    it('fix the list of upgrade tags', function() {
-      assert.sameMembers(DEFAULT_UPGRADE_ENABLED, [
-        'presets',
-        'bridge-full-ref',
-        'standardizing-config',
-        'gadget-around-log',
-        'simplify-name-resolver',
-        'refining-name-resolver',
-        'bean-decorator',
-        // 'config-extended-fields',
-        // 'metadata-refiner',
-        'manifest-refiner',
-      ]);
     })
   });
 });
