@@ -1,5 +1,9 @@
 'use strict';
 
+const fs = require('fs');
+
+const PKG_INFO = JSON.parse(fs.readFileSync(__dirname + '/../../package.json', 'utf8'));
+
 const PRESETS_SCHEMA = {
   "type": "object",
   "properties": {
@@ -71,7 +75,8 @@ const SEMVER_PATTERN = '.+';
 
 module.exports = {
   FRAMEWORK: {
-    NAME: 'devebot'
+    NAME: PKG_INFO.name,
+    VERSION: PKG_INFO.version,
   },
   APPINFO: {
     FIELDS: ['version', 'name', 'description', 'homepage', 'author', 'license', 'main']
@@ -519,12 +524,10 @@ module.exports = {
     {
       tag: 'presets',
       enabled: true,
-      golive: '1.0.0',
     },
     {
       tag: 'bridge-full-ref',
       enabled: true,
-      golive: '0.2.10',
     },
     {
       tag: 'standardizing-config',
@@ -533,37 +536,33 @@ module.exports = {
     {
       tag: 'gadget-around-log',
       enabled: true,
-      golive: '0.2.10',
     },
     {
       tag: 'simplify-name-resolver',
       enabled: true,
-      golive: '1.0.0',
     },
     {
       tag: 'refining-name-resolver',
       enabled: true,
-      golive: '1.0.0',
     },
     {
       tag: 'bean-decorator',
       enabled: true,
-      golive: '1.0.0',
     },
     {
       tag: 'config-extended-fields',
-      enabled: false,
-      golive: '0.2.10',
+      plan: {
+        enabled: true,
+        minBound: '0.2.10',
+      }
     },
     {
       tag: 'metadata-refiner',
       enabled: false,
-      golive: '1.0.0',
     },
     {
       tag: 'manifest-refiner',
       enabled: true,
-      golive: '1.0.0',
     },
   ]
 };

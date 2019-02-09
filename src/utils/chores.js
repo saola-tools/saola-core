@@ -18,10 +18,11 @@ const nodash = require('./nodash');
 const getenv = require('./getenv');
 
 const codetags = require('codetags')
-  .initialize({
+  .getInstance(constx.FRAMEWORK.NAME, {
     namespace: constx.FRAMEWORK.NAME,
-    POSITIVE_TAGS: 'UPGRADE_ENABLED',
-    NEGATIVE_TAGS: 'UPGRADE_DISABLED',
+    positiveTagsLabel: 'UPGRADE_ENABLED',
+    negativeTagsLabel: 'UPGRADE_DISABLED',
+    version: constx.FRAMEWORK.VERSION,
   })
   .register(constx.UPGRADE_TAGS);
 
