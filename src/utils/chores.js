@@ -20,8 +20,8 @@ const getenv = require('./getenv');
 const codetags = require('codetags')
   .getInstance(constx.FRAMEWORK.NAME, {
     namespace: constx.FRAMEWORK.NAME,
-    positiveTagsLabel: 'UPGRADE_ENABLED',
-    negativeTagsLabel: 'UPGRADE_DISABLED',
+    INCLUDED_TAGS: 'UPGRADE_ENABLED',
+    EXCLUDED_TAGS: 'UPGRADE_DISABLED',
     version: constx.FRAMEWORK.VERSION,
   })
   .register(constx.UPGRADE_TAGS);

@@ -47,10 +47,9 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("should extract plugin metadata and enrich with dependencies (empty dependencies)", function() {
-      stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
-        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
-      });
+      if (!chores.isUpgradeSupported('metadata-refiner') || chores.isUpgradeSupported('manifest-refiner')) {
+        this.skip();
+      }
       var bundleMetadata = {
         "devebot-dp-wrapper1/sandbox": {
           "default": {
@@ -132,10 +131,9 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("should extract plugin metadata and enrich with dependencies (normal case)", function() {
-      stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
-        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
-      });
+      if (!chores.isUpgradeSupported('metadata-refiner') || chores.isUpgradeSupported('manifest-refiner')) {
+        this.skip();
+      }
       var bundleMetadata = {
         "application/sandbox": {
           "default": {
@@ -330,10 +328,9 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     it("should extract plugin schema from bridge metadata properly", function() {
-      stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
-        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
-      });
+      if (!chores.isUpgradeSupported('metadata-refiner') || chores.isUpgradeSupported('manifest-refiner')) {
+        this.skip();
+      }
       var bridgeMetadata = {
         "bridge1": {
           "name": "bridge1"

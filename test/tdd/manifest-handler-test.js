@@ -224,21 +224,15 @@ describe('tdd:devebot:core:manifest-handler', function() {
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
 
-    beforeEach(function() {
-      stepEnv.reset();
-      chores.clearCache();
-    });
-
     after(function() {
       stepEnv.reset();
       chores.clearCache();
     });
 
     it("should extract plugin manifest and enrich with dependencies (empty dependencies)", function() {
-      stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner',
-        'DEVEBOT_UPGRADE_DISABLED': 'metadata-refiner'
-      });
+      if (!chores.isUpgradeSupported('manifest-refiner') || chores.isUpgradeSupported('metadata-refiner')) {
+        this.skip();
+      }
       var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
       var C = {L, T, schemaValidator, nameResolver};
       // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
@@ -347,10 +341,9 @@ describe('tdd:devebot:core:manifest-handler', function() {
     });
 
     it("should extract plugin manifest and enrich with dependencies (normal case)", function() {
-      stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner',
-        'DEVEBOT_UPGRADE_DISABLED': 'metadata-refiner'
-      });
+      if (!chores.isUpgradeSupported('manifest-refiner') || chores.isUpgradeSupported('metadata-refiner')) {
+        this.skip();
+      }
       var nameResolver = lab.getNameResolver([
         'sub-plugin1', 'sub-plugin2', 'plugin1', 'plugin2', 'plugin3'
       ], [
@@ -542,21 +535,15 @@ describe('tdd:devebot:core:manifest-handler', function() {
     var T = loggingFactory.getTracer();
     var C = {L, T, schemaValidator};
 
-    beforeEach(function() {
-      stepEnv.reset();
-      chores.clearCache();
-    });
-
     after(function() {
       stepEnv.reset();
       chores.clearCache();
     });
 
     it("checkSandboxConstraintsOfCrates() invokes checkConstraints function properly", function() {
-      stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
-        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
-      });
+      if (!chores.isUpgradeSupported('metadata-refiner') || chores.isUpgradeSupported('manifest-refiner')) {
+        this.skip();
+      }
       var result = [];
       var fakedCheckers = {};
       lodash.forEach(['application', 'subPlugin1', 'subPlugin2'], function(pluginName) {
@@ -846,21 +833,15 @@ describe('tdd:devebot:core:manifest-handler', function() {
       }
     };
 
-    beforeEach(function() {
-      stepEnv.reset();
-      chores.clearCache();
-    });
-
     after(function() {
       stepEnv.reset();
       chores.clearCache();
     });
 
     it("should extract plugin schema from bridge manifest properly", function() {
-      stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'manifest-refiner',
-        'DEVEBOT_UPGRADE_DISABLED': 'metadata-refiner'
-      });
+      if (!chores.isUpgradeSupported('manifest-refiner') || chores.isUpgradeSupported('metadata-refiner')) {
+        this.skip();
+      }
       var bridgeList = lodash.values({
         "/test/lib/bridge1": {
           "name": "bridge1",
@@ -953,21 +934,15 @@ describe('tdd:devebot:core:manifest-handler', function() {
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
 
-    beforeEach(function() {
-      stepEnv.reset();
-      chores.clearCache();
-    });
-
     after(function() {
       stepEnv.reset();
       chores.clearCache();
     });
 
     it("result should be ok if bridge config is valid with bridge schema", function() {
-      stepEnv.setup({
-        'DEVEBOT_UPGRADE_ENABLED': 'metadata-refiner',
-        'DEVEBOT_UPGRADE_DISABLED': 'manifest-refiner'
-      });
+      if (!chores.isUpgradeSupported('metadata-refiner') || chores.isUpgradeSupported('manifest-refiner')) {
+        this.skip();
+      }
       var bridgeConfig = {
         "bridge1": {
           "application": {
