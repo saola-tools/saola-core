@@ -459,7 +459,7 @@ function callMethod(refs, argumentsList, logOnEvent, logState) {
   }
 
   function _invoke(argumentsList) {
-    let result = undefined, exception = undefined;
+    let result, exception;
     switch(methodType) {
       case 'promise': {
         result = Promise.resolve().then(function() {
@@ -670,7 +670,7 @@ function propagateEnabled(childTexture, parentTexture) {
 }
 
 function detectRequestId(argumentsList) {
-  let reqId = undefined;
+  let reqId;
   if (argumentsList && argumentsList.length > 0) {
     for (let k=(argumentsList.length-1); k>=0; k--) {
       const o = argumentsList[k];

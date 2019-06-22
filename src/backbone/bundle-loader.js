@@ -437,7 +437,7 @@ function buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, wrapperName, plu
           kwargs[newKey] = kwargs[oldKey];
         }
       });
-      if (false) {
+      if (constx.LOADING.DELETE_OLD_REFERENCE_ALIAS) {
         // remove the old references
         const newKeys = lodash.keys(referenceAlias);
         const oldKeys = lodash.values(referenceAlias);

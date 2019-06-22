@@ -236,7 +236,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManif
     }));
     const configFiles = chores.filterFiles(configDir, '.*\.js');
     const configInfos = lodash.map(configFiles, function(file) {
-      if (false) {
+      if (constx.LOADING.SPLITTING_FILENAME_BY_REGEXP) {
         return file.replace('.js', '').split(/_(.+)/).filter(function(sub) {
           return sub.length > 0;
         });
