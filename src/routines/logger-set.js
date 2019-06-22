@@ -48,9 +48,10 @@ const commandObject = {
     if (options['level']) {
       const level = options['level'];
       originLogger.setLevel(level, transportList);
+      return Promise.resolve({currentLogLevel: level});
     }
 
-    return Promise.resolve({currentLogLevel: level});
+    return Promise.resolve({});
   }
 };
 

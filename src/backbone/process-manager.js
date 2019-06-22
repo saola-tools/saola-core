@@ -6,7 +6,6 @@ const getenv = require('../utils/getenv');
 const blockRef = chores.getBlockRef(__filename);
 
 function ProcessManager(params = {}) {
-  const issueInspector = params.issueInspector;
   const loggingFactory = params.loggingFactory.branch(blockRef);
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
