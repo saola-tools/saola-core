@@ -455,13 +455,13 @@ bootstrap.initialize = function(action, options = {}) {
       const tasks = argv.tasks || argv.actions;
       if (lodash.isEmpty(tasks)) {
         if (options.forced && !lodash.isEmpty(argv._)) {
-          console.log('Incorrect task(s). Should be: (--tasks=print-config,check-config)');
+          console.info('Incorrect task(s). Should be: (--tasks=print-config,check-config)');
           process.exit(0);
         }
       } else {
         const jobs = stateInspector.init({ tasks });
         if (lodash.isEmpty(jobs)) {
-          console.log('Unknown task(s): (%s)!', tasks);
+          console.info('Unknown task(s): (%s)!', tasks);
           process.exit(0);
         }
       }

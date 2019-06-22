@@ -148,7 +148,7 @@ const LIB_NAME_PATTERNS = {
     /^([a-z][a-z0-9\-]*[a-z0-9])$/g
   ],
   plugin: [
-    new RegExp("^" + constx.FRAMEWORK.NAME + "-dp-([a-z][a-z0-9\-]*[a-z0-9])$" ,"g"),
+    new RegExp("^" + constx.FRAMEWORK.NAME + "-dp-([a-z][a-z0-9\-]*[a-z0-9])$", "g"),
     /^([a-z][a-z0-9\-]*[a-z0-9])$/g
   ]
 }

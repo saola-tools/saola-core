@@ -241,7 +241,7 @@ function loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManif
           return sub.length > 0;
         });
       }
-      return file.replace('.js', '').replace(/[_]/,'&').split('&');
+      return file.replace('.js', '').replace(/[_]/, '&').split('&');
     });
     L.has('dunce') && L.log('dunce', T.add({ configInfos }).toMessage({
       text: ' - parsing configFiles result: ${configInfos}'
@@ -503,7 +503,7 @@ function convertPreciseConfig(ctx, preciseConfig, moduleType, moduleName, module
     return preciseConfig;
   }
   // convert old bridge structures
-  if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
+  if (chores.isUpgradeSupported(['bridge-full-ref', 'presets'])) {
     const tags = nodash.arrayify(lodash.get(modulePresets, ['configTags'], []));
     const cfgBridges = preciseConfig.bridges;
     const loadable = RELOADING_FORCED || !(cfgBridges && cfgBridges.__status__);

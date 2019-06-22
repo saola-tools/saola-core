@@ -65,15 +65,19 @@ function RunhookManager(params = {}) {
   };
 
   function getRunhook(command) {
-    if (!command || !command.name) return {
+    if (!command || !command.name) {
+return {
       code: -1,
       message: 'command.name is undefined'
     };
+}
     const fn = routineStore.suggestName(command.name);
-    if (fn == null || fn.length == 0) return {
+    if (fn == null || fn.length == 0) {
+ return {
       code: -2,
       message: 'command.name not found'
-    };
+    }; 
+}
     if (fn.length >= 2) {
       try {
         return routineStore.lookup(command.name, {

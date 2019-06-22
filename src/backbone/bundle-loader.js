@@ -13,7 +13,7 @@ function BundleLoader(params = {}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
   const CTX = lodash.assign({L, T}, lodash.pick(params, [
-    'issueInspector','nameResolver', 'schemaValidator', 'objectDecorator'
+    'issueInspector', 'nameResolver', 'schemaValidator', 'objectDecorator'
   ]));
 
   L.has('silly') && L.log('silly', T.toMessage({
@@ -192,7 +192,7 @@ function loadScriptEntry(CTX, scriptMap, scriptType, scriptSubDir, scriptFile, s
   issueInspector.collect(opStatus);
 };
 
-function parseScriptTree(scriptFile, scriptInstance, isHierarchical) {
+function parseScriptTree(scriptType, scriptFile, scriptInstance, isHierarchical) {
   let entryPath = scriptFile.replace('.js', '').toLowerCase().split('_');
   if (entryPath.length > 0 && entryPath[0] !== constx[scriptType].ROOT_KEY) {
     entryPath.unshift(constx[scriptType].ROOT_KEY);
