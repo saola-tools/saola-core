@@ -63,7 +63,7 @@ chores.loadPackageInfo = function(pkgRootPath, selectedFieldNames, defaultInfo) 
       return lodash.pick(pkgJson, selectedFieldNames);
     }
     return pkgJson;
-  } catch(err) {
+  } catch (err) {
     return defaultInfo || null;
   }
 };
@@ -391,7 +391,7 @@ chores.extractObjectInfo = function(data, opts) {
   function detect(data, level=2) {
     if (typeof level !== "number" || level < 0) level = 0;
     const type = typeof(data);
-    switch(type) {
+    switch (type) {
       case "boolean":
       case "number":
       case "string":

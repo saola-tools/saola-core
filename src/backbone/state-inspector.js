@@ -163,7 +163,7 @@ function StateInspector(params = {}) {
         if (hasTask(options, 'print-config')) {
           printContent(stateMap);
         }
-      } catch(err) {
+      } catch (err) {
         console.error('Task %s has failed. Exception:\n%s', label, err.stack);
       } finally {
         console.info('Task %s has finished. application loading end.', label);

@@ -460,7 +460,7 @@ function callMethod(refs, argumentsList, logOnEvent, logState) {
 
   function _invoke(argumentsList) {
     let result, exception;
-    switch(methodType) {
+    switch (methodType) {
       case 'promise': {
         result = Promise.resolve().then(function() {
           logOnEvent.Request(logState, argumentsList);

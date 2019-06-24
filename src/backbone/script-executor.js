@@ -32,7 +32,7 @@ function ScriptExecutor(params = {}) {
   this.executeCommand = function(command, outlet) {
     try {
       command = resolveCommand(command);
-    } catch(error) {
+    } catch (error) {
       L.has('error') && L.log('error', T.toMessage({
         tags: [ blockRef, 'executeCommand', 'invalid-command-object' ],
         text: ' - Invalid command object'

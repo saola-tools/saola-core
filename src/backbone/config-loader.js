@@ -292,7 +292,7 @@ function loadConfigFile(ctx, configFile) {
     L.has('dunce') && L.log('dunce', T.add({ configFile }).toMessage({
       text: ' - loading config file: "${configFile}" has done.'
     }));
-  } catch(err) {
+  } catch (err) {
     if (err.code != 'MODULE_NOT_FOUND') {
       L.has('dunce') && L.log('dunce', T.add({ configFile }).toMessage({
         text: ' - config file ${configFile} loading is failed.'
@@ -583,7 +583,7 @@ if (!chores.isUpgradeSupported('simplify-name-resolver')) {
   }
   doAliasMap = function(ctx, preciseConfig, pluginAliasMap, bridgeAliasMap) {
     function nameTransformer(name, type) {
-      switch(type) {
+      switch (type) {
         case 'plugin':
           return pluginAliasMap[name] || name;
         case 'bridge':

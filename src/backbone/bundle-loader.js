@@ -285,7 +285,7 @@ function loadMetainfEntry(CTX, metainfMap, metainfSubDir, schemaFile, pluginRoot
       };
       lodash.defaultsDeep(metainfMap, entry);
     }
-  } catch(err) {
+  } catch (err) {
     L.has('dunce') && L.log('dunce', T.add({ filepath }).toMessage({
       text: ' - schema file ${filepath} loading has failed'
     }));
@@ -355,7 +355,7 @@ function loadGadgetEntry(CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, p
       }));
       opStatus.hasError = true;
     }
-  } catch(err) {
+  } catch (err) {
     L.has('dunce') && L.log('dunce', T.add({ filepath }).toMessage({
       text: ' - gadget file ${filepath} loading has failed'
     }));

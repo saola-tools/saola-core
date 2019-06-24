@@ -57,7 +57,7 @@ function ProcessManager(params = {}) {
 
   this.belongTo = function(idx) {
     if (!this.available || pm_id < 0 || pm_total <= pm_id) return null;
-    while(idx >= pm_total) idx -= pm_total;
+    while (idx >= pm_total) idx -= pm_total;
     return idx === pm_id;
   }
 

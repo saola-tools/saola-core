@@ -60,7 +60,7 @@ module.exports = {
     "space-infix-ops": "off",
     "no-mixed-operators": "off",
     "space-unary-ops": "off",
-    "keyword-spacing": "off",
+    "keyword-spacing": "error",
     "no-unreachable": "off",
     "standard/array-bracket-even-spacing": "off",
     "yoda": "off"
