@@ -168,7 +168,7 @@ function wrapObject(refs, object, opts) {
         info: argList
       }));
       if (!cached[methodPath]) {
-        const { textureOfBean } = opts; 
+        const { textureOfBean } = opts;
         const supportAllMethods = chores.getFirstDefinedValue(
           textureOfBean && textureOfBean.supportAllMethods,
           opts.supportAllMethods);
@@ -239,7 +239,7 @@ function wrapMethod(refs, target, opts) {
 }
 
 function MockingInterceptor(params) {
-  const { logger, tracer, texture, method, methodName, object, objectName } = params;
+  const { logger, tracer, texture, method, methodName, objectName } = params;
   const enabled = isMockingEnabled(texture) && !lodash.isEmpty(texture.mocking.mappings);
   let capsule;
   Object.defineProperty(this, 'capsule', {

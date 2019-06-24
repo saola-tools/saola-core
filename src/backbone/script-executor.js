@@ -61,7 +61,7 @@ function ScriptExecutor(params = {}) {
       promize = runhookManager.execute(command, { outlet: outlet });
     }
 
-    promize.catch(function(error) {
+    promize.catch(function() {
       L.has('silly') && L.log('silly', reqTr.add({ commandName: command.name }).toMessage({
         tags: [ blockRef, 'executeCommand', 'failed' ],
         text: '${commandName}#${requestId} is failed'

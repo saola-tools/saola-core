@@ -148,7 +148,7 @@ function buildConfigTileNames(ctx, options = {}, profileName, sandboxName, textu
 }
 
 function loadConfigOfModules(ctx = {}, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
-  const { L, T, nameResolver } = ctx;
+  const { L, T } = ctx;
 
   const libRefs = lodash.values(pluginRefs);
   if (devebotRef) {
@@ -485,7 +485,7 @@ function ModernizingResultCollector() {
 }
 
 function transformConfig(ctx, configType, configStore, crateInfo) {
-  const { L, T, nameResolver } = ctx || this;
+  const { nameResolver } = ctx || this;
   if (configType === CONFIG_SANDBOX_NAME) {
     configStore = convertPreciseConfig(ctx, configStore, crateInfo.type, crateInfo.name, crateInfo.presets);
     configStore = applyAliasMap(ctx, configStore, nameResolver.getOriginalNameOf);
@@ -498,7 +498,6 @@ function transformConfig(ctx, configType, configStore, crateInfo) {
 }
 
 function convertPreciseConfig(ctx, preciseConfig, moduleType, moduleName, modulePresets) {
-  const { L, T } = ctx;
   if (lodash.isEmpty(preciseConfig) || !lodash.isObject(preciseConfig)) {
     return preciseConfig;
   }
@@ -541,7 +540,6 @@ function convertPreciseConfig(ctx, preciseConfig, moduleType, moduleName, module
 //-----------------------------------------------------------------------------
 
 let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
-  const { L, T } = ctx;
   if (chores.isUpgradeSupported('standardizing-config')) {
     if (preciseConfig && lodash.isObject(preciseConfig.plugins)) {
       const oldPlugins = preciseConfig.plugins;

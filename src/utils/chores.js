@@ -171,7 +171,7 @@ chores.assertDir = function(appName) {
   try {
     fs.readdirSync(configDir);
   } catch (err) {
-    if (err.code == 'ENOENT') {
+    if (err.code === 'ENOENT') {
       try {
         fs.mkdirSync(configDir);
       } catch (err) {
@@ -294,6 +294,21 @@ chores.lookupMethodRef = function(methodName, serviceName, proxyName, sandboxReg
     }
   }
   return ref;
+}
+
+chores.parseScriptTree = function (scriptType, scriptFile, scriptInstance, isHierarchical) {
+  let entryPath = scriptFile.replace('.js', '').toLowerCase().split('_');
+  if (entryPath.length > 0 && entryPath[0] !== constx[scriptType].ROOT_KEY) {
+    entryPath.unshift(constx[scriptType].ROOT_KEY);
+  }
+  entryPath = entryPath.reverse();
+  entryPath.unshift(scriptInstance);
+  const entry = lodash.reduce(entryPath, function(result, item) {
+    const nestEntry = {};
+    nestEntry[item] = result;
+    return nestEntry;
+  });
+  return entry;
 }
 
 chores.printError = function(err) {

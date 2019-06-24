@@ -76,7 +76,7 @@ return {
  return {
       code: -2,
       message: 'command.name not found'
-    }; 
+    };
 }
     if (fn.length >= 2) {
       try {
