@@ -662,7 +662,7 @@ function getTextureOfPlugin({textureStore, pluginCode, gadgetType, gadgetName}) 
 
 function propagateEnabled(childTexture, parentTexture) {
   if (parentTexture && parentTexture.enabled === false) {
-    if (childTexture && childTexture.enabled == undefined) {
+    if (childTexture && childTexture.enabled == null) {
       childTexture.enabled = parentTexture.enabled;
     }
   }

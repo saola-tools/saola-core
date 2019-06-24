@@ -55,7 +55,7 @@ module.exports = {
     "no-template-curly-in-string": "off",
     "no-unneeded-ternary": "off",
     "no-return-assign": "off",
-    "eqeqeq": "off",
+    "eqeqeq": "error",
     "operator-linebreak": "off",
     "space-infix-ops": "off",
     "no-mixed-operators": "off",
@@ -63,6 +63,6 @@ module.exports = {
     "keyword-spacing": "error",
     "no-unreachable": "off",
     "standard/array-bracket-even-spacing": "off",
-    "yoda": "off"
+    "yoda": "error"
   }
 };

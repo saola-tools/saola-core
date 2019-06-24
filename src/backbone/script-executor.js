@@ -49,7 +49,7 @@ function ScriptExecutor(params = {}) {
     }));
 
     let promize;
-    if (command.name == 'definition') {
+    if (command.name === 'definition') {
       promize = Promise.resolve().then(function() {
         outlet.render('definition', {
           appName: params.appName,

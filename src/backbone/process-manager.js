@@ -36,7 +36,7 @@ function ProcessManager(params = {}) {
   Object.defineProperty(this, 'isMaster', {
     get: function() {
       if (!this.available || pm_id < 0 || pm_total <= 0) return false;
-      return (pm_id % pm_total) == 0;
+      return (pm_id % pm_total) === 0;
     },
     set: function(value) {}
   });

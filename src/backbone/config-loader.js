@@ -293,7 +293,7 @@ function loadConfigFile(ctx, configFile) {
       text: ' - loading config file: "${configFile}" has done.'
     }));
   } catch (err) {
-    if (err.code != 'MODULE_NOT_FOUND') {
+    if (err.code !== 'MODULE_NOT_FOUND') {
       L.has('dunce') && L.log('dunce', T.add({ configFile }).toMessage({
         text: ' - config file ${configFile} loading is failed.'
       }));
@@ -312,7 +312,7 @@ function filterConfigBy(ctx, configInfos, selectedNames, configType, aliasesOf) 
     idx[name] = index;
   });
   lodash.forEach(configInfos, function(item) {
-    const found = (item.length == 2) && (aliasesOf[configType].indexOf(item[0]) >= 0) && (item[1].length > 0);
+    const found = (item.length === 2) && (aliasesOf[configType].indexOf(item[0]) >= 0) && (item[1].length > 0);
     if (found && idx[item[1]] != null) {
       arr[idx[item[1]]] = item;
     }

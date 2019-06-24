@@ -302,7 +302,7 @@ function applyCheckConstraints(checkConstraints, extractedCfg, crateName) {
 }
 
 function customizeSandboxResult(result, crateScope, validationType) {
-  result = (result == undefined || result == null) ? false : result;
+  result = (result === undefined || result === null) ? false : result;
   result = (typeof result === 'boolean') ? { ok: result } : result;
   const output = {};
   output.stage = 'config/' + validationType;

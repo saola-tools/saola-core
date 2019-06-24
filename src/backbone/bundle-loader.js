@@ -210,7 +210,7 @@ function validateScript(CTX, scriptObject, scriptType) {
   }
 
   return results.reduce(function(output, result) {
-    output.valid = output.valid && (result.valid != false);
+    output.valid = output.valid && (result.valid !== false);
     output.errors = output.errors.concat(result.errors);
     return output;
   }, { valid: true, errors: [] });
@@ -303,7 +303,7 @@ function validateMetainf(CTX, metainfObject) {
   metainfObject = metainfObject || {};
   results.push(schemaValidator.validate(metainfObject, constx[metainfType].SCHEMA_OBJECT));
   return results.reduce(function(output, result) {
-    output.valid = output.valid && (result.valid != false);
+    output.valid = output.valid && (result.valid !== false);
     output.errors = output.errors.concat(result.errors);
     return output;
   }, { valid: true, errors: [] });
