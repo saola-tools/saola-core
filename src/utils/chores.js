@@ -105,9 +105,9 @@ chores.deepFreeze = function (o) {
   const self = this;
   Object.freeze(o);
   Object.getOwnPropertyNames(o).forEach(function (prop) {
-    if (o.hasOwnProperty(prop)
-        && (nodash.isObject(o[prop]) || nodash.isFunction(o[prop]))
-        && !Object.isFrozen(o[prop])) {
+    if (o.hasOwnProperty(prop) &&
+        (nodash.isObject(o[prop]) || nodash.isFunction(o[prop])) &&
+        !Object.isFrozen(o[prop])) {
       self.deepFreeze(o[prop]);
     }
   });
