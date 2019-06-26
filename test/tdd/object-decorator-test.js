@@ -6,7 +6,6 @@ var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
 var errors = require(lab.getDevebotModule('utils/errors'));
-var debugx = Devebot.require('pinbug')('tdd:devebot:core:object-decorator');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;

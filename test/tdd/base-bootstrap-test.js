@@ -4,7 +4,6 @@ var lab = require('../index');
 var Devebot = lab.getDevebot();
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('tdd:devebot:base:bootstrap');
 var assert = require('chai').assert;
 var path = require('path');
 var bootstrap = require(lab.getDevebotModule('bootstrap'));

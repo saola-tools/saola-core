@@ -26,11 +26,11 @@ module.exports = {
       "always"
     ],
     "prefer-promise-reject-errors": ["warn"],
-    "no-inner-declarations": ["warn"],
+    "no-inner-declarations": ["error"],
     "promise/param-names": ["warn"],
-    "no-unmodified-loop-condition": ["warn"],
+    "no-unmodified-loop-condition": ["error"],
     "no-useless-escape": ["warn"],
-    "eol-last": ["warn"],
+    "eol-last": ["error"],
     "space-before-function-paren": ["warn", {
       "anonymous": "ignore",
       "named": "always",

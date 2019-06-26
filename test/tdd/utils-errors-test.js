@@ -8,7 +8,6 @@ var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
 var errors = require(lab.getDevebotModule('utils/errors'));
-var debugx = Devebot.require('pinbug')('tdd:devebot:utils:errors');
 
 describe('tdd:devebot:utils:errors', function() {
 

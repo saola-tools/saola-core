@@ -3,7 +3,6 @@
 var lab = require('../index');
 var Devebot = lab.getDevebot();
 var chores = Devebot.require('chores');
-var debugx = Devebot.require('pinbug')('tdd:devebot:core:name-resolver');
 var assert = require('chai').assert;
 
 describe('tdd:devebot:core:name-resolver', function() {

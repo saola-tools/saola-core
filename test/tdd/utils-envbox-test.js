@@ -2,10 +2,7 @@
 
 var lab = require('../index');
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('tdd:devebot:utils:envbox');
 var assert = require('chai').assert;
 var envmask = require('envmask').instance;
 var envbox = require(lab.getDevebotModule('utils/envbox'));

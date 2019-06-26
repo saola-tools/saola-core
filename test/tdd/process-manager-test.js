@@ -5,7 +5,6 @@ var Devebot = lab.getDevebot();
 var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
-var debugx = Devebot.require('pinbug')('tdd:devebot:core:process-manager');
 var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');

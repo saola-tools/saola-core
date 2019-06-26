@@ -2,10 +2,8 @@
 
 var lab = require('..');
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
-var pinbug = Devebot.require('pinbug')('tdd:devebot:utils:proxy');
 var assert = require('chai').assert;
 var BeanProxy = require(lab.getDevebotModule('utils/proxy'));
 
