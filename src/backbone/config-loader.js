@@ -363,6 +363,7 @@ function standardizeConfig(ctx, configType, configStore, crateInfo, bridgeManife
 
 function modernizeConfig(ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests) {
   if (configType !== CONFIG_SANDBOX_NAME) return configStore;
+  if (lodash.isEmpty(configStore)) return configStore;
   const { issueInspector } = ctx;
   const collector = new ModernizingResultCollector();
   if (!lodash.isEmpty(bridgeManifests)) {
