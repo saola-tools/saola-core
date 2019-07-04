@@ -216,4 +216,12 @@ describe('tdd:devebot:utils:chores', function() {
       assert.equal(chores.getFirstDefinedValue(undefined, false, 'abc.xyz'), false);
     })
   });
+
+  describe('getVersionOf()', function() {
+    it('return the valid versions of the packages', function () {
+      assert.isString(chores.getVersionOf("bluebird"));
+      assert.isString(chores.getVersionOf("lodash"));
+      assert.isNull(chores.getVersionOf("version-not-found"));
+    })
+  });
 });
