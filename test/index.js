@@ -301,7 +301,8 @@ lab.createRunhookManager = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
-    'runhook-manager', 'bundle-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator', 'jobqueue-binder'
+    'runhook-manager', 'bundle-loader', 'jobqueue-binder',
+    'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver'
   ]);
   return injektor.lookup('runhookManager');
 }
@@ -310,7 +311,9 @@ lab.createSandboxManager = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
-    'context-manager', 'sandbox-manager', 'bridge-loader', 'bundle-loader', 'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver', 'process-manager'
+    'context-manager', 'sandbox-manager', 'bridge-loader', 'bundle-loader',
+    'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver',
+    'process-manager', 'mapping-loader'
   ]);
   return injektor.lookup('sandboxManager');
 }
