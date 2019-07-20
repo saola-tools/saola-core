@@ -182,10 +182,22 @@ function loadMappingStore(mappingName, { location, fileFilter, keyGenerator, eva
     loadMappingFile(mappings, mappingName, evaluated, fileInfo);
   }
   if (mappingStat.isDirectory()) {
-    const fileInfos = traverseDir(location, fileFilter);
-    lodash.forEach(fileInfos, function(fileInfo) {
-      loadMappingFile(mappings, mappingName, evaluated, fileInfo);
-    });
+    let multifiles = true;
+    try {
+      const indexFile = path.join(location, 'index.js');
+      const indexStat = fs.statSync(indexFile);
+      if (indexStat.isFile()) {
+        const fileInfo = lodash.assign(path.parse(indexFile), { standalone: true });
+        loadMappingFile(mappings, mappingName, evaluated, fileInfo);
+        multifiles = false;
+      }
+    } catch (err) {}
+    if (multifiles) {
+      const fileInfos = traverseDir(location, fileFilter);
+      lodash.forEach(fileInfos, function(fileInfo) {
+        loadMappingFile(mappings, mappingName, evaluated, fileInfo);
+      });
+    }
   }
   return mappings;
 }

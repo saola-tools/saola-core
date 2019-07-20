@@ -496,7 +496,8 @@ function ServiceSelector(kwargs = {}) {
 
   let serviceResolverAvailable = true;
 
-  this.lookupMethod = function (serviceName, methodName) {
+  this.lookup = function (serviceName, methodName) {
+    const hasMethod = (typeof methodName === 'string') && (methodName.length > 0);
     let ref = {};
     if (serviceResolverAvailable) {
       let resolver = sandboxRegistry.lookupService(serviceResolver);
@@ -504,14 +505,14 @@ function ServiceSelector(kwargs = {}) {
         ref.proxied = true;
         ref.isRemote = true; // @Deprecated
         ref.service = resolver.lookupService(serviceName);
-        if (ref.service) {
+        if (hasMethod && ref.service) {
           ref.method = ref.service[methodName];
         }
       } else {
         serviceResolverAvailable = false;
       }
     }
-    if (!ref.method) {
+    if (hasMethod && !ref.method) {
       ref.proxied = false;
       ref.isRemote = false; // @Deprecated
       ref.service = sandboxRegistry.lookupService(serviceName);
@@ -521,6 +522,9 @@ function ServiceSelector(kwargs = {}) {
     }
     return ref;
   }
+
+  // @Deprecated
+  this.lookupMethod = this.lookup;
 }
 
 chores.newServiceSelector = function (kwargs) {
