@@ -84,13 +84,15 @@ describe('bdd:devebot:application', function() {
         chores.toFullname("devebot", "sandboxManager"),
         chores.toFullname("devebot", "jobqueueBinder"),
         chores.toFullname("devebot", "processManager"),
-        chores.toFullname("devebot", "mappingLoader"),
         chores.toFullname("devebot", "runhookManager"),
         chores.toFullname("devebot", "scriptExecutor"),
         chores.toFullname("devebot", "scriptRenderer"),
         chores.toFullname("devebot", "securityManager"),
         chores.toFullname("devebot", "repeatedTimer")
       ];
+      if (chores.isUpgradeSupported('builtin-mapping-loader')) {
+        devebotScopes.push(chores.toFullname("devebot", "mappingLoader"));
+      }
       var plugin1Scopes = [
         chores.toFullname("plugin1", "plugin1Service"),
         chores.toFullname("plugin1", "plugin1Trigger")

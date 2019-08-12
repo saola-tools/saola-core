@@ -310,11 +310,15 @@ lab.createRunhookManager = function(appName, injectedObjects) {
 lab.createSandboxManager = function(appName, injectedObjects) {
   var injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
-  _loadBackboneServices(injektor, [
+  var serviceNames = [
     'context-manager', 'sandbox-manager', 'bridge-loader', 'bundle-loader',
     'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver',
-    'process-manager', 'mapping-loader'
-  ]);
+    'process-manager'
+  ];
+  if (chores.isUpgradeSupported('builtin-mapping-loader')) {
+    serviceNames.push('mapping-loader');
+  }
+  _loadBackboneServices(injektor, serviceNames);
   return injektor.lookup('sandboxManager');
 }
 
