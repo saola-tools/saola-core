@@ -314,7 +314,7 @@ describe('bdd:devebot:application', function() {
         this.skip();
         return done();
       }
-      app = lab.getApp('naming-convention');
+      app = lab.getApp('naming-convention/index1');
       app.runner.invoke(function(injektor) {
         var sandboxManager = injektor.lookup('sandboxManager');
         var service1 = sandboxManager.getSandboxService('sublibService', {
@@ -337,7 +337,7 @@ describe('bdd:devebot:application', function() {
         return done();
       }
 
-      app = lab.getApp(lab.unloadApp('naming-convention'));
+      app = lab.getApp('naming-convention/index2');
       app.server;
 
       false && console.log(JSON.stringify(moduleStats, null, 2));
