@@ -121,6 +121,18 @@ var lab = module.exports = {
   }
 }
 
+function deleteModule(moduleName) {
+  var solvedName = require.resolve(moduleName),
+    nodeModule = require.cache[solvedName];
+  if (nodeModule) {
+    for (var i = 0; i < nodeModule.children.length; i++) {
+      var child = nodeModule.children[i];
+      deleteModule(child.filename);
+    }
+    delete require.cache[solvedName];
+  }
+}
+
 var _initInjectedObjects = function(appName, injectedObjects) {
   injectedObjects = injectedObjects || {
     appName: appName || 'unknown',

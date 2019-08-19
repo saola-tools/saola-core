@@ -225,7 +225,8 @@ describe('bdd:devebot:application', function() {
         this.skip();
         return done();
       }
-      app = lab.getApp('naming-convention');
+
+      app = lab.getApp(lab.unloadApp('naming-convention'));
       app.server;
 
       false && console.log(JSON.stringify(moduleStats, null, 2));
@@ -339,6 +340,7 @@ describe('bdd:devebot:application', function() {
       app = lab.getApp(lab.unloadApp('naming-convention'));
       app.server;
 
+      false && console.log(JSON.stringify(moduleStats, null, 2));
       for(var k=1; k<=2; k++) {
         var config = lodash.map(moduleStats['bridgeConfigOfWrapper' + k], function(item) {
           return lodash.get(item, 'config');

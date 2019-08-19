@@ -427,7 +427,7 @@ describe('tdd:devebot:core:logging-factory', function() {
       });
 
       assert.equal(lodash.get(queue, [0, 'severity']), 'info');
-      assert.equal(lodash.get(queue, [0, 'payload', 'lib_name']), 'devebot');
+      assert.equal(lodash.get(queue, [0, 'payload', 'lib_name']), 'logolite');
       assert.containsAllKeys(lodash.get(queue, [0, 'payload']), [
         'instanceId',
         'message',
