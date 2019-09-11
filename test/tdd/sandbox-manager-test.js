@@ -153,7 +153,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     });
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   });
 

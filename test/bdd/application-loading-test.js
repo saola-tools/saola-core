@@ -178,7 +178,7 @@ describe('bdd:devebot:application', function() {
     });
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   });
 
@@ -438,7 +438,7 @@ describe('bdd:devebot:application', function() {
     });
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   });
 

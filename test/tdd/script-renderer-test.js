@@ -210,7 +210,7 @@ describe('tdd:devebot:core:script-renderer', function() {
     });
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   });
 

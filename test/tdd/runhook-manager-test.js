@@ -288,7 +288,7 @@ describe('tdd:devebot:core:runhook-manager', function() {
     });
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   });
 

@@ -813,7 +813,7 @@ describe('tdd:devebot:base:kernel', function() {
     });
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
       issueInspector.reset();
     });
   });

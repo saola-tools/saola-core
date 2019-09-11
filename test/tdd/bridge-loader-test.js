@@ -573,7 +573,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
   });
 
   after(function() {
-    LogTracer.clearStringifyInterceptors();
+    LogTracer.clearInterceptors();
     envmask.reset();
   });
 });

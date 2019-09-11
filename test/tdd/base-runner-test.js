@@ -40,7 +40,7 @@ describe.skip('tdd:devebot:base:runner', function() {
     var T = loggingFactory.getTracer();
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
       issueInspector.reset();
     });
   });

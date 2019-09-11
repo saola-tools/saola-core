@@ -55,7 +55,7 @@ describe('bdd:devebot:command:execution', function() {
     });
     LogConfig.reset();
     LogTracer.reset();
-    LogTracer.clearStringifyInterceptors();
+    LogTracer.clearInterceptors();
     LogTracer.addStringifyInterceptor(logCounter);
     LogTracer.addStringifyInterceptor(logScraper);
     app = lab.getApp('default');
@@ -163,7 +163,7 @@ describe('bdd:devebot:command:execution', function() {
   });
 
   after(function() {
-    LogTracer.clearStringifyInterceptors();
+    LogTracer.clearInterceptors();
     envmask.reset();
   });
 });

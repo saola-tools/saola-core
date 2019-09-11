@@ -85,7 +85,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
     });
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   });
 
@@ -157,7 +157,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
     });
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   });
 
@@ -270,7 +270,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
     });
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   });
 

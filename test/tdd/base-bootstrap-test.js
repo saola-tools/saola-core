@@ -57,7 +57,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       false && console.log(loggingStore);
       assert.deepEqual(loggingStore, { appLoader: 1 });
 
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   })
 
@@ -1118,7 +1118,7 @@ describe('tdd:devebot:base:bootstrap', function() {
   });
 
   after(function() {
-    LogTracer.clearStringifyInterceptors();
+    LogTracer.clearInterceptors();
     envmask.reset();
   });
 });

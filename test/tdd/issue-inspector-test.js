@@ -111,7 +111,7 @@ describe('tdd:devebot:core:issue-inspector', function() {
     })
 
     after(function() {
-      LogTracer.clearStringifyInterceptors();
+      LogTracer.clearInterceptors();
     });
   });
 

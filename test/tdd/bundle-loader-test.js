@@ -799,7 +799,7 @@ describe('tdd:devebot:core:bundle-loader', function() {
   });
 
   after(function() {
-    LogTracer.clearStringifyInterceptors();
+    LogTracer.clearInterceptors();
     envmask.reset();
   });
 });
