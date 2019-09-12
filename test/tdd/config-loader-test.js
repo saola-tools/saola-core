@@ -1419,6 +1419,7 @@ describe('tdd:devebot:core:config-loader', function() {
     before(function() {
       envmask.setup({
         NODE_ENV: 'test',
+        LOGOLITE_FULL_LOG_MODE: 'false',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
         DEVEBOT_CONFIG_ENV: 'dev'
       });
@@ -1717,6 +1718,7 @@ describe('tdd:devebot:core:config-loader', function() {
     before(function() {
       envmask.setup({
         NODE_ENV: 'test',
+        LOGOLITE_FULL_LOG_MODE: 'false',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
         DEVEBOT_CONFIG_ENV: 'dev'
       });
@@ -1770,6 +1772,7 @@ describe('tdd:devebot:core:config-loader', function() {
     before(function() {
       envmask.setup({
         NODE_ENV: 'test',
+        LOGOLITE_FULL_LOG_MODE: 'false',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
         DEVEBOT_CONFIG_ENV: 'dev',
         DEVEBOT_SANDBOX: 'private1,private2,ev1,ev2'
@@ -2115,6 +2118,7 @@ describe('tdd:devebot:core:config-loader', function() {
     before(function() {
       envmask.setup({
         NODE_ENV: 'test',
+        LOGOLITE_FULL_LOG_MODE: 'false',
         DEVEBOT_CONFIG_PROFILE_ALIASES: 'context',
         DEVEBOT_CONFIG_SANDBOX_ALIASES: 'setting',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg-customized-names', 'newcfg'),

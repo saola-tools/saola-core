@@ -51,13 +51,14 @@ describe('bdd:devebot:command:execution', function() {
 
   before(function() {
     envmask.setup({
+      LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all'
     });
     LogConfig.reset();
     LogTracer.reset();
     LogTracer.clearInterceptors();
-    LogTracer.addStringifyInterceptor(logCounter);
-    LogTracer.addStringifyInterceptor(logScraper);
+    LogTracer.addInterceptor(logCounter);
+    LogTracer.addInterceptor(logScraper);
     app = lab.getApp('default');
     injectedServiceNames = [
       chores.toFullname("application", "mainService"),

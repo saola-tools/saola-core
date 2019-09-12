@@ -50,7 +50,7 @@
     "codetags": "0.1.2",
     "injektor": "0.1.18",
     "lodash": "4.17.11",
-    "logolite": "0.1.8",
+    "logolite": "^0.3.0",
     "logzilla": "0.1.18",
     "minimist": "1.2.0",
     "schemato": "0.1.2",

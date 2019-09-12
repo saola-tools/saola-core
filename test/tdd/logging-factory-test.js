@@ -19,6 +19,7 @@ describe('tdd:devebot:core:logging-factory', function() {
     
     before(function() {
       envmask.setup({
+        LOGOLITE_FULL_LOG_MODE: 'false',
         LOGOLITE_ALWAYS_MUTED: 'all'
       });
     });
@@ -311,6 +312,7 @@ describe('tdd:devebot:core:logging-factory', function() {
 
     before(function() {
       envmask.setup({
+        LOGOLITE_FULL_LOG_MODE: 'false',
         LOGOLITE_DEBUGLOG_ENABLED: 'false',
         LOGOLITE_ALWAYS_MUTED: 'all'
       });
@@ -427,7 +429,7 @@ describe('tdd:devebot:core:logging-factory', function() {
       });
 
       assert.equal(lodash.get(queue, [0, 'severity']), 'info');
-      assert.equal(lodash.get(queue, [0, 'payload', 'lib_name']), 'logolite');
+      assert.equal(lodash.get(queue, [0, 'payload', 'lib_name']), 'devebot');
       assert.containsAllKeys(lodash.get(queue, [0, 'payload']), [
         'instanceId',
         'message',

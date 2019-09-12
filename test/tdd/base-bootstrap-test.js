@@ -24,6 +24,7 @@ describe('tdd:devebot:base:bootstrap', function() {
 
   before(function() {
     envmask.setup({
+      LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
     });

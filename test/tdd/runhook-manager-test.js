@@ -19,6 +19,7 @@ describe('tdd:devebot:core:runhook-manager', function() {
   before(function() {
     envmask.setup({
       NODE_ENV: 'test',
+      LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
     });

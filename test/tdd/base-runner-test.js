@@ -25,6 +25,7 @@ describe.skip('tdd:devebot:base:runner', function() {
   before(function() {
     envmask.setup({
       NODE_ENV: 'test',
+      LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
       DEVEBOT_FORCING_SILENT: 'issue-inspector'
