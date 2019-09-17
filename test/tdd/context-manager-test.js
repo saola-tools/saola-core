@@ -8,8 +8,8 @@ var lodash = Devebot.require('lodash');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var EnvMask = require('envmask');
-var envmask = EnvMask.instance;
+var Envcloak = require('envcloak');
+var envcloak = Envcloak.instance;
 
 describe('tdd:devebot:core:context-manager', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -17,7 +17,7 @@ describe('tdd:devebot:core:context-manager', function() {
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       NODE_ENV: 'test',
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
@@ -32,8 +32,10 @@ describe('tdd:devebot:core:context-manager', function() {
   });
 
   it("isFeatureSupported() return true with provided features", function() {
-    var localEnv = new EnvMask({
-      STATE_VERIFICATION_FEATURE_ENABLED: '123, abc'
+    var localEnv = new Envcloak({
+      presets: {
+        STATE_VERIFICATION_FEATURE_ENABLED: '123, abc'
+      }
     });
     var contextManager = lab.getContextManager('state-verification').clearCache();
     assert.isFalse(contextManager.isFeatureSupported('unknown'));
@@ -45,9 +47,11 @@ describe('tdd:devebot:core:context-manager', function() {
   });
 
   it("FEATURE_DISABLED has a higher priority than FEATURE_ENABLED", function() {
-    var localEnv = new EnvMask({
-      STATE_VERIFICATION_FEATURE_DISABLED: 'abc, def',
-      STATE_VERIFICATION_FEATURE_ENABLED: '123, abc'
+    var localEnv = new Envcloak({
+      presets: {
+        STATE_VERIFICATION_FEATURE_DISABLED: 'abc, def',
+        STATE_VERIFICATION_FEATURE_ENABLED: '123, abc'
+      }
     });
     var contextManager = lab.getContextManager('state-verification').clearCache();
     assert.isFalse(contextManager.isFeatureSupported('abc'));
@@ -56,7 +60,7 @@ describe('tdd:devebot:core:context-manager', function() {
   });
 
   after(function() {
-    envmask.reset();
+    envcloak.reset();
     issueInspector.reset();
     chores.clearCache();
   });

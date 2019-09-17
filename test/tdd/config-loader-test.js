@@ -10,8 +10,8 @@ var path = require('path');
 var ConfigLoader = require(lab.getDevebotModule('backbone/config-loader'));
 var NameResolver = require(lab.getDevebotModule('backbone/name-resolver'));
 var ManifestHandler = require(lab.getDevebotModule('backbone/manifest-handler'));
-var EnvMask = require('envmask');
-var envmask = EnvMask.instance;
+var Envcloak = require('envcloak');
+var envcloak = Envcloak.instance;
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:config-loader', function() {
@@ -66,7 +66,7 @@ describe('tdd:devebot:core:config-loader', function() {
     nameResolver,
   });
 
-  var stepEnv = new EnvMask();
+  var stepEnv = new Envcloak();
 
   describe('readVariable(): read environment variables', function() {
     var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
@@ -1417,7 +1417,7 @@ describe('tdd:devebot:core:config-loader', function() {
 
   describe('convertPreciseConfig(): bridge configure transformation', function() {
     before(function() {
-      envmask.setup({
+      envcloak.setup({
         NODE_ENV: 'test',
         LOGOLITE_FULL_LOG_MODE: 'false',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
@@ -1598,7 +1598,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     after(function() {
-      envmask.reset();
+      envcloak.reset();
     });
   });
 
@@ -1716,7 +1716,7 @@ describe('tdd:devebot:core:config-loader', function() {
 
   describe('ConfigLoader.load(): customize configDir and mixture', function() {
     before(function() {
-      envmask.setup({
+      envcloak.setup({
         NODE_ENV: 'test',
         LOGOLITE_FULL_LOG_MODE: 'false',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
@@ -1764,13 +1764,13 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     after(function() {
-      envmask.reset();
+      envcloak.reset();
     });
   });
 
   describe('ConfigLoader.load(): private sandbox configurations', function() {
     before(function() {
-      envmask.setup({
+      envcloak.setup({
         NODE_ENV: 'test',
         LOGOLITE_FULL_LOG_MODE: 'false',
         DEVEBOT_CONFIG_DIR: lab.getAppCfgDir('tdd-cfg', 'newcfg'),
@@ -2110,13 +2110,13 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     after(function() {
-      envmask.reset();
+      envcloak.reset();
     });
   });
 
   describe('ConfigLoader.load(): change PROFILE/SANDBOX labels', function() {
     before(function() {
-      envmask.setup({
+      envcloak.setup({
         NODE_ENV: 'test',
         LOGOLITE_FULL_LOG_MODE: 'false',
         DEVEBOT_CONFIG_PROFILE_ALIASES: 'context',
@@ -2196,7 +2196,7 @@ describe('tdd:devebot:core:config-loader', function() {
     });
 
     after(function() {
-      envmask.reset();
+      envcloak.reset();
     });
   });
 });

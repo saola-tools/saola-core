@@ -9,7 +9,7 @@ var path = require('path');
 var bootstrap = require(lab.getDevebotModule('bootstrap'));
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 
 var CONFIG_EXTENDED_FIELDS = [
   'profile', 'sandbox', 'texture',
@@ -23,7 +23,7 @@ describe('tdd:devebot:base:bootstrap', function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
@@ -1120,7 +1120,7 @@ describe('tdd:devebot:base:bootstrap', function() {
 
   after(function() {
     LogTracer.clearInterceptors();
-    envmask.reset();
+    envcloak.reset();
   });
 });
 

@@ -9,14 +9,14 @@ var errors = require(lab.getDevebotModule('utils/errors'));
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:object-decorator', function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
@@ -3719,6 +3719,6 @@ describe('tdd:devebot:core:object-decorator', function() {
 
   after(function() {
     LogTracer.clearInterceptors();
-    envmask.reset();
+    envcloak.reset();
   });
 });

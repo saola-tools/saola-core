@@ -7,18 +7,18 @@ var lodash = Devebot.require('lodash');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var EnvMask = require('envmask');
-var envmask = EnvMask.instance;
+var Envcloak = require('envcloak');
+var envcloak = Envcloak.instance;
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:manifest-handler', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var stepEnv = new EnvMask();
+  var stepEnv = new Envcloak();
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       NODE_ENV: 'test',
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
@@ -1177,6 +1177,6 @@ describe('tdd:devebot:core:manifest-handler', function() {
   });
 
   after(function() {
-    envmask.reset();
+    envcloak.reset();
   });
 });

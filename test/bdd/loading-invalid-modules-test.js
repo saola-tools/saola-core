@@ -7,7 +7,7 @@ var lodash = Devebot.require('lodash');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 var envbox = require(lab.getDevebotModule('utils/envbox'));
 
 describe('bdd:devebot:loading-invalid-modules', function() {
@@ -16,7 +16,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       NODE_ENV: 'test',
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
@@ -276,7 +276,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
   });
 
   after(function() {
-    envmask.reset();
+    envcloak.reset();
     issueInspector.reset();
     envbox.clearCache();
   });

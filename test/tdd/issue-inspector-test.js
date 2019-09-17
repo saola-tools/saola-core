@@ -6,7 +6,7 @@ var chores = Devebot.require('chores');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 
 describe('tdd:devebot:core:issue-inspector', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -14,7 +14,7 @@ describe('tdd:devebot:core:issue-inspector', function() {
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       NODE_ENV: 'test',
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
@@ -117,6 +117,6 @@ describe('tdd:devebot:core:issue-inspector', function() {
   });
 
   after(function() {
-    envmask.reset();
+    envcloak.reset();
   });
 });

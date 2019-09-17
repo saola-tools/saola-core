@@ -11,7 +11,7 @@ var errors = Devebot.require('errors');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 var sinon = require('sinon');
 
 describe('tdd:devebot:core:sandbox-manager', function() {
@@ -20,7 +20,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       NODE_ENV: 'test',
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
@@ -313,7 +313,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
   });
 
   after(function() {
-    envmask.reset();
+    envcloak.reset();
     issueInspector.reset();
   });
 });

@@ -7,14 +7,14 @@ var lodash = Devebot.require('lodash');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 var util = require('util');
 
 describe('bdd:devebot:application', function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all',
@@ -444,6 +444,6 @@ describe('bdd:devebot:application', function() {
   });
 
   after(function() {
-    envmask.reset();
+    envcloak.reset();
   });
 });

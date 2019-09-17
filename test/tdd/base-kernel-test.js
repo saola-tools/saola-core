@@ -7,8 +7,8 @@ var lodash = Devebot.require('lodash');
 var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var EnvMask = require('envmask');
-var envmask = EnvMask.instance;
+var Envcloak = require('envcloak');
+var envcloak = Envcloak.instance;
 
 var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
 var SELECTED_FIELDS = ManifestHandler.__get__('SELECTED_FIELDS');
@@ -16,11 +16,11 @@ var SELECTED_FIELDS = ManifestHandler.__get__('SELECTED_FIELDS');
 describe('tdd:devebot:base:kernel', function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var stepEnv = new EnvMask();
+  var stepEnv = new Envcloak();
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       NODE_ENV: 'test',
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
@@ -820,6 +820,6 @@ describe('tdd:devebot:base:kernel', function() {
   });
 
   after(function() {
-    envmask.reset();
+    envcloak.reset();
   });
 });

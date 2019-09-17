@@ -10,7 +10,7 @@ var assert = require('chai').assert;
 var DevebotApi = require('devebot-api');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 
 describe('bdd:devebot:command:execution', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -50,7 +50,7 @@ describe('bdd:devebot:command:execution', function() {
   var injectedServiceNames = [];
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all'
     });
@@ -165,6 +165,6 @@ describe('bdd:devebot:command:execution', function() {
 
   after(function() {
     LogTracer.clearInterceptors();
-    envmask.reset();
+    envcloak.reset();
   });
 });

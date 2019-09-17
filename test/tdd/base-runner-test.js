@@ -12,7 +12,7 @@ var path = require('path');
 var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 var Runner = lab.acquireDevebotModule('runner');
 var WsServerMock = Runner.__get__("WsServerMock");
 var WsClientMock = Runner.__get__("WsClientMock");
@@ -23,7 +23,7 @@ describe.skip('tdd:devebot:base:runner', function() {
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       NODE_ENV: 'test',
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
@@ -47,6 +47,6 @@ describe.skip('tdd:devebot:base:runner', function() {
   });
 
   after(function() {
-    envmask.reset();
+    envcloak.reset();
   });
 });

@@ -8,7 +8,7 @@ var debugx = Devebot.require('pinbug')('tdd:devebot:core:logging-factory');
 var LoggingFactory = require(lab.getDevebotModule('backbone/logging-factory'));
 var LogAdapter = require('logolite').LogAdapter;
 var MockLogger = require('logolite').MockLogger;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 
 describe('tdd:devebot:core:logging-factory', function() {
 
@@ -18,7 +18,7 @@ describe('tdd:devebot:core:logging-factory', function() {
     assert.isNotNull(transformLoggingLabels);
     
     before(function() {
-      envmask.setup({
+      envcloak.setup({
         LOGOLITE_FULL_LOG_MODE: 'false',
         LOGOLITE_ALWAYS_MUTED: 'all'
       });
@@ -304,14 +304,14 @@ describe('tdd:devebot:core:logging-factory', function() {
     });
 
     after(function() {
-      envmask.reset();
+      envcloak.reset();
     });
   });
 
   describe('extend Tracer using branch() method', function() {
 
     before(function() {
-      envmask.setup({
+      envcloak.setup({
         LOGOLITE_FULL_LOG_MODE: 'false',
         LOGOLITE_DEBUGLOG_ENABLED: 'false',
         LOGOLITE_ALWAYS_MUTED: 'all'
@@ -571,7 +571,7 @@ describe('tdd:devebot:core:logging-factory', function() {
     });
 
     after(function() {
-      envmask.reset();
+      envcloak.reset();
     });
   });
 });

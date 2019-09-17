@@ -8,7 +8,7 @@ var assert = require('chai').assert;
 var util = require('util');
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
-var envmask = require('envmask').instance;
+var envcloak = require('envcloak').instance;
 
 describe('tdd:devebot:core:bridge-loader', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -16,7 +16,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
-    envmask.setup({
+    envcloak.setup({
       LOGOLITE_FULL_LOG_MODE: 'false',
       LOGOLITE_ALWAYS_ENABLED: 'all',
       LOGOLITE_ALWAYS_MUTED: 'all'
@@ -575,6 +575,6 @@ describe('tdd:devebot:core:bridge-loader', function() {
 
   after(function() {
     LogTracer.clearInterceptors();
-    envmask.reset();
+    envcloak.reset();
   });
 });
