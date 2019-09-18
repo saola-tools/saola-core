@@ -8,7 +8,6 @@ var assert = require('chai').assert;
 var LogConfig = require('logolite').LogConfig;
 var LogTracer = require('logolite').LogTracer;
 var envcloak = require('envcloak').instance;
-var envbox = require(lab.getDevebotModule('utils/envbox'));
 
 describe('bdd:devebot:loading-invalid-modules', function() {
   this.timeout(lab.getDefaultTimeout());
@@ -45,7 +44,7 @@ describe('bdd:devebot:loading-invalid-modules', function() {
     beforeEach(function() {
       LogTracer.reset().empty(loggingStore);
       issueInspector.reset();
-      envbox.clearCache();
+      chores.clearCache();
     });
 
     it('loading application with not found packages will be failed', function() {
@@ -278,6 +277,6 @@ describe('bdd:devebot:loading-invalid-modules', function() {
   after(function() {
     envcloak.reset();
     issueInspector.reset();
-    envbox.clearCache();
+    chores.clearCache();
   });
 });
