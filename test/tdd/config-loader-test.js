@@ -122,6 +122,38 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
+  describe('loadEnvironConfig(): load the configuration from the environment variables', function() {
+    var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
+    var loadEnvironConfig = ConfigLoader.__get__('loadEnvironConfig');
+
+    it('transform sandboxConfig.bridges from application', function() {
+      envcloak.setup({
+        NODE_ENV: 'test',
+        LOGOLITE_FULL_LOG_MODE: 'false',
+        DEVEBOT_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_phoneNumber: '+84987654321',
+        EXAMPLE_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_email: 'contact@example.com',
+        DEVEBOT_CONFIG_ENV: 'dev'
+      });
+
+      var environCfg = loadEnvironConfig(CTX, 'EXAMPLE');
+      false && console.log(JSON.stringify(environCfg, null, 2));
+      assert.deepInclude(environCfg, {
+        "sandbox": {
+          "plugins": {
+            "appDemoPlugin": {
+              "settings": {
+                "email": "contact@example.com",
+                "phoneNumber": "+84987654321"
+              }
+            }
+          }
+        }
+      });
+
+      envcloak.reset();
+    });
+  });
+
   describe('transformConfig(): standardizing loaded configuration data', function() {
     var NameResolver = lab.acquireDevebotModule('backbone/name-resolver');
     var extractAliasNames = NameResolver.__get__('extractAliasNames');
