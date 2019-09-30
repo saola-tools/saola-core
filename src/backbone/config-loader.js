@@ -229,7 +229,7 @@ function extractConfigManifest(ctx, moduleRefs, configManifest) {
   return configManifest;
 }
 
-function loadEnvironConfig(ctx = {}, appLabel) {
+function extractEnvironConfig(ctx = {}, appLabel) {
   const prefixes = [
     util.format('%s_CONFIG_VAL', appLabel),
     util.format('%s_CONFIG_VAL', 'DEVEBOT'),

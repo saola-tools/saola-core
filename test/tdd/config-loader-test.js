@@ -122,9 +122,9 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('loadEnvironConfig(): load the configuration from the environment variables', function() {
+  describe('extractEnvironConfig(): load the configuration from the environment variables', function() {
     var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
-    var loadEnvironConfig = ConfigLoader.__get__('loadEnvironConfig');
+    var extractEnvironConfig = ConfigLoader.__get__('extractEnvironConfig');
 
     it('transform sandboxConfig.bridges from application', function() {
       envcloak.setup({
@@ -135,7 +135,7 @@ describe('tdd:devebot:core:config-loader', function() {
         DEVEBOT_CONFIG_ENV: 'dev'
       });
 
-      var environCfg = loadEnvironConfig(CTX, 'EXAMPLE');
+      var environCfg = extractEnvironConfig(CTX, 'EXAMPLE');
       false && console.log(JSON.stringify(environCfg, null, 2));
       assert.deepInclude(environCfg, {
         "sandbox": {
