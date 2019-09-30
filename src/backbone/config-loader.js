@@ -214,6 +214,8 @@ function loadConfigOfModules(ctx = {}, config, aliasesOf, tileNames, appName, ap
 
     L.has('dunce') && L.log('dunce', ' - Final config object: %s', util.inspect(config[configType], {depth: 8}));
   });
+
+  loadEnvironConfig(ctx, config, appName);
 }
 
 function extractConfigManifest(ctx, moduleRefs, configManifest) {
@@ -227,6 +229,18 @@ function extractConfigManifest(ctx, moduleRefs, configManifest) {
     configManifest[moduleName] = lodash.pick(moduleRef, ['version', 'manifest']);
   });
   return configManifest;
+}
+
+function loadEnvironConfig(ctx = {}, config = {}, appName) {
+  const appLabel = chores.stringLabelCase(appName);
+  const store = extractEnvironConfig(ctx, appLabel);
+  CONFIG_TYPES.forEach(function(configType) {
+    config[configType] = config[configType] || {};
+    if (configType in store && !lodash.isEmpty(store[configType])) {
+      config[configType]['environ'] = store[configType];
+      config[configType]['mixture'] = lodash.merge(config[configType]['mixture'], config[configType]['environ']);
+    }
+  });
 }
 
 function extractEnvironConfig(ctx = {}, appLabel) {

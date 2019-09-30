@@ -122,11 +122,11 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('extractEnvironConfig(): load the configuration from the environment variables', function() {
+  describe('extractEnvironConfig(): extract the configuration from the environment variables', function() {
     var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
     var extractEnvironConfig = ConfigLoader.__get__('extractEnvironConfig');
 
-    it('transform sandboxConfig.bridges from application', function() {
+    it('support both default and customized prefixes', function() {
       envcloak.setup({
         NODE_ENV: 'test',
         LOGOLITE_FULL_LOG_MODE: 'false',
@@ -148,6 +148,69 @@ describe('tdd:devebot:core:config-loader', function() {
             }
           }
         }
+      });
+
+      envcloak.reset();
+    });
+  });
+
+  describe('loadEnvironConfig(): load the configuration from the environment variables', function() {
+    var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
+    var loadEnvironConfig = ConfigLoader.__get__('loadEnvironConfig');
+
+    it('support both default and customized prefixes', function() {
+      envcloak.setup({
+        NODE_ENV: 'test',
+        LOGOLITE_FULL_LOG_MODE: 'false',
+        DEVEBOT_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_phoneNumber: '+84987654321',
+        MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_email: 'contact@example.com',
+        DEVEBOT_CONFIG_ENV: 'dev'
+      });
+
+      var environCfg = {
+        "sandbox": {
+          "mixture": {
+            "plugins": {
+              "appDemoPlugin": {
+                "settings": {
+                  "email": "noreply@example.com",
+                  "address": "No. 123, WestLake street",
+                  "note": null
+                }
+              }
+            }
+          }
+        }
+      };
+      loadEnvironConfig(CTX, environCfg, 'my-demo');
+      false && console.log(JSON.stringify(environCfg, null, 2));
+      assert.deepInclude(environCfg, {
+        "profile": {},
+        "sandbox": {
+          "environ": {
+            "plugins": {
+              "appDemoPlugin": {
+                "settings": {
+                  "email": "contact@example.com",
+                  "phoneNumber": "+84987654321"
+                }
+              }
+            }
+          },
+          "mixture": {
+            "plugins": {
+              "appDemoPlugin": {
+                "settings": {
+                  "address": "No. 123, WestLake street",
+                  "email": "contact@example.com",
+                  "note": null,
+                  "phoneNumber": "+84987654321"
+                }
+              }
+            }
+          }
+        },
+        "texture": {}
       });
 
       envcloak.reset();
