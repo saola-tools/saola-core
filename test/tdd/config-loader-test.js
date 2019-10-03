@@ -166,6 +166,7 @@ describe('tdd:devebot:core:config-loader', function() {
         DEVEBOT_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_phoneNumber: '+84987654321',
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_email: 'contact@example.com',
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_timeout: 102400,
+        MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_rate: 3.14190,
         DEVEBOT_CONFIG_ENV: 'dev'
       });
 
@@ -179,6 +180,7 @@ describe('tdd:devebot:core:config-loader', function() {
                   "email": "noreply@example.com",
                   "address": "No. 123, WestLake street",
                   "timeout": 0,
+                  "rate": 0.0,
                   "note": null
                 }
               }
@@ -197,7 +199,8 @@ describe('tdd:devebot:core:config-loader', function() {
                 "settings": {
                   "enabled": true,
                   "email": "contact@example.com",
-                  "timeout": 102400
+                  "timeout": 102400,
+                  "rate": 3.1419
                 }
               }
             }
@@ -210,6 +213,7 @@ describe('tdd:devebot:core:config-loader', function() {
                   "address": "No. 123, WestLake street",
                   "email": "contact@example.com",
                   "timeout": 102400,
+                  "rate": 3.1419,
                   "note": null
                 }
               }
