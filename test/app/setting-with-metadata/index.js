@@ -3,7 +3,7 @@
 var lab = require('../../index');
 var Devebot = lab.getDevebot();
 
-var app = Devebot.launchApplication({
+var app = Devebot.initialize('tasks').launchApplication({
   appRootPath: __dirname
 }, [
   {

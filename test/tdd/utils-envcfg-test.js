@@ -19,21 +19,42 @@ describe('tdd:devebot:utils:envcfg', function() {
       const cfgMap = envcfg.extractEnv('A_PREFIX_OF_ENVCFG_');
       false && console.log('Configuration: %s', JSON.stringify(cfgMap, null, 2));
       assert.deepEqual(cfgMap, {
-        "plugins": {
-          "example": {
-            "settings": {
-              "supportContacts": {
-                "phoneNumber": "+84987654321",
-                "email": "contact@devebot.com"
+        store: {
+          "plugins": {
+            "example": {
+              "settings": {
+                "supportContacts": {
+                  "phoneNumber": "+84987654321",
+                  "email": "contact@devebot.com"
+                }
               }
             }
           }
-        }
+        },
+        paths: [
+          [
+            "plugins",
+            "example",
+            "settings",
+            "supportContacts",
+            "phoneNumber"
+          ],
+          [
+            "plugins",
+            "example",
+            "settings",
+            "supportContacts",
+            "email"
+          ]
+        ]
       });
     });
 
     it('return empty result when none of environment variables satisfied the prefix', function() {
-      assert.deepEqual(envcfg.extractEnv('NOT_FOUND_PREFIX_ENVCFG'), {});
+      assert.deepEqual(envcfg.extractEnv('NOT_FOUND_PREFIX_ENVCFG'), {
+        store: {},
+        paths: [],
+      });
     });
 
     after(function() {

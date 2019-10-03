@@ -135,9 +135,9 @@ describe('tdd:devebot:core:config-loader', function() {
         DEVEBOT_CONFIG_ENV: 'dev'
       });
 
-      var environCfg = extractEnvironConfig(CTX, 'EXAMPLE');
-      false && console.log(JSON.stringify(environCfg, null, 2));
-      assert.deepInclude(environCfg, {
+      var { store, paths } = extractEnvironConfig(CTX, 'EXAMPLE');
+      false && console.log(JSON.stringify(store, null, 2));
+      assert.deepInclude(store, {
         "sandbox": {
           "plugins": {
             "appDemoPlugin": {
@@ -154,16 +154,18 @@ describe('tdd:devebot:core:config-loader', function() {
     });
   });
 
-  describe('loadEnvironConfig(): load the configuration from the environment variables', function() {
+  describe('fillConfigByEnvVars(): load the configuration from the environment variables', function() {
     var ConfigLoader = lab.acquireDevebotModule('backbone/config-loader');
-    var loadEnvironConfig = ConfigLoader.__get__('loadEnvironConfig');
+    var fillConfigByEnvVars = ConfigLoader.__get__('fillConfigByEnvVars');
 
     it('support both default and customized prefixes', function() {
       envcloak.setup({
         NODE_ENV: 'test',
         LOGOLITE_FULL_LOG_MODE: 'false',
+        MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_enabled: 'true',
         DEVEBOT_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_phoneNumber: '+84987654321',
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_email: 'contact@example.com',
+        MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_timeout: 102400,
         DEVEBOT_CONFIG_ENV: 'dev'
       });
 
@@ -173,8 +175,10 @@ describe('tdd:devebot:core:config-loader', function() {
             "plugins": {
               "appDemoPlugin": {
                 "settings": {
+                  "enabled": false,
                   "email": "noreply@example.com",
                   "address": "No. 123, WestLake street",
+                  "timeout": 0,
                   "note": null
                 }
               }
@@ -182,7 +186,7 @@ describe('tdd:devebot:core:config-loader', function() {
           }
         }
       };
-      loadEnvironConfig(CTX, environCfg, 'my-demo');
+      fillConfigByEnvVars(CTX, environCfg, 'my-demo');
       false && console.log(JSON.stringify(environCfg, null, 2));
       assert.deepInclude(environCfg, {
         "profile": {},
@@ -191,8 +195,9 @@ describe('tdd:devebot:core:config-loader', function() {
             "plugins": {
               "appDemoPlugin": {
                 "settings": {
+                  "enabled": true,
                   "email": "contact@example.com",
-                  "phoneNumber": "+84987654321"
+                  "timeout": 102400
                 }
               }
             }
@@ -201,10 +206,11 @@ describe('tdd:devebot:core:config-loader', function() {
             "plugins": {
               "appDemoPlugin": {
                 "settings": {
+                  "enabled": true,
                   "address": "No. 123, WestLake street",
                   "email": "contact@example.com",
-                  "note": null,
-                  "phoneNumber": "+84987654321"
+                  "timeout": 102400,
+                  "note": null
                 }
               }
             }
