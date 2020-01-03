@@ -1,0 +1,20 @@
+= Tổng quan
+
+Devebot là một khung ứng dụng dịch vụ nhỏ xây dựng trên nền tảng Nodejs. Nó được thiết kế theo một số nguyên tắc quan trọng:
+
+- Tính mô đun cao (High modularity)
+- Có thể tái sử dụng (Reusable)
+- Dễ dàng tích hợp (Easy to integrate)
+
+image::devebot-architecture.png[]
+
+Dựa trên khung ứng dụng `devebot`, các ứng dụng dịch vụ sẽ phân tách thành các `plugin`, mỗi plugin sẽ triển khai một tính năng cụ thể.
+Khung ứng dụng cung cấp các _cầu nối_ bao bọc hoặc kết nối với các dịch vụ khác (dịch vụ web, kết nối cơ sở dữ liệu, ...).
+
+Nhờ vậy, các ứng dụng dịch vụ có thể tận dụng được các chức năng cơ bản bao gồm:
+
+- nạp và kiểm tra tính hợp lệ của tệp cấu hình;
+- kiểm tra cấu hình tổng thể theo chế độ dry-run;
+- tận dụng các một phần chức năng đã được xây dựng và sử dụng lâu dài ổn định thông qua các `plugin`;
+- tận dụng các kết nối phổ biến được cung cấp sẵn thông qua các _cầu nối_;
+- dễ dàng tháo lắp, thay thế các bộ phận hoặc mở rộng chức năng các bộ phận mà không gây ảnh hưởng đến toàn bộ chức năng.

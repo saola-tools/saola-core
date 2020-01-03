@@ -1,0 +1,86 @@
+= Appbox
+
+image::devebot-application-architecture.png[]
+
+*Appbox* là một nodejs package chứa các thành phần sau:
+
+1. Tệp mô tả package (Package descriptor file - tức là tệp `package.json`)
+2. Các tệp application entrypoint file(s)
+3. Cấu hình (configuration)
+4. Các đối tượng routines
+5. Các đối tượng services
+6. Các đối tượng servlets
+7. Các thư viện plugins
+8. Các thư viện bridges
+
+== Package descriptor file
+
+Package descriptor file chỉ là đơn thuần là một file link:https://docs.npmjs.com/files/package.json[package.json] của `npm`.
+Trong trường hợp package là ``appbox``, ngoài việc trường `dependencies` chứa khai báo về `devebot` và các `plugins` phụ thuộc,
+package descriptor file cần khai báo keyword chứa từ khóa `devebot` và `devebot-application` để tiện cho việc tìm kiếm.
+
+[source,javascript]
+----
+{
+    "name": "beret",
+    "version": "0.1.0",
+    "description": "Node.js Socket.io & Restful API Simulator",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [ // <1>
+        "devebot",
+        "devebot-application"
+    ],
+    "author": "devebot",
+    "license": "MIT",
+    "dependencies": {
+        "devebot": "^0.2.7"
+    },
+    "devDependencies": {
+        "mocha": "^5.2.0"
+    }
+}
+----
+<1> keywords chứa từ khóa `devebot` và `devebot-application`
+
+== Appbox entrypoint file(s)
+
+Mỗi `appbox` có ít nhất một tệp `.js` là điểm vào của chương trình.
+Tệp này có nhiệm vụ khai báo sử dụng thư viện `devebot` đồng thời nạp toàn bộ `configuration`, `plugins`, `bridges` và chương trình chạy.
+Quá trình này được thực hiện thông qua static method `launchApplication()` của `devebot`.
+Sau khi nạp xong, application sẽ được kích hoạt thông qua phương thức `start()` của đối tượng Server được tham chiếu qua thuộc tính `server`.
+
+[source,javascript]
+----
+// server.js  // <1>
+'use strict';
+
+var devebot = require('devebot');
+
+var app = devebot.launchApplication({
+    appRootPath: __dirname
+}, [
+    'app-tracelog',
+    'app-webweaver'
+], [
+    'devebot-co-mysql',
+    'devebot-co-redis'
+]);
+
+if (require.main === module) app.server.start();
+
+module.exports = app;
+----
+<1> The main property in ``package.json`` defines default application entry point.
+
+== Cấu hình (Configuration)
+
+Cấu hình của ứng dụng được combine từ một chuỗi các tệp cấu hình nạp đè lên nhau:
+
+image::configuration-loading-flow.png[]
+
+Trình tự nạp tệp cấu hình được thực hiện như sau:
+
+* `config/profile.js` của ``framework`` được nạp đầu tiên, vào nhóm config `profile`.

@@ -1,0 +1,5 @@
+name: devebot
+title: "Devebot Core"
+version: master
+nav:
+- modules/ROOT/nav.adoc
