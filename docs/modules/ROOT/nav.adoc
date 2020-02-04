@@ -1,2 +1,3 @@
 * xref:index.adoc[Tổng quan]
+* xref:concepts.adoc[Kết cấu kỹ thuật]
 ** xref:arch/appbox.adoc[Appbox]

@@ -1,0 +1,10 @@
+= Kết cấu phần mềm
+
+image::devebot-architecture.png[]
+
+Theo như hình vẽ minh họa, kết cấu kỹ thuật của `devebot` gồm các thành phần chính sau:
+
+. *Devebot core*: gói khung ứng dụng lõi;
+. *Appbox*: gói ứng dụng;
+. *Bridges*: các gói chức năng cầu nối;
+. *Plugins*: các gói chức năng bổ sung;

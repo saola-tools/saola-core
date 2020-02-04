@@ -8,6 +8,8 @@ Devebot là một khung ứng dụng dịch vụ nhỏ xây dựng trên nền t
 
 image::devebot-architecture.png[]
 
+== Những lợi ích cơ bản
+
 Dựa trên khung ứng dụng `devebot`, các ứng dụng dịch vụ sẽ phân tách thành các `plugin`, mỗi plugin sẽ triển khai một tính năng cụ thể.
 Khung ứng dụng cung cấp các _cầu nối_ bao bọc hoặc kết nối với các dịch vụ khác (dịch vụ web, kết nối cơ sở dữ liệu, ...).
 
@@ -18,3 +20,15 @@ Nhờ vậy, các ứng dụng dịch vụ có thể tận dụng được các 
 - tận dụng các một phần chức năng đã được xây dựng và sử dụng lâu dài ổn định thông qua các `plugin`;
 - tận dụng các kết nối phổ biến được cung cấp sẵn thông qua các _cầu nối_;
 - dễ dàng tháo lắp, thay thế các bộ phận hoặc mở rộng chức năng các bộ phận mà không gây ảnh hưởng đến toàn bộ chức năng.
+
+== Làm chủ khung ứng dụng
+
+Những gợi ý sau đây được đưa ra nhằm giúp người dùng (là các lập trình viên có ý định sử dụng devebot) tiếp cận nhanh chóng từ bắt đầu đến mức làm chủ khung ứng dụng. Bao gồm các bước sau:
+
+* Khởi nhập nhanh thông qua ví dụ đơn giản;
+* Tìm hiểu tổng quan về khung ứng dụng;
+* Tìm hiểu về cấu trúc tổ chức và các thành phần của khung ứng dụng;
+* Tìm hiểu về công cụ dòng lệnh, tham số, cấu hình;
+* Tìm hiểu về các tính năng khung ứng dụng cung cấp;
+* Tìm hiểu về các plugin thường xuyên sử dụng;
+* Đóng góp vào quá trình phát triển khung ứng dụng;

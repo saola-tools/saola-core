@@ -1,4 +1,4 @@
-= Appbox
+= Appbox - gói ứng dụng
 
 image::devebot-application-architecture.png[]
 
@@ -10,8 +10,8 @@ image::devebot-application-architecture.png[]
 4. Các đối tượng routines
 5. Các đối tượng services
 6. Các đối tượng servlets
-7. Các thư viện plugins
-8. Các thư viện bridges
+7. Các gói thư viện plugins
+8. Các gói thư viện bridges
 
 == Package descriptor file
 
@@ -45,7 +45,7 @@ package descriptor file cần khai báo keyword chứa từ khóa `devebot` và 
 ----
 <1> keywords chứa từ khóa `devebot` và `devebot-application`
 
-== Appbox entrypoint file(s)
+== Application entrypoint file(s)
 
 Mỗi `appbox` có ít nhất một tệp `.js` là điểm vào của chương trình.
 Tệp này có nhiệm vụ khai báo sử dụng thư viện `devebot` đồng thời nạp toàn bộ `configuration`, `plugins`, `bridges` và chương trình chạy.
@@ -59,15 +59,18 @@ Sau khi nạp xong, application sẽ được kích hoạt thông qua phương t
 
 var devebot = require('devebot');
 
-var app = devebot.launchApplication({
-    appRootPath: __dirname
-}, [
-    'app-tracelog',
-    'app-webweaver'
-], [
-    'devebot-co-mysql',
-    'devebot-co-redis'
-]);
+var app = devebot.launchApplication(
+    {
+        appRootPath: __dirname
+    },
+    [
+        'app-tracelog',
+        'app-webweaver'
+    ],
+    [
+        'devebot-co-mysql',
+        'devebot-co-redis'
+    ]);
 
 if (require.main === module) app.server.start();
 
@@ -81,6 +84,23 @@ Cấu hình của ứng dụng được combine từ một chuỗi các tệp c�
 
 image::configuration-loading-flow.png[]
 
-Trình tự nạp tệp cấu hình được thực hiện như sau:
+Trình tự nạp tệp cấu hình cho nhóm `profile` được thực hiện như sau:
 
-* `config/profile.js` của ``framework`` được nạp đầu tiên, vào nhóm config `profile`.
+* Khới tạo một đối tượng rỗng để lưu cấu hình `profile` chung;
+* Tệp cấu hình `config/profile.js` của ``framework`` được nạp đầu tiên, ghép các giá trị vào cấu hình `profile` chung;
+* Tệp cấu hình `config/profile.js` của các plugin sẽ được nạp và ghép vào cấu hình `profile` chung;
+* Tệp cấu hình `config/profile.js` của appbox sẽ được nạp và ghép vào cấu hình `profile` chung;
+* Nếu có khai báo bổ sung cấu hình profile thông qua biến môi trường `$DEVEBOT_PROFILE`, tệp `config/profile_$DEVEBOT_PROFILE.js` của appbox sẽ được nạp và ghép vào cấu hình `profile` chung;
+* Nếu có khai báo bổ sung thư mục mở rộng cấu hình `$DEVEBOT_CONFIG_DIR` và tên môi trường cấu hình `$DEVEBOT_CONFIG_ENV`, thì các tệp cấu hình trong đường dẫn thư mục `$DEVEBOT_CONFIG_DIR/$DEVEBOT_CONFIG_ENV` sẽ được nạp và ghép vào cấu hình `profile` chung.
+
+Tương tự như vậy đối với trình tự nạp tệp cấu hình cho nhóm cấu hình `sandbox`.
+
+== Các đối tượng Routines
+
+Các đối tượng Rountine được định nghĩa để sử dụng nội bộ bên trong khung ứng dụng Devebot.
+
+== Các đối tượng services
+
+
+== Các đối tượng servlets
+
