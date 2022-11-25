@@ -5,7 +5,8 @@ module.exports = {
   "extends": "standard",
   "rules": {
     "no-undef": "error",
-    "no-unused-vars": "error",
+    "no-unused-vars": "warn",
+    "no-unsafe-finally": "off",
     "no-inner-declarations": ["error"],
     "camelcase": "warn",
     "curly": "error",
