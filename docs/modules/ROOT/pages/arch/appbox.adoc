@@ -1,4 +1,4 @@
-= Appbox - gói ứng dụng
+= Appbox - gói ứng dụng chính
 
 image::devebot-application-architecture.png[]
 

@@ -1,1 +1,1 @@
-= Gói thư viện cầu nối (Bridge)
+= Các gói thư viện cầu nối (Bridges)

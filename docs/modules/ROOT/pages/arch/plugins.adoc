@@ -1,1 +1,1 @@
-= Gói thư viện bổ sung (Plugin)
+= Các gói thư viện bổ sung (Plugins)

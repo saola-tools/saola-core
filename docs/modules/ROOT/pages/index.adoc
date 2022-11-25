@@ -21,6 +21,21 @@ Nhờ vậy, các ứng dụng dịch vụ có thể tận dụng được các 
 - tận dụng các kết nối phổ biến được cung cấp sẵn thông qua các _cầu nối_;
 - dễ dàng tháo lắp, thay thế các bộ phận hoặc mở rộng chức năng các bộ phận mà không gây ảnh hưởng đến toàn bộ chức năng.
 
+== Tăng tốc quá trình phát triển phần mềm
+
+image::devebot-appbox-in-practice.png[]
+
+Sơ đồ trên minh họa kỹ thuật áp dụng Khung ứng dụng devebot để xây dựng Restful API Service:
+
+1. BA (Business Analysist) sẽ mô tả các chức năng (functions) của ứng dụng dưới dạng User Stories (theo phương pháp Agile/Scrum) hoặc Use Cases (theo phương pháp Waterfall). Trong quá trình phân rã chức năng, BA sẽ thảo luận với toàn team (bao gồm Dev, DevOps, QA, Testers, IT, Product Owner, Scrum Master) để thống nhất các chức năng cần thực hiện và phân rã tasks.
+2. BA có thể kết hợp cùng Developers để tạo nhanh một prototype (nguyên mẫu) dưới dạng Mock-service bằng cách sử dụng Devebot Framework, Restfront, Mock (texture); DevOps có thể hỗ trợ bước này để tạo Deployment Script.
+3. Theo nhánh này, BA có thể cộng tác cùng QA để xây dựng các Test Cases dựa trên bộ API này. Việc này thực hiện song song với quá trình Dev để đẩy nhanh tiến độ cũng như tận dụng thời gian nhàn rỗi giai đoạn đầu dự án;
+4. Song song việc đó, sau khi làm rõ tasks, Devs sẽ thực hiện việc lập trình nhanh phần chức năng dưới dạng Devebot Service/functions mà không cần quan tâm đến Rest API hoặc mã lệnh chuyển đổi từ HTTP requests -> function -> HTTP Responses; Quá trình này nên có thêm UnitTest hoặc BehaviorTest (BDD)
+5. Khi đã sẵn sàng Rest API mock + Service/functions code, Dev hoặc DevOps có thể mô tả Mappings để nối từ Rest API vào Service/functions. Sau khi mô tả xong mappings (dưới dạng config), chỉ việc switch qua lại giữa hai chế độ này để thử nghiệm (demo) hoặc kiểm thử (testing);
+6. Thay thế bản build với service thật lên beta server thay cho bản Mock, QA+Testers thực hiện việc test và quyết định Release;
+7. IT/SysOps deploy lên server production;
+8. QA verify lại bản build và chính thức phát hành;
+
 == Làm chủ khung ứng dụng
 
 Những gợi ý sau đây được đưa ra nhằm giúp người dùng (là các lập trình viên có ý định sử dụng devebot) tiếp cận nhanh chóng từ bắt đầu đến mức làm chủ khung ứng dụng. Bao gồm các bước sau:

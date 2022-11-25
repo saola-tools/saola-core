@@ -1,4 +1,4 @@
-= Kết cấu phần mềm
+= Kết cấu ứng dụng
 
 image::devebot-architecture.png[]
 
