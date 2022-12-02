@@ -7,8 +7,8 @@ var lodash = Devebot.require('lodash');
 var assert = require('chai').assert;
 var path = require('path');
 var bootstrap = require(lab.getDevebotModule('bootstrap'));
-var LogConfig = require('logolite').LogConfig;
-var LogTracer = require('logolite').LogTracer;
+var LogConfig = Devebot.require('logolite').LogConfig;
+var LogTracer = Devebot.require('logolite').LogTracer;
 var envcloak = require('envcloak').instance;
 
 var CONFIG_EXTENDED_FIELDS = [
@@ -109,7 +109,7 @@ describe('tdd:devebot:base:bootstrap', function() {
       loader: path.join(lab.getDevebotHome(), 'lib/utils/loader.js'),
       pinbug: path.join(lab.getDevebotHome(), 'lib/utils/pinbug.js'),
     }
-    lodash.forEach([ 'injektor', 'logolite', 'schemato', 'semver' ], function(pkgName) {
+    lodash.forEach([ 'injektor', 'logolite', 'schemato' ], function(pkgName) {
       pkgs[pkgName] = pkgName;
     });
     it('require() returns correct exported packages', function() {

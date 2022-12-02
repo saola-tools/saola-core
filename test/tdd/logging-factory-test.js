@@ -6,8 +6,8 @@ var lodash = Devebot.require('lodash');
 var assert = require('chai').assert;
 var debugx = Devebot.require('pinbug')('tdd:devebot:core:logging-factory');
 var LoggingFactory = require(lab.getDevebotModule('backbone/logging-factory'));
-var LogAdapter = require('logolite').LogAdapter;
-var MockLogger = require('logolite').MockLogger;
+var LogAdapter = Devebot.require('logolite').LogAdapter;
+var MockLogger = Devebot.require('logolite').MockLogger;
 var envcloak = require('envcloak').instance;
 
 describe('tdd:devebot:core:logging-factory', function() {

@@ -1,5 +1,10 @@
 'use strict';
 
+var path = require('path');
+var freshy = require('freshy');
+var rewire = require('rewire');
+var sinon = require('sinon');
+
 var chores = require('../lib/utils/chores');
 var constx = require('../lib/utils/constx');
 var errors = require('../lib/utils/errors');
@@ -8,14 +13,11 @@ var NameResolver = require('../lib/backbone/name-resolver');
 var ManifestHandler = require('../lib/backbone/manifest-handler');
 var issueInspector = require('../lib/backbone/issue-inspector').instance;
 var stateInspector = require('../lib/backbone/state-inspector').instance;
-var LogConfig = require('logolite').LogConfig;
-var LogTracer = require('logolite').LogTracer;
-var lodash = require('lodash');
-var path = require('path');
-var Injektor = require('injektor');
-var freshy = require('freshy');
-var rewire = require('rewire');
-var sinon = require('sinon');
+var Devebot = require(path.join(__dirname, '../'));
+var LogConfig = Devebot.require('logolite').LogConfig;
+var LogTracer = Devebot.require('logolite').LogTracer;
+var Injektor = Devebot.require('injektor');
+var lodash = Devebot.require('lodash');
 
 // EventEmitter memory leak detecting
 var max = 12;

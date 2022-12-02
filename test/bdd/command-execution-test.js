@@ -8,8 +8,8 @@ var lodash = Devebot.require('lodash');
 var debugx = Devebot.require('pinbug')('bdd:devebot:command:execution');
 var assert = require('chai').assert;
 var DevebotApi = require('devebot-api');
-var LogConfig = require('logolite').LogConfig;
-var LogTracer = require('logolite').LogTracer;
+var LogConfig = Devebot.require('logolite').LogConfig;
+var LogTracer = Devebot.require('logolite').LogTracer;
 var envcloak = require('envcloak').instance;
 
 describe('bdd:devebot:command:execution', function() {

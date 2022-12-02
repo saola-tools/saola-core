@@ -8,8 +8,8 @@ var loader = Devebot.require('loader');
 var assert = require('chai').assert;
 var path = require('path');
 var util = require('util');
-var LogConfig = require('logolite').LogConfig;
-var LogTracer = require('logolite').LogTracer;
+var LogConfig = Devebot.require('logolite').LogConfig;
+var LogTracer = Devebot.require('logolite').LogTracer;
 var Envcloak = require('envcloak');
 var envcloak = Envcloak.instance;
 

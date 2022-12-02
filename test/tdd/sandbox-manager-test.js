@@ -9,8 +9,8 @@ var lodash = Devebot.require('lodash');
 var loader = Devebot.require('loader');
 var errors = Devebot.require('errors');
 var assert = require('chai').assert;
-var LogConfig = require('logolite').LogConfig;
-var LogTracer = require('logolite').LogTracer;
+var LogConfig = Devebot.require('logolite').LogConfig;
+var LogTracer = Devebot.require('logolite').LogTracer;
 var envcloak = require('envcloak').instance;
 var sinon = require('sinon');
 
@@ -149,7 +149,7 @@ describe('tdd:devebot:core:sandbox-manager', function() {
           chores.toFullname("devebot", "sandboxRegistry")
         ]);
       } else {
-        console.log(JSON.stringify(excluded, null, 2));
+        console.log(JSON.stringify(loggingStore, null, 2));
       }
     });
 

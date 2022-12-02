@@ -6,8 +6,8 @@ var lodash = Devebot.require('lodash');
 var chores = Devebot.require('chores');
 var assert = require('chai').assert;
 var util = require('util');
-var LogConfig = require('logolite').LogConfig;
-var LogTracer = require('logolite').LogTracer;
+var LogConfig = Devebot.require('logolite').LogConfig;
+var LogTracer = Devebot.require('logolite').LogTracer;
 var envcloak = require('envcloak').instance;
 
 describe('tdd:devebot:core:bridge-loader', function() {

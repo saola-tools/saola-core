@@ -480,8 +480,8 @@ bootstrap.require = function(packageName) {
   return null;
 };
 
-function locatePackage({issueInspector} = {}, pkgInfo) {
-  chores.assertOk(issueInspector, pkgInfo, pkgInfo.name, pkgInfo.type, pkgInfo.path);
+function locatePackage({issueInspector} = {}, pkgInfo, pkgType) {
+  chores.assertOk(issueInspector, pkgInfo, pkgInfo.name, pkgInfo.type || pkgType, pkgInfo.path);
   try {
     const entrypoint = require.resolve(pkgInfo.path);
     const buf = {};

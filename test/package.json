@@ -12,7 +12,7 @@
     "devebot-api": "^0.2.2",
     "devebot-cli": "^0.2.2",
     "freshy": "^1.0.4",
-    "liberica": "^0.3.1",
+    "liberica": "^0.4.0",
     "minimist": "^1.2.0",
     "rewire": "^3.0.2",
     "sinon": "^7.4.1",

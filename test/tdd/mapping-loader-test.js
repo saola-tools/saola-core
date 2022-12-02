@@ -2,7 +2,7 @@
 
 var lab = require('../index');
 var Devebot = lab.getDevebot();
-var chores = Devebot.require('chores');
+Devebot.require('logolite'); // load the Devebot's logolite first
 var assert = require('liberica').assert;
 var mockit = require('liberica').mockit;
 var sinon = require('liberica').sinon;
@@ -129,7 +129,7 @@ describe('tdd:devebot:core:mapping-loader', function() {
   });
 
   describe('traverseDirRecursively()', function() {
-    var loggingFactory = mockit.createLoggingFactoryMock({ captureMethodCall: false });
+    var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
     var ctx = {
       L: loggingFactory.getLogger(),
       T: loggingFactory.getTracer(),

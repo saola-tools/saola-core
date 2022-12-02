@@ -357,7 +357,8 @@ function loadManifest(pkgRef, issueInspector) {
 
 function safeloadManifest(pkgPath) {
   try {
-    const manifest = require(pkgPath).manifest;
+    const pkgObject = require(pkgPath);
+    const manifest = 'manifest' in pkgObject && pkgObject.manifest || undefined;
     if (manifest) return manifest;
     return require(path.join(pkgPath, '/manifest.js'));
   } catch (err) {

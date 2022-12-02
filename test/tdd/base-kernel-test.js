@@ -5,8 +5,8 @@ var Devebot = lab.getDevebot();
 var chores = Devebot.require('chores');
 var lodash = Devebot.require('lodash');
 var assert = require('chai').assert;
-var LogConfig = require('logolite').LogConfig;
-var LogTracer = require('logolite').LogTracer;
+var LogConfig = Devebot.require('logolite').LogConfig;
+var LogTracer = Devebot.require('logolite').LogTracer;
 var Envcloak = require('envcloak');
 var envcloak = Envcloak.instance;
 
