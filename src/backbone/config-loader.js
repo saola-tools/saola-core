@@ -247,7 +247,7 @@ function fillConfigByEnvVars(ctx = {}, config = {}, appName) {
       continue;
     }
 
-    let newVal = undefined;
+    let newVal;
     const envVal = lodash.get(store, location);
     const oldVal = lodash.get(config, [configType, 'mixture'].concat(location.slice(1)));
     if (lodash.isNumber(oldVal)) {
