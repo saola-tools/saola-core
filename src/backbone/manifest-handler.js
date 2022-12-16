@@ -1,28 +1,28 @@
-'use strict';
+"use strict";
 
-const lodash = require('lodash');
-const path = require('path');
-const util = require('util');
-const chores = require('../utils/chores');
-const constx = require('../utils/constx');
-const LoggingWrapper = require('./logging-wrapper');
+const lodash = require("lodash");
+const path = require("path");
+const util = require("util");
+const chores = require("../utils/chores");
+const constx = require("../utils/constx");
+const LoggingWrapper = require("./logging-wrapper");
 const blockRef = chores.getBlockRef(__filename);
 
-const SELECTED_FIELDS = [ 'crateScope', 'extension', 'schema', 'checkConstraints' ];
+const SELECTED_FIELDS = [ "crateScope", "extension", "schema", "checkConstraints" ];
 
-function ManifestHandler(params = {}) {
+function ManifestHandler (params = {}) {
   const {nameResolver, issueInspector, bridgeList, bundleList} = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();
   const C = { nameResolver, L, T };
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [ blockRef, 'constructor-begin' ],
-    text: ' + constructor start ...'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [ blockRef, "constructor-begin" ],
+    text: " + constructor start ..."
   }));
 
-  if (chores.isUpgradeSupported('manifest-refiner')) {
+  if (chores.isUpgradeSupported("manifest-refiner")) {
     lodash.forOwn(bridgeList, function(ref) {
       ref.manifest = loadManifest(ref, issueInspector);
       ref.version = loadPackageVersion(ref);
@@ -38,27 +38,27 @@ function ManifestHandler(params = {}) {
   this.SELECTED_FIELDS = SELECTED_FIELDS;
 
   this.validateConfig = function (configStore, bridgeSchema, bundleSchema, result = []) {
-    const bridgeConfig = lodash.get(configStore, ['sandbox', 'mixture', 'bridges'], {});
+    const bridgeConfig = lodash.get(configStore, ["sandbox", "mixture", "bridges"], {});
     validateBridgeConfig(C, bridgeConfig, combineBridgeSchema(C, bridgeList, bridgeSchema), result);
 
     const bundleConfig = {
-      profile: lodash.get(configStore, ['profile', 'mixture'], {}),
-      sandbox: lodash.pick(lodash.get(configStore, ['sandbox', 'mixture'], {}), ['application', 'plugins'])
-    }
+      profile: lodash.get(configStore, ["profile", "mixture"], {}),
+      sandbox: lodash.pick(lodash.get(configStore, ["sandbox", "mixture"], {}), ["application", "plugins"])
+    };
     validateBundleConfig(C, bundleConfig, combineBundleSchema(C, bundleList, bundleSchema), result);
 
     // summarize validating result
-    L.has('silly') && L.log('silly', T.add({ result }).toMessage({
-      tags: [ blockRef, 'validating-config-by-schema-result' ],
-      text: ' - Validating sandbox configuration using schemas'
+    L.has("silly") && L.log("silly", T.add({ result }).toMessage({
+      tags: [ blockRef, "validating-config-by-schema-result" ],
+      text: " - Validating sandbox configuration using schemas"
     }));
 
     return result;
-  }
+  };
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [ blockRef, 'constructor-end' ],
-    text: ' - constructor has finished'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [ blockRef, "constructor-end" ],
+    text: " - constructor has finished"
   }));
 };
 
@@ -79,15 +79,15 @@ module.exports = ManifestHandler;
 
 //-----------------------------------------------------------------------------
 
-function combineBridgeSchema(ref, bridgeList, bridgeSchema = {}) {
+function combineBridgeSchema (ref, bridgeList, bridgeSchema = {}) {
   const { nameResolver } = ref;
   lodash.forEach(bridgeList, function(bridgeRef) {
     let bridgeCode = nameResolver.getDefaultAliasOf(bridgeRef.name, bridgeRef.type);
-    if (!chores.isUpgradeSupported('refining-name-resolver')) {
+    if (!chores.isUpgradeSupported("refining-name-resolver")) {
       bridgeCode = nameResolver.getDefaultAlias(bridgeRef);
     }
-    if (chores.isUpgradeSupported('manifest-refiner')) {
-      const validationBlock = lodash.get(bridgeRef, ['manifest', constx.MANIFEST.DEFAULT_ROOT_NAME, 'validation']);
+    if (chores.isUpgradeSupported("manifest-refiner")) {
+      const validationBlock = lodash.get(bridgeRef, ["manifest", constx.MANIFEST.DEFAULT_ROOT_NAME, "validation"]);
       if (lodash.isObject(validationBlock)) {
         bridgeSchema[bridgeCode] = lodash.pick(validationBlock, SELECTED_FIELDS);
       }
@@ -95,25 +95,25 @@ function combineBridgeSchema(ref, bridgeList, bridgeSchema = {}) {
     // apply 'schemaValidation' option from presets for bridges
     bridgeSchema[bridgeCode] = bridgeSchema[bridgeCode] || {};
     if (bridgeRef.presets && bridgeRef.presets.schemaValidation === false) {
-      lodash.set(bridgeSchema, [bridgeCode, 'enabled'], false);
+      lodash.set(bridgeSchema, [bridgeCode, "enabled"], false);
     }
   });
   return bridgeSchema;
 }
 
-function validateBridgeConfig(ref, bridgeConfig, bridgeSchema, result) {
+function validateBridgeConfig (ref, bridgeConfig, bridgeSchema, result) {
   const { L, T } = ref;
   result = result || [];
 
   bridgeConfig = bridgeConfig || {};
   bridgeSchema = bridgeSchema || {};
 
-  L.has('silly') && L.log('silly', T.add({ bridgeConfig, bridgeSchema }).toMessage({
-    tags: [ blockRef, 'validate-bridge-config-by-schema' ],
-    text: ' - bridge config/schema:\n${bridgeSchema}\n${bridgeConfig}'
+  L.has("silly") && L.log("silly", T.add({ bridgeConfig, bridgeSchema }).toMessage({
+    tags: [ blockRef, "validate-bridge-config-by-schema" ],
+    text: " - bridge config/schema:\n${bridgeSchema}\n${bridgeConfig}"
   }));
 
-  if (!chores.isUpgradeSupported('bridge-full-ref')) {
+  if (!chores.isUpgradeSupported("bridge-full-ref")) {
     for (const dialectName in bridgeConfig) {
       const dialectMap = bridgeConfig[dialectName] || {};
       for (const bridgeCode in dialectMap) {
@@ -121,7 +121,7 @@ function validateBridgeConfig(ref, bridgeConfig, bridgeSchema, result) {
         if (bridgeMetadata.enabled === false || !lodash.isObject(bridgeMetadata.schema)) continue;
         const dialectConfig = dialectMap[bridgeCode] || {};
         const r = chores.validate(dialectConfig, bridgeMetadata.schema);
-        result.push(customizeBridgeResult(r, bridgeCode, '*', dialectName));
+        result.push(customizeBridgeResult(r, bridgeCode, "*", dialectName));
       }
     }
     return result;
@@ -144,11 +144,11 @@ function validateBridgeConfig(ref, bridgeConfig, bridgeSchema, result) {
   return result;
 }
 
-function customizeBridgeResult(result, bridgeCode, pluginName, dialectName) {
+function customizeBridgeResult (result, bridgeCode, pluginName, dialectName) {
   const output = {};
-  output.stage = 'config/schema';
-  output.name = [pluginName, chores.getSeparator(), bridgeCode, '#', dialectName].join('');
-  output.type = 'bridge';
+  output.stage = "config/schema";
+  output.name = [pluginName, chores.getSeparator(), bridgeCode, "#", dialectName].join("");
+  output.type = "bridge";
   output.hasError = result.ok !== true;
   if (!result.ok && result.errors) {
     output.stack = JSON.stringify(result.errors, null, 2);
@@ -158,63 +158,63 @@ function customizeBridgeResult(result, bridgeCode, pluginName, dialectName) {
 
 //-----------------------------------------------------------------------------
 
-function combineBundleSchema(ref, bundleList, bundleSchema = {}) {
+function combineBundleSchema (ref, bundleList, bundleSchema = {}) {
   const { nameResolver } = ref;
   bundleSchema.profile = bundleSchema.profile || {};
   bundleSchema.sandbox = bundleSchema.sandbox || {};
   lodash.forEach(bundleList, function(bundleRef) {
     let pluginCode = nameResolver.getDefaultAliasOf(bundleRef.name, bundleRef.type);
-    if (!chores.isUpgradeSupported('refining-name-resolver')) {
+    if (!chores.isUpgradeSupported("refining-name-resolver")) {
       pluginCode = nameResolver.getDefaultAlias(bundleRef);
     }
-    if (chores.isUpgradeSupported('manifest-refiner')) {
-      const configType = 'sandbox';
-      let validationBlock = lodash.get(bundleRef, ['manifest', constx.MANIFEST.DEFAULT_ROOT_NAME, 'validation']);
+    if (chores.isUpgradeSupported("manifest-refiner")) {
+      const configType = "sandbox";
+      let validationBlock = lodash.get(bundleRef, ["manifest", constx.MANIFEST.DEFAULT_ROOT_NAME, "validation"]);
       if (lodash.isObject(validationBlock)) {
         validationBlock = lodash.pick(validationBlock, SELECTED_FIELDS);
         validationBlock.crateScope = nameResolver.getOriginalNameOf(bundleRef.name, bundleRef.type);
         if (chores.isSpecialBundle(pluginCode)) {
           bundleSchema[configType][pluginCode] = validationBlock;
         } else {
-          bundleSchema[configType]['plugins'] = bundleSchema[configType]['plugins'] || {};
-          bundleSchema[configType]['plugins'][pluginCode] = validationBlock;
+          bundleSchema[configType]["plugins"] = bundleSchema[configType]["plugins"] || {};
+          bundleSchema[configType]["plugins"][pluginCode] = validationBlock;
         }
       }
     }
     // apply 'schemaValidation' option from presets for plugins
     if (bundleRef.presets && bundleRef.presets.schemaValidation === false) {
       if (!chores.isSpecialBundle(pluginCode)) {
-        lodash.forEach(['profile', 'sandbox'], function(configType) {
-          lodash.set(bundleSchema, [configType, 'plugins', pluginCode, 'enabled'], false);
+        lodash.forEach(["profile", "sandbox"], function(configType) {
+          lodash.set(bundleSchema, [configType, "plugins", pluginCode, "enabled"], false);
         });
       }
     }
     // apply 'pluginDepends' & 'bridgeDepends' to bundleSchema
-    lodash.forEach(['bridgeDepends', 'pluginDepends'], function(depType) {
+    lodash.forEach(["bridgeDepends", "pluginDepends"], function(depType) {
       if (lodash.isArray(bundleRef[depType])) {
-        lodash.set(bundleSchema, ['sandbox', 'plugins', pluginCode, depType], bundleRef[depType]);
+        lodash.set(bundleSchema, ["sandbox", "plugins", pluginCode, depType], bundleRef[depType]);
       }
     });
   });
   return bundleSchema;
 }
 
-function validateBundleConfig(ref, bundleConfig, bundleSchema, result) {
+function validateBundleConfig (ref, bundleConfig, bundleSchema, result) {
   const { L, T } = ref;
-  L.has('silly') && L.log('silly', T.add({ bundleConfig, bundleSchema }).toMessage({
-    tags: [ blockRef, 'validate-bundle-config-by-schema' ],
-    text: ' - Synchronize the structure of configuration data and schemas'
+  L.has("silly") && L.log("silly", T.add({ bundleConfig, bundleSchema }).toMessage({
+    tags: [ blockRef, "validate-bundle-config-by-schema" ],
+    text: " - Synchronize the structure of configuration data and schemas"
   }));
   result = result || [];
   validateSandboxSchemaOfCrates(ref, result, bundleConfig.sandbox, bundleSchema.sandbox);
   checkSandboxConstraintsOfCrates(ref, result, bundleConfig.sandbox, bundleSchema.sandbox);
 }
 
-function validateSandboxSchemaOfCrates(ref, result, config, schema) {
+function validateSandboxSchemaOfCrates (ref, result, config, schema) {
   config = config || {};
   schema = schema || {};
   if (config.application) {
-    validateSandboxSchemaOfCrate(ref, result, config.application, schema.application, 'application');
+    validateSandboxSchemaOfCrate(ref, result, config.application, schema.application, "application");
   }
   if (config.plugins) {
     lodash.forOwn(config.plugins, function(pluginObject, pluginName) {
@@ -225,20 +225,20 @@ function validateSandboxSchemaOfCrates(ref, result, config, schema) {
   }
 }
 
-function validateSandboxSchemaOfCrate(ref, result, crateConfig, crateSchema, crateName) {
+function validateSandboxSchemaOfCrate (ref, result, crateConfig, crateSchema, crateName) {
   const { L, T } = ref;
   if (crateSchema && crateSchema.enabled !== false && lodash.isObject(crateSchema.schema)) {
     const r = chores.validate(crateConfig, crateSchema.schema);
-    result.push(customizeSandboxResult(r, crateSchema.crateScope, 'schema'));
+    result.push(customizeSandboxResult(r, crateSchema.crateScope, "schema"));
   } else {
-    L.has('silly') && L.log('silly', T.add({ crateName, crateConfig, crateSchema }).toMessage({
-      tags: [ blockRef, 'validate-bundle-config-by-schema-skipped' ],
-      text: ' - Validating sandboxConfig[${crateName}] is skipped'
+    L.has("silly") && L.log("silly", T.add({ crateName, crateConfig, crateSchema }).toMessage({
+      tags: [ blockRef, "validate-bundle-config-by-schema-skipped" ],
+      text: " - Validating sandboxConfig[${crateName}] is skipped"
     }));
   }
 }
 
-function checkSandboxConstraintsOfCrates(ref, result, config, schema) {
+function checkSandboxConstraintsOfCrates (ref, result, config, schema) {
   config = config || {};
   schema = schema || {};
   if (lodash.isObject(config.application)) {
@@ -251,8 +251,8 @@ function checkSandboxConstraintsOfCrates(ref, result, config, schema) {
   }
 }
 
-function checkSandboxConstraintsOfAppbox(ref, result, config, schema) {
-  const crateName = 'application';
+function checkSandboxConstraintsOfAppbox (ref, result, config, schema) {
+  const crateName = "application";
   const crateConfig = config.application;
   const crateSchema = schema.application;
   const checkConstraints = crateSchema && crateSchema.checkConstraints;
@@ -266,11 +266,11 @@ function checkSandboxConstraintsOfAppbox(ref, result, config, schema) {
       extractedCfg.bridges[depName] = lodash.get(config, ["bridges", depName, crateName]);
     });
     const r = applyCheckConstraints(checkConstraints, extractedCfg, crateName);
-    result.push(customizeSandboxResult(r, crateSchema.crateScope, 'constraints'));
+    result.push(customizeSandboxResult(r, crateSchema.crateScope, "constraints"));
   }
 }
 
-function checkSandboxConstraintsOfPlugin(ref, result, config, schema, crateName) {
+function checkSandboxConstraintsOfPlugin (ref, result, config, schema, crateName) {
   const crateConfig = config.plugins[crateName];
   const crateSchema = schema && schema.plugins && schema.plugins[crateName];
   const checkConstraints = crateSchema && crateSchema.checkConstraints;
@@ -279,8 +279,8 @@ function checkSandboxConstraintsOfPlugin(ref, result, config, schema, crateName)
     extractedCfg.plugins[crateName] = crateConfig;
     lodash.forEach(crateSchema.pluginDepends, function(depName) {
       if (depName === crateName) {
-        const r = { ok: false, reason: { pluginName: crateName, message: 'plugin depends on itself' } };
-        result.push(customizeSandboxResult(r, crateSchema.crateScope, 'constraints'));
+        const r = { ok: false, reason: { pluginName: crateName, message: "plugin depends on itself" } };
+        result.push(customizeSandboxResult(r, crateSchema.crateScope, "constraints"));
       }
       extractedCfg.plugins[depName] = config.plugins[depName];
     });
@@ -288,26 +288,26 @@ function checkSandboxConstraintsOfPlugin(ref, result, config, schema, crateName)
       extractedCfg.bridges[depName] = lodash.get(config, ["bridges", depName, crateName]);
     });
     const r = applyCheckConstraints(checkConstraints, extractedCfg, crateName);
-    result.push(customizeSandboxResult(r, crateSchema.crateScope, 'constraints'));
+    result.push(customizeSandboxResult(r, crateSchema.crateScope, "constraints"));
   }
 }
 
-function applyCheckConstraints(checkConstraints, extractedCfg, crateName) {
+function applyCheckConstraints (checkConstraints, extractedCfg, crateName) {
   try {
     return checkConstraints(extractedCfg);
   } catch (error) {
-    const moduleLabel = (crateName !== 'application') ? 'plugins[' + crateName + ']' : crateName;
-    return { ok: false, reason: util.format('%s.checkConstraints() raises an error', moduleLabel) }
+    const moduleLabel = (crateName !== "application") ? "plugins[" + crateName + "]" : crateName;
+    return { ok: false, reason: util.format("%s.checkConstraints() raises an error", moduleLabel) };
   }
 }
 
-function customizeSandboxResult(result, crateScope, validationType) {
+function customizeSandboxResult (result, crateScope, validationType) {
   result = (result === undefined || result === null) ? false : result;
-  result = (typeof result === 'boolean') ? { ok: result } : result;
+  result = (typeof result === "boolean") ? { ok: result } : result;
   const output = {};
-  output.stage = 'config/' + validationType;
+  output.stage = "config/" + validationType;
   output.name = crateScope;
-  output.type = chores.isSpecialBundle(crateScope) ? crateScope : 'plugin';
+  output.type = chores.isSpecialBundle(crateScope) ? crateScope : "plugin";
   output.hasError = result.ok !== true;
   if (!result.ok) {
     if (result.errors) {
@@ -322,14 +322,14 @@ function customizeSandboxResult(result, crateScope, validationType) {
 
 //-----------------------------------------------------------------------------
 
-function loadPackageVersion(pkgRef, issueInspector) {
+function loadPackageVersion (pkgRef, issueInspector) {
   chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name);
   const pkgInfo = chores.loadPackageInfo(pkgRef.path);
   const version = pkgInfo && pkgInfo.version;
   if (!lodash.isString(version)) {
     issueInspector && issueInspector.collect({
       hasError: true,
-      stage: 'package-version',
+      stage: "package-version",
       type: pkgRef.type,
       name: pkgRef.name,
     });
@@ -337,7 +337,7 @@ function loadPackageVersion(pkgRef, issueInspector) {
   return version;
 }
 
-function loadManifest(pkgRef, issueInspector) {
+function loadManifest (pkgRef, issueInspector) {
   chores.assertOk(pkgRef.path, pkgRef.type, pkgRef.name, issueInspector);
   const manifest = safeloadManifest(pkgRef.path);
   if (!lodash.isEmpty(manifest)) {
@@ -345,7 +345,7 @@ function loadManifest(pkgRef, issueInspector) {
     if (!result.ok) {
       issueInspector && issueInspector.collect({
         hasError: true,
-        stage: 'manifest',
+        stage: "manifest",
         type: pkgRef.type,
         name: pkgRef.name,
         stack: JSON.stringify(result.errors, null, 4)
@@ -355,12 +355,12 @@ function loadManifest(pkgRef, issueInspector) {
   return manifest;
 }
 
-function safeloadManifest(pkgPath) {
+function safeloadManifest (pkgPath) {
   try {
     const pkgObject = require(pkgPath);
-    const manifest = 'manifest' in pkgObject && pkgObject.manifest || undefined;
+    const manifest = "manifest" in pkgObject && pkgObject.manifest || undefined;
     if (manifest) return manifest;
-    return require(path.join(pkgPath, '/manifest.js'));
+    return require(path.join(pkgPath, "/manifest.js"));
   } catch (err) {
     return null;
   }

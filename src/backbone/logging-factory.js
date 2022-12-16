@@ -1,23 +1,23 @@
-'use strict';
+"use strict";
 
-const lodash = require('lodash');
-const LogFactory = require('logzilla');
-const LogAdapter = require('logolite').LogAdapter;
-const LogConfig = require('logolite').LogConfig;
-const LogTracer = require('logolite').LogTracer;
-const chores = require('../utils/chores');
-const constx = require('../utils/constx');
-const nodash = require('../utils/nodash');
+const lodash = require("lodash");
+const LogFactory = require("logzilla");
+const LogAdapter = require("logolite").LogAdapter;
+const LogConfig = require("logolite").LogConfig;
+const LogTracer = require("logolite").LogTracer;
+const chores = require("../utils/chores");
+const constx = require("../utils/constx");
+const nodash = require("../utils/nodash");
 const DEFAULT_SECTOR_NAME = chores.getBlockRef(__filename);
-const FRAMEWORK_METADATA = constx.FRAMEWORK.NAME + '-metadata';
+const FRAMEWORK_METADATA = constx.FRAMEWORK.NAME + "-metadata";
 const STAMP = constx.LOGGER.STARTING_POINT;
 
-function LoggingService(params = {}) {
+function LoggingService (params = {}) {
   const more = {};
   const logFactory = new LogFactory(transformLoggingConfig(params.profileConfig, more));
 
   lodash.assign(this, lodash.mapValues(lodash.pick(logFactory, [
-    'getServiceInfo', 'getServiceHelp'
+    "getServiceInfo", "getServiceHelp"
   ]), function(item) {
     return item.bind(logFactory);
   }));
@@ -29,13 +29,13 @@ function LoggingService(params = {}) {
   });
 };
 
-function LoggingFactory(args={}) {
+function LoggingFactory (args={}) {
   const _ref_ = {};
   args.root = args.root || {};
   if (!lodash.isFunction(args.root.getLogger)) {
     const originalLogger = args.originalLogger;
     if (lodash.isEmpty(originalLogger)) {
-      throw new Error('The root LoggingFactory must be provided the originalLogger');
+      throw new Error("The root LoggingFactory must be provided the originalLogger");
     }
     LogAdapter.connectTo(originalLogger, {
       onLevel: STAMP,
@@ -46,28 +46,28 @@ function LoggingFactory(args={}) {
 
     args.root.getLogger = function(opts) {
       if (opts) {
-        if (opts.type === 'origin' || opts.origin === true) {
+        if (opts.type === "origin" || opts.origin === true) {
           return originalLogger;
         } else
-        if (opts.type === 'shadow' || opts.shadow === true) {
+        if (opts.type === "shadow" || opts.shadow === true) {
           return LogAdapter.getRootLogger();
         }
       }
-      opts = lodash.omit(opts, ['type', 'origin', 'shadow']);
+      opts = lodash.omit(opts, ["type", "origin", "shadow"]);
       opts.sector = opts.sector || DEFAULT_SECTOR_NAME;
       if (args.mappings) {
         opts.mappings = args.mappings;
       }
       logoliteLogger[opts.sector] = logoliteLogger[opts.sector] || LogAdapter.getLogger(opts);
       return logoliteLogger[opts.sector];
-    }
+    };
   }
 
   args.parent = args.parent || {};
   if (!lodash.isFunction(args.parent.getTracer)) {
     args.parent.getTracer = function() {
       return LogTracer.ROOT;
-    }
+    };
   };
 
   this.branch = function(sectorName, sectorId) {
@@ -78,14 +78,14 @@ function LoggingFactory(args={}) {
       sectorName: sectorName,
       sectorId: sectorId
     });
-  }
+  };
 
   this.getLogger = function(opts) {
     return args.root.getLogger(lodash.defaults({
       sector: args.sectorName,
       mappings: args.mappings
     }, opts));
-  }
+  };
 
   _ref_.subTracer = null;
   this.getTracer = function() {
@@ -98,7 +98,7 @@ function LoggingFactory(args={}) {
       const blockInfo = {
         parentKey: parentTracer.key,
         parentValue: parentTracer.value
-      }
+      };
       if (args.sectorName) {
         blockInfo[constx.TRACER.SECTOR.NAME_FIELD] = args.sectorName;
       }
@@ -107,13 +107,13 @@ function LoggingFactory(args={}) {
           .toMessage({ tags: [ FRAMEWORK_METADATA ] }));
     }
     return _ref_.subTracer;
-  }
+  };
 
   this.getLogger();
   this.getTracer();
 };
 
-function transformLoggingConfig(profileConfig, derivative) {
+function transformLoggingConfig (profileConfig, derivative) {
   profileConfig = profileConfig || {};
   const loggingConfig = profileConfig.logger;
 
@@ -146,7 +146,7 @@ function transformLoggingConfig(profileConfig, derivative) {
   return profileConfig;
 };
 
-function transformLoggingLabels(loglabelConfig, loglabelMappings) {
+function transformLoggingLabels (loglabelConfig, loglabelMappings) {
   const result = {};
   if (!lodash.isEmpty(loglabelConfig)) {
     result.levels = {};
@@ -190,6 +190,6 @@ LoggingService.argumentSchema = {
 LoggingService.reset = function() {
   LogConfig.reset();
   LogTracer.reset();
-}
+};
 
 module.exports = LoggingService;

@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
 let debug = null;
 
-function pinbug(pkgName) {
+function pinbug (pkgName) {
   if (debug == null) {
     try {
-      debug = require('debug');
+      debug = require("debug");
     } catch (err) {
       debug = function() {
-        function log() {
+        function log () {
           return console.info.apply(console, arguments);
         }
         log.enabled = false;

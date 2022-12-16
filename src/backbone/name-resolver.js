@@ -1,46 +1,46 @@
-'use strict';
+"use strict";
 
-const lodash = require('lodash');
-const LoggingWrapper = require('./logging-wrapper');
-const chores = require('../utils/chores');
-const constx = require('../utils/constx');
-const nodash = require('../utils/nodash');
+const lodash = require("lodash");
+const LoggingWrapper = require("./logging-wrapper");
+const chores = require("../utils/chores");
+const constx = require("../utils/constx");
+const nodash = require("../utils/nodash");
 const blockRef = chores.getBlockRef(__filename);
 
-function NameResolver(params = {}) {
+function NameResolver (params = {}) {
   const {issueInspector, bridgeList, pluginList} = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
   const T = loggingWrapper.getTracer();
   const CTX = {L, T, issueInspector};
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [ blockRef, 'constructor-begin' ],
-    text: ' + constructor start ...'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [ blockRef, "constructor-begin" ],
+    text: " + constructor start ..."
   }));
 
-  const absoluteAliasMap = {}, relativeAliasMap = {};
+  const absoluteAliasMap = {}; const relativeAliasMap = {};
 
-  function _getAbsoluteAliasMap() {
+  function _getAbsoluteAliasMap () {
     absoluteAliasMap.plugin = absoluteAliasMap.plugin || buildAbsoluteAliasMap(pluginList);
     absoluteAliasMap.bridge = absoluteAliasMap.bridge || buildAbsoluteAliasMap(bridgeList);
     return absoluteAliasMap;
   }
 
-  function _getRelativeAliasMap() {
+  function _getRelativeAliasMap () {
     relativeAliasMap.plugin = relativeAliasMap.plugin || buildRelativeAliasMap(pluginList);
     relativeAliasMap.bridge = relativeAliasMap.bridge || buildRelativeAliasMap(bridgeList);
     return relativeAliasMap;
   }
 
-  function _getOriginalNameOf(crateName, crateType) {
+  function _getOriginalNameOf (crateName, crateType) {
     switch (crateType) {
-      case 'application': {
+      case "application": {
         crateName = crateType;
         break;
       }
-      case 'plugin':
-      case 'bridge': {
+      case "plugin":
+      case "bridge": {
         const absoluteAlias = _getAbsoluteAliasMap();
         crateName = absoluteAlias[crateType][crateName] || crateName;
         break;
@@ -49,14 +49,14 @@ function NameResolver(params = {}) {
     return crateName;
   }
 
-  function _getDefaultAliasOf(crateName, crateType) {
+  function _getDefaultAliasOf (crateName, crateType) {
     switch (crateType) {
-      case 'application': {
+      case "application": {
         crateName = crateType;
         break;
       }
-      case 'plugin':
-      case 'bridge': {
+      case "plugin":
+      case "bridge": {
         crateName = _getOriginalNameOf(crateName, crateType);
         const relativeAlias = _getRelativeAliasMap();
         crateName = relativeAlias[crateType][crateName] || crateName;
@@ -69,15 +69,15 @@ function NameResolver(params = {}) {
   this.getOriginalNameOf = _getOriginalNameOf;
   this.getDefaultAliasOf = _getDefaultAliasOf;
 
-  if (!chores.isUpgradeSupported('simplify-name-resolver')) {
+  if (!chores.isUpgradeSupported("simplify-name-resolver")) {
     this.getAbsoluteAliasMap = _getAbsoluteAliasMap;
     this.getRelativeAliasMap = _getRelativeAliasMap;
   }
 
-  if (!chores.isUpgradeSupported('refining-name-resolver')) {
+  if (!chores.isUpgradeSupported("refining-name-resolver")) {
     this.getAliasBy = function(selectedField, crateDescriptor) {
       crateDescriptor = crateDescriptor || {};
-      if (crateDescriptor.type === 'application') {
+      if (crateDescriptor.type === "application") {
         return crateDescriptor.type;
       }
       if (crateDescriptor.type in LIB_NAME_PATTERNS) {
@@ -86,17 +86,17 @@ function NameResolver(params = {}) {
         }
       }
       return crateDescriptor[selectedField];
-    }
-    this.getOriginalName = this.getAliasBy.bind(this, 'name');
-    this.getDefaultAlias = this.getAliasBy.bind(this, 'codeInCamel');
+    };
+    this.getOriginalName = this.getAliasBy.bind(this, "name");
+    this.getDefaultAlias = this.getAliasBy.bind(this, "codeInCamel");
   }
 
-  extractAliasNames(CTX, 'plugin', pluginList);
-  extractAliasNames(CTX, 'bridge', bridgeList);
+  extractAliasNames(CTX, "plugin", pluginList);
+  extractAliasNames(CTX, "bridge", bridgeList);
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [ blockRef, 'constructor-end' ],
-    text: ' - constructor has finished'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [ blockRef, "constructor-end" ],
+    text: " - constructor has finished"
   }));
 }
 
@@ -151,16 +151,16 @@ const LIB_NAME_PATTERNS = {
     new RegExp("^" + constx.FRAMEWORK.NAME + "-dp-([a-z][a-z0-9\-]*[a-z0-9])$", "g"),
     /^([a-z][a-z0-9\-]*[a-z0-9])$/g
   ]
-}
+};
 
-function hasSupportFields(moduleRef) {
+function hasSupportFields (moduleRef) {
   return nodash.isString(moduleRef.code) && nodash.isString(moduleRef.codeInCamel) &&
       nodash.isString(moduleRef.name) && nodash.isString(moduleRef.nameInCamel);
 }
 
-function extractAliasNames(ctx, type, moduleRefs) {
+function extractAliasNames (ctx, type, moduleRefs) {
   const {issueInspector} = ctx;
-  function buildSupportFields(moduleRef) {
+  function buildSupportFields (moduleRef) {
     const info = chores.extractCodeByPattern(LIB_NAME_PATTERNS[type], moduleRef.name);
     if (info.i >= 0) {
       moduleRef.code = info.code;
@@ -172,7 +172,7 @@ function extractAliasNames(ctx, type, moduleRefs) {
       }
     } else {
       issueInspector.collect(lodash.assign({
-        stage: 'naming',
+        stage: "naming",
         type: type,
         hasError: true,
         stack: LIB_NAME_PATTERNS[type].toString()
@@ -187,7 +187,7 @@ function extractAliasNames(ctx, type, moduleRefs) {
   return moduleRefs;
 }
 
-function buildAbsoluteAliasMap(moduleRefs, aliasMap) {
+function buildAbsoluteAliasMap (moduleRefs, aliasMap) {
   aliasMap = aliasMap || {};
   lodash.forEach(moduleRefs, function(moduleRef) {
     aliasMap[moduleRef.name] = moduleRef.name;
@@ -198,7 +198,7 @@ function buildAbsoluteAliasMap(moduleRefs, aliasMap) {
   return aliasMap;
 }
 
-function buildRelativeAliasMap(moduleRefs, aliasMap) {
+function buildRelativeAliasMap (moduleRefs, aliasMap) {
   aliasMap = aliasMap || {};
   lodash.forEach(moduleRefs, function(moduleRef) {
     aliasMap[moduleRef.name] = moduleRef.codeInCamel;

@@ -1,22 +1,22 @@
-'use strict';
+"use strict";
 
-const LogAdapter = require('logolite').LogAdapter;
-const LogTracer = require('logolite').LogTracer;
-const chores = require('../utils/chores');
-const constx = require('../utils/constx');
+const LogAdapter = require("logolite").LogAdapter;
+const LogTracer = require("logolite").LogTracer;
+const chores = require("../utils/chores");
+const constx = require("../utils/constx");
 const CHECK = constx.LOGGER.INTERNAL_LEVEL;
-const FRAMEWORK_METADATA = constx.FRAMEWORK.NAME + '-metadata';
+const FRAMEWORK_METADATA = constx.FRAMEWORK.NAME + "-metadata";
 
-function LoggingWrapper(sectorName) {
+function LoggingWrapper (sectorName) {
   sectorName = sectorName || chores.getBlockRef(__filename);
-  const _ref_ = { logger: null, tracer: null }
+  const _ref_ = { logger: null, tracer: null };
 
   this.getLogger = function() {
     return _ref_.logger = _ref_.logger || LogAdapter.getLogger({
       sector: sectorName,
-      target: 'dunce'
+      target: "dunce"
     });
-  }
+  };
 
   this.getTracer = function() {
     if (_ref_.tracer == null) {
@@ -29,7 +29,7 @@ function LoggingWrapper(sectorName) {
       const blockInfo = {
         parentKey: parentTracer.key,
         parentValue: parentTracer.value
-      }
+      };
       blockInfo[constx.TRACER.SECTOR.NAME_FIELD] = sectorName;
 
       const rootLogger = this.getLogger();
@@ -38,7 +38,7 @@ function LoggingWrapper(sectorName) {
           .toMessage({ tags: [ FRAMEWORK_METADATA ] }));
     }
     return _ref_.tracer;
-  }
+  };
 
   return this;
 }

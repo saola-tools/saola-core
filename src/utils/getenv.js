@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = function(envName, defaultValue) {
-  if (typeof envName === 'string') {
+  if (typeof envName === "string") {
     if (envName in process.env) {
       return process.env[envName];
     }
@@ -14,4 +14,4 @@ module.exports = function(envName, defaultValue) {
     }
   }
   return defaultValue;
-}
+};

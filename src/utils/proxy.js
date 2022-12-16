@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const toPath = require('lodash/toPath');
+const toPath = require("lodash/toPath");
 
 const nameIndexOf = {
   get: 1,
@@ -10,20 +10,20 @@ const nameIndexOf = {
   deleteProperty: 1,
   enumerate: 1,
   getOwnPropertyDescriptor: 1,
-}
+};
 
 const trapNames = [
-  'apply',
-  'construct',
-  'getPrototypeOf',
-  'setPrototypeOf',
-  'isExtensible',
-  'preventExtensions',
-  'ownKeys',
-].concat(Object.keys(nameIndexOf))
+  "apply",
+  "construct",
+  "getPrototypeOf",
+  "setPrototypeOf",
+  "isExtensible",
+  "preventExtensions",
+  "ownKeys",
+].concat(Object.keys(nameIndexOf));
 
-function BeanProxy(target, handler, opts = {}) {
-  function createProxy(beanTarget, path) {
+function BeanProxy (target, handler, opts = {}) {
+  function createProxy (beanTarget, path) {
     const pathString = chainify(path);
     const sharedContext = opts.isContextShared ? { root: target, path } : null;
     const wrappedHandler = {};
@@ -36,7 +36,7 @@ function BeanProxy(target, handler, opts = {}) {
           const name = isNumber(nameIndex) ? arguments[nameIndex] : null;
           context.slug = pathString;
           if (isString(name)) {
-            context.slug = (pathString && (pathString + '.' + name)) || name;
+            context.slug = (pathString && (pathString + "." + name)) || name;
           }
           context.wrap = function (wrappedTarget) {
             if (isUndefined(wrappedTarget)) {
@@ -44,9 +44,9 @@ function BeanProxy(target, handler, opts = {}) {
             }
             const wrappedPath = isString(name) ? [].concat(path, name) : path;
             return createProxy(wrappedTarget, wrappedPath);
-          }
+          };
           return trap.apply(context, arguments);
-        }
+        };
       }
     }
     return new Proxy(beanTarget, wrappedHandler);
@@ -56,28 +56,28 @@ function BeanProxy(target, handler, opts = {}) {
 
 module.exports = BeanProxy;
 
-function chainify(path) {
+function chainify (path) {
   if (isString(path)) return path;
-  if (Array.isArray(path)) return path.join('.');
+  if (Array.isArray(path)) return path.join(".");
   return null;
 }
 
-function extractPath(options) {
+function extractPath (options) {
   return options && options.path ? toPath(options.path) : [];
 }
 
-function isFunction(f) {
-  return (typeof f === 'function');
+function isFunction (f) {
+  return (typeof f === "function");
 }
 
-function isNumber(n) {
-  return (typeof n === 'number');
+function isNumber (n) {
+  return (typeof n === "number");
 }
 
-function isString(s) {
-  return (typeof s === 'string');
+function isString (s) {
+  return (typeof s === "string");
 }
 
-function isUndefined(v) {
-  return (typeof v === 'undefined');
+function isUndefined (v) {
+  return (typeof v === "undefined");
 }

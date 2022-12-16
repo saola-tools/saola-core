@@ -1,27 +1,27 @@
-'use strict';
+"use strict";
 
-const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
-const lodash = require('lodash');
-const chores = require('../utils/chores');
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const lodash = require("lodash");
+const chores = require("../utils/chores");
 const blockRef = chores.getBlockRef(__filename);
 
-function MappingLoader(params = {}) {
+function MappingLoader (params = {}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
 
   const { schemaValidator } = params;
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [ blockRef, 'constructor-begin' ],
-    text: ' + constructor start ...'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [ blockRef, "constructor-begin" ],
+    text: " + constructor start ..."
   }));
 
   this.loadMappings = function(mappingStore, options = {}) {
     // determine the loaderContext
-    const loaderContext = lodash.get(options, 'context', {});
+    const loaderContext = lodash.get(options, "context", {});
     let mappings = {};
     if (lodash.isString(mappingStore)) {
       const store = {};
@@ -30,18 +30,18 @@ function MappingLoader(params = {}) {
     }
     if (lodash.isObject(mappingStore)) {
       lodash.forOwn(mappingStore, function(descriptor, bundle) {
-        L.has('debug') && L.log('debug', T.add({
+        L.has("debug") && L.log("debug", T.add({
           bundle, enabled: descriptor && descriptor.enabled !== false
         }).toMessage({
-          tags: [ blockRef, 'load-mappings' ],
-          text: ' - load the mappings bundle [${bundle}] - enable: ${enabled}'
+          tags: [ blockRef, "load-mappings" ],
+          text: " - load the mappings bundle [${bundle}] - enable: ${enabled}"
         }));
         if (lodash.isString(descriptor)) {
-          descriptor = { location: descriptor }
+          descriptor = { location: descriptor };
         }
         if (descriptor && descriptor.enabled !== false) {
           lodash.defaults(descriptor, lodash.pick(options, [
-            'evaluated', 'fileFilter', 'keyGenerator'
+            "evaluated", "fileFilter", "keyGenerator"
           ]));
           let accum = loadMappingStore(bundle, descriptor, loaderContext);
           lodash.merge(mappings, accum);
@@ -49,27 +49,27 @@ function MappingLoader(params = {}) {
       });
     }
     // validate with a jsonschema
-    const jsonschema = lodash.get(options, 'jsonschema', {});
+    const jsonschema = lodash.get(options, "jsonschema", {});
     if (!lodash.isEmpty(jsonschema)) {
       const result = schemaValidator.validate(mappings, jsonschema);
       if (result && result.valid === false) {
-        throw new Error('mappings is invalid with the jsonschema');
+        throw new Error("mappings is invalid with the jsonschema");
       }
     }
     // validate with a validator
-    const validator = lodash.get(options, 'validator', {});
+    const validator = lodash.get(options, "validator", {});
     if (lodash.isFunction(validator)) {
       const result = validator(mappings);
       if (result && result.ok === false) {
-        throw new Error('mappings is invalid with the validator');
+        throw new Error("mappings is invalid with the validator");
       }
     }
     return mappings;
-  }
+  };
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [ blockRef, 'constructor-end' ],
-    text: ' - constructor has finished'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [ blockRef, "constructor-end" ],
+    text: " - constructor has finished"
   }));
 }
 
@@ -98,7 +98,7 @@ MappingLoader.argumentSchema = {
   }
 };
 
-if (chores.isUpgradeSupported('builtin-mapping-loader')) {
+if (chores.isUpgradeSupported("builtin-mapping-loader")) {
   lodash.assign(MappingLoader.argumentSchema.properties, {
     "issueInspector": {
       "type": "object"
@@ -106,7 +106,7 @@ if (chores.isUpgradeSupported('builtin-mapping-loader')) {
   });
 }
 
-if (chores.isUpgradeSupported('sandbox-mapping-loader')) {
+if (chores.isUpgradeSupported("sandbox-mapping-loader")) {
   lodash.assign(MappingLoader.argumentSchema.properties, {
     "sandboxRegistry": {
       "type": "object"
@@ -150,7 +150,7 @@ MappingLoader.MAPPING_STORE_SCHEMA = {
 
 module.exports = MappingLoader;
 
-function validateDescriptor(ctx = {}, scriptObject = {}) {
+function validateDescriptor (ctx = {}, scriptObject = {}) {
   const { schemaValidator } = ctx;
   const results = [];
 
@@ -160,7 +160,7 @@ function validateDescriptor(ctx = {}, scriptObject = {}) {
     results.push({
       valid: false,
       errors: [{
-        message: 'fileFilter has wrong type: ' + typeof(scriptObject.fileFilter)
+        message: "fileFilter has wrong type: " + typeof(scriptObject.fileFilter)
       }]
     });
   }
@@ -169,7 +169,7 @@ function validateDescriptor(ctx = {}, scriptObject = {}) {
     results.push({
       valid: false,
       errors: [{
-        message: 'keyGenerator has wrong type: ' + typeof(scriptObject.keyGenerator)
+        message: "keyGenerator has wrong type: " + typeof(scriptObject.keyGenerator)
       }]
     });
   }
@@ -181,7 +181,7 @@ function validateDescriptor(ctx = {}, scriptObject = {}) {
   }, { valid: true, errors: [] });
 };
 
-function loadMappingStore(mappingName, { location, fileFilter, keyGenerator, evaluated }, loaderContext) {
+function loadMappingStore (mappingName, { location, fileFilter, keyGenerator, evaluated }, loaderContext) {
   if (!lodash.isFunction(fileFilter)) {
     fileFilter = defaultFileFilter;
   }
@@ -193,7 +193,7 @@ function loadMappingStore(mappingName, { location, fileFilter, keyGenerator, eva
   try {
     mappingStat = fs.statSync(location);
   } catch (err) {
-    location = location + '.js';
+    location = location + ".js";
     try {
       mappingStat = fs.statSync(location);
     } catch (e__) {
@@ -211,7 +211,7 @@ function loadMappingStore(mappingName, { location, fileFilter, keyGenerator, eva
     } else {
       mappings[mappingId] = mappingBody;
     }
-  }
+  };
   if (mappingStat.isFile()) {
     const fileInfo = lodash.assign(path.parse(location), { standalone: true });
     loadMappingFile(mappings, mappingName, evaluated, fileInfo, loaderContext);
@@ -219,7 +219,7 @@ function loadMappingStore(mappingName, { location, fileFilter, keyGenerator, eva
   if (mappingStat.isDirectory()) {
     let multifiles = true;
     try {
-      const indexFile = path.join(location, 'index.js');
+      const indexFile = path.join(location, "index.js");
       const indexStat = fs.statSync(indexFile);
       if (indexStat.isFile()) {
         const fileInfo = lodash.assign(path.parse(indexFile), { standalone: true });
@@ -242,14 +242,14 @@ function getFilePath (fileInfo) {
 }
 
 function defaultFileFilter (fileInfo) {
-  return fileInfo.ext === '.js';
+  return fileInfo.ext === ".js";
 }
 
 function defaultKeyGenerator (mappingName, fileInfo, fileBody) {
   return mappingName;
 }
 
-function evaluateMappingFile(mappingPath, mappingName, evaluated, loaderContext) {
+function evaluateMappingFile (mappingPath, mappingName, evaluated, loaderContext) {
   const mappingScript = requireMappingFile(mappingPath);
   if (lodash.isFunction(mappingScript) && evaluated !== false) {
     try {
@@ -259,7 +259,7 @@ function evaluateMappingFile(mappingPath, mappingName, evaluated, loaderContext)
   return mappingScript;
 }
 
-function requireMappingFile(mappingFile) {
+function requireMappingFile (mappingFile) {
   try {
     return require(mappingFile);
   } catch (err) {
@@ -267,7 +267,7 @@ function requireMappingFile(mappingFile) {
   }
 }
 
-function traverseDir(dir, filter, fileInfos) {
+function traverseDir (dir, filter, fileInfos) {
   if (!lodash.isFunction(filter)) {
     let exts = filter;
     if (exts != null) {
@@ -275,7 +275,7 @@ function traverseDir(dir, filter, fileInfos) {
         filter = function (fileInfo) {
           if (fileInfo == null) return true;
           return exts.test(path.join(fileInfo.path, fileInfo.base));
-        }
+        };
       } else {
         if (!lodash.isArray(exts)) {
           exts = [exts];
@@ -290,7 +290,7 @@ function traverseDir(dir, filter, fileInfos) {
             }
           }
           return false;
-        }
+        };
       }
     }
   }
@@ -308,7 +308,7 @@ function traverseDir(dir, filter, fileInfos) {
   }
 }
 
-function traverseDirRecursively(homeDir, dir, filter, fileInfos = []) {
+function traverseDirRecursively (homeDir, dir, filter, fileInfos = []) {
   assert.ok(filter == null || lodash.isFunction(filter));
   const files = fs.readdirSync(dir);
   for (const i in files) {

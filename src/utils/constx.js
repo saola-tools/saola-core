@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const PKG_INFO = JSON.parse(fs.readFileSync(path.join(__dirname, '/../../package.json'), 'utf8'));
+const PKG_INFO = JSON.parse(fs.readFileSync(path.join(__dirname, "/../../package.json"), "utf8"));
 
 const PRESETS_SCHEMA = {
   "type": "object",
@@ -43,7 +43,7 @@ const PRESETS_SCHEMA = {
     }
   },
   "additionalProperties": true
-}
+};
 
 const DEPENDENCIES_SCHEMA = {
   "type": "array",
@@ -70,9 +70,9 @@ const DEPENDENCIES_SCHEMA = {
       }
     ]
   }
-}
+};
 
-const SEMVER_PATTERN = '.+';
+const SEMVER_PATTERN = ".+";
 
 module.exports = {
   FRAMEWORK: {
@@ -80,7 +80,7 @@ module.exports = {
     VERSION: PKG_INFO.version,
   },
   APPINFO: {
-    FIELDS: ['version', 'name', 'description', 'homepage', 'author', 'license', 'main']
+    FIELDS: ["version", "name", "description", "homepage", "author", "license", "main"]
   },
   BOOTSTRAP: {
     launchApplication: {
@@ -336,41 +336,41 @@ module.exports = {
     LABELS: {
       silly: {
         level: 5,
-        color: 'magenta'
+        color: "magenta"
       },
       debug: {
         level: 4,
-        color: 'blue'
+        color: "blue"
       },
       trace: {
         level: 3,
-        color: 'cyan'
+        color: "cyan"
       },
       info: {
         level: 2,
-        color: 'green'
+        color: "green"
       },
       warn: {
         level: 1,
-        color: 'yellow'
+        color: "yellow"
       },
       error: {
         level: 0,
-        color: 'red'
+        color: "red"
       }
     },
-    STARTING_POINT: 'affix',
-    INTERNAL_LEVEL: 'check'
+    STARTING_POINT: "affix",
+    INTERNAL_LEVEL: "check"
   },
   TRACER: {
     SECTOR: {
-      ID_FIELD: 'blockId',
-      NAME_FIELD: 'blockName'
+      ID_FIELD: "blockId",
+      NAME_FIELD: "blockName"
     }
   },
   METAINF: {
-    ROOT_KEY: 'metainf',
-    SCRIPT_DIR: '/lib/metadata',
+    ROOT_KEY: "metainf",
+    SCRIPT_DIR: "/lib/metadata",
     SCHEMA_OBJECT: {
       "type": "object",
       "properties": {
@@ -395,8 +395,8 @@ module.exports = {
     }
   },
   ROUTINE: {
-    ROOT_KEY: 'routine',
-    SCRIPT_DIR: '/lib/routines',
+    ROOT_KEY: "routine",
+    SCRIPT_DIR: "/lib/routines",
     SCHEMA_OBJECT: {
       "type": "object",
       "properties": {
@@ -430,35 +430,35 @@ module.exports = {
     }
   },
   SERVICE: {
-    ROOT_KEY: 'service',
-    SCRIPT_DIR: '/lib/services',
-    GROUP: 'services'
+    ROOT_KEY: "service",
+    SCRIPT_DIR: "/lib/services",
+    GROUP: "services"
   },
   TRIGGER: {
-    ROOT_KEY: 'trigger',
-    SCRIPT_DIR: '/lib/triggers',
-    GROUP: 'triggers'
+    ROOT_KEY: "trigger",
+    SCRIPT_DIR: "/lib/triggers",
+    GROUP: "triggers"
   },
   WEBSOCKET: {
     STATE: {
-      ERROR: 'error',
-      STARTED: 'started',
-      PROGRESS: 'progress',
-      TIMEOUT: 'timeout',
-      FAILED: 'failed',
-      CANCELLED: 'cancelled',
-      COMPLETED: 'completed',
-      DONE: 'done'
+      ERROR: "error",
+      STARTED: "started",
+      PROGRESS: "progress",
+      TIMEOUT: "timeout",
+      FAILED: "failed",
+      CANCELLED: "cancelled",
+      COMPLETED: "completed",
+      DONE: "done"
     },
     MSG_ON: {
-      ERROR: 'Invalid command object',
-      STARTED: 'The command is started',
-      PROGRESS: 'The command is processing ...',
-      TIMEOUT: 'The command execution is timeout',
-      FAILED: 'The command execution is failed',
-      CANCELLED: 'The command is cancelled',
-      COMPLETED: 'The command execution is completed',
-      DONE: 'The command is done'
+      ERROR: "Invalid command object",
+      STARTED: "The command is started",
+      PROGRESS: "The command is processing ...",
+      TIMEOUT: "The command execution is timeout",
+      FAILED: "The command execution is failed",
+      CANCELLED: "The command is cancelled",
+      COMPLETED: "The command execution is completed",
+      DONE: "The command is done"
     },
     DETAILS: {
       SCHEMA: {
@@ -523,58 +523,58 @@ module.exports = {
   },
   UPGRADE_TAGS: [
     {
-      tag: 'presets',
+      tag: "presets",
       enabled: true,
     },
     {
-      tag: 'bridge-full-ref',
+      tag: "bridge-full-ref",
       enabled: true,
     },
     {
-      tag: 'standardizing-config',
+      tag: "standardizing-config",
       enabled: true,
     },
     {
-      tag: 'gadget-around-log',
+      tag: "gadget-around-log",
       enabled: true,
     },
     {
-      tag: 'simplify-name-resolver',
+      tag: "simplify-name-resolver",
       enabled: true,
     },
     {
-      tag: 'refining-name-resolver',
+      tag: "refining-name-resolver",
       enabled: true,
     },
     {
-      tag: 'bean-decorator',
+      tag: "bean-decorator",
       enabled: true,
     },
     {
-      tag: 'config-extended-fields',
+      tag: "config-extended-fields",
       plan: {
         enabled: true,
-        minBound: '0.2.10',
+        minBound: "0.2.10",
       }
     },
     {
-      tag: 'metadata-refiner',
+      tag: "metadata-refiner",
       enabled: false,
     },
     {
-      tag: 'manifest-refiner',
+      tag: "manifest-refiner",
       enabled: true,
     },
     {
-      tag: 'builtin-mapping-loader',
+      tag: "builtin-mapping-loader",
       enabled: false,
     },
     {
-      tag: 'sandbox-mapping-loader',
+      tag: "sandbox-mapping-loader",
       enabled: true,
     },
     {
-      tag: 'optimization-mode',
+      tag: "optimization-mode",
       enabled: true,
     },
   ],

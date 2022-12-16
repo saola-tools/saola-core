@@ -1,24 +1,24 @@
-'use strict';
+"use strict";
 
-const Promise = require('bluebird');
-const lodash = require('lodash');
-const chores = require('../utils/chores');
+const Promise = require("bluebird");
+const lodash = require("lodash");
+const chores = require("../utils/chores");
 const blockRef = chores.getBlockRef(__filename);
 
-function ScriptExecutor(params = {}) {
+function ScriptExecutor (params = {}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [ blockRef, 'constructor-begin' ],
-    text: ' + constructor start ...'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [ blockRef, "constructor-begin" ],
+    text: " + constructor start ..."
   }));
 
   const sandboxManager = params.sandboxManager;
   const runhookManager = sandboxManager.getRunhookManager();
 
-  function resolveCommand(command) {
+  function resolveCommand (command) {
     command = command || {};
     command = lodash.isString(command) ? JSON.parse(command) : command;
     // rename "command" field -> "name" field
@@ -33,25 +33,25 @@ function ScriptExecutor(params = {}) {
     try {
       command = resolveCommand(command);
     } catch (error) {
-      L.has('error') && L.log('error', T.toMessage({
-        tags: [ blockRef, 'executeCommand', 'invalid-command-object' ],
-        text: ' - Invalid command object'
+      L.has("error") && L.log("error", T.toMessage({
+        tags: [ blockRef, "executeCommand", "invalid-command-object" ],
+        text: " - Invalid command object"
       }));
-      outlet.render('error');
+      outlet.render("error");
       return;
     }
 
-    const reqTr = T.branch({ key: 'requestId', value: command.requestId });
+    const reqTr = T.branch({ key: "requestId", value: command.requestId });
 
-    L.has('info') && L.log('info', reqTr.add({ commandName: command.name, command }).toMessage({
-      tags: [ blockRef, 'executeCommand', 'begin' ],
-      text: '${commandName}#${requestId} start, details: {command}'
+    L.has("info") && L.log("info", reqTr.add({ commandName: command.name, command }).toMessage({
+      tags: [ blockRef, "executeCommand", "begin" ],
+      text: "${commandName}#${requestId} start, details: {command}"
     }));
 
     let promize;
-    if (command.name === 'definition') {
+    if (command.name === "definition") {
       promize = Promise.resolve().then(function() {
-        outlet.render('definition', {
+        outlet.render("definition", {
           appName: params.appName,
           appInfo: params.appInfo,
           commands: runhookManager.getDefinitions()
@@ -62,22 +62,22 @@ function ScriptExecutor(params = {}) {
     }
 
     promize.catch(function() {
-      L.has('silly') && L.log('silly', reqTr.add({ commandName: command.name }).toMessage({
-        tags: [ blockRef, 'executeCommand', 'failed' ],
-        text: '${commandName}#${requestId} is failed'
+      L.has("silly") && L.log("silly", reqTr.add({ commandName: command.name }).toMessage({
+        tags: [ blockRef, "executeCommand", "failed" ],
+        text: "${commandName}#${requestId} is failed"
       }));
     }).finally(function() {
-      L.has('info') && L.log('info', reqTr.add({ commandName: command.name }).toMessage({
-        tags: [ blockRef, 'executeCommand', 'done' ],
-        text: '${commandName}#${requestId} has done'
+      L.has("info") && L.log("info", reqTr.add({ commandName: command.name }).toMessage({
+        tags: [ blockRef, "executeCommand", "done" ],
+        text: "${commandName}#${requestId} has done"
       }));
-      outlet.render('done');
+      outlet.render("done");
     });
   };
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [ blockRef, 'constructor-end' ],
-    text: ' - constructor has finished'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [ blockRef, "constructor-end" ],
+    text: " - constructor has finished"
   }));
 };
 

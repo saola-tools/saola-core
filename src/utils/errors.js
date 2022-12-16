@@ -1,46 +1,46 @@
-'use strict';
+"use strict";
 
-const util = require('util');
-const getenv = require('./getenv');
+const util = require("util");
+const getenv = require("./getenv");
 
-function ErrorCollection() {
+function ErrorCollection () {
   const cachedErrors = {};
 
   this.assertConstructor = function(errorName) {
     cachedErrors[errorName] = cachedErrors[errorName] || this.createConstructor(errorName);
     return cachedErrors[errorName];
-  }
+  };
 
   this.createConstructor = function(errorName) {
-    function ErrorConstructor() {
-      const info = { message: undefined, code: undefined, payload: undefined }
+    function ErrorConstructor () {
+      const info = { message: undefined, code: undefined, payload: undefined };
       Array.prototype.forEach.call(arguments, function(arg) {
         if (arg) {
           const type = typeof arg;
           switch (type) {
-            case 'string': {
+            case "string": {
               if (info.message !== undefined) {
-                throw new TypeError(util.format('%s has already initialized', 'message'));
+                throw new TypeError(util.format("%s has already initialized", "message"));
               }
               info.message = arg;
               break;
             }
-            case 'number': {
+            case "number": {
               if (info.code !== undefined) {
-                throw new TypeError(util.format('%s has already initialized', 'code'));
+                throw new TypeError(util.format("%s has already initialized", "code"));
               }
               info.code = arg;
               break;
             }
-            case 'object': {
+            case "object": {
               if (info.payload !== undefined) {
-                throw new TypeError(util.format('%s has already initialized', 'payload'));
+                throw new TypeError(util.format("%s has already initialized", "payload"));
               }
               info.payload = arg;
               break;
             }
             default: {
-              throw new TypeError(util.format('invalid type: [%s]/%s', arg, type));
+              throw new TypeError(util.format("invalid type: [%s]/%s", arg, type));
             }
           }
         }
@@ -50,31 +50,31 @@ function ErrorCollection() {
     }
     util.inherits(ErrorConstructor, AbstractError);
     return ErrorConstructor;
-  }
+  };
 
   this.isDerivative = function(ErrorConstructor) {
-    return typeof ErrorConstructor === 'function' &&
+    return typeof ErrorConstructor === "function" &&
         ErrorConstructor.prototype instanceof AbstractError;
-  }
+  };
 
   this.isDescendant = function(error) {
     return error instanceof AbstractError;
-  }
+  };
 
-  Object.defineProperty(this, 'stackTraceLimit', {
-    get: function() { return _ref_.stackTraceLimit },
+  Object.defineProperty(this, "stackTraceLimit", {
+    get: function() { return _ref_.stackTraceLimit; },
     set: function(val) {
-      if (typeof val === 'number') {
+      if (typeof val === "number") {
         _ref_.stackTraceLimit = val;
       }
     }
   });
 
   const _ref_ = {
-    stackTraceLimit: parseInt(getenv('DEVEBOT_STACK_TRACE_LIMIT')) || Error.stackTraceLimit
-  }
+    stackTraceLimit: parseInt(getenv("DEVEBOT_STACK_TRACE_LIMIT")) || Error.stackTraceLimit
+  };
 
-  function AbstractError(message, code, payload) {
+  function AbstractError (message, code, payload) {
     Error.call(this, message);
     this.message = message;
     this.code = code;

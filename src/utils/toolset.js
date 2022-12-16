@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-const block = require('./block');
+const block = require("./block");
 
-function Toolset() {
+function Toolset () {
   const box = block(function () {
     try {
-      return require('devebot-tools');
+      return require("devebot-tools");
     } catch (error) {
       return {};
     }

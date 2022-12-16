@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const constx = require('./constx');
-const Envcloak = require('envcloak');
+const constx = require("./constx");
+const Envcloak = require("envcloak");
 
-Envcloak.NAMESPACE = 'DEVEBOT';
+Envcloak.NAMESPACE = "DEVEBOT";
 
 const ENV_DEF_DEFAULT = [
   {
@@ -130,7 +130,7 @@ const ENV_DEF_DEFAULT = [
     scope: "framework",
     description: "An alternative to BABEL_ENV for npm build scripts"
   }
-]
+];
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ default instance
 
@@ -138,7 +138,7 @@ const defaultInstance = new Envcloak({
   definition: ENV_DEF_DEFAULT
 });
 
-Object.defineProperty(defaultInstance, 'new', {
+Object.defineProperty(defaultInstance, "new", {
   get: function() {
     return function(kwargs) {
       return new Envcloak(kwargs);
