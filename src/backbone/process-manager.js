@@ -17,48 +17,48 @@ function ProcessManager (params = {}) {
 
   const clusterCfg = lodash.get(params, ["profileConfig", "cluster"], {});
 
-  const pm_id = parseInt(getenv(clusterCfg.ENV_ID_NAMES || ["pm_id", "NODE_APP_INSTANCE"]));
-  const pm_total = parseInt(getenv(clusterCfg.ENV_TOTAL_NAMES || ["instances"]));
+  const pmId = parseInt(getenv(clusterCfg.ENV_ID_NAMES || ["pm_id", "NODE_APP_INSTANCE"]));
+  const pmTotal = parseInt(getenv(clusterCfg.ENV_TOTAL_NAMES || ["instances"]));
 
-  L.has("debug") && L.log("debug", T.add({ pm_id, pm_total }).toMessage({
+  L.has("debug") && L.log("debug", T.add({ pmId, pmTotal }).toMessage({
     tags: [ blockRef, "pm2-env-vars" ],
-    text: "PM2 environment: id: ${pm_id} / total: ${pm_total}"
+    text: "PM2 environment: id: ${pmId} / total: ${pmTotal}"
   }));
 
   Object.defineProperty(this, "available", {
     get: function() {
-      return typeof(pm_id) === "number" && !isNaN(pm_id) &&
-          typeof(pm_total) === "number" && !isNaN(pm_total);
+      return typeof(pmId) === "number" && !isNaN(pmId) &&
+          typeof(pmTotal) === "number" && !isNaN(pmTotal);
     },
     set: function(value) {}
   });
 
   Object.defineProperty(this, "isMaster", {
     get: function() {
-      if (!this.available || pm_id < 0 || pm_total <= 0) return false;
-      return (pm_id % pm_total) === 0;
+      if (!this.available || pmId < 0 || pmTotal <= 0) return false;
+      return (pmId % pmTotal) === 0;
     },
     set: function(value) {}
   });
 
   Object.defineProperty(this, "id", {
     get: function() {
-      return typeof(pm_id) === "number" && !isNaN(pm_id) ? pm_id : undefined;
+      return typeof(pmId) === "number" && !isNaN(pmId) ? pmId : undefined;
     },
     set: function(value) {}
   });
 
   Object.defineProperty(this, "total", {
     get: function() {
-      return typeof(pm_total) === "number" && !isNaN(pm_total) ? pm_total : undefined;
+      return typeof(pmTotal) === "number" && !isNaN(pmTotal) ? pmTotal : undefined;
     },
     set: function(value) {}
   });
 
   this.belongTo = function(idx) {
-    if (!this.available || pm_id < 0 || pm_total <= pm_id) return null;
-    while (idx >= pm_total) idx -= pm_total;
-    return idx === pm_id;
+    if (!this.available || pmId < 0 || pmTotal <= pmId) return null;
+    while (idx >= pmTotal) idx -= pmTotal;
+    return idx === pmId;
   };
 
   L.has("silly") && L.log("silly", T.toMessage({

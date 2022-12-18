@@ -643,7 +643,7 @@ let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
 
 let doAliasMap = null;
 if (!chores.isUpgradeSupported("simplify-name-resolver")) {
-  const applyAliasMap_Ref = applyAliasMap;
+  const applyAliasMapRef = applyAliasMap;
   applyAliasMap = function(ctx, configStore) {
     return configStore;
   };
@@ -657,6 +657,6 @@ if (!chores.isUpgradeSupported("simplify-name-resolver")) {
       }
       return name;
     }
-    return applyAliasMap_Ref(ctx, preciseConfig, nameTransformer);
+    return applyAliasMapRef(ctx, preciseConfig, nameTransformer);
   };
 }
