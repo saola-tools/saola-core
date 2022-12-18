@@ -348,7 +348,7 @@ chores.isSilentForced = function(moduleId, cfg) {
 
 chores.isVerboseForced = function(moduleId, cfg) {
   const fvm = envbox.getEnv("FORCING_VERBOSE");
-  return (fvm.indexOf(moduleId) >= 0) || (cfg && cfg.verbose !== false);
+  return (fvm.indexOf(moduleId) >= 0) || !this.isSilentForced(moduleId, cfg);
 };
 
 chores.clearCache = function() {

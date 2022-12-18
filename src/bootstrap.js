@@ -470,10 +470,12 @@ bootstrap.initialize = function(action, options = {}) {
   return this;
 };
 
-const builtinPackages = ["bluebird", "lodash", "injektor", "logolite", "schemato", "semver", "codetags"];
+const popularPackages = ["bluebird", "lodash", "semver"];
+const builtinPackages = ["injektor", "logolite", "schemato", "envcloak", "codetags"];
 const internalModules = ["chores", "loader", "pinbug", "errors"];
 
 bootstrap.require = function(packageName) {
+  if (popularPackages.indexOf(packageName) >= 0) return require(packageName);
   if (builtinPackages.indexOf(packageName) >= 0) return require(packageName);
   if (internalModules.indexOf(packageName) >= 0) return require("./utils/" + packageName);
   if (packageName == "debug") return require("./utils/pinbug");

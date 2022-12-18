@@ -82,6 +82,14 @@ module.exports = {
   APPINFO: {
     FIELDS: ["version", "name", "description", "homepage", "author", "license", "main"]
   },
+  BUILTIN: {
+    BRIDGE: {
+      PREFIX: "co"
+    },
+    PLUGIN: {
+      PREFIX: "dp"
+    }
+  },
   BOOTSTRAP: {
     launchApplication: {
       context: {
