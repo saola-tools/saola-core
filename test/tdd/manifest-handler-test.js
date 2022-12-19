@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var assert = require('chai').assert;
-var LogConfig = Devebot.require('logolite').LogConfig;
-var LogTracer = Devebot.require('logolite').LogTracer;
-var Envcloak = require('envcloak');
+var chores = Devebot.require("chores");
+var lodash = Devebot.require("lodash");
+var assert = require("chai").assert;
+var LogConfig = Devebot.require("logolite").LogConfig;
+var LogTracer = Devebot.require("logolite").LogTracer;
+var Envcloak = require("envcloak");
 var envcloak = Envcloak.instance;
-var sinon = require('sinon');
+var sinon = require("sinon");
 
-describe('tdd:devebot:core:manifest-handler', function() {
+describe("tdd:devebot:core:manifest-handler", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var stepEnv = new Envcloak();
@@ -19,27 +19,27 @@ describe('tdd:devebot:core:manifest-handler', function() {
 
   before(function() {
     envcloak.setup({
-      NODE_ENV: 'test',
-      LOGOLITE_FULL_LOG_MODE: 'false',
-      LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all',
-      DEVEBOT_FORCING_SILENT: 'issue-inspector'
+      NODE_ENV: "test",
+      LOGOLITE_FULL_LOG_MODE: "false",
+      LOGOLITE_ALWAYS_ENABLED: "all",
+      LOGOLITE_ALWAYS_MUTED: "all",
+      DEVEBOT_FORCING_SILENT: "issue-inspector"
     });
     LogConfig.reset();
     issueInspector.reset();
     chores.clearCache();
   });
 
-  describe('.validateConfig()', function() {
-    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
-    var combineBridgeSchema = lab.stubModuleFunction(ManifestHandler, 'combineBridgeSchema');
-    var validateBridgeConfig = lab.stubModuleFunction(ManifestHandler, 'validateBridgeConfig');
-    var combineBundleSchema = lab.stubModuleFunction(ManifestHandler, 'combineBundleSchema');
-    var validateBundleConfig = lab.stubModuleFunction(ManifestHandler, 'validateBundleConfig');
+  describe(".validateConfig()", function() {
+    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    var combineBridgeSchema = lab.stubModuleFunction(ManifestHandler, "combineBridgeSchema");
+    var validateBridgeConfig = lab.stubModuleFunction(ManifestHandler, "validateBridgeConfig");
+    var combineBundleSchema = lab.stubModuleFunction(ManifestHandler, "combineBundleSchema");
+    var validateBundleConfig = lab.stubModuleFunction(ManifestHandler, "validateBundleConfig");
     var bridgeList = [];
     var bundleList = [];
     var pluginList = lab.extractPluginList(bundleList);
-    var nameResolver = lab.getNameResolver(lodash.map(pluginList, 'name'), lodash.map(bridgeList, 'name'));
+    var nameResolver = lab.getNameResolver(lodash.map(pluginList, "name"), lodash.map(bridgeList, "name"));
 
     var manifestHandler = new ManifestHandler({
       nameResolver, issueInspector, bridgeList, bundleList
@@ -217,10 +217,10 @@ describe('tdd:devebot:core:manifest-handler', function() {
     });
   });
 
-  describe('extractBundleSchema()', function() {
-    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
-    var combineBundleSchema = ManifestHandler.__get__('combineBundleSchema');
-    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
+  describe("extractBundleSchema()", function() {
+    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    var combineBundleSchema = ManifestHandler.__get__("combineBundleSchema");
+    var {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
 
@@ -230,17 +230,17 @@ describe('tdd:devebot:core:manifest-handler', function() {
     });
 
     it("should extract plugin manifest and enrich with dependencies (empty dependencies)", function() {
-      if (!chores.isUpgradeSupported('manifest-refiner') || chores.isUpgradeSupported('metadata-refiner')) {
+      if (!chores.isUpgradeSupported("manifest-refiner") || chores.isUpgradeSupported("metadata-refiner")) {
         this.skip();
       }
-      var nameResolver = lab.getNameResolver(['devebot-dp-wrapper1','devebot-dp-wrapper2'], []);
+      var nameResolver = lab.getNameResolver(["devebot-dp-wrapper1", "devebot-dp-wrapper2"], []);
       var C = {L, T, schemaValidator, nameResolver};
       // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
       var bundleList = [
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper1",
-          "path": lab.getLibHome('devebot-dp-wrapper1'),
+          "path": lab.getLibHome("devebot-dp-wrapper1"),
           "presets": {},
           "bridgeDepends": [],
           "pluginDepends": [],
@@ -268,7 +268,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper2",
-          "path": lab.getLibHome('devebot-dp-wrapper2'),
+          "path": lab.getLibHome("devebot-dp-wrapper2"),
           "presets": {},
           "bridgeDepends": [],
           "pluginDepends": [],
@@ -296,7 +296,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
       ];
 
       var bundleSchema = combineBundleSchema(C, bundleList);
-      false && console.log('bundleSchema: %s', JSON.stringify(bundleSchema, null, 2));
+      false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, {
         "profile": {},
         "sandbox": {
@@ -341,11 +341,11 @@ describe('tdd:devebot:core:manifest-handler', function() {
     });
 
     it("should extract plugin manifest and enrich with dependencies (normal case)", function() {
-      if (!chores.isUpgradeSupported('manifest-refiner') || chores.isUpgradeSupported('metadata-refiner')) {
+      if (!chores.isUpgradeSupported("manifest-refiner") || chores.isUpgradeSupported("metadata-refiner")) {
         this.skip();
       }
       var nameResolver = lab.getNameResolver([
-        'sub-plugin1', 'sub-plugin2', 'plugin1', 'plugin2', 'plugin3'
+        "sub-plugin1", "sub-plugin2", "plugin1", "plugin2", "plugin3"
       ], [
         "bridge1", "bridge2", "bridge3"
       ]);
@@ -375,7 +375,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
         {
           "type": "plugin",
           "name": "sub-plugin1",
-          "path": lab.getLibHome('sub-plugin1'),
+          "path": lab.getLibHome("sub-plugin1"),
           "presets": {},
           "bridgeDepends": [ "bridge1", "bridge2" ],
           "pluginDepends": [ "plugin1", "plugin2" ],
@@ -403,7 +403,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
         {
           "type": "plugin",
           "name": "sub-plugin2",
-          "path": lab.getLibHome('sub-plugin2'),
+          "path": lab.getLibHome("sub-plugin2"),
           "presets": {},
           "bridgeDepends": [ "bridge2", "bridge3" ],
           "pluginDepends": [ "plugin2", "plugin3" ],
@@ -522,15 +522,15 @@ describe('tdd:devebot:core:manifest-handler', function() {
         }
       };
       var bundleSchema = combineBundleSchema(C, bundleList);
-      false && console.log('bundleSchema: %s', JSON.stringify(bundleSchema, null, 2));
+      false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, expectedBundleSchema);
     });
   });
 
-  describe('validateBundleConfig()', function() {
-    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
-    var checkSandboxConstraintsOfCrates = ManifestHandler.__get__('checkSandboxConstraintsOfCrates');
-    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
+  describe("validateBundleConfig()", function() {
+    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    var checkSandboxConstraintsOfCrates = ManifestHandler.__get__("checkSandboxConstraintsOfCrates");
+    var {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
     var C = {L, T, schemaValidator};
@@ -541,18 +541,18 @@ describe('tdd:devebot:core:manifest-handler', function() {
     });
 
     it("checkSandboxConstraintsOfCrates() invokes checkConstraints function properly", function() {
-      if (!chores.isUpgradeSupported('metadata-refiner') || chores.isUpgradeSupported('manifest-refiner')) {
+      if (!chores.isUpgradeSupported("metadata-refiner") || chores.isUpgradeSupported("manifest-refiner")) {
         this.skip();
       }
       var result = [];
       var fakedCheckers = {};
-      lodash.forEach(['application', 'subPlugin1', 'subPlugin2'], function(pluginName) {
+      lodash.forEach(["application", "subPlugin1", "subPlugin2"], function(pluginName) {
         fakedCheckers[pluginName] = sinon.stub();
         fakedCheckers[pluginName].callsFake(function(depends) {
-          false && console.log('config of dependencies: %s', JSON.stringify(depends, null, 2));
+          false && console.log("config of dependencies: %s", JSON.stringify(depends, null, 2));
           return true;
         });
-      })
+      });
       var sandboxConfig = {
         "application": {
           "contextPath": "path/to/appbox"
@@ -623,7 +623,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
           },
           "bridgeDepends": [ "bridge3" ],
           "pluginDepends": [ "subPlugin1", "subPlugin2" ],
-          "checkConstraints": fakedCheckers['application']
+          "checkConstraints": fakedCheckers["application"]
         },
         "plugins": {
           "subPlugin1": {
@@ -641,7 +641,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
             },
             "bridgeDepends": [ "bridge1", "bridge2" ],
             "pluginDepends": [ "plugin1", "plugin2" ],
-            "checkConstraints": fakedCheckers['subPlugin1']
+            "checkConstraints": fakedCheckers["subPlugin1"]
           },
           "subPlugin2": {
             "crateScope": "sub-plugin2",
@@ -658,7 +658,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
             },
             "bridgeDepends": [ "bridge2", "bridge3" ],
             "pluginDepends": [ "plugin2", "plugin3" ],
-            "checkConstraints": fakedCheckers['subPlugin2']
+            "checkConstraints": fakedCheckers["subPlugin2"]
           },
           "plugin1": {
             "crateScope": "plugin1",
@@ -681,8 +681,8 @@ describe('tdd:devebot:core:manifest-handler', function() {
         }
       };
       checkSandboxConstraintsOfCrates(C, result, sandboxConfig, sandboxSchema);
-      assert.equal(fakedCheckers['application'].callCount, 1);
-      assert.deepEqual(fakedCheckers['application'].firstCall.args[0], {
+      assert.equal(fakedCheckers["application"].callCount, 1);
+      assert.deepEqual(fakedCheckers["application"].firstCall.args[0], {
         "plugins": {
           "subPlugin1": {
             "host": "127.0.0.1",
@@ -704,8 +704,8 @@ describe('tdd:devebot:core:manifest-handler', function() {
           "contextPath": "path/to/appbox"
         }
       });
-      assert.equal(fakedCheckers['subPlugin1'].callCount, 1);
-      assert.deepEqual(fakedCheckers['subPlugin1'].firstCall.args[0], {
+      assert.equal(fakedCheckers["subPlugin1"].callCount, 1);
+      assert.deepEqual(fakedCheckers["subPlugin1"].firstCall.args[0], {
         "plugins": {
           "subPlugin1": {
             "host": "127.0.0.1",
@@ -731,8 +731,8 @@ describe('tdd:devebot:core:manifest-handler', function() {
           }
         }
       });
-      assert.equal(fakedCheckers['subPlugin2'].callCount, 1);
-      assert.deepEqual(fakedCheckers['subPlugin2'].firstCall.args[0], {
+      assert.equal(fakedCheckers["subPlugin2"].callCount, 1);
+      assert.deepEqual(fakedCheckers["subPlugin2"].firstCall.args[0], {
         "plugins": {
           "subPlugin2": {
             "host": "127.0.0.1",
@@ -758,7 +758,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
           }
         }
       });
-      false && console.log('Result: %s', JSON.stringify(result, null, 2));
+      false && console.log("Result: %s", JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
         {
           "stage": "config/constraints",
@@ -782,12 +782,12 @@ describe('tdd:devebot:core:manifest-handler', function() {
     });
   });
 
-  describe('extractBridgeSchema()', function() {
-    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
-    var combineBridgeSchema = ManifestHandler.__get__('combineBridgeSchema');
-    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
+  describe("extractBridgeSchema()", function() {
+    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    var combineBridgeSchema = ManifestHandler.__get__("combineBridgeSchema");
+    var {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     var nameResolver = lab.getNameResolver([], [
-      'bridge1', 'bridge2', 'bridge3', 'bridge4', 'devebot-co-connector1', 'devebot-co-connector2'
+      "bridge1", "bridge2", "bridge3", "bridge4", "devebot-co-connector1", "devebot-co-connector2"
     ]);
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
@@ -839,7 +839,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
     });
 
     it("should extract plugin schema from bridge manifest properly", function() {
-      if (!chores.isUpgradeSupported('manifest-refiner') || chores.isUpgradeSupported('metadata-refiner')) {
+      if (!chores.isUpgradeSupported("manifest-refiner") || chores.isUpgradeSupported("metadata-refiner")) {
         this.skip();
       }
       var bridgeList = lodash.values({
@@ -918,19 +918,19 @@ describe('tdd:devebot:core:manifest-handler', function() {
             },
           },
         },
-      })
+      });
 
       var bridgeSchema = combineBridgeSchema(CTX, bridgeList);
 
-      false && console.log('bridgeSchema: %s', JSON.stringify(bridgeSchema, null, 2));
+      false && console.log("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);
     });
   });
 
-  describe('validateBridgeConfig()', function() {
-    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
-    var validateBridgeConfig = ManifestHandler.__get__('validateBridgeConfig');
-    var {loggingFactory, schemaValidator} = lab.createBasicServices('fullapp');
+  describe("validateBridgeConfig()", function() {
+    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    var validateBridgeConfig = ManifestHandler.__get__("validateBridgeConfig");
+    var {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     var L = loggingFactory.getLogger();
     var T = loggingFactory.getTracer();
 
@@ -940,7 +940,7 @@ describe('tdd:devebot:core:manifest-handler', function() {
     });
 
     it("result should be ok if bridge config is valid with bridge schema", function() {
-      if (!chores.isUpgradeSupported('metadata-refiner') || chores.isUpgradeSupported('manifest-refiner')) {
+      if (!chores.isUpgradeSupported("metadata-refiner") || chores.isUpgradeSupported("manifest-refiner")) {
         this.skip();
       }
       var bridgeConfig = {
@@ -1077,8 +1077,8 @@ describe('tdd:devebot:core:manifest-handler', function() {
       };
       var result = [];
       validateBridgeConfig({L, T, schemaValidator}, bridgeConfig, bridgeSchema, result);
-      false && console.log('validation result: %s', JSON.stringify(result, null, 2));
-      if (!chores.isUpgradeSupported('bridge-full-ref')) return;
+      false && console.log("validation result: %s", JSON.stringify(result, null, 2));
+      if (!chores.isUpgradeSupported("bridge-full-ref")) return;
       assert.sameDeepMembers(result, [
         {
           "stage": "config/schema",
@@ -1096,44 +1096,44 @@ describe('tdd:devebot:core:manifest-handler', function() {
     });
   });
 
-  describe('loadManifest()', function() {
-    var ManifestHandler = lab.acquireDevebotModule('backbone/manifest-handler');
-    var loadManifest = ManifestHandler.__get__('loadManifest');
+  describe("loadManifest()", function() {
+    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    var loadManifest = ManifestHandler.__get__("loadManifest");
     assert.isFunction(loadManifest);
 
-    it('load manifest of modules properly', function() {
-      var appName = 'setting-with-metadata';
+    it("load manifest of modules properly", function() {
+      var appName = "setting-with-metadata";
       var manifest = loadManifest({
-        type: 'application',
+        type: "application",
         name: appName,
         path: lab.getAppHome(appName),
       }, issueInspector);
-      assert.isObject(lodash.get(manifest, ['config', 'migration']));
-      assert.isObject(lodash.get(manifest, ['config', 'validation', 'schema']));
-      assert.isFunction(lodash.get(manifest, ['config', 'validation', 'checkConstraints']));
+      assert.isObject(lodash.get(manifest, ["config", "migration"]));
+      assert.isObject(lodash.get(manifest, ["config", "validation", "schema"]));
+      assert.isFunction(lodash.get(manifest, ["config", "validation", "checkConstraints"]));
     });
 
-    it('return null if manifest not found', function() {
-      var appName = 'plugin-reference-alias';
+    it("return null if manifest not found", function() {
+      var appName = "plugin-reference-alias";
       var manifest = loadManifest({
-        type: 'application',
+        type: "application",
         name: appName,
         path: lab.getAppHome(appName),
       }, issueInspector);
       assert.isNull(manifest);
     });
 
-    it('raise an issue if manifest is invalid', function() {
-      var issueInspector = { collect: sinon.stub() }
-      var appName = 'invalid-manifest-schema';
+    it("raise an issue if manifest is invalid", function() {
+      var issueInspector = { collect: sinon.stub() };
+      var appName = "invalid-manifest-schema";
       var manifest = loadManifest({
-        type: 'application',
+        type: "application",
         name: appName,
         path: lab.getAppHome(appName),
       }, issueInspector);
       // returned manifest object
-      assert.isObject(lodash.get(manifest, ['config', 'migration']));
-      assert.isString(lodash.get(manifest, ['config', 'validation', 'schema']));
+      assert.isObject(lodash.get(manifest, ["config", "migration"]));
+      assert.isString(lodash.get(manifest, ["config", "validation", "schema"]));
       // issueInspector.collect
       assert.isTrue(issueInspector.collect.calledOnce);
       var collectArgs = lodash.cloneDeep(issueInspector.collect.firstCall.args);

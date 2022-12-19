@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var assert = require('chai').assert;
-var DevebotApi = require('devebot-api');
+var Promise = Devebot.require("bluebird");
+var lodash = Devebot.require("lodash");
+var assert = require("chai").assert;
+var DevebotApi = require("devebot-api");
 
-describe('bdd:devebot:routine:applica-info', function() {
+describe("bdd:devebot:routine:applica-info", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  describe('app.runner', function() {
+  describe("app.runner", function() {
     var app, api;
 
     before(function() {
@@ -23,38 +23,38 @@ describe('bdd:devebot:routine:applica-info', function() {
       }));
     });
 
-    it('definition should contain [applica-info] command', function(done) {
+    it("definition should contain [applica-info] command", function(done) {
       new Promise(function(resolved, rejected) {
         api.loadDefinition(function(err, obj) {
           if (err) return rejected(err);
           resolved(obj.payload);
         });
       }).then(function(defs) {
-        var cmd = lodash.keyBy(defs.commands, 'name')['applica-info'];
+        var cmd = lodash.keyBy(defs.commands, "name")["applica-info"];
         false && console.log(cmd);
         assert.isNotNull(cmd);
         assert.deepEqual(cmd, {
-          package: 'devebot',
-          name: 'applica-info',
-          alias: 'app-info',
-          description: 'Display application information',
+          package: "devebot",
+          name: "applica-info",
+          alias: "app-info",
+          description: "Display application information",
           options: []
         });
         done();
       });
     });
 
-    it('invoked [applica-info] command return correct result', function(done) {
+    it("invoked [applica-info] command return correct result", function(done) {
       new Promise(function(resolved, rejected) {
         api
-          .on('failed', function(result) {
+          .on("failed", function(result) {
             rejected(result);
           })
-          .on('completed', function(result) {
+          .on("completed", function(result) {
             resolved(result);
           })
           .execCommand({
-            name: 'applica-info',
+            name: "applica-info",
             options: {}
           });
       }).then(function(result) {
@@ -102,7 +102,7 @@ describe('bdd:devebot:routine:applica-info', function() {
     });
   });
 
-  describe('app.server', function() {
+  describe("app.server", function() {
     var app, api;
 
     before(function() {
@@ -114,38 +114,38 @@ describe('bdd:devebot:routine:applica-info', function() {
       app.server.start().asCallback(done);
     });
 
-    it('definition should contain [applica-info] command', function(done) {
+    it("definition should contain [applica-info] command", function(done) {
       new Promise(function(resolved, rejected) {
         api.loadDefinition(function(err, obj) {
           if (err) return rejected(err);
           resolved(obj.payload);
         });
       }).then(function(defs) {
-        var cmd = lodash.keyBy(defs.commands, 'name')['applica-info'];
+        var cmd = lodash.keyBy(defs.commands, "name")["applica-info"];
         false && console.log(cmd);
         assert.isNotNull(cmd);
         assert.deepEqual(cmd, {
-          package: 'devebot',
-          name: 'applica-info',
-          alias: 'app-info',
-          description: 'Display application information',
+          package: "devebot",
+          name: "applica-info",
+          alias: "app-info",
+          description: "Display application information",
           options: []
         });
         done();
       }).catch(done);
     });
 
-    it('invoked [applica-info] command return correct result', function(done) {
+    it("invoked [applica-info] command return correct result", function(done) {
       new Promise(function(resolved, rejected) {
         api
-          .on('failed', function(result) {
+          .on("failed", function(result) {
             rejected(result);
           })
-          .on('completed', function(result) {
+          .on("completed", function(result) {
             resolved(result);
           })
           .execCommand({
-            name: 'applica-info',
+            name: "applica-info",
             options: {}
           });
       }).then(function(result) {

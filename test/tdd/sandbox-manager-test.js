@@ -1,38 +1,38 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
-var Injektor = Devebot.require('injektor');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var loader = Devebot.require('loader');
-var errors = Devebot.require('errors');
-var assert = require('chai').assert;
-var LogConfig = Devebot.require('logolite').LogConfig;
-var LogTracer = Devebot.require('logolite').LogTracer;
-var envcloak = require('envcloak').instance;
-var sinon = require('sinon');
+var Promise = Devebot.require("bluebird");
+var Injektor = Devebot.require("injektor");
+var chores = Devebot.require("chores");
+var lodash = Devebot.require("lodash");
+var loader = Devebot.require("loader");
+var errors = Devebot.require("errors");
+var assert = require("chai").assert;
+var LogConfig = Devebot.require("logolite").LogConfig;
+var LogTracer = Devebot.require("logolite").LogTracer;
+var envcloak = require("envcloak").instance;
+var sinon = require("sinon");
 
-describe('tdd:devebot:core:sandbox-manager', function() {
+describe("tdd:devebot:core:sandbox-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
-      NODE_ENV: 'test',
-      LOGOLITE_FULL_LOG_MODE: 'false',
-      LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all'
+      NODE_ENV: "test",
+      LOGOLITE_FULL_LOG_MODE: "false",
+      LOGOLITE_ALWAYS_ENABLED: "all",
+      LOGOLITE_ALWAYS_MUTED: "all"
     });
     LogConfig.reset();
     issueInspector.reset();
   });
 
-  it('getBridgeDialectNames() - retrieve bridge dialect names correctly', function() {
-    var sandboxManager = lab.createSandboxManager('fullapp');
-    if (!chores.isUpgradeSupported('bridge-full-ref')) {
+  it("getBridgeDialectNames() - retrieve bridge dialect names correctly", function() {
+    var sandboxManager = lab.createSandboxManager("fullapp");
+    if (!chores.isUpgradeSupported("bridge-full-ref")) {
       assert.deepEqual(sandboxManager.getBridgeDialectNames(), [
         "bridge1/anyname1a",
         "bridge1/anyname1b",
@@ -44,57 +44,57 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       return;
     }
     assert.deepEqual(sandboxManager.getBridgeDialectNames(), [
-      chores.toFullname('application', 'bridge1#anyname1z'),
-      chores.toFullname('plugin1', 'bridge1#anyname1a'),
-      chores.toFullname('plugin2', 'bridge1#anyname1b'),
-      chores.toFullname('plugin2', 'bridge1#anyname1c'),
-      chores.toFullname('application', 'bridge2#anyname2y'),
-      chores.toFullname('application', 'bridge2#anyname2z'),
-      chores.toFullname('plugin1', 'bridge2#anyname2a'),
-      chores.toFullname('plugin1', 'bridge2#anyname2c'),
-      chores.toFullname('plugin2', 'bridge2#anyname2b'),
-      chores.toFullname('application', 'connector1#wrapper'),
-      chores.toFullname('application', 'connector2#wrapper')
+      chores.toFullname("application", "bridge1#anyname1z"),
+      chores.toFullname("plugin1", "bridge1#anyname1a"),
+      chores.toFullname("plugin2", "bridge1#anyname1b"),
+      chores.toFullname("plugin2", "bridge1#anyname1c"),
+      chores.toFullname("application", "bridge2#anyname2y"),
+      chores.toFullname("application", "bridge2#anyname2z"),
+      chores.toFullname("plugin1", "bridge2#anyname2a"),
+      chores.toFullname("plugin1", "bridge2#anyname2c"),
+      chores.toFullname("plugin2", "bridge2#anyname2b"),
+      chores.toFullname("application", "connector1#wrapper"),
+      chores.toFullname("application", "connector2#wrapper")
     ]);
   });
 
-  it('getPluginServiceNames() - retrieve plugin service names correctly', function() {
-    var sandboxManager = lab.createSandboxManager('fullapp');
+  it("getPluginServiceNames() - retrieve plugin service names correctly", function() {
+    var sandboxManager = lab.createSandboxManager("fullapp");
     assert.deepEqual(sandboxManager.getPluginServiceNames(), [
-      chores.toFullname('application', 'mainService'),
-      chores.toFullname('sub-plugin1', 'sublibService'),
-      chores.toFullname('sub-plugin2', 'sublibService'),
-      chores.toFullname('plugin1', 'plugin1Service'),
-      chores.toFullname('plugin2', 'plugin2Service'),
-      chores.toFullname('plugin3', 'plugin3Service')
+      chores.toFullname("application", "mainService"),
+      chores.toFullname("sub-plugin1", "sublibService"),
+      chores.toFullname("sub-plugin2", "sublibService"),
+      chores.toFullname("plugin1", "plugin1Service"),
+      chores.toFullname("plugin2", "plugin2Service"),
+      chores.toFullname("plugin3", "plugin3Service")
     ]);
   });
 
-  it('getPluginTriggerNames() - retrieve plugin trigger names correctly', function() {
-    var sandboxManager = lab.createSandboxManager('fullapp');
+  it("getPluginTriggerNames() - retrieve plugin trigger names correctly", function() {
+    var sandboxManager = lab.createSandboxManager("fullapp");
     assert.deepEqual(sandboxManager.getPluginTriggerNames(), [
-      chores.toFullname('application', 'mainTrigger'),
-      chores.toFullname('sub-plugin1', 'sublibTrigger'),
-      chores.toFullname('sub-plugin2', 'sublibTrigger'),
-      chores.toFullname('plugin1', 'plugin1Trigger'),
-      chores.toFullname('plugin2', 'plugin2Trigger'),
-      chores.toFullname('plugin3', 'plugin3Trigger')
+      chores.toFullname("application", "mainTrigger"),
+      chores.toFullname("sub-plugin1", "sublibTrigger"),
+      chores.toFullname("sub-plugin2", "sublibTrigger"),
+      chores.toFullname("plugin1", "plugin1Trigger"),
+      chores.toFullname("plugin2", "plugin2Trigger"),
+      chores.toFullname("plugin3", "plugin3Trigger")
     ]);
   });
 
-  it('getSandboxService() - retrieve the unique named service with or without suggested scope', function() {
-    var sandboxManager = lab.createSandboxManager('fullapp');
+  it("getSandboxService() - retrieve the unique named service with or without suggested scope", function() {
+    var sandboxManager = lab.createSandboxManager("fullapp");
 
-    var plugin2Service0 = sandboxManager.getSandboxService('plugin2Service');
+    var plugin2Service0 = sandboxManager.getSandboxService("plugin2Service");
     assert.isNotNull(plugin2Service0);
 
-    var plugin2Service1 = sandboxManager.getSandboxService('plugin2Service', {
-      scope: 'plugin1'
+    var plugin2Service1 = sandboxManager.getSandboxService("plugin2Service", {
+      scope: "plugin1"
     });
     assert.isNotNull(plugin2Service1);
 
-    var plugin2Service2 = sandboxManager.getSandboxService('plugin2Service', {
-      scope: 'plugin2'
+    var plugin2Service2 = sandboxManager.getSandboxService("plugin2Service", {
+      scope: "plugin2"
     });
     assert.isNotNull(plugin2Service2);
 
@@ -102,37 +102,37 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     assert.equal(plugin2Service1, plugin2Service2);
   });
 
-  it('getSandboxService() - retrieve the same named services from different plugins', function() {
-    var sandboxManager = lab.createSandboxManager('fullapp');
+  it("getSandboxService() - retrieve the same named services from different plugins", function() {
+    var sandboxManager = lab.createSandboxManager("fullapp");
 
     assert.throws(function() {
-      var sublibService = sandboxManager.getSandboxService('sublibService');
-    }, Injektor.errors.DuplicatedRelativeNameError, 'name [sublibService] is duplicated');
+      var sublibService = sandboxManager.getSandboxService("sublibService");
+    }, Injektor.errors.DuplicatedRelativeNameError, "name [sublibService] is duplicated");
 
-    var sublibService1 = sandboxManager.getSandboxService('sublibService', {
-      scope: 'sub-plugin1'
+    var sublibService1 = sandboxManager.getSandboxService("sublibService", {
+      scope: "sub-plugin1"
     });
     false && console.log(sublibService1.getConfig());
     assert.isNotNull(sublibService1);
-    assert.deepEqual(sublibService1.getConfig(), { host: 'localhost', port: 17721 });
+    assert.deepEqual(sublibService1.getConfig(), { host: "localhost", port: 17721 });
 
-    var sublibService2 = sandboxManager.getSandboxService('sublibService', {
-      scope: 'sub-plugin2'
+    var sublibService2 = sandboxManager.getSandboxService("sublibService", {
+      scope: "sub-plugin2"
     });
     false && console.log(sublibService2.getConfig());
     assert.isNotNull(sublibService2);
-    assert.deepEqual(sublibService2.getConfig(), { host: 'localhost', port: 17722 });
+    assert.deepEqual(sublibService2.getConfig(), { host: "localhost", port: 17722 });
   });
 
-  describe('logging-interception', function() {
+  describe("logging-interception", function() {
     var loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname('devebot', 'sandboxManager'), 'excluded-internal-services' ],
-          storeTo: 'list'
+          allTags: [ chores.toFullname("devebot", "sandboxManager"), "excluded-internal-services" ],
+          storeTo: "list"
         }]
       }]);
     });
@@ -141,9 +141,9 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       LogTracer.reset().empty(loggingStore);
     });
 
-    it('excludedServices should be defined properly', function() {
-      var sandboxManager = lab.createSandboxManager('fullapp');
-      var excluded = lodash.get(loggingStore, 'list.0.excludedServices', {});
+    it("excludedServices should be defined properly", function() {
+      var sandboxManager = lab.createSandboxManager("fullapp");
+      var excluded = lodash.get(loggingStore, "list.0.excludedServices", {});
       if (true) {
         assert.deepEqual(excluded, [
           chores.toFullname("devebot", "sandboxRegistry")
@@ -158,114 +158,114 @@ describe('tdd:devebot:core:sandbox-manager', function() {
     });
   });
 
-  describe('SandboxRegistry', function() {
-    var SandboxManager = lab.acquireDevebotModule('backbone/sandbox-manager');
-    var SandboxRegistry = SandboxManager.__get__('SandboxRegistry');
+  describe("SandboxRegistry", function() {
+    var SandboxManager = lab.acquireDevebotModule("backbone/sandbox-manager");
+    var SandboxRegistry = SandboxManager.__get__("SandboxRegistry");
 
-    function SampleService() {}
-    var serviceName = 'sampleService';
-    var context = { scope: 'testing' };
+    function SampleService () {}
+    var serviceName = "sampleService";
+    var context = { scope: "testing" };
     var serviceFullname = [context.scope, serviceName].join(chores.getSeparator());
 
     before(function() {
     });
 
-    it('make sure that deprecated methods are available', function() {
+    it("make sure that deprecated methods are available", function() {
       var injektor = new Injektor({ separator: chores.getSeparator() });
       var sandboxRegistry = new SandboxRegistry({ injektor });
       assert.isFunction(sandboxRegistry.lookupService);
     });
 
-    it('lookup() - retrieves beans properly', function() {
-      var bean1 = {}, bean2 = {};
+    it("lookup() - retrieves beans properly", function() {
+      var bean1 = {}; var bean2 = {};
       var injektor = new Injektor({ separator: chores.getSeparator() });
-      injektor.registerObject('bean1', bean1);
-      injektor.registerObject('bean2', bean2, context);
+      injektor.registerObject("bean1", bean1);
+      injektor.registerObject("bean2", bean2, context);
 
       var sandboxRegistry = new SandboxRegistry({ injektor });
 
-      assert.isNull(sandboxRegistry.lookup('bean0'));
-      assert.isNull(sandboxRegistry.lookup('testing/bean1'));
-      assert.deepEqual(sandboxRegistry.lookup('bean1'), bean1);
-      assert.deepEqual(sandboxRegistry.lookup('bean2'), bean2);
-      assert.deepEqual(sandboxRegistry.lookup('testing/bean2'), bean2);
+      assert.isNull(sandboxRegistry.lookup("bean0"));
+      assert.isNull(sandboxRegistry.lookup("testing/bean1"));
+      assert.deepEqual(sandboxRegistry.lookup("bean1"), bean1);
+      assert.deepEqual(sandboxRegistry.lookup("bean2"), bean2);
+      assert.deepEqual(sandboxRegistry.lookup("testing/bean2"), bean2);
     });
 
-    it('lookup() - isExcluded() is supported', function() {
-      var context = { scope: 'devebot' }
-      var bean1 = {}, bean2 = {}, bean3 = {};
+    it("lookup() - isExcluded() is supported", function() {
+      var context = { scope: "devebot" };
+      var bean1 = {}; var bean2 = {}; var bean3 = {};
       var injektor = new Injektor({ separator: chores.getSeparator() });
-      injektor.registerObject('devebot-co-sample', bean1);
-      injektor.registerObject('example', bean2, context);
-      injektor.registerObject('testing/example', bean3);
+      injektor.registerObject("devebot-co-sample", bean1);
+      injektor.registerObject("example", bean2, context);
+      injektor.registerObject("testing/example", bean3);
       var isExcluded = function(beanFullName) {
-        return (typeof beanFullName !== 'string') || (beanFullName.match(/devebot/));
-      }
+        return (typeof beanFullName !== "string") || (beanFullName.match(/devebot/));
+      };
       var sandboxRegistry = new SandboxRegistry({ injektor, isExcluded });
-      assert.isNull(sandboxRegistry.lookup('devebot-co-sample'));
-      assert.isNull(sandboxRegistry.lookup('example'));
-      assert.isNull(sandboxRegistry.lookup('devebot/example'));
-      assert.deepEqual(sandboxRegistry.lookup('testing/example'), bean3);
+      assert.isNull(sandboxRegistry.lookup("devebot-co-sample"));
+      assert.isNull(sandboxRegistry.lookup("example"));
+      assert.isNull(sandboxRegistry.lookup("devebot/example"));
+      assert.deepEqual(sandboxRegistry.lookup("testing/example"), bean3);
     });
 
-    it('lookup() - excludedServices list is supported', function() {
-      var context = { scope: 'devebot' }
-      var bean1 = {}, bean2 = {}, bean3 = {};
+    it("lookup() - excludedServices list is supported", function() {
+      var context = { scope: "devebot" };
+      var bean1 = {}; var bean2 = {}; var bean3 = {};
       var injektor = new Injektor({ separator: chores.getSeparator() });
-      injektor.registerObject('devebot-co-sample', bean1);
-      injektor.registerObject('example', bean2, context);
-      injektor.registerObject('testing/example', bean3);
-      var excludedServices = ['devebot/example'];
+      injektor.registerObject("devebot-co-sample", bean1);
+      injektor.registerObject("example", bean2, context);
+      injektor.registerObject("testing/example", bean3);
+      var excludedServices = ["devebot/example"];
       var sandboxRegistry = new SandboxRegistry({ injektor, excludedServices });
-      assert.deepEqual(sandboxRegistry.lookup('devebot-co-sample'), bean1);
-      assert.isNull(sandboxRegistry.lookup('example'));
-      assert.isNull(sandboxRegistry.lookup('devebot/example'));
-      assert.deepEqual(sandboxRegistry.lookup('testing/example'), bean3);
+      assert.deepEqual(sandboxRegistry.lookup("devebot-co-sample"), bean1);
+      assert.isNull(sandboxRegistry.lookup("example"));
+      assert.isNull(sandboxRegistry.lookup("devebot/example"));
+      assert.deepEqual(sandboxRegistry.lookup("testing/example"), bean3);
     });
 
-    it('defineService() - RestrictedDevebotError', function() {
-      var context = { scope: 'devebot' };
+    it("defineService() - RestrictedDevebotError", function() {
+      var context = { scope: "devebot" };
 
       var injektor = new Injektor({ separator: chores.getSeparator() });
-      var _parseName = sinon.spy(injektor, 'parseName');
-      var _resolveName = sinon.spy(injektor, 'resolveName');
-      var _defineService = sinon.spy(injektor, 'defineService');
+      var _parseName = sinon.spy(injektor, "parseName");
+      var _resolveName = sinon.spy(injektor, "resolveName");
+      var _defineService = sinon.spy(injektor, "defineService");
 
       var sandboxRegistry = new SandboxRegistry({ injektor });
 
       assert.throws(function() {
         sandboxRegistry.defineService(serviceName, SampleService, context);
-      }, errors.assertConstructor('RestrictedDevebotError'));
+      }, errors.assertConstructor("RestrictedDevebotError"));
 
       assert.isTrue(_parseName.calledOnce);
       assert.isTrue(_resolveName.notCalled);
       assert.isTrue(_defineService.notCalled);
     });
 
-    it('defineService() - DuplicatedDevebotError', function() {
+    it("defineService() - DuplicatedDevebotError", function() {
       var injektor = new Injektor({ separator: chores.getSeparator() });
       injektor.registerObject(serviceFullname, {});
 
-      var _parseName = sinon.spy(injektor, 'parseName');
-      var _resolveName = sinon.spy(injektor, 'resolveName');
-      var _defineService = sinon.spy(injektor, 'defineService');
+      var _parseName = sinon.spy(injektor, "parseName");
+      var _resolveName = sinon.spy(injektor, "resolveName");
+      var _defineService = sinon.spy(injektor, "defineService");
 
       var sandboxRegistry = new SandboxRegistry({ injektor });
 
       assert.throws(function() {
         sandboxRegistry.defineService(serviceName, SampleService, context);
-      }, errors.assertConstructor('DuplicatedDevebotError'));
+      }, errors.assertConstructor("DuplicatedDevebotError"));
 
       assert.isTrue(_parseName.calledOnce);
       assert.isTrue(_resolveName.calledOnce);
       assert.isTrue(_defineService.notCalled);
     });
 
-    it('defineService() - [scope in context]', function() {
+    it("defineService() - [scope in context]", function() {
       var injektor = new Injektor({ separator: chores.getSeparator() });
-      var _parseName = sinon.spy(injektor, 'parseName');
-      var _resolveName = sinon.spy(injektor, 'resolveName');
-      var _defineService = sinon.spy(injektor, 'defineService');
+      var _parseName = sinon.spy(injektor, "parseName");
+      var _resolveName = sinon.spy(injektor, "resolveName");
+      var _defineService = sinon.spy(injektor, "defineService");
 
       var sandboxRegistry = new SandboxRegistry({ injektor });
 
@@ -277,8 +277,8 @@ describe('tdd:devebot:core:sandbox-manager', function() {
 
       assert.isTrue(_resolveName.calledOnce);
       assert.equal(_resolveName.firstCall.args[0], serviceName);
-      assert.equal(lodash.get(_resolveName.firstCall.args, [1, 'scope']), context.scope);
-      assert.isArray(lodash.get(_resolveName.firstCall.args, [1, 'exceptions']));
+      assert.equal(lodash.get(_resolveName.firstCall.args, [1, "scope"]), context.scope);
+      assert.isArray(lodash.get(_resolveName.firstCall.args, [1, "exceptions"]));
 
       assert.isTrue(_defineService.calledOnce);
       assert.equal(_defineService.firstCall.args[0], serviceName);
@@ -286,11 +286,11 @@ describe('tdd:devebot:core:sandbox-manager', function() {
       assert.deepEqual(_defineService.firstCall.args[2], context);
     });
 
-    it('defineService() - [name contains scope]', function() {
+    it("defineService() - [name contains scope]", function() {
       var injektor = new Injektor({ separator: chores.getSeparator() });
-      var _parseName = sinon.spy(injektor, 'parseName');
-      var _resolveName = sinon.spy(injektor, 'resolveName');
-      var _defineService = sinon.spy(injektor, 'defineService');
+      var _parseName = sinon.spy(injektor, "parseName");
+      var _resolveName = sinon.spy(injektor, "resolveName");
+      var _defineService = sinon.spy(injektor, "defineService");
 
       var sandboxRegistry = new SandboxRegistry({ injektor });
 
@@ -302,8 +302,8 @@ describe('tdd:devebot:core:sandbox-manager', function() {
 
       assert.isTrue(_resolveName.calledOnce);
       assert.equal(_resolveName.firstCall.args[0], serviceFullname);
-      assert.isUndefined(lodash.get(_resolveName.firstCall.args, [1, 'scope']));
-      assert.isArray(lodash.get(_resolveName.firstCall.args, [1, 'exceptions']));
+      assert.isUndefined(lodash.get(_resolveName.firstCall.args, [1, "scope"]));
+      assert.isArray(lodash.get(_resolveName.firstCall.args, [1, "exceptions"]));
 
       assert.isTrue(_defineService.calledOnce);
       assert.equal(_defineService.firstCall.args[0], serviceFullname);

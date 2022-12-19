@@ -1,28 +1,28 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var assert = require('chai').assert;
-var LogConfig = Devebot.require('logolite').LogConfig;
-var LogTracer = Devebot.require('logolite').LogTracer;
-var envcloak = require('envcloak').instance;
-var util = require('util');
+var chores = Devebot.require("chores");
+var lodash = Devebot.require("lodash");
+var assert = require("chai").assert;
+var LogConfig = Devebot.require("logolite").LogConfig;
+var LogTracer = Devebot.require("logolite").LogTracer;
+var envcloak = require("envcloak").instance;
+var util = require("util");
 
-describe('bdd:devebot:application', function() {
+describe("bdd:devebot:application", function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
     envcloak.setup({
-      LOGOLITE_FULL_LOG_MODE: 'false',
-      LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all',
+      LOGOLITE_FULL_LOG_MODE: "false",
+      LOGOLITE_ALWAYS_ENABLED: "all",
+      LOGOLITE_ALWAYS_MUTED: "all",
     });
     LogConfig.reset();
   });
 
-  describe('application[default]', function() {
+  describe("application[default]", function() {
     var app;
     var serverStats = {};
     var moduleStats = {};
@@ -33,12 +33,12 @@ describe('bdd:devebot:application', function() {
           accumulator: serverStats,
           mappings: [
             {
-              allTags: [ chores.toFullname("devebot", "server"), 'start()' ],
-              countTo: 'startingCount'
+              allTags: [ chores.toFullname("devebot", "server"), "start()" ],
+              countTo: "startingCount"
             },
             {
-              allTags: [ chores.toFullname("devebot", "server"), 'close()' ],
-              countTo: 'stoppingCount'
+              allTags: [ chores.toFullname("devebot", "server"), "close()" ],
+              countTo: "stoppingCount"
             }
           ]
         },
@@ -46,16 +46,16 @@ describe('bdd:devebot:application', function() {
           accumulator: moduleStats,
           mappings: [
             {
-              anyTags: [ 'devebot-metadata' ],
-              storeTo: 'metadata'
+              anyTags: [ "devebot-metadata" ],
+              storeTo: "metadata"
             },
             {
-              anyTags: [ 'constructor-begin' ],
-              countTo: 'constructorBeginTotal'
+              anyTags: [ "constructor-begin" ],
+              countTo: "constructorBeginTotal"
             },
             {
-              anyTags: [ 'constructor-end' ],
-              countTo: 'constructorEndTotal'
+              anyTags: [ "constructor-end" ],
+              countTo: "constructorEndTotal"
             }
           ]
         }
@@ -66,7 +66,7 @@ describe('bdd:devebot:application', function() {
       LogTracer.reset().empty(serverStats).empty(moduleStats);
     });
 
-    it('total of constructor startpoints must equal to constructor endpoints', function(done) {
+    it("total of constructor startpoints must equal to constructor endpoints", function(done) {
       app = lab.getApp();
       var devebotScopes = [
         chores.toFullname("devebot", "bootstrap"),
@@ -91,7 +91,7 @@ describe('bdd:devebot:application', function() {
         chores.toFullname("devebot", "securityManager"),
         chores.toFullname("devebot", "repeatedTimer")
       ];
-      if (chores.isUpgradeSupported('builtin-mapping-loader')) {
+      if (chores.isUpgradeSupported("builtin-mapping-loader")) {
         devebotScopes.push(chores.toFullname("devebot", "mappingLoader"));
       }
       var plugin1Scopes = [
@@ -110,7 +110,7 @@ describe('bdd:devebot:application', function() {
       var bridge1Scopes = [];
       var bridge2Scopes = [];
 
-      if (chores.isUpgradeSupported(['bridge-full-ref','presets'])) {
+      if (chores.isUpgradeSupported(["bridge-full-ref", "presets"])) {
         bridge1Scopes = [
           chores.toFullname("plugin1", "bridge1#anyname1a"),
           chores.toFullname("plugin2", "bridge1#anyname1b"),
@@ -123,7 +123,7 @@ describe('bdd:devebot:application', function() {
         ];
       }
 
-      if (!chores.isUpgradeSupported('bridge-full-ref')) {
+      if (!chores.isUpgradeSupported("bridge-full-ref")) {
         bridge1Scopes = [
           chores.toFullname("bridge1", "anyname1a"),
           chores.toFullname("bridge1", "anyname1b"),
@@ -147,7 +147,7 @@ describe('bdd:devebot:application', function() {
           assert.isAbove(moduleStats.constructorBeginTotal, 0);
           assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
           var metadata = lodash.map(moduleStats.metadata, function(item) {
-            return item && item.blockName
+            return item && item.blockName;
           });
           // block 'bootstrap' appears 3 times
           metadata = lodash.uniq(metadata);
@@ -183,7 +183,7 @@ describe('bdd:devebot:application', function() {
     });
   });
 
-  describe('other applications', function() {
+  describe("other applications", function() {
     var app;
     var moduleStats = {};
 
@@ -193,24 +193,24 @@ describe('bdd:devebot:application', function() {
           accumulator: moduleStats,
           mappings: [
             {
-              allTags: [ chores.toFullname('devebot', 'sandboxManager'), 'instantiateObject' ],
-              storeTo: 'dependencyInfo'
+              allTags: [ chores.toFullname("devebot", "sandboxManager"), "instantiateObject" ],
+              storeTo: "dependencyInfo"
             },
             {
-              allTags: [ chores.toFullname('devebot-dp-wrapper1', 'sublibTrigger'), 'bridge-config' ],
-              storeTo: 'bridgeConfigOfWrapper1'
+              allTags: [ chores.toFullname("devebot-dp-wrapper1", "sublibTrigger"), "bridge-config" ],
+              storeTo: "bridgeConfigOfWrapper1"
             },
             {
-              allTags: [ chores.toFullname('devebot-dp-wrapper2', 'sublibTrigger'), 'bridge-config' ],
-              storeTo: 'bridgeConfigOfWrapper2'
+              allTags: [ chores.toFullname("devebot-dp-wrapper2", "sublibTrigger"), "bridge-config" ],
+              storeTo: "bridgeConfigOfWrapper2"
             },
             {
-              anyTags: [ 'constructor-begin' ],
-              countTo: 'constructorBeginTotal'
+              anyTags: [ "constructor-begin" ],
+              countTo: "constructorBeginTotal"
             },
             {
-              anyTags: [ 'constructor-end' ],
-              countTo: 'constructorEndTotal'
+              anyTags: [ "constructor-end" ],
+              countTo: "constructorEndTotal"
             }
           ]
         }
@@ -221,13 +221,12 @@ describe('bdd:devebot:application', function() {
       LogTracer.reset().empty(moduleStats);
     });
 
-    it('[naming-convention] special plugins & bridges should be loaded properly', function() {
-      if (!chores.isUpgradeSupported('standardizing-config')) {
+    it("[naming-convention] special plugins & bridges should be loaded properly", function() {
+      if (!chores.isUpgradeSupported("standardizing-config")) {
         this.skip();
-        return done();
       }
 
-      app = lab.getApp(lab.unloadApp('naming-convention'));
+      app = lab.getApp(lab.unloadApp("naming-convention"));
       app.server;
 
       false && console.log(JSON.stringify(moduleStats, null, 2));
@@ -260,7 +259,7 @@ describe('bdd:devebot:application', function() {
           "handlerType": "TRIGGER"
         }
       ];
-      if (chores.isUpgradeSupported('bridge-full-ref')) {
+      if (chores.isUpgradeSupported("bridge-full-ref")) {
         expectedDependencies.push({
           "handlerName": chores.toFullname("application", "connector1#wrapper"),
           "handlerType": "DIALECT"
@@ -304,47 +303,45 @@ describe('bdd:devebot:application', function() {
       };
 
       var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
-        return lodash.pick(item, ['handlerName', 'handlerType']);
+        return lodash.pick(item, ["handlerName", "handlerType"]);
       });
       false && console.log(JSON.stringify(dependencyInfo, null, 2));
       assert.sameDeepMembers(dependencyInfo, expectedDependencies);
     });
 
-    it('[naming-convention] special plugins & bridges should be available', function(done) {
-      if (!chores.isUpgradeSupported('standardizing-config')) {
+    it("[naming-convention] special plugins & bridges should be available", function(done) {
+      if (!chores.isUpgradeSupported("standardizing-config")) {
         this.skip();
         return done();
       }
-      app = lab.getApp('naming-convention/index1');
+      app = lab.getApp("naming-convention/index1");
       app.runner.invoke(function(injektor) {
-        var sandboxManager = injektor.lookup('sandboxManager');
-        var service1 = sandboxManager.getSandboxService('sublibService', {
-          scope: 'devebot-dp-wrapper1'
+        var sandboxManager = injektor.lookup("sandboxManager");
+        var service1 = sandboxManager.getSandboxService("sublibService", {
+          scope: "devebot-dp-wrapper1"
         });
-        assert(service1.getConfig(), { port: 17741, host: 'localhost' });
-        var service2 = sandboxManager.getSandboxService(chores.toFullname('devebot-dp-wrapper2', 'sublibService'));
-        assert(service2.getConfig(), { port: 17742, host: 'localhost' });
+        assert(service1.getConfig(), { port: 17741, host: "localhost" });
+        var service2 = sandboxManager.getSandboxService(chores.toFullname("devebot-dp-wrapper2", "sublibService"));
+        assert(service2.getConfig(), { port: 17742, host: "localhost" });
         return done();
       });
     });
 
-    it('[naming-convention] bridge configuration should be loaded properly', function() {
-      if (!chores.isUpgradeSupported('standardizing-config')) {
+    it("[naming-convention] bridge configuration should be loaded properly", function() {
+      if (!chores.isUpgradeSupported("standardizing-config")) {
         this.skip();
-        return done();
       }
-      if (!chores.isUpgradeSupported('bridge-full-ref')) {
+      if (!chores.isUpgradeSupported("bridge-full-ref")) {
         this.skip();
-        return done();
       }
 
-      app = lab.getApp('naming-convention/index2');
+      app = lab.getApp("naming-convention/index2");
       app.server;
 
       false && console.log(JSON.stringify(moduleStats, null, 2));
-      for(var k=1; k<=2; k++) {
-        var config = lodash.map(moduleStats['bridgeConfigOfWrapper' + k], function(item) {
-          return lodash.get(item, 'config');
+      for (var k=1; k<=2; k++) {
+        var config = lodash.map(moduleStats["bridgeConfigOfWrapper" + k], function(item) {
+          return lodash.get(item, "config");
         });
         false && console.log(JSON.stringify(config, null, 2));
         assert.sameDeepMembers(config, [
@@ -364,13 +361,13 @@ describe('bdd:devebot:application', function() {
       }
     });
 
-    it('[reference-alias] special plugins & bridges should be loaded properly', function() {
-      if (!chores.isUpgradeSupported('presets')) {
+    it("[reference-alias] special plugins & bridges should be loaded properly", function() {
+      if (!chores.isUpgradeSupported("presets")) {
         this.skip();
         return;
       }
 
-      app = lab.getApp('reference-alias');
+      app = lab.getApp("reference-alias");
       app.server;
 
       false && console.log(JSON.stringify(moduleStats, null, 2));
@@ -378,7 +375,7 @@ describe('bdd:devebot:application', function() {
       assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
       var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
-        return lodash.pick(item, ['handlerName', 'handlerType']);
+        return lodash.pick(item, ["handlerName", "handlerType"]);
       });
       false && console.log(JSON.stringify(dependencyInfo, null, 2));
       assert.sameDeepMembers(dependencyInfo, [
@@ -401,13 +398,13 @@ describe('bdd:devebot:application', function() {
       ]);
     });
 
-    it('[rename-comp-dir] special plugins & bridges should be loaded properly', function() {
-      if (!chores.isUpgradeSupported('presets')) {
+    it("[rename-comp-dir] special plugins & bridges should be loaded properly", function() {
+      if (!chores.isUpgradeSupported("presets")) {
         this.skip();
         return;
       }
 
-      app = lab.getApp('rename-comp-dir');
+      app = lab.getApp("rename-comp-dir");
       app.server;
 
       false && console.log(JSON.stringify(moduleStats, null, 2));
@@ -415,7 +412,7 @@ describe('bdd:devebot:application', function() {
       assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
       var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
-        return lodash.pick(item, ['handlerName', 'handlerType']);
+        return lodash.pick(item, ["handlerName", "handlerType"]);
       });
       false && console.log(JSON.stringify(dependencyInfo, null, 2));
       assert.sameDeepMembers(dependencyInfo, [

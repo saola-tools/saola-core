@@ -1,25 +1,25 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var chores = Devebot.require('chores');
-var assert = require('chai').assert;
+var chores = Devebot.require("chores");
+var assert = require("chai").assert;
 
-describe('tdd:devebot:core:name-resolver', function() {
+describe("tdd:devebot:core:name-resolver", function() {
   var loggingFactory = lab.createLoggingFactoryMock();
   var CTX = {
     L: loggingFactory.getLogger(),
     T: loggingFactory.getTracer(),
-  }
+  };
 
-  describe('standardizing loaded configuration data', function() {
-    var NameResolver = lab.acquireDevebotModule('backbone/name-resolver');
-    var extractAliasNames = NameResolver.__get__('extractAliasNames');
-    var buildAbsoluteAliasMap = NameResolver.__get__('buildAbsoluteAliasMap');
-    var buildRelativeAliasMap = NameResolver.__get__('buildRelativeAliasMap');
+  describe("standardizing loaded configuration data", function() {
+    var NameResolver = lab.acquireDevebotModule("backbone/name-resolver");
+    var extractAliasNames = NameResolver.__get__("extractAliasNames");
+    var buildAbsoluteAliasMap = NameResolver.__get__("buildAbsoluteAliasMap");
+    var buildRelativeAliasMap = NameResolver.__get__("buildRelativeAliasMap");
 
-    it('should build the map of plugin-names transformation correctly', function() {
-      if (!chores.isUpgradeSupported('standardizing-config')) this.skip();
+    it("should build the map of plugin-names transformation correctly", function() {
+      if (!chores.isUpgradeSupported("standardizing-config")) this.skip();
 
       var pluginDefs = {
         "path/to/devebot-dp-wrapper1": {
@@ -90,7 +90,7 @@ describe('tdd:devebot:core:name-resolver', function() {
         }
       };
 
-      assert.deepEqual(extractAliasNames(CTX, 'plugin', pluginDefs), pluginRefs);
+      assert.deepEqual(extractAliasNames(CTX, "plugin", pluginDefs), pluginRefs);
 
       var expectedMap = {
         "devebot-dp-wrapper1": "devebot-dp-wrapper1",
@@ -120,17 +120,17 @@ describe('tdd:devebot:core:name-resolver', function() {
     });
   });
 
-  describe('converting and reverting the plugin & bridge names', function() {
+  describe("converting and reverting the plugin & bridge names", function() {
     var nameResolver = lab.getNameResolver([
-      'sub-plugin1', 'devebot-dp-wrapper1', 'sub-plugin2', 'devebot-dp-wrapper2'
+      "sub-plugin1", "devebot-dp-wrapper1", "sub-plugin2", "devebot-dp-wrapper2"
     ], [
-      'bridge1', 'bridge-kebab-case1', 'devebot-co-connector1', 'bridge2', 'bridge-kebab-case2', 'devebot-co-connector2'
+      "bridge1", "bridge-kebab-case1", "devebot-co-connector1", "bridge2", "bridge-kebab-case2", "devebot-co-connector2"
     ]);
-    it('should build absoluteAliasMap correctly', function() {
-      if (chores.isUpgradeSupported('simplify-name-resolver')) this.skip();
+    it("should build absoluteAliasMap correctly", function() {
+      if (chores.isUpgradeSupported("simplify-name-resolver")) this.skip();
 
       var absoluteAliasMap = nameResolver.getAbsoluteAliasMap();
-      false && console.log('absoluteAliasMap: %s', JSON.stringify(absoluteAliasMap, null, 2));
+      false && console.log("absoluteAliasMap: %s", JSON.stringify(absoluteAliasMap, null, 2));
       assert.deepEqual(absoluteAliasMap, {
         "plugin": {
           "sub-plugin1": "sub-plugin1",
@@ -160,12 +160,12 @@ describe('tdd:devebot:core:name-resolver', function() {
         }
       });
     });
-  
-    it('should build relativeAliasMap correctly', function() {
-      if (chores.isUpgradeSupported('simplify-name-resolver')) this.skip();
+
+    it("should build relativeAliasMap correctly", function() {
+      if (chores.isUpgradeSupported("simplify-name-resolver")) this.skip();
 
       var relativeAliasMap = nameResolver.getRelativeAliasMap();
-      false && console.log('relativeAliasMap: %s', JSON.stringify(relativeAliasMap, null, 2));
+      false && console.log("relativeAliasMap: %s", JSON.stringify(relativeAliasMap, null, 2));
       assert.deepEqual(relativeAliasMap, {
         "plugin": {
           "sub-plugin1": "subPlugin1",
@@ -184,21 +184,21 @@ describe('tdd:devebot:core:name-resolver', function() {
       });
     });
 
-    it('getOriginalNameOf(_, "bridge")', function() {
+    it("getOriginalNameOf(_, \"bridge\")", function() {
       var result = [
-        'bridge1',
-        'bridge-kebab-case1',
-        'bridgeKebabCase1',
-        'devebot-co-connector1',
-        'devebotCoConnector1',
-        'connector1',
-        'unknown',
+        "bridge1",
+        "bridge-kebab-case1",
+        "bridgeKebabCase1",
+        "devebot-co-connector1",
+        "devebotCoConnector1",
+        "connector1",
+        "unknown",
         null
       ].map(function(name) {
         return {
           source: name,
-          target: nameResolver.getOriginalNameOf(name, 'bridge')
-        }
+          target: nameResolver.getOriginalNameOf(name, "bridge")
+        };
       });
       false && console.log(JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
@@ -237,20 +237,20 @@ describe('tdd:devebot:core:name-resolver', function() {
       ]);
     });
 
-    it('getOriginalNameOf(_, "plugin")', function() {
+    it("getOriginalNameOf(_, \"plugin\")", function() {
       var result = [
-        'sub-plugin1',
-        'subPlugin1',
-        'devebot-dp-wrapper1',
-        'devebotDpWrapper1',
-        'wrapper1',
-        'unknown',
+        "sub-plugin1",
+        "subPlugin1",
+        "devebot-dp-wrapper1",
+        "devebotDpWrapper1",
+        "wrapper1",
+        "unknown",
         null
       ].map(function(name) {
         return {
           source: name,
-          target: nameResolver.getOriginalNameOf(name, 'plugin')
-        }
+          target: nameResolver.getOriginalNameOf(name, "plugin")
+        };
       });
       false && console.log(JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
@@ -285,14 +285,14 @@ describe('tdd:devebot:core:name-resolver', function() {
       ]);
     });
 
-    it('getDefaultAliasOf(_, "bridge")', function() {
+    it("getDefaultAliasOf(_, \"bridge\")", function() {
       var result = [
-        'bridge1', 'bridge-kebab-case1', 'devebot-co-connector1', 'unknown', null
+        "bridge1", "bridge-kebab-case1", "devebot-co-connector1", "unknown", null
       ].map(function(name) {
         return {
           source: name,
           target: nameResolver.getDefaultAliasOf(name, "bridge")
-        }
+        };
       });
       false && console.log(JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
@@ -319,14 +319,14 @@ describe('tdd:devebot:core:name-resolver', function() {
       ]);
     });
 
-    it('getDefaultAliasOf(_, "plugin")', function() {
+    it("getDefaultAliasOf(_, \"plugin\")", function() {
       var result = [
-        'sub-plugin1', 'sub-plugin2', 'devebot-dp-wrapper1', 'devebot-dp-wrapper2', 'unknown', null
+        "sub-plugin1", "sub-plugin2", "devebot-dp-wrapper1", "devebot-dp-wrapper2", "unknown", null
       ].map(function(name) {
         return {
           source: name,
           target: nameResolver.getDefaultAliasOf(name, "plugin")
-        }
+        };
       });
       false && console.log(JSON.stringify(result, null, 2));
       assert.deepEqual(result, [

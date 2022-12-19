@@ -1,35 +1,35 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-Devebot.require('logolite'); // load the Devebot's logolite first
-var assert = require('liberica').assert;
-var mockit = require('liberica').mockit;
-var sinon = require('liberica').sinon;
-var path = require('path');
+Devebot.require("logolite"); // load the Devebot's logolite first
+var assert = require("liberica").assert;
+var mockit = require("liberica").mockit;
+var sinon = require("liberica").sinon;
+var path = require("path");
 
-describe('tdd:devebot:core:mapping-loader', function() {
+describe("tdd:devebot:core:mapping-loader", function() {
   var loggingFactory = lab.createLoggingFactoryMock();
   var CTX = {
     L: loggingFactory.getLogger(),
     T: loggingFactory.getTracer(),
-  }
+  };
 
-  describe('traverseDir()', function() {
+  describe("traverseDir()", function() {
     var MappingLoader, traverseDir, traverseDirRecursively;
 
     beforeEach(function() {
-      MappingLoader = mockit.acquire('mapping-loader', {
-        moduleHome: path.join(__dirname, '../../lib/backbone')
+      MappingLoader = mockit.acquire("mapping-loader", {
+        moduleHome: path.join(__dirname, "../../lib/backbone")
       });
-      traverseDir = mockit.get(MappingLoader, 'traverseDir');
-      traverseDirRecursively = mockit.spy(MappingLoader, 'traverseDirRecursively');
+      traverseDir = mockit.get(MappingLoader, "traverseDir");
+      traverseDirRecursively = mockit.spy(MappingLoader, "traverseDirRecursively");
 
       assert.isFunction(traverseDir);
       assert.isFunction(traverseDirRecursively);
     });
 
-    it('should standardize the directory path', function() {
+    it("should standardize the directory path", function() {
       let args;
 
       traverseDir("", [".js"]);
@@ -62,7 +62,7 @@ describe('tdd:devebot:core:mapping-loader', function() {
     const MAPPING_DIR = ["", "home", "devebot", "example"].join(path.sep);
     const RELATIVE_DIR = ["", "mappings"].join(path.sep);
 
-    it('should match filenames with a RegExp', function() {
+    it("should match filenames with a RegExp", function() {
       let args;
 
       traverseDir(MAPPING_DIR, /\.js$/);
@@ -81,10 +81,10 @@ describe('tdd:devebot:core:mapping-loader', function() {
       traverseDirRecursively.resetHistory();
     });
 
-    it('should match filenames with an array of extensions', function() {
+    it("should match filenames with an array of extensions", function() {
       let args;
 
-      traverseDir(MAPPING_DIR, ["jsi", "jsx", "zz","JAR","json","html"]);
+      traverseDir(MAPPING_DIR, ["jsi", "jsx", "zz", "JAR", "json", "html"]);
       args = traverseDirRecursively.getCall(0).args;
       const filter = args[2];
 
@@ -110,7 +110,7 @@ describe('tdd:devebot:core:mapping-loader', function() {
       traverseDirRecursively.resetHistory();
     });
 
-    it('should match filenames with a string', function() {
+    it("should match filenames with a string", function() {
       let args;
 
       traverseDir(MAPPING_DIR, "mappings" + path.sep +"github");
@@ -128,47 +128,47 @@ describe('tdd:devebot:core:mapping-loader', function() {
     });
   });
 
-  describe('traverseDirRecursively()', function() {
+  describe("traverseDirRecursively()", function() {
     var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
     var ctx = {
       L: loggingFactory.getLogger(),
       T: loggingFactory.getTracer(),
-      blockRef: 'app-restfetch',
-    }
+      blockRef: "app-restfetch",
+    };
 
     const MAPPING_HOME_DIR = ["", "home", "devebot", "example", "mappings"].join(path.sep);
     const statOfDirectory = {
-      isDirectory: function() { return true },
-      isFile: function() { return false },
-    }
+      isDirectory: function() { return true; },
+      isFile: function() { return false; },
+    };
     const statOfFile = {
-      isDirectory: function() { return false },
-      isFile: function() { return true },
-    }
+      isDirectory: function() { return false; },
+      isFile: function() { return true; },
+    };
 
-    function mappingFileFilter(fileinfo) {
-      return ['.js'].indexOf(fileinfo.ext) >= 0;
+    function mappingFileFilter (fileinfo) {
+      return [".js"].indexOf(fileinfo.ext) >= 0;
     }
 
     var MappingLoader, traverseDirRecursively, fs;
 
     beforeEach(function() {
-      MappingLoader = mockit.acquire('mapping-loader', {
-        moduleHome: path.join(__dirname, '../../lib/backbone')
+      MappingLoader = mockit.acquire("mapping-loader", {
+        moduleHome: path.join(__dirname, "../../lib/backbone")
       });
-      traverseDirRecursively = mockit.get(MappingLoader, 'traverseDirRecursively');
-      fs = mockit.stubObject(MappingLoader, 'fs', ['readdirSync', 'statSync']);
+      traverseDirRecursively = mockit.get(MappingLoader, "traverseDirRecursively");
+      fs = mockit.stubObject(MappingLoader, "fs", ["readdirSync", "statSync"]);
     });
 
-    it('get all of names of filtered files in a directory', function() {
+    it("get all of names of filtered files in a directory", function() {
       fs.readdirSync.withArgs(MAPPING_HOME_DIR)
         .returns([
           "github-api.js",
           "gitlab-api.js",
           "readme.md"
-        ])
-      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "github-api.js")).returns(statOfFile)
-      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "gitlab-api.js")).returns(statOfFile)
+        ]);
+      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "github-api.js")).returns(statOfFile);
+      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "gitlab-api.js")).returns(statOfFile);
       fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "readme.md")).returns(statOfFile);
       assert.deepEqual(traverseDirRecursively(MAPPING_HOME_DIR, MAPPING_HOME_DIR, mappingFileFilter), [
         {
@@ -190,7 +190,7 @@ describe('tdd:devebot:core:mapping-loader', function() {
       ]);
     });
 
-    it('get all of names of recursive filtered files in a directory', function() {
+    it("get all of names of recursive filtered files in a directory", function() {
       fs.readdirSync.withArgs(MAPPING_HOME_DIR).returns([
         "api",
         "vcs",
@@ -201,21 +201,21 @@ describe('tdd:devebot:core:mapping-loader', function() {
       fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "api")).returns(statOfDirectory);
       fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs")).returns(statOfDirectory);
       fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "doc")).returns(statOfDirectory);
-      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "index.js")).returns(statOfFile)
+      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "index.js")).returns(statOfFile);
       fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "readme.md")).returns(statOfFile);
 
       fs.readdirSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs")).returns([
         "git"
       ]);
-      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs", "git")).returns(statOfDirectory)
+      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs", "git")).returns(statOfDirectory);
 
       fs.readdirSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs", "git")).returns([
         "github-api.js",
         "gitlab-api.js",
         "readme.md"
       ]);
-      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs", "git", "github-api.js")).returns(statOfFile)
-      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs", "git", "gitlab-api.js")).returns(statOfFile)
+      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs", "git", "github-api.js")).returns(statOfFile);
+      fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs", "git", "gitlab-api.js")).returns(statOfFile);
       fs.statSync.withArgs(path.join(MAPPING_HOME_DIR, "vcs", "git", "readme.md")).returns(statOfFile);
 
       assert.deepEqual(traverseDirRecursively(MAPPING_HOME_DIR, MAPPING_HOME_DIR, mappingFileFilter), [
@@ -247,23 +247,23 @@ describe('tdd:devebot:core:mapping-loader', function() {
     });
   });
 
-  describe('loadMappingStore()', function() {
+  describe("loadMappingStore()", function() {
     var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
     var ctx = {
       L: loggingFactory.getLogger(),
       T: loggingFactory.getTracer(),
-      blockRef: 'app-restfetch',
-    }
+      blockRef: "app-restfetch",
+    };
 
     var MappingLoader, loadMappingStore, evaluateMappingFile, fs;
 
     beforeEach(function() {
-      MappingLoader = lab.acquireDevebotModule('backbone/mapping-loader');
-      loadMappingStore = MappingLoader.__get__('loadMappingStore');
+      MappingLoader = lab.acquireDevebotModule("backbone/mapping-loader");
+      loadMappingStore = MappingLoader.__get__("loadMappingStore");
       fs = {
         statSync: sinon.stub()
       };
-      MappingLoader.__set__('fs', fs);
+      MappingLoader.__set__("fs", fs);
     });
   });
 });

@@ -1,58 +1,58 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var assert = require('chai').assert;
-var path = require('path');
-var bootstrap = require(lab.getDevebotModule('bootstrap'));
-var LogConfig = Devebot.require('logolite').LogConfig;
-var LogTracer = Devebot.require('logolite').LogTracer;
-var envcloak = require('envcloak').instance;
+var chores = Devebot.require("chores");
+var lodash = Devebot.require("lodash");
+var assert = require("chai").assert;
+var path = require("path");
+var bootstrap = require(lab.getDevebotModule("bootstrap"));
+var LogConfig = Devebot.require("logolite").LogConfig;
+var LogTracer = Devebot.require("logolite").LogTracer;
+var envcloak = require("envcloak").instance;
 
 var CONFIG_EXTENDED_FIELDS = [
-  'profile', 'sandbox', 'texture',
-  'appName', 'appInfo', 'bridgeList', 'bundleList',
+  "profile", "sandbox", "texture",
+  "appName", "appInfo", "bridgeList", "bundleList",
 ];
-if (!chores.isUpgradeSupported('config-extended-fields')) {
-  CONFIG_EXTENDED_FIELDS.push('bridgeRefs', 'pluginRefs');
+if (!chores.isUpgradeSupported("config-extended-fields")) {
+  CONFIG_EXTENDED_FIELDS.push("bridgeRefs", "pluginRefs");
 }
 
-describe('tdd:devebot:base:bootstrap', function() {
+describe("tdd:devebot:base:bootstrap", function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
     envcloak.setup({
-      LOGOLITE_FULL_LOG_MODE: 'false',
-      LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all'
+      LOGOLITE_FULL_LOG_MODE: "false",
+      LOGOLITE_ALWAYS_ENABLED: "all",
+      LOGOLITE_ALWAYS_MUTED: "all"
     });
     LogConfig.reset();
   });
 
-  describe('Prerequisite', function() {
-    it('launchApplication() load configure only (not server/runner)', function() {
+  describe("Prerequisite", function() {
+    it("launchApplication() load configure only (not server/runner)", function() {
       var loggingStore = {};
       LogTracer.reset().setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'constructor-begin', 'appLoader' ],
-          countTo: 'appLoader'
+          allTags: [ "constructor-begin", "appLoader" ],
+          countTo: "appLoader"
         }, {
-          allTags: [ chores.toFullname('devebot', 'kernel'), 'constructor-begin' ],
-          countTo: 'loadingKernel'
+          allTags: [ chores.toFullname("devebot", "kernel"), "constructor-begin" ],
+          countTo: "loadingKernel"
         }, {
-          allTags: [ chores.toFullname('devebot', 'server'), 'constructor-begin' ],
-          countTo: 'loadingServer'
+          allTags: [ chores.toFullname("devebot", "server"), "constructor-begin" ],
+          countTo: "loadingServer"
         }, {
-          allTags: [ chores.toFullname('devebot', 'runner'), 'constructor-begin' ],
-          countTo: 'loadingRunner'
+          allTags: [ chores.toFullname("devebot", "runner"), "constructor-begin" ],
+          countTo: "loadingRunner"
         }]
       }]);
 
       var app = bootstrap.launchApplication({
-        appRootPath: lab.getAppHome('fullapp')
+        appRootPath: lab.getAppHome("fullapp")
       });
 
       false && console.log(loggingStore);
@@ -60,150 +60,150 @@ describe('tdd:devebot:base:bootstrap', function() {
 
       LogTracer.clearInterceptors();
     });
-  })
+  });
 
-  describe('replaceObjectFields()', function() {
-    it('should do nothing with empty object', function() {
+  describe("replaceObjectFields()", function() {
+    it("should do nothing with empty object", function() {
       assert.deepEqual(replaceObjectFields({}, DEFAULT_CONTEXT), {});
       assert.deepEqual(replaceObjectFields(null, DEFAULT_CONTEXT), null);
-      assert.deepEqual(replaceObjectFields('hello', DEFAULT_CONTEXT), 'hello');
+      assert.deepEqual(replaceObjectFields("hello", DEFAULT_CONTEXT), "hello");
     });
-    it('should replace the matched string fields only', function() {
+    it("should replace the matched string fields only", function() {
       assert.deepEqual(
         replaceObjectFields({
           libRootPaths: [
-            '/some/path/here/test/lib/plugin1',
-            '/some/path/here/test/lib/plugin2',
-            '/some/path/here/test/lib/plugin3'
+            "/some/path/here/test/lib/plugin1",
+            "/some/path/here/test/lib/plugin2",
+            "/some/path/here/test/lib/plugin3"
           ],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', path: '/some/path/here/test/lib/plugin1' },
-            'plugin2': { name: 'plugin2', path: '/some/path/here/test/lib/plugin2' },
-            'plugin3': { name: 'plugin3', path: '/some/path/here/test/lib/plugin3' }
+            "plugin1": { name: "plugin1", path: "/some/path/here/test/lib/plugin1" },
+            "plugin2": { name: "plugin2", path: "/some/path/here/test/lib/plugin2" },
+            "plugin3": { name: "plugin3", path: "/some/path/here/test/lib/plugin3" }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/some/path/here/test/lib/bridge1' },
-            'bridge2': { name: 'bridge2', path: '/some/path/here/test/lib/bridge2' }
+            "bridge1": { name: "bridge1", path: "/some/path/here/test/lib/bridge1" },
+            "bridge2": { name: "bridge2", path: "/some/path/here/test/lib/bridge2" }
           }
         }, DEFAULT_CONTEXT),
         {
-          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
+          libRootPaths: ["/test/lib/plugin1", "/test/lib/plugin2", "/test/lib/plugin3"],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', path: '/test/lib/plugin1' },
-            'plugin2': { name: 'plugin2', path: '/test/lib/plugin2' },
-            'plugin3': { name: 'plugin3', path: '/test/lib/plugin3' }
+            "plugin1": { name: "plugin1", path: "/test/lib/plugin1" },
+            "plugin2": { name: "plugin2", path: "/test/lib/plugin2" },
+            "plugin3": { name: "plugin3", path: "/test/lib/plugin3" }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', path: '/test/lib/bridge1' },
-            'bridge2': { name: 'bridge2', path: '/test/lib/bridge2' }
+            "bridge1": { name: "bridge1", path: "/test/lib/bridge1" },
+            "bridge2": { name: "bridge2", path: "/test/lib/bridge2" }
           }
         }
       );
     });
   });
 
-  describe('require()', function() {
+  describe("require()", function() {
     var pkgs = {
-      chores: path.join(lab.getDevebotHome(), 'lib/utils/chores.js'),
-      errors: path.join(lab.getDevebotHome(), 'lib/utils/errors.js'),
-      loader: path.join(lab.getDevebotHome(), 'lib/utils/loader.js'),
-      pinbug: path.join(lab.getDevebotHome(), 'lib/utils/pinbug.js'),
-    }
-    lodash.forEach([ 'injektor', 'logolite', 'schemato' ], function(pkgName) {
+      chores: path.join(lab.getDevebotHome(), "lib/utils/chores.js"),
+      errors: path.join(lab.getDevebotHome(), "lib/utils/errors.js"),
+      loader: path.join(lab.getDevebotHome(), "lib/utils/loader.js"),
+      pinbug: path.join(lab.getDevebotHome(), "lib/utils/pinbug.js"),
+    };
+    lodash.forEach([ "injektor", "logolite", "schemato" ], function(pkgName) {
       pkgs[pkgName] = pkgName;
     });
-    it('require() returns correct exported packages', function() {
+    it("require() returns correct exported packages", function() {
       lodash.forOwn(pkgs, function(pkgPath, pkgName) {
         assert.equal(bootstrap.require(pkgName), require(pkgPath));
       });
     });
   });
 
-  describe('locatePackage()', function() {
+  describe("locatePackage()", function() {
     var issueInspector = lab.getIssueInspector();
-    var bootstrap = lab.acquireDevebotModule('bootstrap');
-    var locatePackage = bootstrap.__get__('locatePackage');
+    var bootstrap = lab.acquireDevebotModule("bootstrap");
+    var locatePackage = bootstrap.__get__("locatePackage");
     assert.isFunction(locatePackage);
 
-    it('locate a valid package successfully', function() {
-      var providedPkg = lab.getAppHome('locating-package-json');
+    it("locate a valid package successfully", function() {
+      var providedPkg = lab.getAppHome("locating-package-json");
       var detectedPkg = locatePackage({issueInspector}, {
-        name: 'locating-package-json',
-        type: 'application',
+        name: "locating-package-json",
+        type: "application",
         path: providedPkg
       });
       assert.equal(detectedPkg, providedPkg);
     });
 
-    it('locate a deep packages with default [main] script files (index.js)', function() {
+    it("locate a deep packages with default [main] script files (index.js)", function() {
       var detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
-        name: 'locating-package-json-foo',
-        type: 'application',
-        path: lab.getAppHome('locating-package-json/foo')
+        name: "locating-package-json-foo",
+        type: "application",
+        path: lab.getAppHome("locating-package-json/foo")
       }));
-      assert.equal(detectedPkg, '/test/app/locating-package-json/foo');
+      assert.equal(detectedPkg, "/test/app/locating-package-json/foo");
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
-        name: 'locating-package-json-foo',
-        type: 'application',
-        path: lab.getAppHome('locating-package-json/foo/sub')
+        name: "locating-package-json-foo",
+        type: "application",
+        path: lab.getAppHome("locating-package-json/foo/sub")
       }));
-      assert.equal(detectedPkg, '/test/app/locating-package-json/foo');
+      assert.equal(detectedPkg, "/test/app/locating-package-json/foo");
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
-        name: 'locating-package-json-foo',
-        type: 'application',
-        path: lab.getAppHome('locating-package-json/foo/sub/sub')
+        name: "locating-package-json-foo",
+        type: "application",
+        path: lab.getAppHome("locating-package-json/foo/sub/sub")
       }));
-      assert.equal(detectedPkg, '/test/app/locating-package-json/foo/sub/sub');
+      assert.equal(detectedPkg, "/test/app/locating-package-json/foo/sub/sub");
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
-        name: 'locating-package-json-foo',
-        type: 'application',
-        path: lab.getAppHome('locating-package-json/foo/sub/sub/sub')
+        name: "locating-package-json-foo",
+        type: "application",
+        path: lab.getAppHome("locating-package-json/foo/sub/sub/sub")
       }));
-      assert.equal(detectedPkg, '/test/app/locating-package-json/foo/sub/sub');
+      assert.equal(detectedPkg, "/test/app/locating-package-json/foo/sub/sub");
     });
 
-    it('locate a deep packages with customized [main] script files', function() {
+    it("locate a deep packages with customized [main] script files", function() {
       var detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
-        name: 'locating-package-json-bar',
-        type: 'application',
-        path: lab.getAppHome('locating-package-json/bar')
+        name: "locating-package-json-bar",
+        type: "application",
+        path: lab.getAppHome("locating-package-json/bar")
       }));
-      assert.equal(detectedPkg, '/test/app/locating-package-json/bar');
+      assert.equal(detectedPkg, "/test/app/locating-package-json/bar");
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
-        name: 'locating-package-json-bar',
-        type: 'application',
-        path: lab.getAppHome('locating-package-json/bar/sub/start')
+        name: "locating-package-json-bar",
+        type: "application",
+        path: lab.getAppHome("locating-package-json/bar/sub/start")
       }));
-      assert.equal(detectedPkg, '/test/app/locating-package-json/bar');
+      assert.equal(detectedPkg, "/test/app/locating-package-json/bar");
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
-        name: 'locating-package-json-bar',
-        type: 'application',
-        path: lab.getAppHome('locating-package-json/bar/sub/sub')
+        name: "locating-package-json-bar",
+        type: "application",
+        path: lab.getAppHome("locating-package-json/bar/sub/sub")
       }));
-      assert.equal(detectedPkg, '/test/app/locating-package-json/bar/sub/sub');
+      assert.equal(detectedPkg, "/test/app/locating-package-json/bar/sub/sub");
 
       detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
-        name: 'locating-package-json-bar',
-        type: 'application',
-        path: lab.getAppHome('locating-package-json/bar/sub/sub/sub/start')
+        name: "locating-package-json-bar",
+        type: "application",
+        path: lab.getAppHome("locating-package-json/bar/sub/sub/sub/start")
       }));
-      assert.equal(detectedPkg, '/test/app/locating-package-json/bar/sub/sub');
+      assert.equal(detectedPkg, "/test/app/locating-package-json/bar/sub/sub");
     });
   });
 
-  describe('expandExtensions()', function() {
-    var bootstrap = lab.acquireDevebotModule('bootstrap');
-    var expandExtensions = bootstrap.__get__('expandExtensions');
+  describe("expandExtensions()", function() {
+    var bootstrap = lab.acquireDevebotModule("bootstrap");
+    var expandExtensions = bootstrap.__get__("expandExtensions");
     assert.isFunction(expandExtensions);
 
-    it('expand empty parameters', function() {
+    it("expand empty parameters", function() {
       var output = expandExtensions();
-      false && console.log('expandExtensions(): ', output);
+      false && console.log("expandExtensions(): ", output);
       assert.deepEqual(output, {
         libRootPaths: [],
         bridgeRefs: {},
@@ -211,20 +211,20 @@ describe('tdd:devebot:base:bootstrap', function() {
       });
     });
 
-    it('expand empty context with a list of plugins', function() {
+    it("expand empty context with a list of plugins", function() {
       var output = expandExtensions(null, [
         {
-          name: 'plugin1',
-          path: lab.getLibHome('plugin1')
+          name: "plugin1",
+          path: lab.getLibHome("plugin1")
         },
         {
-          name: 'plugin2',
-          path: lab.getLibHome('plugin2')
+          name: "plugin2",
+          path: lab.getLibHome("plugin2")
         }
       ], null);
       output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
-      false && console.log('expandExtensions(): ', JSON.stringify(output, null, 2));
-      if (chores.isUpgradeSupported('presets')) {
+      false && console.log("expandExtensions(): ", JSON.stringify(output, null, 2));
+      if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [
             "/test/lib/plugin1",
@@ -267,43 +267,43 @@ describe('tdd:devebot:base:bootstrap', function() {
         });
       } else {
         assert.deepEqual(output, {
-          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2'],
+          libRootPaths: ["/test/lib/plugin1", "/test/lib/plugin2"],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
-            'plugin2': { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' }
+            "plugin1": { name: "plugin1", type: "plugin", path: "/test/lib/plugin1" },
+            "plugin2": { name: "plugin2", type: "plugin", path: "/test/lib/plugin2" }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
-            'bridge2': { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' }
+            "bridge1": { name: "bridge1", type: "bridge", path: "/test/lib/bridge1" },
+            "bridge2": { name: "bridge2", type: "bridge", path: "/test/lib/bridge2" }
           }
         });
       }
     });
 
-    it('expand empty context with a list of bridges', function() {
+    it("expand empty context with a list of bridges", function() {
       var output = expandExtensions(null, [], [
         {
-          name: 'bridge1',
-          path: lab.getLibHome('bridge1')
+          name: "bridge1",
+          path: lab.getLibHome("bridge1")
         },
         {
-          name: 'bridge2',
-          path: lab.getLibHome('bridge2')
+          name: "bridge2",
+          path: lab.getLibHome("bridge2")
         }
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
-      false && console.log('expandExtensions(): ', output);
-      if (chores.isUpgradeSupported('presets')) {
+      false && console.log("expandExtensions(): ", output);
+      if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           libRootPaths: [],
           pluginRefs: {},
           bridgeRefs: {
-            '/test/lib/bridge1': {
+            "/test/lib/bridge1": {
               "name": "bridge1",
               "type": "bridge",
               "path": "/test/lib/bridge1"
             },
-            '/test/lib/bridge2': {
+            "/test/lib/bridge2": {
               "name": "bridge2",
               "type": "bridge",
               "path": "/test/lib/bridge2"
@@ -315,40 +315,40 @@ describe('tdd:devebot:base:bootstrap', function() {
           libRootPaths: [],
           pluginRefs: {},
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
-            'bridge2': { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' }
+            "bridge1": { name: "bridge1", type: "bridge", path: "/test/lib/bridge1" },
+            "bridge2": { name: "bridge2", type: "bridge", path: "/test/lib/bridge2" }
           }
         });
       }
     });
 
-    it('expand empty context with a list of plugins and a list of bridges', function() {
+    it("expand empty context with a list of plugins and a list of bridges", function() {
       var output = expandExtensions(null, [
         {
-          name: 'plugin1',
-          path: lab.getLibHome('plugin1')
+          name: "plugin1",
+          path: lab.getLibHome("plugin1")
         },
         {
-          name: 'plugin2',
-          path: lab.getLibHome('plugin2')
+          name: "plugin2",
+          path: lab.getLibHome("plugin2")
         },
         {
-          name: 'plugin3',
-          path: lab.getLibHome('plugin3')
+          name: "plugin3",
+          path: lab.getLibHome("plugin3")
         }
       ], [
         {
-          name: 'bridge1',
-          path: lab.getLibHome('bridge1')
+          name: "bridge1",
+          path: lab.getLibHome("bridge1")
         },
         {
-          name: 'bridge2',
-          path: lab.getLibHome('bridge2')
+          name: "bridge2",
+          path: lab.getLibHome("bridge2")
         }
       ]);
       output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
-      false && console.log('expandExtensions(): ', JSON.stringify(output, null, 2));
-      if (chores.isUpgradeSupported('presets')) {
+      false && console.log("expandExtensions(): ", JSON.stringify(output, null, 2));
+      if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [
             "/test/lib/plugin1",
@@ -400,34 +400,34 @@ describe('tdd:devebot:base:bootstrap', function() {
         });
       } else {
         assert.deepEqual(output, {
-          libRootPaths: ['/test/lib/plugin1', '/test/lib/plugin2', '/test/lib/plugin3'],
+          libRootPaths: ["/test/lib/plugin1", "/test/lib/plugin2", "/test/lib/plugin3"],
           pluginRefs: {
-            'plugin1': { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
-            'plugin2': { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' },
-            'plugin3': { name: 'plugin3', type: 'plugin', path: '/test/lib/plugin3' }
+            "plugin1": { name: "plugin1", type: "plugin", path: "/test/lib/plugin1" },
+            "plugin2": { name: "plugin2", type: "plugin", path: "/test/lib/plugin2" },
+            "plugin3": { name: "plugin3", type: "plugin", path: "/test/lib/plugin3" }
           },
           bridgeRefs: {
-            'bridge1': { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
-            'bridge2': { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' }
+            "bridge1": { name: "bridge1", type: "bridge", path: "/test/lib/bridge1" },
+            "bridge2": { name: "bridge2", type: "bridge", path: "/test/lib/bridge2" }
           }
         });
       }
     });
 
-    it('expand empty context with nested and overlap plugins', function() {
+    it("expand empty context with nested and overlap plugins", function() {
       var output = expandExtensions(null, [
         {
-          name: 'sub-plugin1',
-          path: lab.getLibHome('sub-plugin1')
+          name: "sub-plugin1",
+          path: lab.getLibHome("sub-plugin1")
         },
         {
-          name: 'sub-plugin2',
-          path: lab.getLibHome('sub-plugin2')
+          name: "sub-plugin2",
+          path: lab.getLibHome("sub-plugin2")
         }
       ]);
       output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
-      false && console.log('expandExtensions(): ', JSON.stringify(output, null, 2));
-      if (chores.isUpgradeSupported('presets')) {
+      false && console.log("expandExtensions(): ", JSON.stringify(output, null, 2));
+      if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [
             "/test/lib/sub-plugin1",
@@ -504,77 +504,77 @@ describe('tdd:devebot:base:bootstrap', function() {
         assert.deepEqual(output, {
           libRootPaths:
             [
-              '/test/lib/sub-plugin1',
-              '/test/lib/plugin1',
-              '/test/lib/plugin2',
-              '/test/lib/sub-plugin2',
-              '/test/lib/plugin3'
+              "/test/lib/sub-plugin1",
+              "/test/lib/plugin1",
+              "/test/lib/plugin2",
+              "/test/lib/sub-plugin2",
+              "/test/lib/plugin3"
             ],
           pluginRefs:
             {
-              'sub-plugin1': { name: 'sub-plugin1', type: 'plugin', path: '/test/lib/sub-plugin1' },
-              'sub-plugin2': { name: 'sub-plugin2', type: 'plugin', path: '/test/lib/sub-plugin2' },
-              plugin1: { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
-              plugin2: { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' },
-              plugin3: { name: 'plugin3', type: 'plugin', path: '/test/lib/plugin3' }
+              "sub-plugin1": { name: "sub-plugin1", type: "plugin", path: "/test/lib/sub-plugin1" },
+              "sub-plugin2": { name: "sub-plugin2", type: "plugin", path: "/test/lib/sub-plugin2" },
+              plugin1: { name: "plugin1", type: "plugin", path: "/test/lib/plugin1" },
+              plugin2: { name: "plugin2", type: "plugin", path: "/test/lib/plugin2" },
+              plugin3: { name: "plugin3", type: "plugin", path: "/test/lib/plugin3" }
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
-              bridge2: { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' },
-              bridge3: { name: 'bridge3', type: 'bridge', path: '/test/lib/bridge3' }
+              bridge1: { name: "bridge1", type: "bridge", path: "/test/lib/bridge1" },
+              bridge2: { name: "bridge2", type: "bridge", path: "/test/lib/bridge2" },
+              bridge3: { name: "bridge3", type: "bridge", path: "/test/lib/bridge3" }
             }
         });
       }
     });
 
-    it('expand empty context with complete plugins (nested and overlap plugins)', function() {
+    it("expand empty context with complete plugins (nested and overlap plugins)", function() {
       var output = expandExtensions(null, [
         {
-          name: 'sub-plugin1',
-          path: lab.getLibHome('sub-plugin1')
+          name: "sub-plugin1",
+          path: lab.getLibHome("sub-plugin1")
         },
         {
-          name: 'plugin1',
-          path: lab.getLibHome('plugin1')
+          name: "plugin1",
+          path: lab.getLibHome("plugin1")
         },
         {
-          name: 'plugin2',
-          path: lab.getLibHome('plugin2')
+          name: "plugin2",
+          path: lab.getLibHome("plugin2")
         },
         {
-          name: 'sub-plugin2',
-          path: lab.getLibHome('sub-plugin2')
+          name: "sub-plugin2",
+          path: lab.getLibHome("sub-plugin2")
         },
         {
-          name: 'plugin3',
-          path: lab.getLibHome('plugin3')
+          name: "plugin3",
+          path: lab.getLibHome("plugin3")
         },
         {
-          name: 'plugin4',
-          path: lab.getLibHome('plugin4')
+          name: "plugin4",
+          path: lab.getLibHome("plugin4")
         }
       ], [
         {
-          name: 'bridge1',
-          path: lab.getLibHome('bridge1')
+          name: "bridge1",
+          path: lab.getLibHome("bridge1")
         },
         {
-          name: 'bridge2',
-          path: lab.getLibHome('bridge2')
+          name: "bridge2",
+          path: lab.getLibHome("bridge2")
         },
         {
-          name: 'bridge3',
-          path: lab.getLibHome('bridge3')
+          name: "bridge3",
+          path: lab.getLibHome("bridge3")
         },
         {
-          name: 'bridge4',
-          path: lab.getLibHome('bridge4')
+          name: "bridge4",
+          path: lab.getLibHome("bridge4")
         }
       ]);
       output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
-      false && console.log('expandExtensions(): ', JSON.stringify(output, null, 2));
-      if (chores.isUpgradeSupported('presets')) {
+      false && console.log("expandExtensions(): ", JSON.stringify(output, null, 2));
+      if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [
             "/test/lib/sub-plugin1",
@@ -665,74 +665,74 @@ describe('tdd:devebot:base:bootstrap', function() {
         assert.deepEqual(output, {
           libRootPaths:
             [
-              '/test/lib/sub-plugin1',
-              '/test/lib/plugin1',
-              '/test/lib/plugin2',
-              '/test/lib/sub-plugin2',
-              '/test/lib/plugin3',
-              '/test/lib/plugin4'
+              "/test/lib/sub-plugin1",
+              "/test/lib/plugin1",
+              "/test/lib/plugin2",
+              "/test/lib/sub-plugin2",
+              "/test/lib/plugin3",
+              "/test/lib/plugin4"
             ],
           pluginRefs:
             {
-              'sub-plugin1': { name: 'sub-plugin1', type: 'plugin', path: '/test/lib/sub-plugin1' },
-              plugin1: { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
-              plugin2: { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' },
-              'sub-plugin2': { name: 'sub-plugin2', type: 'plugin', path: '/test/lib/sub-plugin2' },
-              plugin3: { name: 'plugin3', type: 'plugin', path: '/test/lib/plugin3' },
-              plugin4: { name: 'plugin4', type: 'plugin', path: '/test/lib/plugin4' }
+              "sub-plugin1": { name: "sub-plugin1", type: "plugin", path: "/test/lib/sub-plugin1" },
+              plugin1: { name: "plugin1", type: "plugin", path: "/test/lib/plugin1" },
+              plugin2: { name: "plugin2", type: "plugin", path: "/test/lib/plugin2" },
+              "sub-plugin2": { name: "sub-plugin2", type: "plugin", path: "/test/lib/sub-plugin2" },
+              plugin3: { name: "plugin3", type: "plugin", path: "/test/lib/plugin3" },
+              plugin4: { name: "plugin4", type: "plugin", path: "/test/lib/plugin4" }
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
-              bridge2: { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' },
-              bridge3: { name: 'bridge3', type: 'bridge', path: '/test/lib/bridge3' },
-              bridge4: { name: 'bridge4', type: 'bridge', path: '/test/lib/bridge4' }
+              bridge1: { name: "bridge1", type: "bridge", path: "/test/lib/bridge1" },
+              bridge2: { name: "bridge2", type: "bridge", path: "/test/lib/bridge2" },
+              bridge3: { name: "bridge3", type: "bridge", path: "/test/lib/bridge3" },
+              bridge4: { name: "bridge4", type: "bridge", path: "/test/lib/bridge4" }
             }
         });
       }
     });
   });
 
-  describe('launchApplication()', function() {
+  describe("launchApplication()", function() {
     var assertAppConfig = function(app) {
       var cfg = app.config;
-      false && console.log('SHOW [app.config]: ', cfg);
+      false && console.log("SHOW [app.config]: ", cfg);
       assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
-      assert.equal(cfg.appName, 'devebot-application');
+      assert.equal(cfg.appName, "devebot-application");
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
       });
       assert.sameDeepMembers(cfg.bridgeList, []);
       assert.sameDeepMembers(lodash.map(cfg.bundleList, item => {
-        return lodash.pick(item, ['type', 'name'])
+        return lodash.pick(item, ["type", "name"]);
       }), [{
-        type: 'application',
-        name: 'devebot-application'
+        type: "application",
+        name: "devebot-application"
       },
       {
-        type: 'framework',
-        name: 'devebot'
+        type: "framework",
+        name: "devebot"
       }]);
-    }
+    };
 
     var assertAppRunner = function(app) {
       var runner = app.runner;
-    }
+    };
 
     var assertAppServer = function(app) {
       var runner = app.runner;
-    }
+    };
 
     beforeEach(function() {
       LogTracer.reset();
     });
 
-    it('launch application with empty parameters', function() {
+    it("launch application with empty parameters", function() {
       var app = bootstrap.launchApplication();
       var cfg = replaceObjectFields(app.config);
-      false && console.log('Application config: ', JSON.stringify(cfg, null, 2));
-      assert.equal(cfg.appName, 'devebot-application');
+      false && console.log("Application config: ", JSON.stringify(cfg, null, 2));
+      assert.equal(cfg.appName, "devebot-application");
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
@@ -751,28 +751,28 @@ describe('tdd:devebot:base:bootstrap', function() {
       ]);
     });
 
-    it('launch application with empty root directory (as string)', function() {
-      var app = bootstrap.launchApplication(lab.getAppHome('empty'), [], []);
+    it("launch application with empty root directory (as string)", function() {
+      var app = bootstrap.launchApplication(lab.getAppHome("empty"), [], []);
       assertAppConfig(app);
     });
 
-    it('launch application with empty root directory (in context)', function() {
+    it("launch application with empty root directory (in context)", function() {
       var app = bootstrap.launchApplication({
-        appRootPath: lab.getAppHome('empty')
+        appRootPath: lab.getAppHome("empty")
       }, [], []);
       assertAppConfig(app);
       assertAppRunner(app);
       assertAppServer(app);
     });
 
-    it('launch application with full components', function() {
-      var app = lab.getApp('fullapp');
-      false && console.log('fullapp app.config: ', JSON.stringify(app.config, null, 2));
+    it("launch application with full components", function() {
+      var app = lab.getApp("fullapp");
+      false && console.log("fullapp app.config: ", JSON.stringify(app.config, null, 2));
       var cfg = replaceObjectFields(app.config, DEFAULT_CONTEXT);
-      false && console.log('fullapp cfg: ', JSON.stringify(cfg, null, 2));
+      false && console.log("fullapp cfg: ", JSON.stringify(cfg, null, 2));
       assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
       // verify appInfo
-      assert.equal(cfg.appName, 'fullapp');
+      assert.equal(cfg.appName, "fullapp");
       assert.deepEqual(cfg.appInfo, {
         "version": "0.1.0",
         "name": "fullapp",
@@ -887,10 +887,10 @@ describe('tdd:devebot:base:bootstrap', function() {
           "version": "0.1.2",
         }
       ];
-      if (!chores.isUpgradeSupported('manifest-refiner')) {
+      if (!chores.isUpgradeSupported("manifest-refiner")) {
         expectedBridgeRefs = lodash.map(expectedBridgeRefs, function(ref) {
           return lodash.omit(ref, ["manifest", "version"]);
-        })
+        });
       }
       assert.sameDeepMembers(cfg.bridgeList, expectedBridgeRefs);
       // verify pluginRefs
@@ -977,46 +977,46 @@ describe('tdd:devebot:base:bootstrap', function() {
           "path": "/devebot",
         }
       ];
-      if (!chores.isUpgradeSupported('presets')) {
+      if (!chores.isUpgradeSupported("presets")) {
         expectedPluginRefs = lodash.map(expectedPluginRefs, function(item) {
           return lodash.omit(item, ["presets", "bridgeDepends", "pluginDepends"]);
         });
       }
-      if (!chores.isUpgradeSupported('manifest-refiner')) {
+      if (!chores.isUpgradeSupported("manifest-refiner")) {
         expectedPluginRefs = lodash.map(expectedPluginRefs, function(ref) {
           return lodash.omit(ref, ["manifest", "version"]);
-        })
+        });
       }
       assert.sameDeepMembers(cfg.bundleList, expectedPluginRefs);
     });
   });
 
-  describe('registerLayerware()', function() {
+  describe("registerLayerware()", function() {
     beforeEach(function() {
       LogTracer.reset();
     });
 
-    it('register a new plugin with empty parameters', function() {
+    it("register a new plugin with empty parameters", function() {
       var pluginLauncher = bootstrap.registerLayerware();
       var pluginStore = removeLoggingUtils(pluginLauncher());
       false && console.log(JSON.stringify(pluginStore, null, 2));
       assert.deepEqual(pluginStore, { libRootPaths: [], bridgeRefs: {}, pluginRefs: {} });
     });
 
-    it('register a new plugin with nested and overlap sub-plugins', function() {
+    it("register a new plugin with nested and overlap sub-plugins", function() {
       var pluginLauncher = bootstrap.registerLayerware(null, [
         {
-          name: 'sub-plugin1',
-          path: lab.getLibHome('sub-plugin1')
+          name: "sub-plugin1",
+          path: lab.getLibHome("sub-plugin1")
         },
         {
-          name: 'sub-plugin2',
-          path: lab.getLibHome('sub-plugin2')
+          name: "sub-plugin2",
+          path: lab.getLibHome("sub-plugin2")
         }
       ], []);
       var output = replaceObjectFields(removeLoggingUtils(pluginLauncher()), DEFAULT_CONTEXT);
-      false && console.log('pluginLauncher(): ', JSON.stringify(output, null, 2));
-      if (chores.isUpgradeSupported('presets')) {
+      false && console.log("pluginLauncher(): ", JSON.stringify(output, null, 2));
+      if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [
             "/test/lib/sub-plugin1",
@@ -1093,25 +1093,25 @@ describe('tdd:devebot:base:bootstrap', function() {
         assert.deepEqual(output, {
           libRootPaths:
             [
-              '/test/lib/sub-plugin1',
-              '/test/lib/plugin1',
-              '/test/lib/plugin2',
-              '/test/lib/sub-plugin2',
-              '/test/lib/plugin3'
+              "/test/lib/sub-plugin1",
+              "/test/lib/plugin1",
+              "/test/lib/plugin2",
+              "/test/lib/sub-plugin2",
+              "/test/lib/plugin3"
             ],
           pluginRefs:
             {
-              'sub-plugin1': { name: 'sub-plugin1', type: 'plugin', path: '/test/lib/sub-plugin1' },
-              'sub-plugin2': { name: 'sub-plugin2', type: 'plugin', path: '/test/lib/sub-plugin2' },
-              plugin1: { name: 'plugin1', type: 'plugin', path: '/test/lib/plugin1' },
-              plugin2: { name: 'plugin2', type: 'plugin', path: '/test/lib/plugin2' },
-              plugin3: { name: 'plugin3', type: 'plugin', path: '/test/lib/plugin3' }
+              "sub-plugin1": { name: "sub-plugin1", type: "plugin", path: "/test/lib/sub-plugin1" },
+              "sub-plugin2": { name: "sub-plugin2", type: "plugin", path: "/test/lib/sub-plugin2" },
+              plugin1: { name: "plugin1", type: "plugin", path: "/test/lib/plugin1" },
+              plugin2: { name: "plugin2", type: "plugin", path: "/test/lib/plugin2" },
+              plugin3: { name: "plugin3", type: "plugin", path: "/test/lib/plugin3" }
             },
           bridgeRefs:
             {
-              bridge1: { name: 'bridge1', type: 'bridge', path: '/test/lib/bridge1' },
-              bridge2: { name: 'bridge2', type: 'bridge', path: '/test/lib/bridge2' },
-              bridge3: { name: 'bridge3', type: 'bridge', path: '/test/lib/bridge3' }
+              bridge1: { name: "bridge1", type: "bridge", path: "/test/lib/bridge1" },
+              bridge2: { name: "bridge2", type: "bridge", path: "/test/lib/bridge2" },
+              bridge3: { name: "bridge3", type: "bridge", path: "/test/lib/bridge3" }
             }
         });
       }
@@ -1128,28 +1128,28 @@ var DEFAULT_CONTEXT = {
   replacers: [
     {
       pattern: /^(?!https).*\/(devebot|test\/lib|test\/app)\/([^\/].*)(\/?.*)/g,
-      replacement: '/$1/$2$3'
+      replacement: "/$1/$2$3"
     }
   ]
 };
 
 var replaceLibPath = function(p, context) {
-  if (typeof p !== 'string') return p;
+  if (typeof p !== "string") return p;
   var output = p;
   context = context || DEFAULT_CONTEXT;
   context.replacers = context.replacers || [];
-  for(var i=0; i<context.replacers.length; i++) {
+  for (var i=0; i<context.replacers.length; i++) {
     var replacer = context.replacers[i];
     if (p.match(replacer.pattern)) {
       output = p.replace(replacer.pattern, replacer.replacement);
       break;
     }
   }
-  output = output.replace(/^\/devebot\/devebot/g, '/devebot');
-  output = output.replace(/^\/devebot\/projects\/devebot/g, '/devebot');
-  output = output.replace(/^\/devebot-[0-9].*/g, '/devebot'); // folder /devebot-0.2.1
+  output = output.replace(/^\/devebot\/devebot/g, "/devebot");
+  output = output.replace(/^\/devebot\/projects\/devebot/g, "/devebot");
+  output = output.replace(/^\/devebot-[0-9].*/g, "/devebot"); // folder /devebot-0.2.1
   return output;
-}
+};
 
 var replaceObjectFields = function(obj, context) {
   var replaceFields = function(queue) {
@@ -1164,13 +1164,13 @@ var replaceObjectFields = function(obj, context) {
           if (lodash.isString(o[key])) {
             o[key] = replaceLibPath(o[key], context);
           }
-        })
+        });
       }
       replaceFields(queue);
     }
-  }
+  };
   obj = lodash.cloneDeep(obj);
-  if (chores.isUpgradeSupported('presets')) {
+  if (chores.isUpgradeSupported("presets")) {
     if (obj && obj.bridgeRefs && !lodash.isArray(obj.bridgeRefs)) {
       obj.bridgeRefs = lodash.mapKeys(obj.bridgeRefs, function(value, key) {
         return replaceLibPath(key, context);
@@ -1184,8 +1184,8 @@ var replaceObjectFields = function(obj, context) {
   }
   replaceFields([obj]);
   return obj;
-}
+};
 
 var removeLoggingUtils = function(config) {
-  return lodash.omit(config, ['logger', 'tracer']);
-}
+  return lodash.omit(config, ["logger", "tracer"]);
+};

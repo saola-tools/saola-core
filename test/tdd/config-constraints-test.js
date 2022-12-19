@@ -1,46 +1,46 @@
-'use strict';
+"use strict";
 
-var Temporify = require('temporify');
-var path = require('path');
-var _ = require('lodash');
+var Temporify = require("temporify");
+var path = require("path");
+var _ = require("lodash");
 
-var helper = require('../index');
-var appboxDefault = require('../gen/appbox-default');
-var bridgeDefault = require('../gen/bridge-default');
+var helper = require("../index");
+var appboxDefault = require("../gen/appbox-default");
+var bridgeDefault = require("../gen/bridge-default");
 
-describe.skip('tdd:devebot:core:config-constraints', function() {
+describe.skip("tdd:devebot:core:config-constraints", function() {
   this.timeout(60000);
 
-  var bridgePkgs = _.map(_.range(1,3), function(idx) {
+  var bridgePkgs = _.map(_.range(1, 3), function(idx) {
     return {
-      name: 'bridge' + idx,
+      name: "bridge" + idx,
       builder: bridgeDefault({
-        name: 'bridge' + idx,
-        version: '0.1.' + idx
+        name: "bridge" + idx,
+        version: "0.1." + idx
       })
-    }
-  })
+    };
+  });
 
   var appDemo = appboxDefault({
     application: {
-      name: 'demo-app',
+      name: "demo-app",
       port: 17700,
-      servlet_host: 'localhost',
+      servlet_host: "localhost",
       servlet_port: 8080
     },
     plugins: [1, 2].map(function(idx) {
       return {
-        name: 'plugin' + idx,
-        path: helper.getLibHome('plugin' + idx),
-        host: '0.0.0.0',
+        name: "plugin" + idx,
+        path: helper.getLibHome("plugin" + idx),
+        host: "0.0.0.0",
         port: 17700 + idx
-      }
+      };
     }),
     bridges: _.map(bridgePkgs, (pkg) => {
       return {
         name: pkg.name,
         path: pkg.builder.homedir
-      }
+      };
     })
   });
 
@@ -54,19 +54,19 @@ describe.skip('tdd:devebot:core:config-constraints', function() {
   });
 
   beforeEach(function() {
-  })
+  });
 
-  it('', function(done) {
+  it("", function(done) {
     flow = app.server.start();
     flow = flow.delay(5000);
     flow.asCallback(done);
-  })
+  });
 
   afterEach(function(done) {
     app.server.stop().asCallback(done);
-  })
+  });
 
   after(function() {
     appDemo.destroy();
   });
-})
+});

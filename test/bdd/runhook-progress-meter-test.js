@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('bdd:devebot:runhook:progress:meter');
-var assert = require('chai').assert;
-var DevebotApi = require('devebot-api');
+var Promise = Devebot.require("bluebird");
+var lodash = Devebot.require("lodash");
+var debugx = Devebot.require("pinbug")("bdd:devebot:runhook:progress:meter");
+var assert = require("chai").assert;
+var DevebotApi = require("devebot-api");
 
-describe('bdd:devebot:runhook:progress:meter', function() {
+describe("bdd:devebot:runhook:progress:meter", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var app, api;
@@ -22,7 +22,7 @@ describe('bdd:devebot:runhook:progress:meter', function() {
     app.server.start().asCallback(done);
   });
 
-  it('direct runhook should return correct result', function(done) {
+  it("direct runhook should return correct result", function(done) {
     var number = 15;
     var expectedValue = fibonacci(number);
     var expectedPrgr = [];
@@ -30,25 +30,25 @@ describe('bdd:devebot:runhook:progress:meter', function() {
       expectedPrgr.push(lodash.round((n + 1) * 100 / number));
     });
     var returnedPrgr = [];
-    new Promise(function(resolved, rejected) {
-      debugx.enabled && debugx('Invoke the command');
-      api.on('failed', function(result) {
-        rejected(result);
+    new Promise(function(resolve, reject) {
+      debugx.enabled && debugx("Invoke the command");
+      api.on("failed", function(result) {
+        reject(result);
       });
-      api.on('completed', function(result) {
-        resolved(result);
+      api.on("completed", function(result) {
+        resolve(result);
       });
-      api.on('progress', function(status) {
+      api.on("progress", function(status) {
         returnedPrgr.push(status.progress);
       });
       api.execCommand({
-        name: 'plugin2-routine1',
-        data: { 'number': number },
-        mode: 'direct'
+        name: "plugin2-routine1",
+        data: { "number": number },
+        mode: "direct"
       });
     }).then(function(result) {
-      debugx.enabled && debugx('Expected progress: %s', JSON.stringify(expectedPrgr));
-      debugx.enabled && debugx('Returned progress: %s', JSON.stringify(returnedPrgr));
+      debugx.enabled && debugx("Expected progress: %s", JSON.stringify(expectedPrgr));
+      debugx.enabled && debugx("Returned progress: %s", JSON.stringify(returnedPrgr));
       assert.sameOrderedMembers(expectedPrgr, returnedPrgr);
       debugx.enabled && debugx(JSON.stringify(result, null, 2));
       assert.equal(result.payload[0].data.fibonacci, expectedValue);
@@ -59,7 +59,7 @@ describe('bdd:devebot:runhook:progress:meter', function() {
     });
   });
 
-  it('remote runhook should return correct result', function(done) {
+  it("remote runhook should return correct result", function(done) {
     var number = 20;
     var expectedValue = fibonacci(number);
     var expectedPrgr = [];
@@ -67,24 +67,24 @@ describe('bdd:devebot:runhook:progress:meter', function() {
       expectedPrgr.push(lodash.round((n + 1) * 100 / number));
     });
     var returnedPrgr = [];
-    new Promise(function(resolved, rejected) {
-      api.on('failed', function(result) {
-        rejected(result);
+    new Promise(function(resolve, reject) {
+      api.on("failed", function(result) {
+        reject(result);
       });
-      api.on('completed', function(result) {
-        resolved(result);
+      api.on("completed", function(result) {
+        resolve(result);
       });
-      api.on('progress', function(status) {
+      api.on("progress", function(status) {
         returnedPrgr.push(status.progress);
       });
       api.execCommand({
-        name: 'plugin2-routine1',
-        data: { 'number': number },
-        mode: 'remote'
+        name: "plugin2-routine1",
+        data: { "number": number },
+        mode: "remote"
       });
     }).then(function(result) {
-      debugx.enabled && debugx('Expected progress: %s', JSON.stringify(expectedPrgr));
-      debugx.enabled && debugx('Returned progress: %s', JSON.stringify(returnedPrgr));
+      debugx.enabled && debugx("Expected progress: %s", JSON.stringify(expectedPrgr));
+      debugx.enabled && debugx("Returned progress: %s", JSON.stringify(returnedPrgr));
       assert.sameOrderedMembers(expectedPrgr, returnedPrgr);
       debugx.enabled && debugx(JSON.stringify(result, null, 2));
       assert.equal(result.payload[0].data.fibonacci, expectedValue);
@@ -95,19 +95,19 @@ describe('bdd:devebot:runhook:progress:meter', function() {
     });
   });
 
-  it('return error when input data is invalid with schema', function(done) {
+  it("return error when input data is invalid with schema", function(done) {
     var number = 101;
-    new Promise(function(resolved, rejected) {
-      api.on('failed', function(result) {
-        rejected(result);
+    new Promise(function(resolve, reject) {
+      api.on("failed", function(result) {
+        reject(result);
       });
-      api.on('completed', function(result) {
-        resolved(result);
+      api.on("completed", function(result) {
+        resolve(result);
       });
       api.execCommand({
-        name: 'plugin2-routine1',
-        data: { 'number': number },
-        mode: 'remote'
+        name: "plugin2-routine1",
+        data: { "number": number },
+        mode: "remote"
       });
     }).then(function(result) {
       debugx.enabled && debugx(JSON.stringify(result, null, 2));
@@ -120,19 +120,19 @@ describe('bdd:devebot:runhook:progress:meter', function() {
     });
   });
 
-  it('return error when input data cannot pass validate()', function(done) {
+  it("return error when input data cannot pass validate()", function(done) {
     var number = 101;
-    new Promise(function(resolved, rejected) {
-      api.on('failed', function(result) {
-        rejected(result);
+    new Promise(function(resolve, reject) {
+      api.on("failed", function(result) {
+        reject(result);
       });
-      api.on('completed', function(result) {
-        resolved(result);
+      api.on("completed", function(result) {
+        resolve(result);
       });
       api.execCommand({
-        name: 'plugin2-routine3',
-        data: { 'number': number },
-        mode: 'remote'
+        name: "plugin2-routine3",
+        data: { "number": number },
+        mode: "remote"
       });
     }).then(function(result) {
       debugx.enabled && debugx(JSON.stringify(result, null, 2));
@@ -150,7 +150,7 @@ describe('bdd:devebot:runhook:progress:meter', function() {
   });
 });
 
-var fibonacci = function fibonacci(n) {
+var fibonacci = function fibonacci (n) {
   if (n == 0 || n == 1) return n;
   return fibonacci(n - 1) + fibonacci(n - 2);
-}
+};

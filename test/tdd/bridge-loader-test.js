@@ -1,54 +1,54 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var lodash = Devebot.require('lodash');
-var chores = Devebot.require('chores');
-var assert = require('chai').assert;
-var util = require('util');
-var LogConfig = Devebot.require('logolite').LogConfig;
-var LogTracer = Devebot.require('logolite').LogTracer;
-var envcloak = require('envcloak').instance;
+var lodash = Devebot.require("lodash");
+var chores = Devebot.require("chores");
+var assert = require("chai").assert;
+var util = require("util");
+var LogConfig = Devebot.require("logolite").LogConfig;
+var LogTracer = Devebot.require("logolite").LogTracer;
+var envcloak = require("envcloak").instance;
 
-describe('tdd:devebot:core:bridge-loader', function() {
+describe("tdd:devebot:core:bridge-loader", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
-      LOGOLITE_FULL_LOG_MODE: 'false',
-      LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all'
+      LOGOLITE_FULL_LOG_MODE: "false",
+      LOGOLITE_ALWAYS_ENABLED: "all",
+      LOGOLITE_ALWAYS_MUTED: "all"
     });
     LogConfig.reset();
     issueInspector.reset();
   });
 
-  describe('loadMetadata()', function() {
+  describe("loadMetadata()", function() {
     before(function() {
-      if (!chores.isUpgradeSupported('metadata-refiner')) this.skip();
+      if (!chores.isUpgradeSupported("metadata-refiner")) this.skip();
     });
     it("load bridge's metadata from empty application", function() {
       var bridgeLoader = lab.createBridgeLoader();
       var metadataMap = {};
       bridgeLoader.loadMetadata(metadataMap);
-      false && console.log('metadataMap: %s', JSON.stringify(metadataMap, null, 2));
+      false && console.log("metadataMap: %s", JSON.stringify(metadataMap, null, 2));
       assert.deepEqual(metadataMap, {});
     });
     it("load bridge's metadata from simplest application", function() {
-      var bridgeLoader = lab.createBridgeLoader('simple');
+      var bridgeLoader = lab.createBridgeLoader("simple");
       var metadataMap = {};
       bridgeLoader.loadMetadata(metadataMap);
-      false && console.log('metadataMap: ', JSON.stringify(metadataMap, null, 2));
+      false && console.log("metadataMap: ", JSON.stringify(metadataMap, null, 2));
       assert.deepEqual(metadataMap, {});
     });
     it("load all of valid bridge's metadata from complete application", function() {
-      var bridgeLoader = lab.createBridgeLoader('fullapp');
+      var bridgeLoader = lab.createBridgeLoader("fullapp");
       var metadataMap = {};
       bridgeLoader.loadMetadata(metadataMap);
       issueInspector.barrier({exitOnError: true});
-      false && console.log('metadataMap: %s', JSON.stringify(metadataMap, null, 2));
+      false && console.log("metadataMap: %s", JSON.stringify(metadataMap, null, 2));
       assert.deepInclude(metadataMap, {
         "bridge1": {
           "name": "bridge1"
@@ -102,41 +102,41 @@ describe('tdd:devebot:core:bridge-loader', function() {
     });
   });
 
-  describe('loadDialects()', function() {
-    it('load dialects from empty application', function() {
+  describe("loadDialects()", function() {
+    it("load dialects from empty application", function() {
       var bridgeLoader = lab.createBridgeLoader();
       var dialectMap = {};
       bridgeLoader.loadDialects(dialectMap);
-      false && console.log('dialectMap: ', JSON.stringify(dialectMap, null, 2));
+      false && console.log("dialectMap: ", JSON.stringify(dialectMap, null, 2));
       assert.deepEqual(dialectMap, {});
     });
 
-    it('load dialects from simplest application', function() {
-      var bridgeLoader = lab.createBridgeLoader('simple');
+    it("load dialects from simplest application", function() {
+      var bridgeLoader = lab.createBridgeLoader("simple");
       var dialectMap = {};
       bridgeLoader.loadDialects(dialectMap);
-      false && console.log('dialectMap: ', JSON.stringify(dialectMap, null, 2));
+      false && console.log("dialectMap: ", JSON.stringify(dialectMap, null, 2));
       assert.deepEqual(dialectMap, {});
     });
 
-    it('load nothing from all of components if dialectOptions is omitted', function() {
-      var bridgeLoader = lab.createBridgeLoader('fullapp');
+    it("load nothing from all of components if dialectOptions is omitted", function() {
+      var bridgeLoader = lab.createBridgeLoader("fullapp");
       var originMap = {};
       bridgeLoader.loadDialects(originMap); // dialectOptions is omitted
       issueInspector.barrier({exitOnError: true});
-      false && console.log('dialectMap: ', util.inspect(originMap, { depth: 5 }));
+      false && console.log("dialectMap: ", util.inspect(originMap, { depth: 5 }));
       var dialectMap = lodash.mapValues(originMap, function(dialect) {
         return lodash.assign(lodash.pick(dialect, [
-            'construktor.argumentProperties',
-            'construktor.argumentSchema'
-          ]), lodash.omit(dialect, ['construktor']));
+            "construktor.argumentProperties",
+            "construktor.argumentSchema"
+          ]), lodash.omit(dialect, ["construktor"]));
       });
-      false && console.log('dialectMap: ', JSON.stringify(dialectMap, null, 2));
+      false && console.log("dialectMap: ", JSON.stringify(dialectMap, null, 2));
       assert.deepInclude(dialectMap, {});
     });
 
-    it('load all of valid dialects from all of components', function() {
-      var bridgeLoader = lab.createBridgeLoader('fullapp');
+    it("load all of valid dialects from all of components", function() {
+      var bridgeLoader = lab.createBridgeLoader("fullapp");
       var bridgeConfig = {
         "bridge1": {
           "application": {
@@ -204,8 +204,8 @@ describe('tdd:devebot:core:bridge-loader', function() {
         }
       };
 
-      if (!chores.isUpgradeSupported('bridge-full-ref'))
-      bridgeConfig = {
+      if (!chores.isUpgradeSupported("bridge-full-ref")) {
+ bridgeConfig = {
         "anyname1a": {
           "bridge1": {
             "refPath": "sandbox -> bridge1 -> anyname1a"
@@ -227,17 +227,18 @@ describe('tdd:devebot:core:bridge-loader', function() {
           }
         }
       };
+}
       var originMap = {};
       bridgeLoader.loadDialects(originMap, bridgeConfig);
       issueInspector.barrier({exitOnError: true});
-      false && console.log('dialectMap: ', util.inspect(originMap, { depth: 5 }));
+      false && console.log("dialectMap: ", util.inspect(originMap, { depth: 5 }));
       var dialectMap = lodash.mapValues(originMap, function(dialect) {
         return lodash.assign(lodash.pick(dialect, [
-            'construktor.argumentProperties',
-            'construktor.argumentSchema'
-          ]), lodash.omit(dialect, ['construktor']));
+            "construktor.argumentProperties",
+            "construktor.argumentSchema"
+          ]), lodash.omit(dialect, ["construktor"]));
       });
-      false && console.log('dialectMap: ', JSON.stringify(dialectMap, null, 2));
+      false && console.log("dialectMap: ", JSON.stringify(dialectMap, null, 2));
       // uniqueName = [pluginName, bridgeName, dialectName].join(chores.getSeparator());
       var expectedMap = {};
       expectedMap[chores.toFullname("application", "bridge1", "anyname1z")] = {
@@ -457,7 +458,7 @@ describe('tdd:devebot:core:bridge-loader', function() {
         "name": "connector2#wrapper"
       };
 
-      if (!chores.isUpgradeSupported('bridge-full-ref')) {
+      if (!chores.isUpgradeSupported("bridge-full-ref")) {
         expectedMap = {};
         expectedMap[chores.toFullname("bridge1", "anyname1a")] = {
           "construktor": {

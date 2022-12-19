@@ -1,41 +1,41 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var loader = Devebot.require('loader');
-var assert = require('chai').assert;
-var LogConfig = Devebot.require('logolite').LogConfig;
-var LogTracer = Devebot.require('logolite').LogTracer;
-var envcloak = require('envcloak').instance;
+var Promise = Devebot.require("bluebird");
+var chores = Devebot.require("chores");
+var lodash = Devebot.require("lodash");
+var loader = Devebot.require("loader");
+var assert = require("chai").assert;
+var LogConfig = Devebot.require("logolite").LogConfig;
+var LogTracer = Devebot.require("logolite").LogTracer;
+var envcloak = require("envcloak").instance;
 
-describe('tdd:devebot:core:runhook-manager', function() {
+describe("tdd:devebot:core:runhook-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
-      NODE_ENV: 'test',
-      LOGOLITE_FULL_LOG_MODE: 'false',
-      LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all'
+      NODE_ENV: "test",
+      LOGOLITE_FULL_LOG_MODE: "false",
+      LOGOLITE_ALWAYS_ENABLED: "all",
+      LOGOLITE_ALWAYS_MUTED: "all"
     });
     LogConfig.reset();
     issueInspector.reset();
   });
 
-  describe('definition', function() {
+  describe("definition", function() {
     var loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname('devebot', 'runhookManager'), 'definition' ],
-          storeTo: 'definition'
+          allTags: [ chores.toFullname("devebot", "runhookManager"), "definition" ],
+          storeTo: "definition"
         }]
       }]);
     });
@@ -44,8 +44,8 @@ describe('tdd:devebot:core:runhook-manager', function() {
       LogTracer.reset().empty(loggingStore);
     });
 
-    it('load all of command definitions from routines', function() {
-      var runhookManager = lab.createRunhookManager('fullapp');
+    it("load all of command definitions from routines", function() {
+      var runhookManager = lab.createRunhookManager("fullapp");
       var commands = lab.simplifyCommands(runhookManager.getDefinitions());
       false && console.log(JSON.stringify(commands, null, 2));
       assert.sameDeepMembers(commands, [
@@ -228,60 +228,60 @@ describe('tdd:devebot:core:runhook-manager', function() {
       ]);
     });
 
-    it('check command is available correctly', function() {
-      var runhookManager = lab.createRunhookManager('fullapp');
-      assert.isFalse(runhookManager.isAvailable({ name: 'main-cmd0' }));
-      assert.isFalse(runhookManager.isAvailable({ name: 'main-cmd0', package: 'fullapp' }));
+    it("check command is available correctly", function() {
+      var runhookManager = lab.createRunhookManager("fullapp");
+      assert.isFalse(runhookManager.isAvailable({ name: "main-cmd0" }));
+      assert.isFalse(runhookManager.isAvailable({ name: "main-cmd0", package: "fullapp" }));
 
-      assert.isTrue(runhookManager.isAvailable({ name: 'main-cmd1' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'main-cmd1', package: 'fullapp' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'main-cmd2' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'main-cmd2', package: 'fullapp' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'plugin1-routine1', package: 'plugin1' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'plugin2-routine3', package: 'plugin2' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'plugin3-routine3', package: 'plugin3' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'applica-info' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'system-info', package: 'devebot' }));
+      assert.isTrue(runhookManager.isAvailable({ name: "main-cmd1" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "main-cmd1", package: "fullapp" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "main-cmd2" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "main-cmd2", package: "fullapp" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "plugin1-routine1", package: "plugin1" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "plugin2-routine3", package: "plugin2" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "plugin3-routine3", package: "plugin3" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "applica-info" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "system-info", package: "devebot" }));
 
-      assert.isFalse(runhookManager.isAvailable({ name: 'routine0' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'routine0', package: 'sub-plugin1' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'routine0', package: 'sub-plugin2' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'routine1' }));
-      assert.isTrue(runhookManager.isAvailable({ name: 'routine2' }));
+      assert.isFalse(runhookManager.isAvailable({ name: "routine0" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "routine0", package: "sub-plugin1" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "routine0", package: "sub-plugin2" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "routine1" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "routine2" }));
     });
 
-    it('retrieve the unique named routine with or without suggested package', function() {
-      var runhookManager = lab.createRunhookManager('fullapp');
+    it("retrieve the unique named routine with or without suggested package", function() {
+      var runhookManager = lab.createRunhookManager("fullapp");
 
-      var runhook1 = runhookManager.getRunhook({ name: 'routine1' });
+      var runhook1 = runhookManager.getRunhook({ name: "routine1" });
       assert.isFunction(runhook1.handler);
 
-      var runhook1_1 = runhookManager.getRunhook({ name: 'routine1', package: 'sub-routine1' });
+      var runhook1_1 = runhookManager.getRunhook({ name: "routine1", package: "sub-routine1" });
       assert.equal(runhook1_1, runhook1);
 
-      var runhook1_2 = runhookManager.getRunhook({ name: 'routine1', package: 'sub-routine2' });
+      var runhook1_2 = runhookManager.getRunhook({ name: "routine1", package: "sub-routine2" });
       assert.equal(runhook1_2, runhook1);
 
-      var runhook2 = runhookManager.getRunhook({ name: 'routine2' });
+      var runhook2 = runhookManager.getRunhook({ name: "routine2" });
       assert.isFunction(runhook2.handler);
 
-      var runhook2_1 = runhookManager.getRunhook({ name: 'routine2', package: 'sub-routine1' });
+      var runhook2_1 = runhookManager.getRunhook({ name: "routine2", package: "sub-routine1" });
       assert.equal(runhook2_1, runhook2);
 
-      var runhook2_2 = runhookManager.getRunhook({ name: 'routine2', package: 'sub-routine2' });
+      var runhook2_2 = runhookManager.getRunhook({ name: "routine2", package: "sub-routine2" });
       assert.equal(runhook2_2, runhook2);
 
       assert.notEqual(runhook1, runhook2);
       assert.notEqual(runhook1.handler, runhook2.handler);
     });
 
-    it('retrieve the same named routines from different packages', function() {
-      var runhookManager = lab.createRunhookManager('fullapp');
+    it("retrieve the same named routines from different packages", function() {
+      var runhookManager = lab.createRunhookManager("fullapp");
 
-      var runhook0_1 = runhookManager.getRunhook({ name: 'routine0', package: 'sub-plugin1' });
+      var runhook0_1 = runhookManager.getRunhook({ name: "routine0", package: "sub-plugin1" });
       assert.isFunction(runhook0_1.handler);
 
-      var runhook0_2 = runhookManager.getRunhook({ name: 'routine0', package: 'sub-plugin2' });
+      var runhook0_2 = runhookManager.getRunhook({ name: "routine0", package: "sub-plugin2" });
       assert.isFunction(runhook0_2.handler);
 
       assert.notEqual(runhook0_1, runhook0_2);

@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
-var constx = require(lab.getDevebotModule('utils/constx'));
+var lab = require("../index");
+var constx = require(lab.getDevebotModule("utils/constx"));
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var assert = require('chai').assert;
-var LogConfig = Devebot.require('logolite').LogConfig;
-var LogTracer = Devebot.require('logolite').LogTracer;
-var envcloak = require('envcloak').instance;
-var sinon = require('sinon');
+var Promise = Devebot.require("bluebird");
+var lodash = Devebot.require("lodash");
+var assert = require("chai").assert;
+var LogConfig = Devebot.require("logolite").LogConfig;
+var LogTracer = Devebot.require("logolite").LogTracer;
+var envcloak = require("envcloak").instance;
+var sinon = require("sinon");
 
-describe('tdd:devebot:core:script-renderer', function() {
+describe("tdd:devebot:core:script-renderer", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();
@@ -19,18 +19,18 @@ describe('tdd:devebot:core:script-renderer', function() {
 
   before(function() {
     envcloak.setup({
-      NODE_ENV: 'test',
-      LOGOLITE_FULL_LOG_MODE: 'false',
-      LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all'
+      NODE_ENV: "test",
+      LOGOLITE_FULL_LOG_MODE: "false",
+      LOGOLITE_ALWAYS_ENABLED: "all",
+      LOGOLITE_ALWAYS_MUTED: "all"
     });
     LogConfig.reset();
     issueInspector.reset();
   });
 
-  describe('WebSocketOutlet', function() {
-    var ScriptRenderer = lab.acquireDevebotModule('backbone/script-renderer');
-    var WebSocketOutlet = ScriptRenderer.__get__('WebSocketOutlet');
+  describe("WebSocketOutlet", function() {
+    var ScriptRenderer = lab.acquireDevebotModule("backbone/script-renderer");
+    var WebSocketOutlet = ScriptRenderer.__get__("WebSocketOutlet");
     var ws = { send: function() {} };
     var outlet = new WebSocketOutlet({
         ws: ws,
@@ -41,8 +41,8 @@ describe('tdd:devebot:core:script-renderer', function() {
     var testSend = function(state, supposed, expected) {
       var wsStub = null;
       var output = new Promise(function(onResolved, onRejected) {
-        wsStub = sinon.stub(ws, 'send').callsFake(function(message) {
-          false && console.log('Received message: %s', message);
+        wsStub = sinon.stub(ws, "send").callsFake(function(message) {
+          false && console.log("Received message: %s", message);
           if (lodash.isEqual(JSON.parse(message), expected)) {
             onResolved(message);
           } else {
@@ -55,7 +55,7 @@ describe('tdd:devebot:core:script-renderer', function() {
         wsStub && wsStub.restore();
       });
       return output;
-    }
+    };
     var loggingStore = {};
 
     before(function() {
@@ -63,8 +63,8 @@ describe('tdd:devebot:core:script-renderer', function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ 'devebot/scriptRenderer', 'definition' ],
-          storeTo: 'definition'
+          allTags: [ "devebot/scriptRenderer", "definition" ],
+          storeTo: "definition"
         }]
       }]);
     });
@@ -73,22 +73,22 @@ describe('tdd:devebot:core:script-renderer', function() {
       LogTracer.reset().empty(loggingStore);
     });
 
-    it('WebSocketOutlet render states exactly', function(done) {
+    it("WebSocketOutlet render states exactly", function(done) {
       Promise.mapSeries([
         {
-          state: 'definition',
+          state: "definition",
           supposed: {
-            text: 'Any Object'
+            text: "Any Object"
           },
           expected: {
-            state: 'definition',
+            state: "definition",
             payload: {
-              text: 'Any Object'
+              text: "Any Object"
             }
           }
         },
         {
-          state: 'error',
+          state: "error",
           supposed: null,
           expected: {
             state: constx.WEBSOCKET.STATE.ERROR,
@@ -96,7 +96,7 @@ describe('tdd:devebot:core:script-renderer', function() {
           }
         },
         {
-          state: 'started',
+          state: "started",
           supposed: null,
           expected: {
             state: constx.WEBSOCKET.STATE.STARTED,
@@ -104,7 +104,7 @@ describe('tdd:devebot:core:script-renderer', function() {
           }
         },
         {
-          state: 'cancelled',
+          state: "cancelled",
           supposed: null,
           expected: {
             state: constx.WEBSOCKET.STATE.CANCELLED,
@@ -112,13 +112,13 @@ describe('tdd:devebot:core:script-renderer', function() {
           }
         },
         {
-          state: 'failed',
+          state: "failed",
           supposed: {
-            type: 'object',
-            title: 'My Error',
+            type: "object",
+            title: "My Error",
             label: {
-              error: 'Error',
-              value: 'Value'
+              error: "Error",
+              value: "Value"
             },
             data: {
               error: true,
@@ -129,11 +129,11 @@ describe('tdd:devebot:core:script-renderer', function() {
             state: constx.WEBSOCKET.STATE.FAILED,
             message: constx.WEBSOCKET.MSG_ON.FAILED,
             payload: [{
-              type: 'object',
-              title: 'My Error',
+              type: "object",
+              title: "My Error",
               label: {
-                error: 'Error',
-                value: 'Value'
+                error: "Error",
+                value: "Value"
               },
               data: {
                 error: true,
@@ -143,46 +143,46 @@ describe('tdd:devebot:core:script-renderer', function() {
           }
         },
         {
-          state: 'completed',
+          state: "completed",
           supposed: {
-            type: 'object',
-            title: 'My Result',
+            type: "object",
+            title: "My Result",
             label: {
-              f_int: 'Integer',
-              f_boolean: 'Boolean',
-              f_string: 'String'
+              f_int: "Integer",
+              f_boolean: "Boolean",
+              f_string: "String"
             },
             data: {
               f_int: 1024,
               f_boolean: true,
-              f_string: 'Hello'
+              f_string: "Hello"
             }
           },
           expected: {
             state: constx.WEBSOCKET.STATE.COMPLETED,
             message: constx.WEBSOCKET.MSG_ON.COMPLETED,
             payload: [{
-              type: 'object',
-              title: 'My Result',
+              type: "object",
+              title: "My Result",
               label: {
-                f_int: 'Integer',
-                f_boolean: 'Boolean',
-                f_string: 'String'
+                f_int: "Integer",
+                f_boolean: "Boolean",
+                f_string: "String"
               },
               data: {
                 f_int: 1024,
                 f_boolean: true,
-                f_string: 'Hello'
+                f_string: "Hello"
               }
             }]
           }
         },
         {
-          state: 'progress',
+          state: "progress",
           supposed: {
             progress: 57,
             data: {
-              msg: 'processing (57%)'
+              msg: "processing (57%)"
             }
           },
           expected: {
@@ -190,16 +190,16 @@ describe('tdd:devebot:core:script-renderer', function() {
             message: constx.WEBSOCKET.MSG_ON.PROGRESS,
             percent: 57,
             payload: {
-              msg: 'processing (57%)'
+              msg: "processing (57%)"
             },
             progress: 57,
             data: {
-              msg: 'processing (57%)'
+              msg: "processing (57%)"
             }
           }
         },
         {
-          state: 'done',
+          state: "done",
           supposed: null,
           expected: {
             state: constx.WEBSOCKET.STATE.DONE
@@ -215,92 +215,92 @@ describe('tdd:devebot:core:script-renderer', function() {
     });
   });
 
-  describe('standardizeOutput()', function() {
-    var ScriptRenderer = lab.acquireDevebotModule('backbone/script-renderer');
-    var standardizeOutput = ScriptRenderer.__get__('standardizeOutput');
+  describe("standardizeOutput()", function() {
+    var ScriptRenderer = lab.acquireDevebotModule("backbone/script-renderer");
+    var standardizeOutput = ScriptRenderer.__get__("standardizeOutput");
 
     var jsonOutput = {
-      type: 'json',
-      title: 'JSON format example',
+      type: "json",
+      title: "JSON format example",
       data: {
-        text: 'Any JSON object'
+        text: "Any JSON object"
       }
     };
     var objectOutput = {
-      type: 'object',
-      title: 'Object/Record format example',
+      type: "object",
+      title: "Object/Record format example",
       data: {
         error: true,
         value: 1024
       },
       label: {
-        error: 'Error',
-        value: 'Value'
+        error: "Error",
+        value: "Value"
       }
     };
     var tableOutput = {
-      type: 'table',
-      title: 'Table/Grid format example',
+      type: "table",
+      title: "Table/Grid format example",
       data: [{
         no: 1,
-        id: 'unique#1',
-        name: 'Item 1'
+        id: "unique#1",
+        name: "Item 1"
       }, {
         no: 2,
-        id: 'unique#2',
-        name: 'Item 2'
+        id: "unique#2",
+        name: "Item 2"
       }, {
         no: 3,
-        id: 'unique#3',
-        name: 'Item 3'
+        id: "unique#3",
+        name: "Item 3"
       }],
       label: {
-        no: 'No.',
-        id: 'ID',
-        name: 'Name'
+        no: "No.",
+        id: "ID",
+        name: "Name"
       }
     };
     var invalidObjectFormat = {
-      type: 'object',
-      title: 'Object/Record format example',
+      type: "object",
+      title: "Object/Record format example",
       data: {
         error: true,
         value: 1024
       },
-      label: 'Should be an object'
+      label: "Should be an object"
     };
 
-    it('standardize valid json-type output correctly', function() {
+    it("standardize valid json-type output correctly", function() {
       var expected = [jsonOutput];
-      assert.deepEqual(standardizeOutput(schemaValidator,  jsonOutput , true), expected);
+      assert.deepEqual(standardizeOutput(schemaValidator,  jsonOutput, true), expected);
       assert.deepEqual(standardizeOutput(schemaValidator, [jsonOutput], true), expected);
     });
 
-    it('standardize valid object-type output correctly', function() {
+    it("standardize valid object-type output correctly", function() {
       var expected = [objectOutput];
-      assert.deepEqual(standardizeOutput(schemaValidator,  objectOutput , true), expected);
+      assert.deepEqual(standardizeOutput(schemaValidator,  objectOutput, true), expected);
       assert.deepEqual(standardizeOutput(schemaValidator, [objectOutput], true), expected);
     });
 
-    it('standardize valid table-type output correctly', function() {
+    it("standardize valid table-type output correctly", function() {
       var expected = [tableOutput];
-      assert.deepEqual(standardizeOutput(schemaValidator,  tableOutput , true), expected);
+      assert.deepEqual(standardizeOutput(schemaValidator,  tableOutput, true), expected);
       assert.deepEqual(standardizeOutput(schemaValidator, [tableOutput], true), expected);
     });
 
-    it('standardize composed of output formats correctly', function() {
+    it("standardize composed of output formats correctly", function() {
       var mixed = [jsonOutput, tableOutput, objectOutput];
       var expected = [jsonOutput, tableOutput, objectOutput];
-      assert.deepEqual(standardizeOutput(schemaValidator,  mixed , true), expected);
+      assert.deepEqual(standardizeOutput(schemaValidator,  mixed, true), expected);
     });
 
-    it('standardizing invalid formats will return JSON output', function() {
+    it("standardizing invalid formats will return JSON output", function() {
       var expected = [{
-        type: 'json',
+        type: "json",
         title: constx.WEBSOCKET.MSG_ON.FAILED,
         data: invalidObjectFormat
       }];
-      assert.deepEqual(standardizeOutput(schemaValidator,  invalidObjectFormat , true), expected);
+      assert.deepEqual(standardizeOutput(schemaValidator,  invalidObjectFormat, true), expected);
     });
   });
 

@@ -1,29 +1,26 @@
-'use strict';
+"use strict";
 
-var lab = require('../index');
+var lab = require("../index");
 var Devebot = lab.getDevebot();
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var loader = Devebot.require('loader');
-var assert = require('chai').assert;
-var path = require('path');
-var util = require('util');
-var LogConfig = Devebot.require('logolite').LogConfig;
-var LogTracer = Devebot.require('logolite').LogTracer;
-var Envcloak = require('envcloak');
+var assert = require("chai").assert;
+var path = require("path");
+var util = require("util");
+var LogConfig = Devebot.require("logolite").LogConfig;
+var LogTracer = Devebot.require("logolite").LogTracer;
+var Envcloak = require("envcloak");
 var envcloak = Envcloak.instance;
 
-describe('tdd:devebot:core:process-manager', function() {
+describe("tdd:devebot:core:process-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
-      NODE_ENV: 'test',
-      LOGOLITE_FULL_LOG_MODE: 'false',
-      LOGOLITE_ALWAYS_ENABLED: 'all',
-      LOGOLITE_ALWAYS_MUTED: 'all'
+      NODE_ENV: "test",
+      LOGOLITE_FULL_LOG_MODE: "false",
+      LOGOLITE_ALWAYS_ENABLED: "all",
+      LOGOLITE_ALWAYS_MUTED: "all"
     });
     issueInspector.reset();
     LogConfig.reset();
@@ -32,8 +29,8 @@ describe('tdd:devebot:core:process-manager', function() {
   it("process with 'pm_id'~6, 'instances'~3 will run in cluster mode, as a master", function() {
     var localEnv = new Envcloak({
       presets: {
-        pm_id: '6',
-        instances: '3'
+        pm_id: "6",
+        instances: "3"
       }
     });
     var processManager = lab.createProcessManager(null);
@@ -47,8 +44,8 @@ describe('tdd:devebot:core:process-manager', function() {
   it("process with 'pm_id'~3, 'instances'~2 will run in cluster mode, as a worker", function() {
     var localEnv = new Envcloak({
       presets: {
-        pm_id: '3',
-        instances: '2'
+        pm_id: "3",
+        instances: "2"
       }
     });
     var processManager = lab.createProcessManager(null);
@@ -62,7 +59,7 @@ describe('tdd:devebot:core:process-manager', function() {
   it("process with 'pm_id'~3, undefined 'instances' will run in single mode", function() {
     var localEnv = new Envcloak({
       presets: {
-        pm_id: '3'
+        pm_id: "3"
       }
     });
     var processManager = lab.createProcessManager(null);
@@ -76,7 +73,7 @@ describe('tdd:devebot:core:process-manager', function() {
   it("process with undefined 'pm_id', 'instances'~1 will run in single mode", function() {
     var localEnv = new Envcloak({
       presets: {
-        instances: '1'
+        instances: "1"
       }
     });
     var processManager = lab.createProcessManager(null);
