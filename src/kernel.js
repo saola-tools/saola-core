@@ -46,6 +46,7 @@ function Kernel (params = {}) {
     .registerObject("profileNames", configObject["profile"]["names"], chores.injektorContext)
     .registerObject("profileConfig", configObject["profile"]["mixture"], chores.injektorContext)
     .registerObject("sandboxNames", configObject["sandbox"]["names"], chores.injektorContext)
+    .registerObject("sandboxOrigin", configObject["sandbox"]["initial"], chores.injektorContext)
     .registerObject("sandboxConfig", configObject["sandbox"]["mixture"], chores.injektorContext)
     .registerObject("textureNames", configObject["texture"]["names"], chores.injektorContext)
     .registerObject("textureConfig", configObject["texture"]["mixture"], chores.injektorContext);

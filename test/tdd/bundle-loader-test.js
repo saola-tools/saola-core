@@ -482,6 +482,7 @@ describe("tdd:devebot:core:bundle-loader", function() {
         "construktor": {
           "argumentProperties": lodash.concat([
             "sandboxName",
+            "sandboxOrigin",
             "sandboxConfig",
             "profileName",
             "profileConfig",
@@ -506,6 +507,9 @@ describe("tdd:devebot:core:bundle-loader", function() {
             "properties": {
               "sandboxName": {
                 "type": "string"
+              },
+              "sandboxOrigin": {
+                "type": "object"
               },
               "sandboxConfig": {
                 "type": "object"
@@ -532,6 +536,7 @@ describe("tdd:devebot:core:bundle-loader", function() {
         "construktor": {
           "argumentProperties": [
             "sandboxName",
+            "sandboxOrigin",
             "sandboxConfig",
             "profileName",
             "profileConfig",
@@ -550,6 +555,9 @@ describe("tdd:devebot:core:bundle-loader", function() {
             "properties": {
               "sandboxName": {
                 "type": "string"
+              },
+              "sandboxOrigin": {
+                "type": "object"
               },
               "sandboxConfig": {
                 "type": "object"
@@ -578,6 +586,9 @@ describe("tdd:devebot:core:bundle-loader", function() {
               "sandboxName": {
                 "type": "string"
               },
+              "sandboxOrigin": {
+                "type": "object"
+              },
               "sandboxConfig": {
                 "type": "object"
               },
@@ -604,6 +615,9 @@ describe("tdd:devebot:core:bundle-loader", function() {
             "properties": {
               "sandboxName": {
                 "type": "string"
+              },
+              "sandboxOrigin": {
+                "type": "object"
               },
               "sandboxConfig": {
                 "type": "object"
@@ -671,6 +685,7 @@ describe("tdd:devebot:core:bundle-loader", function() {
         "construktor": {
           "argumentProperties": lodash.concat([
             "sandboxName",
+            "sandboxOrigin",
             "sandboxConfig",
             "profileName",
             "profileConfig",
@@ -692,6 +707,7 @@ describe("tdd:devebot:core:bundle-loader", function() {
         "construktor": {
           "argumentProperties": [
             "sandboxName",
+            "sandboxOrigin",
             "sandboxConfig",
             "profileName",
             "profileConfig",
@@ -705,6 +721,7 @@ describe("tdd:devebot:core:bundle-loader", function() {
         "construktor": {
           "argumentProperties": [
             "sandboxName",
+            "sandboxOrigin",
             "sandboxConfig",
             "profileName",
             "profileConfig",
@@ -722,6 +739,9 @@ describe("tdd:devebot:core:bundle-loader", function() {
             "properties": {
               "sandboxName": {
                 "type": "string"
+              },
+              "sandboxOrigin": {
+                "type": "object"
               },
               "sandboxConfig": {
                 "type": "object"
@@ -750,6 +770,9 @@ describe("tdd:devebot:core:bundle-loader", function() {
               "sandboxName": {
                 "type": "string"
               },
+              "sandboxOrigin": {
+                "type": "object"
+              },
               "sandboxConfig": {
                 "type": "object"
               },
@@ -776,6 +799,9 @@ describe("tdd:devebot:core:bundle-loader", function() {
             "properties": {
               "sandboxName": {
                 "type": "string"
+              },
+              "sandboxOrigin": {
+                "type": "object"
               },
               "sandboxConfig": {
                 "type": "object"

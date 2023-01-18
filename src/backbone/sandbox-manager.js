@@ -60,7 +60,7 @@ function SandboxManager (params = {}) {
 
   const sandboxInjektor = new Injektor(chores.injektorOptions);
   const COPIED_DEPENDENCIES = [ "appName", "appInfo",
-    "sandboxNames", "sandboxConfig", "profileNames", "profileConfig",
+    "sandboxNames", "sandboxOrigin", "sandboxConfig", "profileNames", "profileConfig",
     "contextManager", "schemaValidator", "loggingFactory", "processManager"
   ];
   if (chores.isUpgradeSupported("builtin-mapping-loader")) {
@@ -326,6 +326,9 @@ SandboxManager.argumentSchema = {
       "items": {
         "type": "string"
       }
+    },
+    "sandboxOrigin": {
+      "type": "object"
     },
     "sandboxConfig": {
       "type": "object"

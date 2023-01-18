@@ -100,11 +100,13 @@ function loadConfig (ctx = {}, appName, options, appRef, devebotRef, pluginRefs,
 
   lodash.forEach([CONFIG_SANDBOX_NAME, CONFIG_TEXTURE_NAME], function(configType) {
     if (chores.isUpgradeSupported("standardizing-config")) {
+      applyAliasMap(ctx, config[configType].initial, nameResolver.getDefaultAliasOf);
       applyAliasMap(ctx, config[configType].default, nameResolver.getDefaultAliasOf);
       applyAliasMap(ctx, config[configType].expanse, nameResolver.getDefaultAliasOf);
       applyAliasMap(ctx, config[configType].mixture, nameResolver.getDefaultAliasOf);
       if (!chores.isUpgradeSupported("simplify-name-resolver")) {
         const {plugin: pluginReverseMap, bridge: bridgeReverseMap} = nameResolver.getRelativeAliasMap();
+        doAliasMap(ctx, config[configType].initial, pluginReverseMap, bridgeReverseMap);
         doAliasMap(ctx, config[configType].default, pluginReverseMap, bridgeReverseMap);
         doAliasMap(ctx, config[configType].expanse, pluginReverseMap, bridgeReverseMap);
         doAliasMap(ctx, config[configType].mixture, pluginReverseMap, bridgeReverseMap);
@@ -199,8 +201,9 @@ function loadConfigOfModules (ctx = {}, config, aliasesOf, tileNames, appName, a
       for (const i in aliasesOf[configType]) {
         const defaultFile = path.join(libRootDir, CONFIG_SUBDIR, aliasesOf[configType][i] + ".js");
         if (chores.fileExists(defaultFile)) {
-          config[configType]["default"] = lodash.defaultsDeep(config[configType]["default"],
+          config[configType]["initial"] = lodash.defaultsDeep(config[configType]["initial"],
               standardizeConfig(ctx, configType, loadConfigFile(ctx, defaultFile), libRef, bridgeManifests, pluginManifests));
+          config[configType]["default"] = lodash.cloneDeep(config[configType]["initial"]);
           break;
         }
       }

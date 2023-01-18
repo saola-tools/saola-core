@@ -142,6 +142,7 @@ var _initInjectedObjects = function(appName, injectedObjects) {
     profileNames: [ 'default' ],
     profileConfig: {},
     sandboxNames: [ 'default' ],
+    sandboxOrigin: {},
     sandboxConfig: {},
     textureNames: [ 'default' ],
     textureConfig: {},

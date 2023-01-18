@@ -407,8 +407,10 @@ function buildGadgetWrapper (CTX, gadgetConstructor, gadgetType, wrapperName, pl
     if (newFeatures.sandboxConfig !== false) {
       kwargs = getWrappedParams(kwargs);
       if (chores.isSpecialBundle(pluginRootDir.type)) {
+        kwargs.sandboxOrigin = lodash.get(kwargs, ["sandboxOrigin", pluginCode], {});
         kwargs.sandboxConfig = lodash.get(kwargs, ["sandboxConfig", pluginCode], {});
       } else {
+        kwargs.sandboxOrigin = lodash.get(kwargs, ["sandboxOrigin", "plugins", pluginCode], {});
         kwargs.sandboxConfig = lodash.get(kwargs, ["sandboxConfig", "plugins", pluginCode], {});
       }
     }
@@ -468,7 +470,7 @@ function buildGadgetWrapper (CTX, gadgetConstructor, gadgetType, wrapperName, pl
 
   util.inherits(wrapperConstructor, gadgetConstructor);
 
-  const wrappedArgumentFields = ["sandboxName", "sandboxConfig", "profileName", "profileConfig", "loggingFactory"];
+  const wrappedArgumentFields = ["sandboxName", "sandboxOrigin", "sandboxConfig", "profileName", "profileConfig", "loggingFactory"];
 
   if (gadgetConstructor.argumentSchema) {
     const wrappedArgumentSchema = {
