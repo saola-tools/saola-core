@@ -14,6 +14,8 @@
     "freshy": "^1.0.4",
     "liberica": "^0.4.0",
     "minimist": "^1.2.0",
+    "mocha": "^10.1.0",
+    "mochawesome": "^7.1.3",
     "rewire": "^3.0.2",
     "sinon": "^7.4.1",
     "temporify": "^0.1.2"

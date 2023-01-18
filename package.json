@@ -1,6 +1,6 @@
 {
   "name": "devebot",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Nodejs Microservice Framework",
   "main": "index.js",
   "directories": {
@@ -15,19 +15,24 @@
   ],
   "scripts": {
     "clean": "rm -rf ./lib",
+    "clean-modules": "rm -rf ./node_modules && rm ./package-lock.json",
+    "bootstrap": "npm install --ignore-scripts; npm --prefix=test install --ignore-scripts",
+    "check": "npm exec -- eslint config src index.js",
+    "check-silent": "npm exec -- eslint --quiet config src index.js",
+    "pretest": "npm run clean && BABEL_ENV=${DEVEBOT_BABEL_ENV:-production} NODE_ENV=${DEVEBOT_NODE_ENV:-test} npm run build",
+    "prove": "npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js",
+    "test": "npm run prove",
+    "prepublishOnly": "npm run check-silent && npm run clean && BABEL_ENV=${DEVEBOT_BABEL_ENV:-test} NODE_ENV=${DEVEBOT_NODE_ENV:-production} npm run build",
+    "verify": "npm run prepublishOnly && npm run prove",
     "build-without-cleaning": "babel ./src -d ./lib",
     "build": "npm run clean && npm run build-without-cleaning",
-    "eslint-lib": "eslint ./lib/ --quiet",
-    "eslint-lib-verbose": "eslint ./lib/",
-    "eslint-src": "eslint ./src/ --quiet",
-    "eslint-src-verbose": "eslint ./src/",
-    "prepublish": "BABEL_ENV=${DEVEBOT_BABEL_ENV:-production} npm run build",
-    "pretest": "BABEL_ENV=${DEVEBOT_BABEL_ENV:-test} npm run build",
-    "prove": "mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js",
-    "test": "npm run prove",
-    "test-publish": "npm run prepublish && npm run prove",
-    "test-without-rebuilding": "mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js --reporter dot",
-    "test-to-reports": "npm run build && mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js --reporter mochawesome --reporter-options reportDir=test-reports,reportFilename=index"
+    "eslint-lib": "npm exec -- eslint ./lib/ --quiet",
+    "eslint-lib-verbose": "npm exec -- eslint ./lib/",
+    "eslint-src": "npm exec -- eslint ./src/ --quiet",
+    "eslint-src-verbose": "npm exec -- eslint ./src/",
+    "test-publish": "npm run prepublishOnly && npm run prove",
+    "test-without-rebuilding": "npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js --reporter dot",
+    "test-to-reports": "npm run build && npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js --reporter mochawesome --reporter-options reportDir=test-reports,reportFilename=index"
   },
   "repository": {
     "type": "git",
@@ -66,13 +71,12 @@
     "@babel/preset-env": "^7.20.2",
     "babel-plugin-minify-mangle-names": "^0.5.1",
     "babel-plugin-transform-async-to-module-method": "^6.24.1",
+    "cross-env": "^5.2.0",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "mocha": "^10.1.0",
-    "mochawesome": "^7.1.3"
+    "eslint-plugin-standard": "^4.0.0"
   }
 }

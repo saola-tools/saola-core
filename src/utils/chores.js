@@ -8,6 +8,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const util = require("util");
+const LogConfig = require("logolite").LogConfig;
 const uuidv4 = require("logolite/uuidv4");
 const format = require("logolite/lib/format");
 const Validator = require("schemato").Validator;
@@ -351,9 +352,15 @@ chores.isVerboseForced = function(moduleId, cfg) {
   return (fvm.indexOf(moduleId) >= 0) || !this.isSilentForced(moduleId, cfg);
 };
 
+chores.setEnvironments = function(envMap) {
+  envbox.setup(envMap);
+  return this.clearCache();
+};
+
 chores.clearCache = function() {
   envbox.clearCache();
   codetags.clearCache();
+  LogConfig.reset();
   return this;
 };
 
