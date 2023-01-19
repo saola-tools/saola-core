@@ -58,17 +58,29 @@ function SandboxManager (params = {}) {
     text: " - create sandbox${sandboxNames}.injektor object"
   }));
 
-  const sandboxInjektor = new Injektor(chores.injektorOptions);
-  const COPIED_DEPENDENCIES = [ "appName", "appInfo",
-    "sandboxNames", "sandboxOrigin", "sandboxConfig", "profileNames", "profileConfig",
+  const COPIED_DEPENDENCIES = [
+    "appName", "appInfo",
+    "sandboxNames", "sandboxOrigin", "sandboxConfig",
+    "profileNames", "profileConfig",
     "contextManager", "schemaValidator", "loggingFactory", "processManager"
   ];
   if (chores.isUpgradeSupported("builtin-mapping-loader")) {
     COPIED_DEPENDENCIES.push("mappingLoader");
   }
-  COPIED_DEPENDENCIES.forEach(function(refName) {
-    sandboxInjektor.registerObject(refName, params[refName], chores.injektorContext);
+
+  const refNameMappings = lodash.assign(lodash.keyBy(COPIED_DEPENDENCIES), {
+    "sandboxBaseConfig": "sandboxOrigin"
   });
+
+  function initInjektor (params, refNameMappings, myInjektor) {
+    myInjektor = myInjektor || new Injektor(chores.injektorOptions);
+    for (const refName in refNameMappings) {
+      myInjektor.registerObject(refName, params[refNameMappings[refName]], chores.injektorContext);
+    }
+    return myInjektor;
+  }
+
+  const sandboxInjektor = initInjektor(params, refNameMappings);
 
   lodash.forOwn(utilityMap, function(utilityConstruktor, utilityName) {
     sandboxInjektor.defineService(utilityName, utilityConstruktor, chores.injektorContext);
@@ -183,11 +195,10 @@ function SandboxManager (params = {}) {
     instantiateObject(sandboxInjektor, triggerRecord, "TRIGGER", injectedServices);
   });
 
-  const runhookInjektor = new Injektor(chores.injektorOptions);
-  const RUNHOOK_DEPENDENCIES = [ "bundleLoader" ].concat(COPIED_DEPENDENCIES);
-  RUNHOOK_DEPENDENCIES.forEach(function(refName) {
-    runhookInjektor.registerObject(refName, params[refName], chores.injektorContext);
-  });
+  const runhookInjektor = initInjektor(params, lodash.assign({
+    "bundleLoader": "bundleLoader"
+  }, refNameMappings));
+
   runhookInjektor.registerObject("sandboxName", sandboxName, chores.injektorContext);
   runhookInjektor.registerObject("profileName", profileName, chores.injektorContext);
   runhookInjektor.registerObject("injectedHandlers", injectedHandlers, chores.injektorContext);
