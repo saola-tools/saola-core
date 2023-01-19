@@ -38,9 +38,15 @@ function ManifestHandler (params = {}) {
   this.SELECTED_FIELDS = SELECTED_FIELDS;
 
   this.validateConfig = function (configStore, bridgeSchema, bundleSchema, result = []) {
+    if (chores.isUpgradeSupported("manifest-bypassed")) {
+      return result;
+    }
+
+    // validates the bridges by the manifest inside them
     const bridgeConfig = lodash.get(configStore, ["sandbox", "mixture", "bridges"], {});
     validateBridgeConfig(C, bridgeConfig, combineBridgeSchema(C, bridgeList, bridgeSchema), result);
 
+    // validates the plugins by the manifest inside them
     const bundleConfig = {
       profile: lodash.get(configStore, ["profile", "mixture"], {}),
       sandbox: lodash.pick(lodash.get(configStore, ["sandbox", "mixture"], {}), ["application", "plugins"])
