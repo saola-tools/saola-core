@@ -144,12 +144,12 @@ module.exports = NameResolver;
 
 const LIB_NAME_PATTERNS = {
   bridge: [
-    new RegExp("^" + constx.FRAMEWORK.NAME + "-" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9\-]*[a-z0-9])$", "g"),
-    /^([a-z][a-z0-9\-]*[a-z0-9])$/g
+    new RegExp("^" + constx.FRAMEWORK.NAME + "-" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    /^([a-z][a-z0-9-]*[a-z0-9])$/g
   ],
   plugin: [
-    new RegExp("^" + constx.FRAMEWORK.NAME + "-" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9\-]*[a-z0-9])$", "g"),
-    /^([a-z][a-z0-9\-]*[a-z0-9])$/g
+    new RegExp("^" + constx.FRAMEWORK.NAME + "-" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    /^([a-z][a-z0-9-]*[a-z0-9])$/g
   ]
 };
 
