@@ -9,6 +9,8 @@ var LogConfig = Devebot.require("logolite").LogConfig;
 var LogTracer = Devebot.require("logolite").LogTracer;
 var envcloak = require("envcloak").instance;
 
+var constx = require("../../lib/utils/constx");
+
 describe("bdd:devebot:loading-invalid-modules", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -33,9 +35,9 @@ describe("bdd:devebot:loading-invalid-modules", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname("devebot", "issueInspector"), "examine" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine" ],
           matchingField: "invoker",
-          matchingRule: chores.toFullname("devebot", "bootstrap"),
+          matchingRule: chores.toFullname(constx.FRAMEWORK.NAME, "bootstrap"),
           storeTo: "errorSummary"
         }]
       }]);
@@ -96,9 +98,9 @@ describe("bdd:devebot:loading-invalid-modules", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname("devebot", "issueInspector"), "examine", "sandbox-loading" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine", "sandbox-loading" ],
           matchingField: "invoker",
-          matchingRule: chores.toFullname("devebot", "kernel"),
+          matchingRule: chores.toFullname(constx.FRAMEWORK.NAME, "kernel"),
           storeTo: "errorSummary"
         }]
       }]);
@@ -168,9 +170,9 @@ describe("bdd:devebot:loading-invalid-modules", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname("devebot", "issueInspector"), "examine", "sandbox-loading" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine", "sandbox-loading" ],
           matchingField: "invoker",
-          matchingRule: chores.toFullname("devebot", "kernel"),
+          matchingRule: chores.toFullname(constx.FRAMEWORK.NAME, "kernel"),
           storeTo: "errorSummary"
         }]
       }]);

@@ -30,7 +30,7 @@ const codetags = require("codetags")
 const store = {
   defaultScope: getenv("DEVEBOT_DEFAULT_SCOPE", constx.FRAMEWORK.NAME),
   injektorOptions: {
-    namePatternTemplate: "^[a-zA-Z]{1}[a-zA-Z0-9&#\\-_%s]*$",
+    namePatternTemplate: "^[@a-zA-Z]{1}[a-zA-Z0-9&#\\-_%s]*$",
     separator: "/"
   },
   injektorContext: { scope: constx.FRAMEWORK.NAME },
@@ -253,6 +253,24 @@ chores.getBlockRef = function(filename, blockScope) {
 
 chores.getSeparator = function() {
   return store.injektorOptions.separator;
+};
+
+let scopedNamePattern = null;
+
+chores.getFrameworkName = function (packageName) {
+  if (!scopedNamePattern) {
+    const scopedNamePatternStr = util.format("^@(?<scope>.+)%s(?<name>[a-zA-Z]{1}[a-zA-Z0-9-_]*)$", this.getSeparator());
+    scopedNamePattern = new RegExp(scopedNamePatternStr);
+  }
+  const match = packageName.match(scopedNamePattern);
+  if (match && match.groups) {
+    const scope = match.groups["scope"];
+    if (lodash.isString(scope)) {
+      return scope;
+    }
+  }
+  //
+  return packageName;
 };
 
 chores.getFullname = function(parts, separator) {

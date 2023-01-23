@@ -83,7 +83,7 @@ function Kernel (params = {}) {
   const sandboxManager = injektor.lookup("sandboxManager", chores.injektorContext);
 
   const profileConfig = injektor.lookup("profileConfig", chores.injektorContext);
-  const frameworkCfg = profileConfig[constx.FRAMEWORK.NAME] || {};
+  const frameworkCfg = profileConfig.devebot || {};
   const inOpts = lodash.assign({ invoker: blockRef, footmark: "sandbox-loading" }, frameworkCfg);
   issueInspector.barrier(inOpts);
   stateInspector.conclude(inOpts);

@@ -7,6 +7,8 @@ var lodash = Devebot.require("lodash");
 var assert = require("chai").assert;
 var DevebotApi = require("devebot-api");
 
+var constx = require("../../lib/utils/constx");
+
 describe("bdd:devebot:routine:applica-info", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -23,8 +25,8 @@ describe("bdd:devebot:routine:applica-info", function() {
       }));
     });
 
-    it("definition should contain [applica-info] command", function(done) {
-      new Promise(function(resolved, rejected) {
+    it("definition should contain [applica-info] command", function() {
+      return new Promise(function(resolved, rejected) {
         api.loadDefinition(function(err, obj) {
           if (err) return rejected(err);
           resolved(obj.payload);
@@ -34,18 +36,17 @@ describe("bdd:devebot:routine:applica-info", function() {
         false && console.log(cmd);
         assert.isNotNull(cmd);
         assert.deepEqual(cmd, {
-          package: "devebot",
+          package: constx.FRAMEWORK.NAME,
           name: "applica-info",
           alias: "app-info",
           description: "Display application information",
           options: []
         });
-        done();
       });
     });
 
-    it("invoked [applica-info] command return correct result", function(done) {
-      new Promise(function(resolved, rejected) {
+    it("invoked [applica-info] command return correct result", function() {
+      return new Promise(function(resolved, rejected) {
         api
           .on("failed", function(result) {
             rejected(result);
@@ -97,8 +98,7 @@ describe("bdd:devebot:routine:applica-info", function() {
             }
           }
         ]);
-        done();
-      }).catch(done);
+      });
     });
   });
 
@@ -114,8 +114,8 @@ describe("bdd:devebot:routine:applica-info", function() {
       app.server.start().asCallback(done);
     });
 
-    it("definition should contain [applica-info] command", function(done) {
-      new Promise(function(resolved, rejected) {
+    it("definition should contain [applica-info] command", function() {
+      return new Promise(function(resolved, rejected) {
         api.loadDefinition(function(err, obj) {
           if (err) return rejected(err);
           resolved(obj.payload);
@@ -125,18 +125,17 @@ describe("bdd:devebot:routine:applica-info", function() {
         false && console.log(cmd);
         assert.isNotNull(cmd);
         assert.deepEqual(cmd, {
-          package: "devebot",
+          package: constx.FRAMEWORK.NAME,
           name: "applica-info",
           alias: "app-info",
           description: "Display application information",
           options: []
         });
-        done();
-      }).catch(done);
+      });
     });
 
-    it("invoked [applica-info] command return correct result", function(done) {
-      new Promise(function(resolved, rejected) {
+    it("invoked [applica-info] command return correct result", function() {
+      return new Promise(function(resolved, rejected) {
         api
           .on("failed", function(result) {
             rejected(result);
@@ -187,8 +186,7 @@ describe("bdd:devebot:routine:applica-info", function() {
             }
           }
         ]);
-        done();
-      }).catch(done);
+      });
     });
 
     afterEach(function(done) {

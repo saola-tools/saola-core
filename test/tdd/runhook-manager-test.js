@@ -11,6 +11,8 @@ var LogConfig = Devebot.require("logolite").LogConfig;
 var LogTracer = Devebot.require("logolite").LogTracer;
 var envcloak = require("envcloak").instance;
 
+var constx = require("../../lib/utils/constx");
+
 describe("tdd:devebot:core:runhook-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -34,7 +36,7 @@ describe("tdd:devebot:core:runhook-manager", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname("devebot", "runhookManager"), "definition" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "runhookManager"), "definition" ],
           storeTo: "definition"
         }]
       }]);
@@ -165,28 +167,28 @@ describe("tdd:devebot:core:runhook-manager", function() {
           "options": []
         },
         {
-          "package": "devebot",
+          "package": constx.FRAMEWORK.NAME,
           "name": "applica-info",
           "alias": "app-info",
           "description": "[String]",
           "options": []
         },
         {
-          "package": "devebot",
+          "package": constx.FRAMEWORK.NAME,
           "name": "logger-info",
           "alias": "log-info",
           "description": "[String]",
           "options": []
         },
         {
-          "package": "devebot",
+          "package": constx.FRAMEWORK.NAME,
           "name": "logger-reset",
           "alias": "log-reset",
           "description": "[String]",
           "options": []
         },
         {
-          "package": "devebot",
+          "package": constx.FRAMEWORK.NAME,
           "name": "logger-set",
           "alias": "log-set",
           "description": "[String]",
@@ -212,14 +214,14 @@ describe("tdd:devebot:core:runhook-manager", function() {
           ]
         },
         {
-          "package": "devebot",
+          "package": constx.FRAMEWORK.NAME,
           "name": "sandbox-info",
           "alias": "sb-info",
           "description": "[String]",
           "options": []
         },
         {
-          "package": "devebot",
+          "package": constx.FRAMEWORK.NAME,
           "name": "system-info",
           "alias": "sys-info",
           "description": "[String]",
@@ -241,7 +243,7 @@ describe("tdd:devebot:core:runhook-manager", function() {
       assert.isTrue(runhookManager.isAvailable({ name: "plugin2-routine3", package: "plugin2" }));
       assert.isTrue(runhookManager.isAvailable({ name: "plugin3-routine3", package: "plugin3" }));
       assert.isTrue(runhookManager.isAvailable({ name: "applica-info" }));
-      assert.isTrue(runhookManager.isAvailable({ name: "system-info", package: "devebot" }));
+      assert.isTrue(runhookManager.isAvailable({ name: "system-info", package: constx.FRAMEWORK.NAME }));
 
       assert.isFalse(runhookManager.isAvailable({ name: "routine0" }));
       assert.isTrue(runhookManager.isAvailable({ name: "routine0", package: "sub-plugin1" }));

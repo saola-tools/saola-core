@@ -22,7 +22,7 @@ describe("bdd:devebot:runhook:progress:meter", function() {
     app.server.start().asCallback(done);
   });
 
-  it("direct runhook should return correct result", function(done) {
+  it("direct runhook should return correct result", function() {
     var number = 15;
     var expectedValue = fibonacci(number);
     var expectedPrgr = [];
@@ -30,7 +30,7 @@ describe("bdd:devebot:runhook:progress:meter", function() {
       expectedPrgr.push(lodash.round((n + 1) * 100 / number));
     });
     var returnedPrgr = [];
-    new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       debugx.enabled && debugx("Invoke the command");
       api.on("failed", function(result) {
         reject(result);
@@ -52,14 +52,13 @@ describe("bdd:devebot:runhook:progress:meter", function() {
       assert.sameOrderedMembers(expectedPrgr, returnedPrgr);
       debugx.enabled && debugx(JSON.stringify(result, null, 2));
       assert.equal(result.payload[0].data.fibonacci, expectedValue);
-      done();
     }).catch(function(error) {
       debugx.enabled && debugx(JSON.stringify(error, null, 2));
-      done(error);
+      throw error;
     });
   });
 
-  it("remote runhook should return correct result", function(done) {
+  it("remote runhook should return correct result", function() {
     var number = 20;
     var expectedValue = fibonacci(number);
     var expectedPrgr = [];
@@ -67,7 +66,7 @@ describe("bdd:devebot:runhook:progress:meter", function() {
       expectedPrgr.push(lodash.round((n + 1) * 100 / number));
     });
     var returnedPrgr = [];
-    new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       api.on("failed", function(result) {
         reject(result);
       });
@@ -88,10 +87,9 @@ describe("bdd:devebot:runhook:progress:meter", function() {
       assert.sameOrderedMembers(expectedPrgr, returnedPrgr);
       debugx.enabled && debugx(JSON.stringify(result, null, 2));
       assert.equal(result.payload[0].data.fibonacci, expectedValue);
-      done();
     }).catch(function(error) {
       debugx.enabled && debugx(JSON.stringify(error, null, 2));
-      done(error);
+      throw error;
     });
   });
 

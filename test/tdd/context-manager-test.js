@@ -14,6 +14,7 @@ var envcloak = Envcloak.instance;
 describe("tdd:devebot:core:context-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
+  var sampleProjectName = "state-verification";
   var issueInspector = lab.getIssueInspector();
 
   before(function() {
@@ -37,7 +38,7 @@ describe("tdd:devebot:core:context-manager", function() {
         STATE_VERIFICATION_FEATURE_ENABLED: "123, abc"
       }
     });
-    var contextManager = lab.getContextManager("state-verification").clearCache();
+    var contextManager = lab.getContextManager(sampleProjectName).clearCache();
     assert.isFalse(contextManager.isFeatureSupported("unknown"));
     assert.isTrue(contextManager.isFeatureSupported("abc"));
     assert.isTrue(contextManager.isFeatureSupported(["123", "abc"]));
@@ -53,7 +54,7 @@ describe("tdd:devebot:core:context-manager", function() {
         STATE_VERIFICATION_FEATURE_ENABLED: "123, abc"
       }
     });
-    var contextManager = lab.getContextManager("state-verification").clearCache();
+    var contextManager = lab.getContextManager(sampleProjectName).clearCache();
     assert.isFalse(contextManager.isFeatureSupported("abc"));
     assert.isFalse(contextManager.isFeatureSupported(["123", "def"]));
     localEnv.reset();

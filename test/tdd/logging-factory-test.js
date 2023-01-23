@@ -10,6 +10,8 @@ var LogAdapter = Devebot.require("logolite").LogAdapter;
 var MockLogger = Devebot.require("logolite").MockLogger;
 var envcloak = require("envcloak").instance;
 
+var constx = require("../../lib/utils/constx");
+
 describe("tdd:devebot:core:logging-factory", function() {
   describe("logging backward compatible", function() {
     var LoggingFactory = lab.acquireDevebotModule("backbone/logging-factory");
@@ -427,7 +429,7 @@ describe("tdd:devebot:core:logging-factory", function() {
       });
 
       assert.equal(lodash.get(queue, [0, "severity"]), "info");
-      assert.equal(lodash.get(queue, [0, "payload", "lib_name"]), "devebot");
+      assert.equal(lodash.get(queue, [0, "payload", "lib_name"]), constx.FRAMEWORK.NAME);
       assert.containsAllKeys(lodash.get(queue, [0, "payload"]), [
         "instanceId",
         "message",
@@ -439,7 +441,7 @@ describe("tdd:devebot:core:logging-factory", function() {
       ]);
 
       assert.equal(lodash.get(queue, [1, "severity"]), "info");
-      assert.equal(lodash.get(queue, [1, "payload", "blockName"]), "devebot");
+      assert.equal(lodash.get(queue, [1, "payload", "blockName"]), constx.FRAMEWORK.NAME);
       assert.containsAllKeys(lodash.get(queue, [1, "payload"]), [
         "instanceId",
         "blockId",
@@ -551,7 +553,7 @@ describe("tdd:devebot:core:logging-factory", function() {
       assert.isTrue(factory.getTracer() !== factory_2_1.getTracer());
       assert.isTrue(factory.getLogger() !== factory_2_1.getLogger());
 
-      assert.equal(lodash.get(queue, [1, "payload", "blockName"]), "devebot");
+      assert.equal(lodash.get(queue, [1, "payload", "blockName"]), constx.FRAMEWORK.NAME);
       assert.equal(lodash.get(queue, [2, "payload", "blockName"]), "child1");
       assert.equal(lodash.get(queue, [3, "payload", "blockName"]), "child2");
       assert.equal(lodash.get(queue, [4, "payload", "blockName"]), "grand-child-1");

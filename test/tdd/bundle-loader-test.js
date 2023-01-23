@@ -11,6 +11,8 @@ var LogConfig = Devebot.require("logolite").LogConfig;
 var LogTracer = Devebot.require("logolite").LogTracer;
 var envcloak = require("envcloak").instance;
 
+var constx = require("../../lib/utils/constx");
+
 describe("tdd:devebot:core:bundle-loader", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -42,8 +44,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
       var routineMap = lab.simplifyRoutines(originMap);
       false && console.log("routineMap: ", JSON.stringify(routineMap, null, 2));
       var expectedMap = {};
-      expectedMap[chores.toFullname("devebot", "applica-info")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "applica-info")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "applica-info",
         "object": {
           "info": {
@@ -54,8 +56,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "logger-info")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "logger-info")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "logger-info",
         "object": {
           "info": {
@@ -66,8 +68,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "logger-reset")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "logger-reset")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "logger-reset",
         "object": {
           "info": {
@@ -78,8 +80,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "logger-set")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "logger-set")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "logger-set",
         "object": {
           "info": {
@@ -109,8 +111,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "sandbox-info")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "sandbox-info")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "sandbox-info",
         "object": {
           "info": {
@@ -121,8 +123,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "system-info")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "system-info")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "system-info",
         "object": {
           "info": {
@@ -255,8 +257,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "applica-info")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "applica-info")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "applica-info",
         "object": {
           "info": {
@@ -267,8 +269,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "logger-info")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "logger-info")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "logger-info",
         "object": {
           "info": {
@@ -279,8 +281,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "logger-reset")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "logger-reset")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "logger-reset",
         "object": {
           "info": {
@@ -291,8 +293,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "logger-set")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "logger-set")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "logger-set",
         "object": {
           "info": {
@@ -322,8 +324,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "sandbox-info")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "sandbox-info")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "sandbox-info",
         "object": {
           "info": {
@@ -334,8 +336,8 @@ describe("tdd:devebot:core:bundle-loader", function() {
           "handler": "[Function]"
         }
       };
-      expectedMap[chores.toFullname("devebot", "system-info")] = {
-        "crateScope": "devebot",
+      expectedMap[chores.toFullname(constx.FRAMEWORK.NAME, "system-info")] = {
+        "crateScope": constx.FRAMEWORK.NAME,
         "name": "system-info",
         "object": {
           "info": {

@@ -7,6 +7,8 @@ var lodash = Devebot.require("lodash");
 var assert = require("chai").assert;
 var DevebotApi = require("devebot-api");
 
+var constx = require("../../lib/utils/constx");
+
 describe("bdd:devebot:command:system-info", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -21,8 +23,8 @@ describe("bdd:devebot:command:system-info", function() {
     app.server.start().asCallback(done);
   });
 
-  it("definition should contain [system-info] command", function(done) {
-    new Promise(function(resolved, rejected) {
+  it("definition should contain [system-info] command", function() {
+    return new Promise(function(resolved, rejected) {
       api.loadDefinition(function(err, obj) {
         if (err) return rejected(err);
         resolved(obj.payload);
@@ -32,18 +34,17 @@ describe("bdd:devebot:command:system-info", function() {
       false && console.log(cmd);
       assert.isNotNull(cmd);
       assert.deepEqual(cmd, {
-        package: "devebot",
+        package: constx.FRAMEWORK.NAME,
         name: "system-info",
         alias: "sys-info",
         description: "Display the system information (configuration, logger, sandbox)",
         options: []
       });
-      done();
-    }).catch(done);
+    });
   });
 
-  it("invoked [system-info] command return correct result", function(done) {
-    new Promise(function(resolved, rejected) {
+  it("invoked [system-info] command return correct result", function() {
+    return new Promise(function(resolved, rejected) {
       api
         .on("failed", function(result) {
           rejected(result);
@@ -89,8 +90,7 @@ describe("bdd:devebot:command:system-info", function() {
       assert.isAbove(info.data.os_uptime, 0);
       assert.isArray(info.data.os_loadavg);
       assert.lengthOf(info.data.os_loadavg, 3);
-      done();
-    }).catch(done);
+    });
   });
 
   afterEach(function(done) {

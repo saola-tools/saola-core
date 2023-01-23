@@ -4,12 +4,15 @@ var lab = require("../index");
 var constx = require(lab.getDevebotModule("utils/constx"));
 var Devebot = lab.getDevebot();
 var Promise = Devebot.require("bluebird");
+var chores = Devebot.require("chores");
 var lodash = Devebot.require("lodash");
 var assert = require("chai").assert;
 var LogConfig = Devebot.require("logolite").LogConfig;
 var LogTracer = Devebot.require("logolite").LogTracer;
 var envcloak = require("envcloak").instance;
 var sinon = require("sinon");
+
+var constx = require("../../lib/utils/constx");
 
 describe("tdd:devebot:core:script-renderer", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -63,7 +66,7 @@ describe("tdd:devebot:core:script-renderer", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ "devebot/scriptRenderer", "definition" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "scriptRenderer"), "definition" ],
           storeTo: "definition"
         }]
       }]);

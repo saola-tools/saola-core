@@ -10,6 +10,8 @@ var LogTracer = Devebot.require("logolite").LogTracer;
 var envcloak = require("envcloak").instance;
 var util = require("util");
 
+var constx = require("../../lib/utils/constx");
+
 describe("bdd:devebot:application", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -33,11 +35,11 @@ describe("bdd:devebot:application", function() {
           accumulator: serverStats,
           mappings: [
             {
-              allTags: [ chores.toFullname("devebot", "server"), "start()" ],
+              allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "server"), "start()" ],
               countTo: "startingCount"
             },
             {
-              allTags: [ chores.toFullname("devebot", "server"), "close()" ],
+              allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "server"), "close()" ],
               countTo: "stoppingCount"
             }
           ]
@@ -46,7 +48,7 @@ describe("bdd:devebot:application", function() {
           accumulator: moduleStats,
           mappings: [
             {
-              anyTags: [ "devebot-metadata" ],
+              anyTags: [ constx.FRAMEWORK.NAME + "-metadata" ],
               storeTo: "metadata"
             },
             {
@@ -69,30 +71,30 @@ describe("bdd:devebot:application", function() {
     it("total of constructor startpoints must equal to constructor endpoints", function(done) {
       app = lab.getApp();
       var devebotScopes = [
-        chores.toFullname("devebot", "bootstrap"),
-        chores.toFullname("devebot", "appinfoLoader"),
-        chores.toFullname("devebot", "nameResolver"),
-        chores.toFullname("devebot", "manifestHandler"),
-        chores.toFullname("devebot", "configLoader"),
-        chores.toFullname("devebot", "contextManager"),
-        chores.toFullname("devebot", "kernel"),
-        chores.toFullname("devebot", "server"),
-        "devebot",
-        chores.toFullname("devebot", "bridgeLoader"),
-        chores.toFullname("devebot", "schemaValidator"),
-        chores.toFullname("devebot", "bundleLoader"),
-        chores.toFullname("devebot", "objectDecorator"),
-        chores.toFullname("devebot", "sandboxManager"),
-        chores.toFullname("devebot", "jobqueueBinder"),
-        chores.toFullname("devebot", "processManager"),
-        chores.toFullname("devebot", "runhookManager"),
-        chores.toFullname("devebot", "scriptExecutor"),
-        chores.toFullname("devebot", "scriptRenderer"),
-        chores.toFullname("devebot", "securityManager"),
-        chores.toFullname("devebot", "repeatedTimer")
+        constx.FRAMEWORK.NAME,
+        chores.toFullname(constx.FRAMEWORK.NAME, "bootstrap"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "appinfoLoader"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "nameResolver"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "configLoader"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "contextManager"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "kernel"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "server"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "bridgeLoader"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "schemaValidator"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "bundleLoader"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "objectDecorator"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "sandboxManager"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "jobqueueBinder"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "processManager"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "runhookManager"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "scriptExecutor"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "scriptRenderer"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "securityManager"),
+        chores.toFullname(constx.FRAMEWORK.NAME, "repeatedTimer")
       ];
       if (chores.isUpgradeSupported("builtin-mapping-loader")) {
-        devebotScopes.push(chores.toFullname("devebot", "mappingLoader"));
+        devebotScopes.push(chores.toFullname(constx.FRAMEWORK.NAME, "mappingLoader"));
       }
       var plugin1Scopes = [
         chores.toFullname("plugin1", "plugin1Service"),
@@ -193,7 +195,7 @@ describe("bdd:devebot:application", function() {
           accumulator: moduleStats,
           mappings: [
             {
-              allTags: [ chores.toFullname("devebot", "sandboxManager"), "instantiateObject" ],
+              allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "sandboxManager"), "instantiateObject" ],
               storeTo: "dependencyInfo"
             },
             {

@@ -224,7 +224,7 @@ lab.extractPluginList = function(bundleList) {
 
 lab.getContextManager = function(appName) {
   var app = lab.getApp(appName);
-  return app.runner.getSandboxService('contextManager', { scope: 'devebot' });
+  return app.runner.getSandboxService('contextManager', chores.injektorContext);
 }
 
 lab.createKernel = function(appName) {

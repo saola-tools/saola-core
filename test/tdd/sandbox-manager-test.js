@@ -14,6 +14,8 @@ var LogTracer = Devebot.require("logolite").LogTracer;
 var envcloak = require("envcloak").instance;
 var sinon = require("sinon");
 
+var constx = require("../../lib/utils/constx");
+
 describe("tdd:devebot:core:sandbox-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -131,7 +133,7 @@ describe("tdd:devebot:core:sandbox-manager", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname("devebot", "sandboxManager"), "excluded-internal-services" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "sandboxManager"), "excluded-internal-services" ],
           storeTo: "list"
         }]
       }]);
@@ -146,7 +148,7 @@ describe("tdd:devebot:core:sandbox-manager", function() {
       var excluded = lodash.get(loggingStore, "list.0.excludedServices", {});
       if (true) {
         assert.deepEqual(excluded, [
-          chores.toFullname("devebot", "sandboxRegistry")
+          chores.toFullname(constx.FRAMEWORK.NAME, "sandboxRegistry")
         ]);
       } else {
         console.log(JSON.stringify(loggingStore, null, 2));
@@ -192,7 +194,7 @@ describe("tdd:devebot:core:sandbox-manager", function() {
     });
 
     it("lookup() - isExcluded() is supported", function() {
-      var context = { scope: "devebot" };
+      var context = { scope: constx.FRAMEWORK.NAME };
       var bean1 = {}; var bean2 = {}; var bean3 = {};
       var injektor = new Injektor({ separator: chores.getSeparator() });
       injektor.registerObject("devebot-co-sample", bean1);
@@ -204,27 +206,27 @@ describe("tdd:devebot:core:sandbox-manager", function() {
       var sandboxRegistry = new SandboxRegistry({ injektor, isExcluded });
       assert.isNull(sandboxRegistry.lookup("devebot-co-sample"));
       assert.isNull(sandboxRegistry.lookup("example"));
-      assert.isNull(sandboxRegistry.lookup("devebot/example"));
+      assert.isNull(sandboxRegistry.lookup(chores.toFullname(constx.FRAMEWORK.NAME, "example")));
       assert.deepEqual(sandboxRegistry.lookup("testing/example"), bean3);
     });
 
     it("lookup() - excludedServices list is supported", function() {
-      var context = { scope: "devebot" };
+      var context = { scope: constx.FRAMEWORK.NAME };
       var bean1 = {}; var bean2 = {}; var bean3 = {};
       var injektor = new Injektor({ separator: chores.getSeparator() });
       injektor.registerObject("devebot-co-sample", bean1);
       injektor.registerObject("example", bean2, context);
       injektor.registerObject("testing/example", bean3);
-      var excludedServices = ["devebot/example"];
+      var excludedServices = [ chores.toFullname(constx.FRAMEWORK.NAME, "example") ];
       var sandboxRegistry = new SandboxRegistry({ injektor, excludedServices });
       assert.deepEqual(sandboxRegistry.lookup("devebot-co-sample"), bean1);
       assert.isNull(sandboxRegistry.lookup("example"));
-      assert.isNull(sandboxRegistry.lookup("devebot/example"));
+      assert.isNull(sandboxRegistry.lookup(chores.toFullname(constx.FRAMEWORK.NAME, "example")));
       assert.deepEqual(sandboxRegistry.lookup("testing/example"), bean3);
     });
 
     it("defineService() - RestrictedDevebotError", function() {
-      var context = { scope: "devebot" };
+      var context = { scope: constx.FRAMEWORK.NAME };
 
       var injektor = new Injektor({ separator: chores.getSeparator() });
       var _parseName = sinon.spy(injektor, "parseName");

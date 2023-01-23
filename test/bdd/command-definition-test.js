@@ -22,8 +22,8 @@ describe("bdd:devebot:command:definition", function() {
     app.server.start().asCallback(done);
   });
 
-  it("definition should contain default commands", function(done) {
-    new Promise(function(resolve, reject) {
+  it("definition should contain default commands", function() {
+    return new Promise(function(resolve, reject) {
       api.loadDefinition(function(err, obj) {
         if (err) return reject(err);
         resolve(obj.payload);
@@ -58,8 +58,6 @@ describe("bdd:devebot:command:definition", function() {
         assert.containsAllKeys(cmd, ["name", "description", "options"]);
       });
       false && console.log("Definition: %s", JSON.stringify(defs, null, 2));
-
-      done();
     });
   });
 

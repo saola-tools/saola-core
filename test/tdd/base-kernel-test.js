@@ -10,6 +10,8 @@ var LogTracer = Devebot.require("logolite").LogTracer;
 var Envcloak = require("envcloak");
 var envcloak = Envcloak.instance;
 
+var constx = require("../../lib/utils/constx");
+
 var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
 var SELECTED_FIELDS = ManifestHandler.__get__("SELECTED_FIELDS");
 
@@ -396,24 +398,24 @@ describe("tdd:devebot:base:kernel", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname("devebot", "manifestHandler"), "bridge-config-schema-input" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "bridge-config-schema-input" ],
           storeTo: "bridgeInput"
         }, {
-          allTags: [ chores.toFullname("devebot", "manifestHandler"), "plugin-config-schema-input" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "plugin-config-schema-input" ],
           storeTo: "pluginInput"
         }, {
-          allTags: [ chores.toFullname("devebot", "manifestHandler"), "validate-bridge-config-by-schema" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "validate-bridge-config-by-schema" ],
           storeTo: "bridgeData"
         }, {
-          allTags: [ chores.toFullname("devebot", "manifestHandler"), "validate-bundle-config-by-schema" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "validate-bundle-config-by-schema" ],
           storeTo: "pluginData"
         }, {
-          allTags: [ chores.toFullname("devebot", "manifestHandler"), "validating-config-by-schema-result" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "validating-config-by-schema-result" ],
           storeTo: "outputValidation"
         }, {
-          allTags: [ chores.toFullname("devebot", "issueInspector"), "examine", "metadata-validating" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine", "metadata-validating" ],
           matchingField: "invoker",
-          matchingRule: chores.toFullname("devebot", "kernel"),
+          matchingRule: chores.toFullname(constx.FRAMEWORK.NAME, "kernel"),
           storeTo: "errorSummary"
         }]
       }]);

@@ -8,6 +8,8 @@ var LogConfig = Devebot.require("logolite").LogConfig;
 var LogTracer = Devebot.require("logolite").LogTracer;
 var envcloak = require("envcloak").instance;
 
+var constx = require("../../lib/utils/constx");
+
 describe("tdd:devebot:core:issue-inspector", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -32,7 +34,7 @@ describe("tdd:devebot:core:issue-inspector", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname("devebot", "issueInspector"), "examine" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine" ],
           storeTo: "errorSummary"
         }]
       }]);

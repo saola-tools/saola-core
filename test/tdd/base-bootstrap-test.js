@@ -11,6 +11,9 @@ var LogConfig = Devebot.require("logolite").LogConfig;
 var LogTracer = Devebot.require("logolite").LogTracer;
 var envcloak = require("envcloak").instance;
 
+var constx = require("../../lib/utils/constx");
+var frameworkName = chores.getFrameworkName(constx.FRAMEWORK.NAME);
+
 var CONFIG_EXTENDED_FIELDS = [
   "profile", "sandbox", "texture",
   "appName", "appInfo", "bridgeList", "bundleList",
@@ -40,13 +43,13 @@ describe("tdd:devebot:base:bootstrap", function() {
           allTags: [ "constructor-begin", "appLoader" ],
           countTo: "appLoader"
         }, {
-          allTags: [ chores.toFullname("devebot", "kernel"), "constructor-begin" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "kernel"), "constructor-begin" ],
           countTo: "loadingKernel"
         }, {
-          allTags: [ chores.toFullname("devebot", "server"), "constructor-begin" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "server"), "constructor-begin" ],
           countTo: "loadingServer"
         }, {
-          allTags: [ chores.toFullname("devebot", "runner"), "constructor-begin" ],
+          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "runner"), "constructor-begin" ],
           countTo: "loadingRunner"
         }]
       }]);
@@ -698,7 +701,7 @@ describe("tdd:devebot:base:bootstrap", function() {
       var cfg = app.config;
       false && console.log("SHOW [app.config]: ", cfg);
       assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
-      assert.equal(cfg.appName, "devebot-application");
+      assert.equal(cfg.appName, frameworkName + "-application");
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
@@ -708,11 +711,11 @@ describe("tdd:devebot:base:bootstrap", function() {
         return lodash.pick(item, ["type", "name"]);
       }), [{
         type: "application",
-        name: "devebot-application"
+        name: frameworkName + "-application"
       },
       {
         type: "framework",
-        name: "devebot"
+        name: constx.FRAMEWORK.NAME
       }]);
     };
 
@@ -732,7 +735,7 @@ describe("tdd:devebot:base:bootstrap", function() {
       var app = bootstrap.launchApplication();
       var cfg = replaceObjectFields(app.config);
       false && console.log("Application config: ", JSON.stringify(cfg, null, 2));
-      assert.equal(cfg.appName, "devebot-application");
+      assert.equal(cfg.appName, frameworkName + "-application");
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
@@ -740,11 +743,11 @@ describe("tdd:devebot:base:bootstrap", function() {
       assert.sameDeepMembers(cfg.bridgeList, []);
       assert.sameDeepMembers(cfg.bundleList, [
         {
-          "name": "devebot-application",
+          "name": frameworkName + "-application",
           "type": "application",
         },
         {
-          "name": "devebot",
+          "name": constx.FRAMEWORK.NAME,
           "type": "framework",
           "path": "/devebot",
         }
@@ -973,7 +976,7 @@ describe("tdd:devebot:base:bootstrap", function() {
         },
         {
           "type": "framework",
-          "name": "devebot",
+          "name": constx.FRAMEWORK.NAME,
           "path": "/devebot",
         }
       ];
