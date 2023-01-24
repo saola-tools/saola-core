@@ -4,8 +4,8 @@ const events = require("events");
 const util = require("util");
 
 const Kernel = require("./kernel");
-const chores = require("./utils/chores");
 const LoggingWrapper = require("./backbone/logging-wrapper");
+const chores = require("./utils/chores");
 const blockRef = chores.getBlockRef(__filename);
 
 function Runner (params = {}) {

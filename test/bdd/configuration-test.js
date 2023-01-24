@@ -1,13 +1,14 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
-var debugx = Devebot.require("pinbug")("bdd:devebot:core:configuration");
-var assert = require("chai").assert;
-var expect = require("chai").expect;
-var util = require("util");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const lodash = Devebot.require("lodash");
+const chores = Devebot.require("chores");
+const debugx = Devebot.require("pinbug")("bdd:devebot:core:configuration");
+const assert = require("chai").assert;
+const expect = require("chai").expect;
+const util = require("util");
 
 describe("bdd:devebot:configuration", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -57,13 +58,13 @@ describe("bdd:devebot:configuration", function() {
         expect(profileConfig)
           .to.be.an("object")
           .to.include.all.keys("devebot");
-        expect(profileConfig.devebot)
+        expect(lodash.get(profileConfig, chores.getProfileConfigFrameworkSection()))
           .to.be.an("object")
           .to.include.all.keys("host", "port", "authen", "tunnel");
-        expect(profileConfig.devebot.authen)
+        expect(lodash.get(profileConfig, chores.getProfileConfigFrameworkSection(["authen"])))
           .to.be.an("object")
           .to.include.all.keys("disabled", "tokenStoreFile");
-        expect(profileConfig.devebot.tunnel)
+        expect(lodash.get(profileConfig, chores.getProfileConfigFrameworkSection(["tunnel"])))
           .to.be.an("object")
           .to.include.all.keys("enabled", "key_file", "crt_file");
       }).then(done);

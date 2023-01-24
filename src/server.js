@@ -9,11 +9,13 @@ const fs = require("fs");
 const WebSocketServer = require("ws").Server;
 
 const Kernel = require("./kernel");
-const chores = require("./utils/chores");
-const constx = require("./utils/constx");
 const LoggingWrapper = require("./backbone/logging-wrapper");
 const RepeatedTimer = require("./backbone/repeated-timer");
+const constx = require("./utils/constx");
+const chores = require("./utils/chores");
 const blockRef = chores.getBlockRef(__filename);
+
+const FRAMEWORK_NAME = chores.getFrameworkName(constx.FRAMEWORK.NAME);
 
 function Server (params = {}) {
   Kernel.call(this, params);
@@ -44,7 +46,7 @@ function Server (params = {}) {
   const appRootUrl = "/" + chores.stringKebabCase(appName);
 
   // framework configures
-  const frameworkCfg = lodash.get(profileConfig, [constx.FRAMEWORK.NAME], {});
+  const frameworkCfg = lodash.get(profileConfig, chores.getProfileConfigFrameworkSection(), {});
 
   const tunnelCfg = lodash.get(frameworkCfg, ["tunnel"], {});
   const sslEnabled = tunnelCfg.enabled && tunnelCfg.key_file && tunnelCfg.crt_file;
@@ -88,16 +90,16 @@ function Server (params = {}) {
     return Promise.resolve().then(function() {
       if (mode === 0) return Promise.resolve();
       if (mode === 1) return tictac.start();
-      return new Promise(function(onResolved, onRejected) {
+      return new Promise(function(resolve, reject) {
         const serverHost = lodash.get(frameworkCfg, ["host"], "0.0.0.0");
         const serverPort = lodash.get(frameworkCfg, ["port"], 17779);
         const serverInstance = server.listen(serverPort, serverHost, function () {
           const proto = sslEnabled ? "wss" : "ws";
           const host = serverInstance.address().address;
           const port = serverInstance.address().port;
-          chores.isVerboseForced(constx.FRAMEWORK.NAME, frameworkCfg) &&
+          chores.isVerboseForced(FRAMEWORK_NAME, frameworkCfg) &&
               console.info("%s is listening on %s://%s:%s%s", appName, proto, host, port, appRootUrl);
-          onResolved(serverInstance);
+          resolve(serverInstance);
         });
       });
     }).then(function() {
@@ -131,10 +133,10 @@ function Server (params = {}) {
       }));
       if (mode === 0) return Promise.resolve();
       if (mode === 1) return tictac.stop();
-      return new Promise(function(onResolved, onRejected) {
+      return new Promise(function(resolve, reject) {
         const timeoutHandler = setTimeout(function() {
           L.has("dunce") && L.log("dunce", "Timeout closing Server");
-          onRejected();
+          reject();
         }, 60000);
         const serverCloseEvent = function() {
           L.has("dunce") && L.log("dunce", "HTTP Server is invoked");
@@ -146,7 +148,7 @@ function Server (params = {}) {
         server.close(function() {
           L.has("dunce") && L.log("dunce", "HTTP Server has been closed");
           clearTimeout(timeoutHandler);
-          onResolved();
+          resolve();
         });
       });
     }).then(function() {
@@ -154,7 +156,7 @@ function Server (params = {}) {
         tags: [ blockRef, "close()", "webserver-stopped" ],
         text: "webserver has stopped"
       }));
-      chores.isVerboseForced(constx.FRAMEWORK.NAME, frameworkCfg) &&
+      chores.isVerboseForced(FRAMEWORK_NAME, frameworkCfg) &&
           console.info("%s has been closed", appName);
       return Promise.resolve();
     });

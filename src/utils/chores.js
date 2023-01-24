@@ -257,6 +257,14 @@ chores.getSeparator = function() {
 
 let scopedNamePattern = null;
 
+chores.getProfileConfigFrameworkSection = function (subpath) {
+  const location = [ "devebot" ];
+  if (subpath) {
+    return location.concat(subpath);
+  }
+  return location;
+}
+
 chores.getFrameworkName = function (packageName) {
   if (!scopedNamePattern) {
     const scopedNamePatternStr = util.format("^@(?<scope>.+)%s(?<name>[a-zA-Z]{1}[a-zA-Z0-9-_]*)$", this.getSeparator());

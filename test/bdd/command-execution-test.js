@@ -95,8 +95,8 @@ describe("bdd:devebot:command:execution", function() {
     app.server.start().asCallback(done);
   });
 
-  it("definition should contain runhook-call command", function(done) {
-    new Promise(function(resolved, rejected) {
+  it("definition should contain runhook-call command", function() {
+    return new Promise(function(resolved, rejected) {
       api.loadDefinition(function(err, obj) {
         if (err) return rejected(err);
         resolved(obj.payload);
@@ -104,12 +104,11 @@ describe("bdd:devebot:command:execution", function() {
     }).then(function(defs) {
       var cmd = lodash.keyBy(defs.commands, "name")["plugin1-routine1"];
       assert.isNotNull(cmd);
-      done();
     });
   });
 
-  it("remote runhook should return correct result", function(done) {
-    new Promise(function(resolved, rejected) {
+  it("remote runhook should return correct result", function() {
+    return new Promise(function(resolved, rejected) {
       api.on("failed", function(result) {
         rejected(result);
       });
@@ -127,15 +126,14 @@ describe("bdd:devebot:command:execution", function() {
       assert.isArray(logStats["plugin1Routine1State"]);
       assert.equal(logStats["plugin1Routine1State"].length, 1);
       assert.sameMembers(logStats["plugin1Routine1State"][0]["injectedServiceNames"], injectedServiceNames);
-      done();
     }).catch(function(error) {
       debugx.enabled && debugx(JSON.stringify(error, null, 2));
-      done(error);
+      throw error;
     });
   });
 
-  it("direct runhook should return correct result", function(done) {
-    new Promise(function(resolved, rejected) {
+  it("direct runhook should return correct result", function() {
+    return new Promise(function(resolved, rejected) {
       api.on("failed", function(result) {
         rejected(result);
       });
@@ -152,10 +150,9 @@ describe("bdd:devebot:command:execution", function() {
       assert.isArray(logStats["plugin1Routine2State"]);
       assert.equal(logStats["plugin1Routine2State"].length, 1);
       assert.sameMembers(logStats["plugin1Routine2State"][0]["injectedServiceNames"], injectedServiceNames);
-      done();
     }).catch(function(error) {
       debugx.enabled && debugx(JSON.stringify(error, null, 2));
-      done(error);
+      throw error;
     });
   });
 

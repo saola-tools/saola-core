@@ -1,11 +1,11 @@
 "use strict";
 
-const Injektor = require("injektor");
 const lodash = require("lodash");
 const path = require("path");
-const chores = require("./utils/chores");
-const constx = require("./utils/constx");
+const Injektor = require("injektor");
 const LoggingWrapper = require("./backbone/logging-wrapper");
+const constx = require("./utils/constx");
+const chores = require("./utils/chores");
 const blockRef = chores.getBlockRef(__filename);
 
 const CONSTRUCTORS = {};
@@ -83,7 +83,7 @@ function Kernel (params = {}) {
   const sandboxManager = injektor.lookup("sandboxManager", chores.injektorContext);
 
   const profileConfig = injektor.lookup("profileConfig", chores.injektorContext);
-  const frameworkCfg = profileConfig.devebot || {};
+  const frameworkCfg = lodash.get(profileConfig, chores.getProfileConfigFrameworkSection(), {});
   const inOpts = lodash.assign({ invoker: blockRef, footmark: "sandbox-loading" }, frameworkCfg);
   issueInspector.barrier(inOpts);
   stateInspector.conclude(inOpts);

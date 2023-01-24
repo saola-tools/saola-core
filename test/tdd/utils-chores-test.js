@@ -122,7 +122,7 @@ describe("tdd:devebot:utils:chores", function() {
       assert.equal(chores.extractObjectInfo(true), "boolean");
       assert.equal(chores.extractObjectInfo(null), "null");
       assert.equal(chores.extractObjectInfo(Symbol()), "symbol");
-      assert.equal(chores.extractObjectInfo(Symbol("devebot")), "symbol");
+      assert.equal(chores.extractObjectInfo(Symbol("string")), "symbol");
     });
     it("should extract javascript object types correctly", function() {
       assert.deepEqual(chores.extractObjectInfo([1, "a", true, null]),

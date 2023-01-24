@@ -22,7 +22,9 @@ const Server = require("./server");
 const blockRef = chores.getBlockRef(__filename);
 const issueInspector = IssueInspector.instance;
 const stateInspector = StateInspector.instance;
-const FRAMEWORK_CAPNAME = lodash.capitalize(constx.FRAMEWORK.NAME);
+
+const FRAMEWORK_NAME = chores.getFrameworkName(constx.FRAMEWORK.NAME);
+const FRAMEWORK_CAPNAME = lodash.capitalize(FRAMEWORK_NAME);
 
 function appLoader (params = {}) {
   const {logger: L, tracer: T} = params;
@@ -526,4 +528,4 @@ function locatePackage ({issueInspector} = {}, pkgInfo, pkgType) {
   }
 }
 
-module.exports = global[constx.FRAMEWORK.NAME] = global[FRAMEWORK_CAPNAME] = global["Devebot"] = bootstrap;
+module.exports = global[FRAMEWORK_NAME] = global[FRAMEWORK_CAPNAME] = bootstrap;

@@ -93,9 +93,9 @@ describe("bdd:devebot:runhook:progress:meter", function() {
     });
   });
 
-  it("return error when input data is invalid with schema", function(done) {
+  it("return error when input data is invalid with schema", function() {
     var number = 101;
-    new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       api.on("failed", function(result) {
         reject(result);
       });
@@ -109,18 +109,17 @@ describe("bdd:devebot:runhook:progress:meter", function() {
       });
     }).then(function(result) {
       debugx.enabled && debugx(JSON.stringify(result, null, 2));
-      done();
-    }).catch(function(error) {
+      assert.fail("This testcase must raise an error");
+    }, function(error) {
       debugx.enabled && debugx(JSON.stringify(error, null, 2));
       assert.isObject(error.payload[0].data.schema);
       assert.isString(error.payload[0].data.message);
-      done();
     });
   });
 
-  it("return error when input data cannot pass validate()", function(done) {
+  it("return error when input data cannot pass validate()", function() {
     var number = 101;
-    new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       api.on("failed", function(result) {
         reject(result);
       });
@@ -134,11 +133,10 @@ describe("bdd:devebot:runhook:progress:meter", function() {
       });
     }).then(function(result) {
       debugx.enabled && debugx(JSON.stringify(result, null, 2));
-      done();
-    }).catch(function(error) {
+      assert.fail("This testcase must raise an error");
+    }, function(error) {
       debugx.enabled && debugx(JSON.stringify(error, null, 2));
       assert.isString(error.payload[0].data.message);
-      done();
     });
   });
 
