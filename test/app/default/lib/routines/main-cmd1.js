@@ -1,20 +1,19 @@
 /* global Devebot */
-'use strict';
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+const Promise = Devebot.require("bluebird");
 
-var commandConfig;
+let commandConfig;
 
-var commandObject = {
+let commandObject = {
   info: {
-    description: 'Main Application Command1',
+    description: "Main Application Command1",
     options: []
   },
   handler: function(opts, payload, ctx) {
     return Promise.resolve([{
-        type: 'json',
-        title: 'Main Application Command1',
+        type: "json",
+        title: "Main Application Command1",
         data: {}
     }]);
   }

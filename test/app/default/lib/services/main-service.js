@@ -1,13 +1,13 @@
 /* global Devebot */
-'use strict';
+"use strict";
 
-var lodash = Devebot.require('lodash');
+const lodash = Devebot.require("lodash");
 
 var Service = function(params={}) {
-  var L = params.loggingFactory.getLogger();
+  const L = params.loggingFactory.getLogger();
 
-  var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
-  L.has('silly') && L.log('silly', 'configuration: %s', JSON.stringify(mainCfg));
+  const mainCfg = lodash.get(params, ["sandboxConfig", "application"], {});
+  L.has("silly") && L.log("silly", "configuration: %s", JSON.stringify(mainCfg));
 };
 
 module.exports = Service;
