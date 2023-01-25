@@ -1,33 +1,33 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
 
-var Service = function(params={}) {
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
-  var blockRef = params.componentId;
+const Service = function(params={}) {
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
+  const blockRef = params.componentId;
 
-  var mainCfg = lodash.get(params, ['sandboxConfig'], {});
+  const mainCfg = lodash.get(params, ["sandboxConfig"], {});
 
-  L.has('dunce') && L.log('dunce', T.add({
+  L.has("dunce") && L.log("dunce", T.add({
     pluginCfg: mainCfg
   }).toMessage({
-    tags: [ blockRef, 'configuration' ],
-    text: ' - configuration: {pluginCfg}'
+    tags: [ blockRef, "configuration" ],
+    text: " - configuration: {pluginCfg}"
   }));
 
   this.getConfig = function() {
     return lodash.cloneDeep(mainCfg);
-  }
+  };
 };
 
-if (chores.isUpgradeSupported('bridge-full-ref')) {
+if (chores.isUpgradeSupported("bridge-full-ref")) {
   Service.referenceList = [
-    chores.toFullname('devebot-dp-wrapper1', 'sublibService'),
-    chores.toFullname('devebot-dp-wrapper2', 'sublibService')
-  ]
+    chores.toFullname("devebot-dp-wrapper1", "sublibService"),
+    chores.toFullname("devebot-dp-wrapper2", "sublibService")
+  ];
 }
 
 module.exports = Service;
