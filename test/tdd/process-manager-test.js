@@ -1,19 +1,19 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var assert = require("chai").assert;
-var path = require("path");
-var util = require("util");
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var Envcloak = require("envcloak");
-var envcloak = Envcloak.instance;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const assert = require("chai").assert;
+const path = require("path");
+const util = require("util");
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const Envcloak = require("envcloak");
+const envcloak = Envcloak.instance;
 
 describe("tdd:lib:core:process-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var issueInspector = lab.getIssueInspector();
+  let issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
@@ -27,13 +27,13 @@ describe("tdd:lib:core:process-manager", function() {
   });
 
   it("process with 'pm_id'~6, 'instances'~3 will run in cluster mode, as a master", function() {
-    var localEnv = new Envcloak({
+    let localEnv = new Envcloak({
       presets: {
         pm_id: "6",
         instances: "3"
       }
     });
-    var processManager = lab.createProcessManager(null);
+    let processManager = lab.createProcessManager(null);
     assert.equal(processManager.available, true);
     assert.equal(processManager.id, 6);
     assert.equal(processManager.total, 3);
@@ -42,13 +42,13 @@ describe("tdd:lib:core:process-manager", function() {
   });
 
   it("process with 'pm_id'~3, 'instances'~2 will run in cluster mode, as a worker", function() {
-    var localEnv = new Envcloak({
+    let localEnv = new Envcloak({
       presets: {
         pm_id: "3",
         instances: "2"
       }
     });
-    var processManager = lab.createProcessManager(null);
+    let processManager = lab.createProcessManager(null);
     assert.equal(processManager.available, true);
     assert.equal(processManager.id, 3);
     assert.equal(processManager.total, 2);
@@ -57,12 +57,12 @@ describe("tdd:lib:core:process-manager", function() {
   });
 
   it("process with 'pm_id'~3, undefined 'instances' will run in single mode", function() {
-    var localEnv = new Envcloak({
+    let localEnv = new Envcloak({
       presets: {
         pm_id: "3"
       }
     });
-    var processManager = lab.createProcessManager(null);
+    let processManager = lab.createProcessManager(null);
     assert.equal(processManager.available, false);
     assert.equal(processManager.id, 3);
     assert.isUndefined(processManager.total);
@@ -71,12 +71,12 @@ describe("tdd:lib:core:process-manager", function() {
   });
 
   it("process with undefined 'pm_id', 'instances'~1 will run in single mode", function() {
-    var localEnv = new Envcloak({
+    let localEnv = new Envcloak({
       presets: {
         instances: "1"
       }
     });
-    var processManager = lab.createProcessManager(null);
+    let processManager = lab.createProcessManager(null);
     assert.equal(processManager.available, false);
     assert.isUndefined(processManager.id);
     assert.equal(processManager.total, 1);

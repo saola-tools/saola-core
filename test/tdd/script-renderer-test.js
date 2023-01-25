@@ -16,8 +16,8 @@ const sinon = require("sinon");
 describe("tdd:lib:core:script-renderer", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var issueInspector = lab.getIssueInspector();
-  var {loggingFactory, schemaValidator} = lab.createBasicServices();
+  let issueInspector = lab.getIssueInspector();
+  let {loggingFactory, schemaValidator} = lab.createBasicServices();
 
   before(function() {
     envcloak.setup({
@@ -31,18 +31,18 @@ describe("tdd:lib:core:script-renderer", function() {
   });
 
   describe("WebSocketOutlet", function() {
-    var ScriptRenderer = lab.acquireDevebotModule("backbone/script-renderer");
-    var WebSocketOutlet = ScriptRenderer.__get__("WebSocketOutlet");
-    var ws = { send: function() {} };
-    var outlet = new WebSocketOutlet({
+    let ScriptRenderer = lab.acquireDevebotModule("backbone/script-renderer");
+    let WebSocketOutlet = ScriptRenderer.__get__("WebSocketOutlet");
+    let ws = { send: function() {} };
+    let outlet = new WebSocketOutlet({
         ws: ws,
         logger: loggingFactory.getLogger(),
         tracer: loggingFactory.getTracer(),
         schemaValidator: schemaValidator
       });
-    var testSend = function(state, supposed, expected) {
-      var wsStub = null;
-      var output = new Promise(function(resolve, reject) {
+    let testSend = function(state, supposed, expected) {
+      let wsStub = null;
+      let output = new Promise(function(resolve, reject) {
         wsStub = sinon.stub(ws, "send").callsFake(function(message) {
           false && console.log("Received message: %s", message);
           if (lodash.isEqual(JSON.parse(message), expected)) {
@@ -58,7 +58,7 @@ describe("tdd:lib:core:script-renderer", function() {
       });
       return output;
     };
-    var loggingStore = {};
+    let loggingStore = {};
 
     before(function() {
       assert.isNotNull(WebSocketOutlet);
@@ -218,17 +218,17 @@ describe("tdd:lib:core:script-renderer", function() {
   });
 
   describe("standardizeOutput()", function() {
-    var ScriptRenderer = lab.acquireDevebotModule("backbone/script-renderer");
-    var standardizeOutput = ScriptRenderer.__get__("standardizeOutput");
+    let ScriptRenderer = lab.acquireDevebotModule("backbone/script-renderer");
+    let standardizeOutput = ScriptRenderer.__get__("standardizeOutput");
 
-    var jsonOutput = {
+    let jsonOutput = {
       type: "json",
       title: "JSON format example",
       data: {
         text: "Any JSON object"
       }
     };
-    var objectOutput = {
+    let objectOutput = {
       type: "object",
       title: "Object/Record format example",
       data: {
@@ -240,7 +240,7 @@ describe("tdd:lib:core:script-renderer", function() {
         value: "Value"
       }
     };
-    var tableOutput = {
+    let tableOutput = {
       type: "table",
       title: "Table/Grid format example",
       data: [{
@@ -262,7 +262,7 @@ describe("tdd:lib:core:script-renderer", function() {
         name: "Name"
       }
     };
-    var invalidObjectFormat = {
+    let invalidObjectFormat = {
       type: "object",
       title: "Object/Record format example",
       data: {
@@ -273,31 +273,31 @@ describe("tdd:lib:core:script-renderer", function() {
     };
 
     it("standardize valid json-type output correctly", function() {
-      var expected = [jsonOutput];
+      let expected = [jsonOutput];
       assert.deepEqual(standardizeOutput(schemaValidator,  jsonOutput, true), expected);
       assert.deepEqual(standardizeOutput(schemaValidator, [jsonOutput], true), expected);
     });
 
     it("standardize valid object-type output correctly", function() {
-      var expected = [objectOutput];
+      let expected = [objectOutput];
       assert.deepEqual(standardizeOutput(schemaValidator,  objectOutput, true), expected);
       assert.deepEqual(standardizeOutput(schemaValidator, [objectOutput], true), expected);
     });
 
     it("standardize valid table-type output correctly", function() {
-      var expected = [tableOutput];
+      let expected = [tableOutput];
       assert.deepEqual(standardizeOutput(schemaValidator,  tableOutput, true), expected);
       assert.deepEqual(standardizeOutput(schemaValidator, [tableOutput], true), expected);
     });
 
     it("standardize composed of output formats correctly", function() {
-      var mixed = [jsonOutput, tableOutput, objectOutput];
-      var expected = [jsonOutput, tableOutput, objectOutput];
+      let mixed = [jsonOutput, tableOutput, objectOutput];
+      let expected = [jsonOutput, tableOutput, objectOutput];
       assert.deepEqual(standardizeOutput(schemaValidator,  mixed, true), expected);
     });
 
     it("standardizing invalid formats will return JSON output", function() {
-      var expected = [{
+      let expected = [{
         type: "json",
         title: constx.WEBSOCKET.MSG_ON.FAILED,
         data: invalidObjectFormat

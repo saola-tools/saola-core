@@ -1,17 +1,17 @@
 "use strict";
 
-var Temporify = require("temporify");
-var path = require("path");
-var _ = require("lodash");
+const Temporify = require("temporify");
+const path = require("path");
+const _ = require("lodash");
 
-var helper = require("../index");
-var appboxDefault = require("../gen/appbox-default");
-var bridgeDefault = require("../gen/bridge-default");
+const helper = require("../index");
+const appboxDefault = require("../gen/appbox-default");
+const bridgeDefault = require("../gen/bridge-default");
 
 describe.skip("tdd:devebot:core:config-constraints", function() {
   this.timeout(60000);
 
-  var bridgePkgs = _.map(_.range(1, 3), function(idx) {
+  let bridgePkgs = _.map(_.range(1, 3), function(idx) {
     return {
       name: "bridge" + idx,
       builder: bridgeDefault({
@@ -21,7 +21,7 @@ describe.skip("tdd:devebot:core:config-constraints", function() {
     };
   });
 
-  var appDemo = appboxDefault({
+  let appDemo = appboxDefault({
     application: {
       name: "demo-app",
       port: 17700,
@@ -47,7 +47,7 @@ describe.skip("tdd:devebot:core:config-constraints", function() {
   // console.log('Home: %s', appDemo.homedir);
   // console.log('Stats: %s', JSON.stringify(appDemo.stats(), null, 2));
 
-  var app, flow;
+  let app, flow;
 
   before(function() {
     app = require(appDemo.homedir);

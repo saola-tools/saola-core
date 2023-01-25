@@ -1,24 +1,25 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var path = require("path");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const path = require("path");
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 describe("tdd:lib:utils:chores", function() {
   describe("loadServiceByNames()", function() {
-    var serviceFolder = lab.getLibHome("testcode/services");
-    var serviceNames = ["service1", "service2"];
+    let serviceFolder = lab.getLibHome("testcode/services");
+    let serviceNames = ["service1", "service2"];
     it("should load service modules by names", function() {
-      var serviceMap = {};
-      var result = chores.loadServiceByNames(serviceMap, serviceFolder, serviceNames);
+      let serviceMap = {};
+      let result = chores.loadServiceByNames(serviceMap, serviceFolder, serviceNames);
       assert.equal(result, serviceMap);
       assert.sameMembers(lodash.keys(serviceMap), serviceNames);
-      var totalConstructors = lodash.reduce(lodash.values(serviceMap), function(sum, f) {
+      let totalConstructors = lodash.reduce(lodash.values(serviceMap), function(sum, f) {
         return lodash.isFunction(f) ? (sum + 1) : sum;
       }, 0);
       assert.equal(totalConstructors, serviceNames.length);
@@ -55,7 +56,7 @@ describe("tdd:lib:utils:chores", function() {
 
   describe("getBlockRef()", function() {
     it("should generate blockRef correctly", function() {
-      var file = path.join(lab.getLibHome("plugin1"), "lib/services/plugin1-service.js");
+      let file = path.join(lab.getLibHome("plugin1"), "lib/services/plugin1-service.js");
       assert.equal(chores.getBlockRef(file), chores.toFullname(constx.FRAMEWORK.NAME, "plugin1Service"));
       assert.equal(chores.getBlockRef(file, "mymodule"), chores.toFullname("mymodule", "plugin1Service"));
       assert.equal(chores.getBlockRef(file, [ "mymodule" ]), chores.toFullname("mymodule", "plugin1Service"));
@@ -82,7 +83,7 @@ describe("tdd:lib:utils:chores", function() {
 
   describe("transformBeanName()", function() {
     it("should transform by default pattern correctly", function() {
-      var someObj = { name: "object" };
+      let someObj = { name: "object" };
       assert.deepEqual(chores.transformBeanName(someObj),  someObj);
       assert.equal(chores.transformBeanName(1024),  1024);
       assert.equal(chores.transformBeanName(true),  true);
@@ -95,7 +96,7 @@ describe("tdd:lib:utils:chores", function() {
 
   describe("deepFreeze()", function() {
     it("should prevent assign value to freezed fields", function() {
-      var obj = { a: { b: { c: 1000 }, f: function(x) { return x; } } };
+      let obj = { a: { b: { c: 1000 }, f: function(x) { return x; } } };
       chores.deepFreeze(obj);
       assert.throws(function() { obj.s = {}; }, TypeError);
       assert.throws(function() { delete obj.a; }, TypeError);
@@ -142,7 +143,7 @@ describe("tdd:lib:utils:chores", function() {
 
   describe("argumentsToArray()", function() {
     it("should convert arguments to array correctly", function() {
-      var range = {};
+      let range = {};
       function convert () {
         return chores.argumentsToArray(arguments, range.left, range.right);
       }

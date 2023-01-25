@@ -1,26 +1,26 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var loader = Devebot.require("loader");
-var debugx = Devebot.require("pinbug")("tdd:devebot:base:runner");
-var assert = require("chai").assert;
-var path = require("path");
-var util = require("util");
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
-var Runner = lab.acquireDevebotModule("runner");
-var WsServerMock = Runner.__get__("WsServerMock");
-var WsClientMock = Runner.__get__("WsClientMock");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const loader = Devebot.require("loader");
+const debugx = Devebot.require("pinbug")("tdd:devebot:base:runner");
+const assert = require("chai").assert;
+const path = require("path");
+const util = require("util");
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
+const Runner = lab.acquireDevebotModule("runner");
+const WsServerMock = Runner.__get__("WsServerMock");
+const WsClientMock = Runner.__get__("WsClientMock");
 
-describe.skip("tdd:devebot:base:runner", function() {
+describe.skip("tdd:lib:base:runner", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var issueInspector = lab.getIssueInspector();
+  let issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
@@ -36,9 +36,9 @@ describe.skip("tdd:devebot:base:runner", function() {
   });
 
   describe("MockWsServer", function() {
-    var {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
-    var L = loggingFactory.getLogger();
-    var T = loggingFactory.getTracer();
+    let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
+    let L = loggingFactory.getLogger();
+    let T = loggingFactory.getTracer();
 
     after(function() {
       LogTracer.clearInterceptors();

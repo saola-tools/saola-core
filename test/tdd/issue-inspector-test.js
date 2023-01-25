@@ -1,19 +1,20 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var chores = Devebot.require("chores");
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+const assert = require("chai").assert;
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
-describe("tdd:devebot:core:issue-inspector", function() {
+describe("tdd:lib:core:issue-inspector", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var issueInspector = lab.getIssueInspector();
+  let issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
@@ -28,13 +29,13 @@ describe("tdd:devebot:core:issue-inspector", function() {
   });
 
   describe("barrier()", function() {
-    var loggingStore = {};
+    let loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "issueInspector"), "examine" ],
           storeTo: "errorSummary"
         }]
       }]);
@@ -45,7 +46,7 @@ describe("tdd:devebot:core:issue-inspector", function() {
     });
 
     it("pass if no error has occurred", function() {
-      var unhook = lab.preventExit();
+      let unhook = lab.preventExit();
       issueInspector.collect();
       issueInspector.collect({
         hasError: false,
@@ -66,12 +67,12 @@ describe("tdd:devebot:core:issue-inspector", function() {
         type: "TRIGGER"
       }]);
       issueInspector.barrier({exitOnError: true});
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 0);
     });
 
     it("exit if there are some errors occurred", function() {
-      var unhook = lab.preventExit({ throwException: true });
+      let unhook = lab.preventExit({ throwException: true });
 
       function doSomething () {
         issueInspector.collect();
@@ -105,7 +106,7 @@ describe("tdd:devebot:core:issue-inspector", function() {
 
       assert.throws(doSomething, lab.ProcessExitError);
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
     });
 

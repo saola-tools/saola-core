@@ -10,6 +10,7 @@ const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
 const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 describe("bdd:app:loading-invalid-modules", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -35,9 +36,9 @@ describe("bdd:app:loading-invalid-modules", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "issueInspector"), "examine" ],
           matchingField: "invoker",
-          matchingRule: chores.toFullname(constx.FRAMEWORK.NAME, "bootstrap"),
+          matchingRule: chores.toFullname(FRAMEWORK_PACKAGE_NAME, "bootstrap"),
           storeTo: "errorSummary"
         }]
       }]);
@@ -98,9 +99,9 @@ describe("bdd:app:loading-invalid-modules", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine", "sandbox-loading" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "issueInspector"), "examine", "sandbox-loading" ],
           matchingField: "invoker",
-          matchingRule: chores.toFullname(constx.FRAMEWORK.NAME, "kernel"),
+          matchingRule: chores.toFullname(FRAMEWORK_PACKAGE_NAME, "kernel"),
           storeTo: "errorSummary"
         }]
       }]);
@@ -170,9 +171,9 @@ describe("bdd:app:loading-invalid-modules", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine", "sandbox-loading" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "issueInspector"), "examine", "sandbox-loading" ],
           matchingField: "invoker",
-          matchingRule: chores.toFullname(constx.FRAMEWORK.NAME, "kernel"),
+          matchingRule: chores.toFullname(FRAMEWORK_PACKAGE_NAME, "kernel"),
           storeTo: "errorSummary"
         }]
       }]);

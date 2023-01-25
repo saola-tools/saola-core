@@ -1,16 +1,16 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
-var chores = Devebot.require("chores");
-var errors = require(lab.getDevebotModule("utils/errors"));
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
-var sinon = require("sinon");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const lodash = Devebot.require("lodash");
+const chores = Devebot.require("chores");
+const errors = require(lab.getDevebotModule("utils/errors"));
+const assert = require("chai").assert;
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
+const sinon = require("sinon");
 
 describe("tdd:lib:core:object-decorator", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -26,17 +26,17 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapMethod()", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var wrapMethod = ObjectDecorator.__get__("wrapMethod");
-    var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
-    var refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() };
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let wrapMethod = ObjectDecorator.__get__("wrapMethod");
+    let loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
+    let refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() };
 
     beforeEach(function() {
       loggingFactory.resetHistory();
     });
 
     it("skip wrapping a method if texture is undefined or disabled", function() {
-      var originalMethod = sinon.stub();
+      let originalMethod = sinon.stub();
       assert.equal(wrapMethod(refs, originalMethod), originalMethod);
       assert.equal(wrapMethod(refs, originalMethod, {}), originalMethod);
       assert.equal(wrapMethod(refs, originalMethod, { texture: {} }), originalMethod);
@@ -49,10 +49,10 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should wrap a method if texture is defined", function() {
-      var originalMethod = sinon.stub();
-      var wrappedMethod = wrapMethod(refs, originalMethod, { texture: { logging: {} } });
+      let originalMethod = sinon.stub();
+      let wrappedMethod = wrapMethod(refs, originalMethod, { texture: { logging: {} } });
       assert.notEqual(wrappedMethod, originalMethod);
-      var result = wrappedMethod({ msg: "Hello world" }, { reqId: LogConfig.getLogID() });
+      let result = wrappedMethod({ msg: "Hello world" }, { reqId: LogConfig.getLogID() });
       assert.equal(originalMethod.callCount, 1);
       assert.equal(originalMethod.firstCall.args.length, 2);
       assert.deepEqual(originalMethod.firstCall.args[0], { msg: "Hello world" });
@@ -60,7 +60,7 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should wrap logging for a general method correctly", function() {
-      var object = {
+      let object = {
         sampleMethod: sinon.stub().callsFake(function() {
           return {
             description: "Echo message",
@@ -68,7 +68,7 @@ describe("tdd:lib:core:object-decorator", function() {
           };
         })
       };
-      var texture = {
+      let texture = {
         methodType: "general",
         logging: {
           onRequest: {
@@ -97,13 +97,13 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var wrappedMethod = wrapMethod(refs, object.sampleMethod, {
+      let wrappedMethod = wrapMethod(refs, object.sampleMethod, {
         texture: texture,
         object: object,
         objectName: "sampleObject",
         methodName: "sampleMethod"
       });
-      var output = wrappedMethod({ msg: "Welcome to devebot" }, { reqId: LogConfig.getLogID() });
+      let output = wrappedMethod({ msg: "Welcome to devebot" }, { reqId: LogConfig.getLogID() });
       assert.equal(object.sampleMethod.callCount, 1);
       assert.equal(object.sampleMethod.firstCall.args.length, 2);
       assert.deepEqual(object.sampleMethod.firstCall.args[0], { msg: "Welcome to devebot" });
@@ -111,12 +111,12 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should wrap logging for a promise method correctly", function(done) {
-      var object = {
+      let object = {
         sampleMethod: sinon.stub().callsFake(function() {
           return Promise.resolve(arguments[0]);
         })
       };
-      var texture = {
+      let texture = {
         methodType: "promise",
         logging: {
           enabled: true,
@@ -147,13 +147,13 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var wrappedMethod = wrapMethod(refs, object.sampleMethod, {
+      let wrappedMethod = wrapMethod(refs, object.sampleMethod, {
         texture: texture,
         object: object,
         objectName: "sampleObject",
         methodName: "sampleMethod"
       });
-      var p = wrappedMethod({ msg: "Welcome to devebot" }, { reqId: LogConfig.getLogID() });
+      let p = wrappedMethod({ msg: "Welcome to devebot" }, { reqId: LogConfig.getLogID() });
       p = p.then(function(result) {
         assert.equal(object.sampleMethod.callCount, 1);
         assert.equal(object.sampleMethod.firstCall.args.length, 2);
@@ -165,7 +165,7 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should wrap logging for a callback method correctly", function(done) {
-      var texture = {
+      let texture = {
         methodType: "callback",
         logging: {
           enabled: true,
@@ -196,13 +196,13 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var object = {
+      let object = {
         sampleMethod: sinon.stub().callsFake(function() {
           let cb = arguments[arguments.length - 1];
           cb(null, { msg: "This is a normal result" });
         })
       };
-      var wrappedMethod = wrapMethod(refs, object.sampleMethod, {
+      let wrappedMethod = wrapMethod(refs, object.sampleMethod, {
         texture: texture,
         object: object,
         objectName: "sampleObject",
@@ -215,19 +215,19 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapConstructor()", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
-    var wrapConstructor = ObjectDecorator.__get__("wrapConstructor");
-    var wrapObject = sinon.stub().callsFake(function(refs, object, opts) {
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
+    let wrapConstructor = ObjectDecorator.__get__("wrapConstructor");
+    let wrapObject = sinon.stub().callsFake(function(refs, object, opts) {
       return object;
     });
     ObjectDecorator.__set__("wrapObject", wrapObject);
 
-    var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
-    var refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() };
+    let loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
+    let refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() };
 
     // Default example constructor
-    var ExampleConstructor = function () {};
+    let ExampleConstructor = function () {};
       ExampleConstructor.prototype.calculate = function() {};
       ExampleConstructor.prototype.getConfig = function() {};
 
@@ -236,7 +236,7 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("skip wrapping a constructor if textureOfBean is undefined or null", function() {
-      var opts = {};
+      let opts = {};
       assert.equal(wrapConstructor(refs, ExampleConstructor, opts), ExampleConstructor);
       opts = { textureOfBean: null };
       assert.equal(wrapConstructor(refs, ExampleConstructor, opts), ExampleConstructor);
@@ -245,21 +245,21 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("skip wrapping a constructor if textureOfBean.enabled is false", function() {
-      var opts = { textureOfBean: {
+      let opts = { textureOfBean: {
         enabled: false,
         methods: {
           calculate: DEFAULT_TEXTURE,
           getConfig: DEFAULT_TEXTURE
         }
       } };
-      var WrappedConstructor = wrapConstructor(refs, ExampleConstructor, opts);
+      let WrappedConstructor = wrapConstructor(refs, ExampleConstructor, opts);
       assert.equal(WrappedConstructor, ExampleConstructor);
     });
 
     it("should wrap a constructor that will be invoked by the \"new\" operator", function() {
-      var opts = { textureOfBean: {} };
+      let opts = { textureOfBean: {} };
 
-      var ExampleConstructor = function () {};
+      let ExampleConstructor = function () {};
       ExampleConstructor.prototype.method1 = sinon.stub().callsFake(function(str) {
         false && console.log(" - method1(%s)", JSON.stringify(arguments, null, 2));
         return "My name is '" + str + "'";
@@ -273,14 +273,14 @@ describe("tdd:lib:core:object-decorator", function() {
       ExampleConstructor = sinon.spy(ExampleConstructor);
 
       // compare wrapped constructor ~ original constructor
-      var WrappedConstructor = wrapConstructor(refs, ExampleConstructor, opts);
+      let WrappedConstructor = wrapConstructor(refs, ExampleConstructor, opts);
       assert.notEqual(WrappedConstructor, ExampleConstructor);
       assert.equal(WrappedConstructor.prototype, ExampleConstructor.prototype);
       assert.equal(WrappedConstructor.argumentSchema, ExampleConstructor.argumentSchema);
       assert.equal(WrappedConstructor.referenceList, ExampleConstructor.referenceList);
 
       // create new instance
-      var obj = new WrappedConstructor("Example", { enabled: true });
+      let obj = new WrappedConstructor("Example", { enabled: true });
       assert.isFunction(obj.method1);
       assert.isFunction(obj.method2);
       assert.equal(obj.method1("Peter Pan"), "My name is 'Peter Pan'");
@@ -292,16 +292,16 @@ describe("tdd:lib:core:object-decorator", function() {
 
       // assert wrapObject has been called with correct parameters
       assert.equal(wrapObject.callCount, 1);
-      var wrapObject_args = wrapObject.firstCall.args;
+      let wrapObject_args = wrapObject.firstCall.args;
       assert.deepEqual(wrapObject_args[0], refs);
       assert.isTrue(wrapObject_args[1] instanceof ExampleConstructor);
       assert.deepEqual(wrapObject_args[2], opts);
     });
 
     it("should wrap a constructor that will be invoked as a function", function() {
-      var opts = { textureOfBean: {} };
+      let opts = { textureOfBean: {} };
 
-      var ExampleConstructor = function () {
+      let ExampleConstructor = function () {
         this.number = 100;
         this.string = "Hello world";
       };
@@ -318,18 +318,18 @@ describe("tdd:lib:core:object-decorator", function() {
       ExampleConstructor = sinon.spy(ExampleConstructor);
 
       // compare wrapped constructor ~ original constructor
-      var ObjectBuilder = wrapConstructor(refs, ExampleConstructor, opts);
+      let ObjectBuilder = wrapConstructor(refs, ExampleConstructor, opts);
       assert.notEqual(ObjectBuilder, ExampleConstructor);
       assert.equal(ObjectBuilder.prototype, ExampleConstructor.prototype);
       assert.equal(ObjectBuilder.argumentSchema, ExampleConstructor.argumentSchema);
       assert.equal(ObjectBuilder.referenceList, ExampleConstructor.referenceList);
 
       // create new instance
-      var wrapper = function(args) {
+      let wrapper = function(args) {
         return ObjectBuilder.apply(this, args);
       };
       wrapper.prototype = ObjectBuilder.prototype;
-      var obj = new wrapper(["Example", { enabled: true }]);
+      let obj = new wrapper(["Example", { enabled: true }]);
       assert.isFunction(obj.method1);
       assert.isFunction(obj.method2);
       assert.equal(obj.method1("Peter Pan"), "My name is 'Peter Pan'");
@@ -344,12 +344,12 @@ describe("tdd:lib:core:object-decorator", function() {
 
       // assert wrapObject has been called with correct parameters
       assert.equal(wrapObject.callCount, 1);
-      var wrapObject_args = wrapObject.firstCall.args;
+      let wrapObject_args = wrapObject.firstCall.args;
       assert.deepEqual(wrapObject_args[0], refs);
       assert.deepEqual(wrapObject_args[2], opts);
 
       // verify original object
-      var wrappedObject = wrapObject_args[1];
+      let wrappedObject = wrapObject_args[1];
       assert.isTrue(wrappedObject instanceof ExampleConstructor);
       assert.equal(wrappedObject.number, 100);
       assert.equal(wrappedObject.string, "Hello world");
@@ -357,13 +357,13 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapObject()", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
-    var wrapObject = ObjectDecorator.__get__("wrapObject");
-    var wrapMethod = sinon.spy(ObjectDecorator.__get__("wrapMethod"));
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
+    let wrapObject = ObjectDecorator.__get__("wrapObject");
+    let wrapMethod = sinon.spy(ObjectDecorator.__get__("wrapMethod"));
     ObjectDecorator.__set__("wrapMethod", wrapMethod);
-    var loggingFactory = lab.createLoggingFactoryMock();
-    var refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() };
+    let loggingFactory = lab.createLoggingFactoryMock();
+    let refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() };
 
     beforeEach(function() {
       loggingFactory.resetHistory();
@@ -371,12 +371,12 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should wrap all of public methods of a bean with empty textureStore", function() {
-      var textureOfBean = {};
-      var mockedBean = {
+      let textureOfBean = {};
+      let mockedBean = {
         method1: sinon.stub(),
         method2: sinon.stub()
       };
-      var wrappedBean = wrapObject(refs, mockedBean, {
+      let wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: "originalBean"
       });
@@ -396,7 +396,7 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should wrap all of public methods of a bean", function() {
-      var textureOfBean = {
+      let textureOfBean = {
         methods: {
           method1: {
             methodType: "general", // promise, callback, general
@@ -431,11 +431,11 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var mockedBean = {
+      let mockedBean = {
         method1: sinon.stub(),
         method2: sinon.stub()
       };
-      var wrappedBean = wrapObject(refs, mockedBean, {
+      let wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: "originalBean"
       });
@@ -449,7 +449,7 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should wrap deep located methods of a bean", function() {
-      var methodTexture = {
+      let methodTexture = {
         methodType: "general", // promise, callback, general
         logging: {
           enabled: true,
@@ -480,14 +480,14 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var textureOfBean = {
+      let textureOfBean = {
         methods: {
           level1: { method1: lodash.cloneDeep(methodTexture) },
           level2: { sub2: { method2: lodash.cloneDeep(methodTexture) } },
           level3: { sub3: { bean3: { method3: lodash.cloneDeep(methodTexture) } } }
         }
       };
-      var mockedBean = {
+      let mockedBean = {
         level1: { method1: sinon.stub() },
         level2: { sub2: { method2: sinon.stub() } },
         level3: { sub3: { bean3: new function() {
@@ -497,7 +497,7 @@ describe("tdd:lib:core:object-decorator", function() {
           };
         }()}}
       };
-      var wrappedBean = wrapObject(refs, mockedBean, {
+      let wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: "originalBean"
       });
@@ -533,7 +533,7 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should support decorated context for nested method calls", function() {
-      var textureOfBean = {
+      let textureOfBean = {
         methods: {
           start: lodash.cloneDeep(DEFAULT_TEXTURE),
           level1: { method1: lodash.cloneDeep(DEFAULT_TEXTURE) },
@@ -544,7 +544,7 @@ describe("tdd:lib:core:object-decorator", function() {
           } } }
         }
       };
-      var mockedBean = {
+      let mockedBean = {
         start: function(amount, opts) {
           return this.report(amount, opts);
         },
@@ -568,14 +568,14 @@ describe("tdd:lib:core:object-decorator", function() {
           };
         }()}}
       };
-      var wrappedBean = wrapObject(refs, mockedBean, {
+      let wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: "originalBean"
       });
       // number of requests
-      var requestCount = 5;
+      let requestCount = 5;
       // invokes start() "requestCount" times
-      var msgs = lodash.range(requestCount).map(function(i) {
+      let msgs = lodash.range(requestCount).map(function(i) {
         return wrappedBean.start(100 + i);
       });
       assert.deepEqual(msgs, [
@@ -605,17 +605,17 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should skip wrapping the result of method call that returns the owner", function() {
-      var textureOfBean = {
+      let textureOfBean = {
         methods: {
           parent: { child: { self: lodash.cloneDeep(DEFAULT_TEXTURE) } }
         }
       };
-      var mockedBean = {
+      let mockedBean = {
         parent: { child: { self: function() {
           return this;
         } } }
       };
-      var wrappedBean = wrapObject(refs, mockedBean, {
+      let wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: "originalBean"
       });
@@ -633,7 +633,7 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     function createWrappedBean (textureOpts) {
-      var textureOfBean = {
+      let textureOfBean = {
         methods: {
           start: lodash.cloneDeep(DEFAULT_TEXTURE),
           parent: { child: { getBean: lodash.assign(textureOpts, DEFAULT_TEXTURE) } },
@@ -641,7 +641,7 @@ describe("tdd:lib:core:object-decorator", function() {
           "parent.child.getBean.summarize": lodash.cloneDeep(DEFAULT_TEXTURE)
         }
       };
-      var mockedBean = {
+      let mockedBean = {
         start: function(amount, opts) {
           return this.parent.child.getBean().invoice(amount, opts);
         },
@@ -661,7 +661,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }();
         } } }
       };
-      var wrappedBean = wrapObject(refs, mockedBean, {
+      let wrappedBean = wrapObject(refs, mockedBean, {
         textureOfBean: textureOfBean,
         objectName: "originalBean"
       });
@@ -747,19 +747,19 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should support logging templates that contain the streamId", function() {
-      var loggingFactory = lab.createLoggingFactoryMock();
+      let loggingFactory = lab.createLoggingFactoryMock();
       function _extractLogInfo (tracerStore) {
         return {
           add: tracerStore.add.map(arg => lodash.pick(arg, ["requestId", "streamId"])),
           toMessage: tracerStore.toMessage.map(arg => lodash.pick(arg, ["text"])),
         };
       }
-      var textureOfBean = {};
-      var mockedBean = {
+      let textureOfBean = {};
+      let mockedBean = {
         method1: sinon.stub(),
         method2: sinon.stub(),
       };
-      var wrappedBean = wrapObject(refs, mockedBean, {
+      let wrappedBean = wrapObject(refs, mockedBean, {
         logger: loggingFactory.getLogger(),
         tracer: loggingFactory.getTracer(),
         textureOfBean: textureOfBean,
@@ -770,7 +770,7 @@ describe("tdd:lib:core:object-decorator", function() {
       });
       wrappedBean.method1("Hello world!", { requestId: "HJbTk3z4TFiBcNbG6SCycg" });
       wrappedBean.method2("How are you?", { requestId: "sad2rAQ0TX-C55idWsAMrw" });
-      var tracerStore = loggingFactory.getTracerStore();
+      let tracerStore = loggingFactory.getTracerStore();
       false && console.log(JSON.stringify(tracerStore, null, 2));
       assert.deepEqual(_extractLogInfo(tracerStore), {
         "add": [
@@ -810,29 +810,29 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapBridgeDialect(): propagates a method call to local functions", function() {
-    var loggingFactory = lab.createLoggingFactoryMock();
-    var nameResolver = lab.getNameResolver(["simple-plugin"], ["simple-bridge"]);
-    var issueInspector = {};
-    var schemaValidator = {};
+    let loggingFactory = lab.createLoggingFactoryMock();
+    let nameResolver = lab.getNameResolver(["simple-plugin"], ["simple-bridge"]);
+    let issueInspector = {};
+    let schemaValidator = {};
 
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var getTextureOfBridge = lab.spyModuleFunction(ObjectDecorator, "getTextureOfBridge");
-    var getBridgeFullname = lab.spyModuleFunction(ObjectDecorator, "getBridgeFullname");
-    var wrapConstructor = lab.stubModuleFunction(ObjectDecorator, "wrapConstructor");
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let getTextureOfBridge = lab.spyModuleFunction(ObjectDecorator, "getTextureOfBridge");
+    let getBridgeFullname = lab.spyModuleFunction(ObjectDecorator, "getBridgeFullname");
+    let wrapConstructor = lab.stubModuleFunction(ObjectDecorator, "wrapConstructor");
 
     // define Constructor
-    var mockedBean = {
+    let mockedBean = {
       method1: sinon.stub(),
       method2: sinon.stub()
     };
-    var MockedConstructor = function() {
+    let MockedConstructor = function() {
       this.method1 = mockedBean.method1;
       this.method2 = mockedBean.method2;
     };
 
     it("propagates a method call to local functions properly (popular case)", function() {
-      var textureConfig = {};
-      var objectDecorator = new ObjectDecorator({
+      let textureConfig = {};
+      let objectDecorator = new ObjectDecorator({
         appInfo: {},
         profileConfig: {},
         textureConfig: textureConfig,
@@ -842,7 +842,7 @@ describe("tdd:lib:core:object-decorator", function() {
         schemaValidator: schemaValidator
       });
 
-      var WrappedConstructor = objectDecorator.wrapBridgeDialect(MockedConstructor, {
+      let WrappedConstructor = objectDecorator.wrapBridgeDialect(MockedConstructor, {
         pluginName: "simple-plugin",
         bridgeName: "simple-bridge",
         dialectName: "connector",
@@ -850,34 +850,34 @@ describe("tdd:lib:core:object-decorator", function() {
       });
 
       assert.isTrue(getTextureOfBridge.calledOnce);
-      var gtobArgs = getTextureOfBridge.firstCall.args[0];
+      let gtobArgs = getTextureOfBridge.firstCall.args[0];
       assert.deepEqual(gtobArgs, {
         textureStore: textureConfig,
         pluginCode: "simplePlugin",
         bridgeCode: "simpleBridge",
         dialectName: "connector",
       });
-      var textureOfBean = getTextureOfBridge.returnValues[0];
+      let textureOfBean = getTextureOfBridge.returnValues[0];
 
       assert.isTrue(getBridgeFullname.calledOnce);
-      var gbfnArgs = getBridgeFullname.firstCall.args[0];
+      let gbfnArgs = getBridgeFullname.firstCall.args[0];
       assert.deepEqual(gbfnArgs, {
         pluginName: "simple-plugin",
         bridgeCode: "simpleBridge",
         dialectName: "connector",
       });
-      var gbfnResult = getBridgeFullname.returnValues[0];
+      let gbfnResult = getBridgeFullname.returnValues[0];
       assert.equal(gbfnResult, "simple-plugin/simpleBridge#connector");
 
       assert.isTrue(wrapConstructor.calledOnce);
       assert.lengthOf(wrapConstructor.firstCall.args, 3);
-      var argContext = wrapConstructor.firstCall.args[0];
+      let argContext = wrapConstructor.firstCall.args[0];
       assert.isObject(argContext);
       assert.equal(argContext.issueInspector, issueInspector);
       assert.equal(argContext.schemaValidator, schemaValidator);
-      var argConstructor = wrapConstructor.firstCall.args[1];
+      let argConstructor = wrapConstructor.firstCall.args[1];
       assert.equal(argConstructor, MockedConstructor);
-      var argOptions = wrapConstructor.firstCall.args[2];
+      let argOptions = wrapConstructor.firstCall.args[2];
       assert.equal(argOptions.textureOfBean, textureOfBean);
       assert.equal(argOptions.objectName, "simple-plugin/simpleBridge#connector");
       assert.isString(argOptions.streamId);
@@ -887,17 +887,17 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapBridgeDialect()", function() {
-    var loggingFactory = lab.createLoggingFactoryMock();
-    var nameResolver = lab.getNameResolver(["simple-plugin"], ["simple-bridge"]);
-    var issueInspector = {};
-    var schemaValidator = {};
+    let loggingFactory = lab.createLoggingFactoryMock();
+    let nameResolver = lab.getNameResolver(["simple-plugin"], ["simple-bridge"]);
+    let issueInspector = {};
+    let schemaValidator = {};
 
     beforeEach(function() {
       loggingFactory.resetHistory();
     });
 
     it("should wrap all of methods of a bridge-dialect with empty textureStore", function() {
-      var objectDecorator = lab.initBackboneService("object-decorator", {
+      let objectDecorator = lab.initBackboneService("object-decorator", {
         appInfo: {},
         profileConfig: {},
         textureConfig: {},
@@ -908,17 +908,17 @@ describe("tdd:lib:core:object-decorator", function() {
       });
 
       // define Constructor
-      var mockedBean = {
+      let mockedBean = {
         method1: sinon.stub(),
         method2: sinon.stub()
       };
-      var MockedConstructor = function() {
+      let MockedConstructor = function() {
         this.method1 = mockedBean.method1;
         this.method2 = mockedBean.method2;
       };
 
       // wrapping Constructor
-      var WrappedConstructor = objectDecorator.wrapBridgeDialect(MockedConstructor, {
+      let WrappedConstructor = objectDecorator.wrapBridgeDialect(MockedConstructor, {
         pluginName: "simple-plugin",
         bridgeName: "simple-bridge",
         dialectName: "connector",
@@ -926,7 +926,7 @@ describe("tdd:lib:core:object-decorator", function() {
       });
       assert.equal(WrappedConstructor, MockedConstructor);
 
-      var wrappedBean = new WrappedConstructor();
+      let wrappedBean = new WrappedConstructor();
       // invoke method1() 3 times
       lodash.range(3).forEach(function() {
         wrappedBean.method1();
@@ -939,19 +939,19 @@ describe("tdd:lib:core:object-decorator", function() {
       assert.equal(mockedBean.method2.callCount, 2);
 
       //verify tracer
-      var tracerStore = loggingFactory.getTracerStore();
-      var logState_method1 = tracerStore.add.filter(item => {
+      let tracerStore = loggingFactory.getTracerStore();
+      let logState_method1 = tracerStore.add.filter(item => {
         return ("requestId" in item && item.methodName === "method1");
       });
       assert.equal(logState_method1.length, 0);
-      var logState_method2 = tracerStore.add.filter(item => {
+      let logState_method2 = tracerStore.add.filter(item => {
         return ("requestId" in item && item.methodName === "method2");
       });
       assert.equal(logState_method2.length, 0);
     });
 
     it("should wrap deep located methods of a bridge-dialect", function() {
-      var methodTexture = {
+      let methodTexture = {
         methodType: "general", // promise, callback, general
         logging: {
           enabled: true,
@@ -982,7 +982,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var textureConfig = {
+      let textureConfig = {
         bridges: {
           simpleBridge: {
             simplePlugin: {
@@ -996,7 +996,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var objectDecorator = lab.initBackboneService("object-decorator", {
+      let objectDecorator = lab.initBackboneService("object-decorator", {
         appInfo: {},
         profileConfig: {},
         textureConfig: textureConfig,
@@ -1005,15 +1005,15 @@ describe("tdd:lib:core:object-decorator", function() {
         issueInspector: issueInspector,
         schemaValidator: schemaValidator
       });
-      var mockedBean = {
+      let mockedBean = {
         level1: { method1: sinon.stub() },
         level2: { sub2: { method2: sinon.stub() } }
       };
-      var MockedConstructor = function() {
+      let MockedConstructor = function() {
         this.level1 = mockedBean.level1;
         this.level2 = mockedBean.level2;
       };
-      var WrappedConstructor = objectDecorator.wrapBridgeDialect(MockedConstructor, {
+      let WrappedConstructor = objectDecorator.wrapBridgeDialect(MockedConstructor, {
         pluginName: "simple-plugin",
         bridgeName: "simple-bridge",
         dialectName: "connector",
@@ -1021,7 +1021,7 @@ describe("tdd:lib:core:object-decorator", function() {
       });
       assert.notEqual(WrappedConstructor, MockedConstructor);
 
-      var wrappedBean = new WrappedConstructor();
+      let wrappedBean = new WrappedConstructor();
       // invokes method1() 3 times
       lodash.range(3).forEach(function() {
         wrappedBean.level1.method1("Hello world", {
@@ -1037,12 +1037,12 @@ describe("tdd:lib:core:object-decorator", function() {
       });
       assert.equal(mockedBean.level2.sub2.method2.callCount, 5);
       //verify tracer
-      var tracerStore = loggingFactory.getTracerStore();
-      var logState_method1 = tracerStore.add.filter(item => {
+      let tracerStore = loggingFactory.getTracerStore();
+      let logState_method1 = tracerStore.add.filter(item => {
         return ("requestId" in item && item.methodName === "method1");
       });
       assert.equal(logState_method1.length, 3 * 2);
-      var logState_method2 = tracerStore.add.filter(item => {
+      let logState_method2 = tracerStore.add.filter(item => {
         return ("requestId" in item && item.methodName === "method2");
       });
       assert.equal(logState_method2.length, 5 * 2);
@@ -1050,35 +1050,35 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapPluginGadget(): propagates a method call to local functions", function() {
-    var loggingFactory = lab.createLoggingFactoryMock();
-    var nameResolver = lab.getNameResolver(["simple-plugin"], []);
-    var issueInspector = {};
-    var schemaValidator = {};
+    let loggingFactory = lab.createLoggingFactoryMock();
+    let nameResolver = lab.getNameResolver(["simple-plugin"], []);
+    let issueInspector = {};
+    let schemaValidator = {};
 
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
-    var extractStreamId = lab.spyModuleFunction(ObjectDecorator, "extractStreamId");
-    var getTextureOfPlugin = lab.spyModuleFunction(ObjectDecorator, "getTextureOfPlugin");
-    var getPluginFullname = lab.spyModuleFunction(ObjectDecorator, "getPluginFullname");
-    var determineOptionValue = lab.spyModuleFunction(ObjectDecorator, "determineOptionValue");
-    var wrapConstructor = lab.stubModuleFunction(ObjectDecorator, "wrapConstructor");
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
+    let extractStreamId = lab.spyModuleFunction(ObjectDecorator, "extractStreamId");
+    let getTextureOfPlugin = lab.spyModuleFunction(ObjectDecorator, "getTextureOfPlugin");
+    let getPluginFullname = lab.spyModuleFunction(ObjectDecorator, "getPluginFullname");
+    let determineOptionValue = lab.spyModuleFunction(ObjectDecorator, "determineOptionValue");
+    let wrapConstructor = lab.stubModuleFunction(ObjectDecorator, "wrapConstructor");
 
     // define Constructor
-    var mockedBean = {
+    let mockedBean = {
       method1: sinon.stub(),
       method2: sinon.stub()
     };
-    var MockedConstructor = function() {
+    let MockedConstructor = function() {
       this.method1 = mockedBean.method1;
       this.method2 = mockedBean.method2;
     };
 
     it("propagates a method call to local functions properly (popular case)", function() {
-      var appInfo = {
+      let appInfo = {
         name: "example-application",
         version: "0.17.7",
       };
-      var profileConfig = {
+      let profileConfig = {
         decorator: {
           logging: {
             enabled: true,
@@ -1086,8 +1086,8 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var methodTexture = lodash.assign({}, DEFAULT_TEXTURE);
-      var textureConfig = {
+      let methodTexture = lodash.assign({}, DEFAULT_TEXTURE);
+      let textureConfig = {
         plugins: {
           "simplePlugin": {
             services: {
@@ -1100,7 +1100,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var objectDecorator = new ObjectDecorator({
+      let objectDecorator = new ObjectDecorator({
         appInfo: appInfo,
         profileConfig: profileConfig,
         textureConfig: textureConfig,
@@ -1110,7 +1110,7 @@ describe("tdd:lib:core:object-decorator", function() {
         schemaValidator: schemaValidator
       });
 
-      var WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
+      let WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
         pluginName: "simple-plugin",
         gadgetType: "services",
         gadgetName: "originalBean",
@@ -1119,7 +1119,7 @@ describe("tdd:lib:core:object-decorator", function() {
 
       // verify extractStreamId() call
       assert.isTrue(extractStreamId.calledOnce);
-      var esidArgs = extractStreamId.firstCall.args;
+      let esidArgs = extractStreamId.firstCall.args;
       assert.lengthOf(esidArgs, 3);
       assert.equal(esidArgs[0], profileConfig.decorator.logging);
       assert.equal(esidArgs[1], appInfo);
@@ -1127,23 +1127,23 @@ describe("tdd:lib:core:object-decorator", function() {
 
       // verify getTextureOfPlugin() call
       assert.isTrue(getTextureOfPlugin.calledOnce);
-      var gtobArgs = getTextureOfPlugin.firstCall.args[0];
+      let gtobArgs = getTextureOfPlugin.firstCall.args[0];
       assert.deepEqual(gtobArgs, {
         textureStore: textureConfig,
         pluginCode: "simplePlugin",
         gadgetType: "services",
         gadgetName: "originalBean",
       });
-      var textureOfBean = getTextureOfPlugin.returnValues[0];
+      let textureOfBean = getTextureOfPlugin.returnValues[0];
 
       // verify getPluginFullname() call
       assert.isTrue(getPluginFullname.calledOnce);
-      var gbfnArgs = getPluginFullname.firstCall.args[0];
+      let gbfnArgs = getPluginFullname.firstCall.args[0];
       assert.deepEqual(gbfnArgs, {
         pluginName: "simple-plugin",
         gadgetName: "originalBean",
       });
-      var gbfnResult = getPluginFullname.returnValues[0];
+      let gbfnResult = getPluginFullname.returnValues[0];
       assert.equal(gbfnResult, "simple-plugin/originalBean");
 
       // verify determineOptionValue() call
@@ -1152,13 +1152,13 @@ describe("tdd:lib:core:object-decorator", function() {
       // verify wrapConstructor() call
       assert.isTrue(wrapConstructor.calledOnce);
       assert.lengthOf(wrapConstructor.firstCall.args, 3);
-      var argContext = wrapConstructor.firstCall.args[0];
+      let argContext = wrapConstructor.firstCall.args[0];
       assert.isObject(argContext);
       assert.equal(argContext.issueInspector, issueInspector);
       assert.equal(argContext.schemaValidator, schemaValidator);
-      var argConstructor = wrapConstructor.firstCall.args[1];
+      let argConstructor = wrapConstructor.firstCall.args[1];
       assert.equal(argConstructor, MockedConstructor);
-      var argOptions = wrapConstructor.firstCall.args[2];
+      let argOptions = wrapConstructor.firstCall.args[2];
       assert.equal(argOptions.textureOfBean, textureOfBean);
       assert.equal(argOptions.objectName, "simple-plugin/originalBean");
       assert.isString(argOptions.streamId);
@@ -1168,17 +1168,17 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapPluginGadget()", function() {
-    var loggingFactory = lab.createLoggingFactoryMock();
-    var nameResolver = lab.getNameResolver(["simple-plugin"], []);
-    var issueInspector = {};
-    var schemaValidator = {};
+    let loggingFactory = lab.createLoggingFactoryMock();
+    let nameResolver = lab.getNameResolver(["simple-plugin"], []);
+    let issueInspector = {};
+    let schemaValidator = {};
 
     beforeEach(function() {
       loggingFactory.resetHistory();
     });
 
     it("should wrap all of methods of a plugin-gadget with empty textureStore", function() {
-      var objectDecorator = lab.initBackboneService("object-decorator", {
+      let objectDecorator = lab.initBackboneService("object-decorator", {
         appInfo: {},
         profileConfig: {},
         textureConfig: {},
@@ -1187,15 +1187,15 @@ describe("tdd:lib:core:object-decorator", function() {
         issueInspector: issueInspector,
         schemaValidator: schemaValidator
       });
-      var mockedBean = {
+      let mockedBean = {
         method1: sinon.stub(),
         method2: sinon.stub()
       };
-      var MockedConstructor = function() {
+      let MockedConstructor = function() {
         this.method1 = mockedBean.method1;
         this.method2 = mockedBean.method2;
       };
-      var WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
+      let WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
         pluginName: "simple-plugin",
         gadgetType: "services",
         gadgetName: "originalBean",
@@ -1203,7 +1203,7 @@ describe("tdd:lib:core:object-decorator", function() {
       });
       assert.equal(WrappedConstructor, MockedConstructor);
 
-      var wrappedBean = new WrappedConstructor();
+      let wrappedBean = new WrappedConstructor();
       // invoke method1() 3 times
       lodash.range(3).forEach(function() {
         wrappedBean.method1();
@@ -1216,7 +1216,7 @@ describe("tdd:lib:core:object-decorator", function() {
       assert.equal(mockedBean.method2.callCount, 2);
 
       //verify tracer
-      var tracerStore = loggingFactory.getTracerStore();
+      let tracerStore = loggingFactory.getTracerStore();
       let logState_method1 = tracerStore.add.filter(item => {
         return ("requestId" in item && item.methodName === "method1");
       });
@@ -1228,7 +1228,7 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should wrap deep located methods of a plugin-gadget", function() {
-      var methodTexture = {
+      let methodTexture = {
         methodType: "general", // promise, callback, general
         logging: {
           enabled: true,
@@ -1259,7 +1259,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var textureConfig = {
+      let textureConfig = {
         plugins: {
           "simplePlugin": {
             services: {
@@ -1273,7 +1273,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var objectDecorator = lab.initBackboneService("object-decorator", {
+      let objectDecorator = lab.initBackboneService("object-decorator", {
         appInfo: {},
         profileConfig: {},
         textureConfig: textureConfig,
@@ -1282,15 +1282,15 @@ describe("tdd:lib:core:object-decorator", function() {
         issueInspector: issueInspector,
         schemaValidator: schemaValidator
       });
-      var mockedBean = {
+      let mockedBean = {
         level1: { method1: sinon.stub() },
         level2: { sub2: { method2: sinon.stub() } }
       };
-      var MockedConstructor = function() {
+      let MockedConstructor = function() {
         this.level1 = mockedBean.level1;
         this.level2 = mockedBean.level2;
       };
-      var WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
+      let WrappedConstructor = objectDecorator.wrapPluginGadget(MockedConstructor, {
         pluginName: "simple-plugin",
         gadgetType: "services",
         gadgetName: "originalBean",
@@ -1298,7 +1298,7 @@ describe("tdd:lib:core:object-decorator", function() {
       });
       assert.notEqual(WrappedConstructor, MockedConstructor);
 
-      var wrappedBean = new WrappedConstructor();
+      let wrappedBean = new WrappedConstructor();
       // invokes method1() 3 times
       lodash.range(3).forEach(function() {
         wrappedBean.level1.method1("Hello world", {
@@ -1315,7 +1315,7 @@ describe("tdd:lib:core:object-decorator", function() {
       assert.equal(mockedBean.level2.sub2.method2.callCount, 5);
 
       //verify tracer
-      var tracerStore = loggingFactory.getTracerStore();
+      let tracerStore = loggingFactory.getTracerStore();
       let logState_method1 = tracerStore.add.filter(item => {
         return ("requestId" in item && item.methodName === "method1");
       });
@@ -1328,18 +1328,18 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("LoggingInterceptor", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var LoggingInterceptor = ObjectDecorator.__get__("LoggingInterceptor");
-    var DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let LoggingInterceptor = ObjectDecorator.__get__("LoggingInterceptor");
+    let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
 
     function _captureTracerState (tracer) {
-      var tracerState = { add: { callArgs: [] }, toMessage: { callArgs: [] } };
+      let tracerState = { add: { callArgs: [] }, toMessage: { callArgs: [] } };
       tracerState.add.callCount = tracer.add.callCount;
-      for (var i=0; i<tracerState.add.callCount; i++) {
+      for (let i=0; i<tracerState.add.callCount; i++) {
         tracerState.add.callArgs.push(lodash.cloneDeep(tracer.add.getCall(i).args));
       }
       tracerState.toMessage.callCount = tracer.toMessage.callCount;
-      for (var i=0; i<tracerState.toMessage.callCount; i++) {
+      for (let i=0; i<tracerState.toMessage.callCount; i++) {
         let toMessageArgs = lodash.cloneDeep(tracer.toMessage.getCall(i).args);
         if (lodash.isArray(toMessageArgs) && toMessageArgs.length > 1 && toMessageArgs[1] == "direct") {
           toMessageArgs.splice(1);
@@ -1361,7 +1361,7 @@ describe("tdd:lib:core:object-decorator", function() {
       if (!lodash.isArray(params.scenarios)) {
         params.scenarios = [params.scenarios];
       }
-      var texture = {
+      let texture = {
         logging: {
           onRequest: {
             getRequestId: function(args, context) {
@@ -1393,7 +1393,7 @@ describe("tdd:lib:core:object-decorator", function() {
         texture.methodType = params.methodType;
       }
 
-      var object = {
+      let object = {
         sampleMethod: sinon.stub().callsFake(function(data, opts) {
           opts = opts || {};
           let scenario = params.scenarios[opts.index];
@@ -1415,9 +1415,9 @@ describe("tdd:lib:core:object-decorator", function() {
         })
       };
 
-      var loggingFactory = lab.createLoggingFactoryMock({ instanceId: "NS3Csx_9RTC6NBI9HXVv0Q" });
+      let loggingFactory = lab.createLoggingFactoryMock({ instanceId: "NS3Csx_9RTC6NBI9HXVv0Q" });
 
-      var loggingProxy = new LoggingInterceptor({
+      let loggingProxy = new LoggingInterceptor({
         object: object,
         objectName: params.methodType + "Mode",
         method: object.sampleMethod,
@@ -1429,13 +1429,13 @@ describe("tdd:lib:core:object-decorator", function() {
       });
 
       let p = Promise.mapSeries(params.scenarios, function(scenario, index) {
-        var flowState = { index: index, scenario: scenario };
+        let flowState = { index: index, scenario: scenario };
         let methodType = scenario.methodType || params.methodType;
 
-        var parameters = lodash.concat(scenario.input, [{ reqId: scenario.requestId, index }]);
+        let parameters = lodash.concat(scenario.input, [{ reqId: scenario.requestId, index }]);
 
         if (methodType === "promise") {
-          var output = loggingProxy.capsule.apply(null, parameters);
+          let output = loggingProxy.capsule.apply(null, parameters);
           flowState.result = {};
           return output.then(function (value) {
             flowState.result.value = lodash.cloneDeep(value);
@@ -1459,7 +1459,7 @@ describe("tdd:lib:core:object-decorator", function() {
               }
               onResolved(flowState);
             });
-            var output = loggingProxy.capsule.apply(null, parameters);
+            let output = loggingProxy.capsule.apply(null, parameters);
             assert.isUndefined(output);
           }).then(function(flowState) {
             flowState.tracer = _captureTracerState(loggingFactory.getTracer());
@@ -1502,7 +1502,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["value"]);
@@ -1568,7 +1568,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["error"]);
@@ -1635,7 +1635,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["value"]);
@@ -1708,7 +1708,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["error"]);
@@ -1782,7 +1782,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["value"]);
@@ -1848,7 +1848,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["error"]);
@@ -1915,7 +1915,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["value"]);
@@ -1981,7 +1981,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["error"]);
@@ -2048,7 +2048,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["value"]);
@@ -2115,7 +2115,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["error"]);
@@ -2183,7 +2183,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["value"]);
@@ -2249,7 +2249,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }).then(function(r) {
         false && console.log(JSON.stringify(r, null, 2));
-        var step = r.flowStates[0];
+        let step = r.flowStates[0];
 
         // verify result
         assert.hasAllKeys(step.result, ["error"]);
@@ -2342,7 +2342,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
 
           // verify tracer
-          var actionFlow = "implicit";
+          let actionFlow = "implicit";
           if (i >= 2) { // preciseThreshold
             actionFlow = "explicit";
           }
@@ -2456,7 +2456,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
 
           // verify tracer
-          var actionFlow = "implicit";
+          let actionFlow = "implicit";
           if (i >= 2) { // preciseThreshold
             actionFlow = "explicit";
           }
@@ -2548,7 +2548,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
 
           // verify tracer
-          var actionFlow = "implicit";
+          let actionFlow = "implicit";
           if (i >= 2) { // preciseThreshold
             actionFlow = "explicit";
           }
@@ -2753,17 +2753,17 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("function at the end of arguments list must not be changed when auto-detecting methodType", function() {
-      var loggingFactory = lab.createLoggingFactoryMock({ instanceId: "X25Xv2HNQPyeD22SyjuCiw" });
-      var func = function() {};
+      let loggingFactory = lab.createLoggingFactoryMock({ instanceId: "X25Xv2HNQPyeD22SyjuCiw" });
+      let func = function() {};
       func.Router = function(req, res, next) {};
 
-      var object = {
+      let object = {
         sampleMethod: sinon.stub().callsFake(function() {
           return chores.argumentsToArray(arguments);
         })
       };
 
-      var loggingProxy = new LoggingInterceptor({
+      let loggingProxy = new LoggingInterceptor({
         object: object,
         objectName: "object",
         method: object.sampleMethod,
@@ -2773,15 +2773,15 @@ describe("tdd:lib:core:object-decorator", function() {
         tracer: loggingFactory.getTracer()
       });
 
-      var output = loggingProxy.capsule("Hello world", {requestId: "94f03511d4e2" }, func);
-      var lastArg = output[output.length - 1];
+      let output = loggingProxy.capsule("Hello world", {requestId: "94f03511d4e2" }, func);
+      let lastArg = output[output.length - 1];
 
       assert.isFunction(lastArg);
       assert.notEqual(lastArg, func);
       assert.isFunction(lastArg.Router);
       assert.equal(lastArg.Router, func.Router);
 
-      var tracerState = _captureTracerState(loggingFactory.getTracer());
+      let tracerState = _captureTracerState(loggingFactory.getTracer());
       assert.equal(tracerState.add.callCount, 2);
       assert.deepEqual(tracerState.add.callArgs, lodash.fill(Array(2), [
         {
@@ -2812,23 +2812,23 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("getRequestId/extractInfo runs on its own context (reqContext)", function() {
-      var loggingFactory = lab.createLoggingFactoryMock();
+      let loggingFactory = lab.createLoggingFactoryMock();
 
-      var timeoutMap = {
+      let timeoutMap = {
         "Req#0": 150,
         "Req#1": 5,
         "Req#2": 100
       };
-      var object = {
+      let object = {
         sampleMethod: sinon.stub().callsFake(function() {
-          var requestId = arguments[1].requestId;
-          var callback = arguments[2];
-          var timeout = timeoutMap[requestId] || 0;
+          let requestId = arguments[1].requestId;
+          let callback = arguments[2];
+          let timeout = timeoutMap[requestId] || 0;
           setTimeout(callback, timeout);
         })
       };
 
-      var loggingProxy = new LoggingInterceptor({
+      let loggingProxy = new LoggingInterceptor({
         object: object,
         objectName: "object",
         method: object.sampleMethod,
@@ -2862,7 +2862,7 @@ describe("tdd:lib:core:object-decorator", function() {
         tracer: loggingFactory.getTracer()
       });
 
-      var p = Promise.map(lodash.range(3), function(i) {
+      let p = Promise.map(lodash.range(3), function(i) {
         return new Promise(function(onResolved, onRejected) {
           loggingProxy.capsule("Msg#" + i, { requestId: "Req#" + i }, function(error, value) {
             onResolved({error, value});
@@ -2871,12 +2871,12 @@ describe("tdd:lib:core:object-decorator", function() {
       });
 
       p = p.then(function(results) {
-        var tracerStore = loggingFactory.getTracerStore();
+        let tracerStore = loggingFactory.getTracerStore();
         false && console.log("toMessage: %s", JSON.stringify(tracerStore.toMessage, null, 2));
-        var toMessageState = lodash.filter(tracerStore.toMessage, function(logMsg) {
+        let toMessageState = lodash.filter(tracerStore.toMessage, function(logMsg) {
           return logMsg && logMsg.info && logMsg.info.requestId;
         });
-        var toMessageInfos = lodash.map(toMessageState, function(logMsg) {
+        let toMessageInfos = lodash.map(toMessageState, function(logMsg) {
           return logMsg.info.requestId === logMsg.info.messageOf;
         });
         assert.lengthOf(toMessageInfos, 6);
@@ -2888,17 +2888,17 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("defined streamId must be propagated to logState object", function() {
-      var loggingFactory = lab.createLoggingFactoryMock();
+      let loggingFactory = lab.createLoggingFactoryMock();
 
-      var object = {
+      let object = {
         sampleMethod: sinon.stub().callsFake(function() {
-          var opts = arguments[1];
-          var output = { message: arguments[0], requestId: opts.requestId };
+          let opts = arguments[1];
+          let output = { message: arguments[0], requestId: opts.requestId };
           switch (opts.methodType) {
             case "promise":
               return Promise.resolve(output);
             case "callback":
-              var callback = arguments[2];
+              let callback = arguments[2];
               return callback(null, output);
             case "general":
               return output;
@@ -2906,7 +2906,7 @@ describe("tdd:lib:core:object-decorator", function() {
         })
       };
 
-      var loggingProxy = new LoggingInterceptor({
+      let loggingProxy = new LoggingInterceptor({
         object: object,
         objectName: "object",
         method: object.sampleMethod,
@@ -2928,7 +2928,7 @@ describe("tdd:lib:core:object-decorator", function() {
         methodType: "promise"
       }).then(function(result) {
         assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e1" });
-        var tracerStore = loggingFactory.getTracerStore();
+        let tracerStore = loggingFactory.getTracerStore();
         false && console.log(JSON.stringify(tracerStore, null, 2));
         assert.deepEqual(_extractLogInfo(tracerStore), {
           add: [
@@ -2948,21 +2948,21 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("LoggingInterceptor", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var LoggingInterceptor = ObjectDecorator.__get__("LoggingInterceptor");
-    var DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let LoggingInterceptor = ObjectDecorator.__get__("LoggingInterceptor");
+    let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
 
-    var loggingFactory = lab.createLoggingFactoryMock();
+    let loggingFactory = lab.createLoggingFactoryMock();
 
-    var object = {
+    let object = {
       sampleMethod: sinon.stub().callsFake(function() {
-        var opts = arguments[1];
-        var output = { message: arguments[0], requestId: opts.requestId };
+        let opts = arguments[1];
+        let output = { message: arguments[0], requestId: opts.requestId };
         switch (opts.methodType) {
           case "promise":
             return Promise.resolve(output);
           case "callback":
-            var callback = arguments[2];
+            let callback = arguments[2];
             return callback(null, output);
           case "general":
             return output;
@@ -2970,7 +2970,7 @@ describe("tdd:lib:core:object-decorator", function() {
       })
     };
 
-    var loggingProxy = new LoggingInterceptor({
+    let loggingProxy = new LoggingInterceptor({
       object: object,
       objectName: "object",
       method: object.sampleMethod,
@@ -3016,7 +3016,7 @@ describe("tdd:lib:core:object-decorator", function() {
         methodType: "promise"
       }).then(function(result) {
         assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e1" });
-        var tracerStore = loggingFactory.getTracerStore();
+        let tracerStore = loggingFactory.getTracerStore();
         false && console.log(JSON.stringify(tracerStore, null, 2));
         assert.deepEqual(_extractLogInfo(tracerStore), {
           add: [
@@ -3056,7 +3056,7 @@ describe("tdd:lib:core:object-decorator", function() {
           methodType: "callback"
         }, function callback (error, result) {
           assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e2" });
-          var tracerStore = loggingFactory.getTracerStore();
+          let tracerStore = loggingFactory.getTracerStore();
           false && console.log(JSON.stringify(tracerStore, null, 2));
           assert.deepEqual(_extractLogInfo(tracerStore), {
             add: [
@@ -3093,12 +3093,12 @@ describe("tdd:lib:core:object-decorator", function() {
 
     it("wrap getRequestId/extractInfo invocations inside try-catch blocks: general", function() {
       // methodType: general
-      var result = loggingProxy.capsule("Hello world", {
+      let result = loggingProxy.capsule("Hello world", {
         requestId: "94f03511d4e3",
         methodType: "general"
       });
       assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e3" });
-      var tracerStore = loggingFactory.getTracerStore();
+      let tracerStore = loggingFactory.getTracerStore();
       false && console.log(JSON.stringify(tracerStore, null, 2));
       assert.deepEqual(_extractLogInfo(tracerStore), {
         add: [
@@ -3131,11 +3131,11 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("MockingInterceptor", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var MockingInterceptor = ObjectDecorator.__get__("MockingInterceptor");
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let MockingInterceptor = ObjectDecorator.__get__("MockingInterceptor");
 
     it("mocking will be skipped if texture.enabled is false", function() {
-      var texture = {
+      let texture = {
         enabled: false,
         mocking: {
           mappings: {
@@ -3146,11 +3146,11 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var method = sinon.stub();
+      let method = sinon.stub();
       method.withArgs("Will be success").returns("Thank you");
       method.withArgs("Will be failure").throws(new Error("Failed anyway"));
-      var mockingProxy = new MockingInterceptor({texture, method});
-      var output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let mockingProxy = new MockingInterceptor({texture, method});
+      let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
       assert.equal(output, "Thank you");
       assert.throw(function() {
         return mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
@@ -3161,7 +3161,7 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("mocking will be skipped if texture.mocking.enabled is false", function() {
-      var texture = {
+      let texture = {
         mocking: {
           enabled: false,
           mappings: {
@@ -3172,11 +3172,11 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var method = sinon.stub();
+      let method = sinon.stub();
       method.withArgs("Will be success").returns("Thank you");
       method.withArgs("Will be failure").throws(new Error("Failed anyway"));
-      var mockingProxy = new MockingInterceptor({texture, method});
-      var output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let mockingProxy = new MockingInterceptor({texture, method});
+      let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
       assert.equal(output, "Thank you");
       assert.throw(function() {
         return mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
@@ -3187,12 +3187,12 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("mocking will be skipped if texture.mocking.mappings not found", function() {
-      var texture = { mocking: { } };
-      var method = sinon.stub();
+      let texture = { mocking: { } };
+      let method = sinon.stub();
       method.withArgs("Will be success").returns("Thank you");
       method.withArgs("Will be failure").throws(new Error("Failed anyway"));
-      var mockingProxy = new MockingInterceptor({texture, method});
-      var output = mockingProxy.capsule("Will be success");
+      let mockingProxy = new MockingInterceptor({texture, method});
+      let output = mockingProxy.capsule("Will be success");
       assert.equal(output, "Thank you");
       assert.throw(function() {
         return mockingProxy.capsule("Will be failure");
@@ -3201,12 +3201,12 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("mocking will be skipped if texture.mocking.mappings is empty", function() {
-      var texture = { mocking: { mappings: {} } };
-      var method = sinon.stub();
+      let texture = { mocking: { mappings: {} } };
+      let method = sinon.stub();
       method.withArgs("Will be success").returns("Thank you");
       method.withArgs("Will be failure").throws(new Error("Failed anyway"));
-      var mockingProxy = new MockingInterceptor({texture, method});
-      var output = mockingProxy.capsule("Will be success");
+      let mockingProxy = new MockingInterceptor({texture, method});
+      let output = mockingProxy.capsule("Will be success");
       assert.equal(output, "Thank you");
       assert.throw(function() {
         return mockingProxy.capsule("Will be failure");
@@ -3215,10 +3215,10 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("mocking return a Promise when texture.methodType is \"promise", function() {
-      var generate = sinon.stub();
+      let generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
-      var texture = {
+      let texture = {
         methodType: "promise",
         mocking: {
           mappings: {
@@ -3233,13 +3233,13 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var method = sinon.stub();
-      var mockingProxy = new MockingInterceptor({texture, method});
+      let method = sinon.stub();
+      let mockingProxy = new MockingInterceptor({texture, method});
 
-      var p = Promise.resolve();
+      let p = Promise.resolve();
 
       p = p.then(function() {
-        var output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+        let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
         assert.isFunction(output.then);
         assert.isTrue(output.isFulfilled());
         return output.then(function(result) {
@@ -3248,7 +3248,7 @@ describe("tdd:lib:core:object-decorator", function() {
       });
 
       p = p.then(function() {
-        var output = mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+        let output = mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
         assert.isFunction(output.then);
         assert.isTrue(output.isRejected());
         return output.catch(function(error) {
@@ -3262,10 +3262,10 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("mocking push result to callback if texture.methodType is \"callback\" and the last argument is a callback", function() {
-      var generate = sinon.stub();
+      let generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
-      var texture = {
+      let texture = {
         methodType: "callback",
         mocking: {
           mappings: {
@@ -3280,8 +3280,8 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var method = sinon.stub();
-      var mockingProxy = new MockingInterceptor({texture, method});
+      let method = sinon.stub();
+      let mockingProxy = new MockingInterceptor({texture, method});
 
       return Promise.all([
         new Promise(function(onResolved, onRejected) {
@@ -3304,10 +3304,10 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("mocking return a normal result if texture.methodType is undefined and the last argument is NOT a callback", function() {
-      var generate = sinon.stub();
+      let generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
-      var texture = {
+      let texture = {
         mocking: {
           mappings: {
             "success": {
@@ -3321,10 +3321,10 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var method = sinon.stub();
-      var mockingProxy = new MockingInterceptor({texture, method});
+      let method = sinon.stub();
+      let mockingProxy = new MockingInterceptor({texture, method});
 
-      var output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
       assert.equal(output, "Action completed");
 
       assert.throw(function() {
@@ -3336,10 +3336,10 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("unmatched mocking request will invoke the target method if [unmatched] is undefined", function() {
-      var generate = sinon.stub();
+      let generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
-      var texture = {
+      let texture = {
         mocking: {
           mappings: {
             "matched#1": {
@@ -3358,16 +3358,16 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       };
-      var method = sinon.stub().returns("From original method");
-      var mockingProxy = new MockingInterceptor({texture, method});
+      let method = sinon.stub().returns("From original method");
+      let mockingProxy = new MockingInterceptor({texture, method});
 
-      var out_1 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let out_1 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
       assert.equal(out_1, "Action completed");
 
-      var out_2 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh"});
+      let out_2 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh"});
       assert.equal(out_2, "Action completed");
 
-      var out_3 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh"});
+      let out_3 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh"});
       assert.equal(out_3, "From original method");
 
       assert.equal(method.callCount, 1);
@@ -3375,10 +3375,10 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("unmatched mocking request will throw MockNotFoundError if [unmatched] is exception", function() {
-      var generate = sinon.stub();
+      let generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
-      var texture = {
+      let texture = {
         mocking: {
           mappings: {
             "matched#1": {
@@ -3398,13 +3398,13 @@ describe("tdd:lib:core:object-decorator", function() {
           unmatched: "exception"
         }
       };
-      var method = sinon.stub();
-      var mockingProxy = new MockingInterceptor({texture, method});
+      let method = sinon.stub();
+      let mockingProxy = new MockingInterceptor({texture, method});
 
-      var out_1 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let out_1 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
       assert.equal(out_1, "Action completed");
 
-      var out_2 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh"});
+      let out_2 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh"});
       assert.equal(out_2, "Action completed");
 
       assert.throw(function() {
@@ -3417,10 +3417,10 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("getTextureByPath()", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
-    var getTextureByPath = ObjectDecorator.__get__("getTextureByPath");
-    var textureOfBean = {
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
+    let getTextureByPath = ObjectDecorator.__get__("getTextureByPath");
+    let textureOfBean = {
       methods: {
         bean: {
           connect: DEFAULT_TEXTURE
@@ -3488,10 +3488,10 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("getTextureOfBridge()", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
-    var getTextureOfBridge = ObjectDecorator.__get__("getTextureOfBridge");
-    var textureStore = {
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
+    let getTextureOfBridge = ObjectDecorator.__get__("getTextureOfBridge");
+    let textureStore = {
       bridges: {
         sampleBridge: {
           samplePlugin: {
@@ -3526,10 +3526,10 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("getTextureOfPlugin()", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
-    var getTextureOfPlugin = ObjectDecorator.__get__("getTextureOfPlugin");
-    var textureStore = {
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
+    let getTextureOfPlugin = ObjectDecorator.__get__("getTextureOfPlugin");
+    let textureStore = {
       application: {
         reducers: {
           etaReducer: {
@@ -3624,8 +3624,8 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("detectRequestId()", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var detectRequestId = ObjectDecorator.__get__("detectRequestId");
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let detectRequestId = ObjectDecorator.__get__("detectRequestId");
     it("should keep safety with any kind of arguments", function() {
       assert.doesNotThrow(function() {
         detectRequestId();
@@ -3634,7 +3634,7 @@ describe("tdd:lib:core:object-decorator", function() {
         detectRequestId([]);
         detectRequestId([null, 1, true, [], {}, function() {}]);
       }, Error);
-      var reqId = (function() {
+      let reqId = (function() {
         return detectRequestId(arguments);
       })(
         { a: {}, b: null, c: function() {}, d: [], e: {} },
@@ -3646,9 +3646,9 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("extractStreamId()", function() {
-    var ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
-    var extractStreamId = ObjectDecorator.__get__("extractStreamId");
-    var appInfo = {
+    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let extractStreamId = ObjectDecorator.__get__("extractStreamId");
+    let appInfo = {
       name: "example",
       version: "0.1.1",
       framework: {
@@ -3668,11 +3668,11 @@ describe("tdd:lib:core:object-decorator", function() {
     });
 
     it("should keep safety with an unsafe streamIdExtractor", function() {
-      var streamId;
+      let streamId;
       assert.doesNotThrow(function() {
         streamId = extractStreamId({
           streamIdExtractor: function() {
-            var obj;
+            let obj;
             return obj.streamId;
           }
         }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt");

@@ -1,22 +1,22 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
+const lab = require("../index");
+const Devebot = lab.getDevebot();
 Devebot.require("logolite"); // load the Devebot's logolite first
-var assert = require("liberica").assert;
-var mockit = require("liberica").mockit;
-var sinon = require("liberica").sinon;
-var path = require("path");
+const assert = require("liberica").assert;
+const mockit = require("liberica").mockit;
+const sinon = require("liberica").sinon;
+const path = require("path");
 
-describe("tdd:devebot:core:mapping-loader", function() {
-  var loggingFactory = lab.createLoggingFactoryMock();
-  var CTX = {
+describe("tdd:lib:core:mapping-loader", function() {
+  let loggingFactory = lab.createLoggingFactoryMock();
+  let CTX = {
     L: loggingFactory.getLogger(),
     T: loggingFactory.getTracer(),
   };
 
   describe("traverseDir()", function() {
-    var MappingLoader, traverseDir, traverseDirRecursively;
+    let MappingLoader, traverseDir, traverseDirRecursively;
 
     beforeEach(function() {
       MappingLoader = mockit.acquire("mapping-loader", {
@@ -129,8 +129,8 @@ describe("tdd:devebot:core:mapping-loader", function() {
   });
 
   describe("traverseDirRecursively()", function() {
-    var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
-    var ctx = {
+    let loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
+    let ctx = {
       L: loggingFactory.getLogger(),
       T: loggingFactory.getTracer(),
       blockRef: "app-restfetch",
@@ -150,7 +150,7 @@ describe("tdd:devebot:core:mapping-loader", function() {
       return [".js"].indexOf(fileinfo.ext) >= 0;
     }
 
-    var MappingLoader, traverseDirRecursively, fs;
+    let MappingLoader, traverseDirRecursively, fs;
 
     beforeEach(function() {
       MappingLoader = mockit.acquire("mapping-loader", {
@@ -248,14 +248,14 @@ describe("tdd:devebot:core:mapping-loader", function() {
   });
 
   describe("loadMappingStore()", function() {
-    var loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
-    var ctx = {
+    let loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
+    let ctx = {
       L: loggingFactory.getLogger(),
       T: loggingFactory.getTracer(),
       blockRef: "app-restfetch",
     };
 
-    var MappingLoader, loadMappingStore, evaluateMappingFile, fs;
+    let MappingLoader, loadMappingStore, evaluateMappingFile, fs;
 
     beforeEach(function() {
       MappingLoader = lab.acquireDevebotModule("backbone/mapping-loader");

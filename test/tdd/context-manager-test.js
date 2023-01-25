@@ -1,21 +1,21 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var Envcloak = require("envcloak");
-var envcloak = Envcloak.instance;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const Envcloak = require("envcloak");
+const envcloak = Envcloak.instance;
 
-describe("tdd:devebot:core:context-manager", function() {
+describe("tdd:lib:core:context-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var sampleProjectName = "state-verification";
-  var issueInspector = lab.getIssueInspector();
+  let sampleProjectName = "state-verification";
+  let issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
@@ -33,12 +33,12 @@ describe("tdd:devebot:core:context-manager", function() {
   });
 
   it("isFeatureSupported() return true with provided features", function() {
-    var localEnv = new Envcloak({
+    let localEnv = new Envcloak({
       presets: {
         STATE_VERIFICATION_FEATURE_ENABLED: "123, abc"
       }
     });
-    var contextManager = lab.getContextManager(sampleProjectName).clearCache();
+    let contextManager = lab.getContextManager(sampleProjectName).clearCache();
     assert.isFalse(contextManager.isFeatureSupported("unknown"));
     assert.isTrue(contextManager.isFeatureSupported("abc"));
     assert.isTrue(contextManager.isFeatureSupported(["123", "abc"]));
@@ -48,13 +48,13 @@ describe("tdd:devebot:core:context-manager", function() {
   });
 
   it("FEATURE_DISABLED has a higher priority than FEATURE_ENABLED", function() {
-    var localEnv = new Envcloak({
+    let localEnv = new Envcloak({
       presets: {
         STATE_VERIFICATION_FEATURE_DISABLED: "abc, def",
         STATE_VERIFICATION_FEATURE_ENABLED: "123, abc"
       }
     });
-    var contextManager = lab.getContextManager(sampleProjectName).clearCache();
+    let contextManager = lab.getContextManager(sampleProjectName).clearCache();
     assert.isFalse(contextManager.isFeatureSupported("abc"));
     assert.isFalse(contextManager.isFeatureSupported(["123", "def"]));
     localEnv.reset();

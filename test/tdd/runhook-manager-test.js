@@ -1,22 +1,23 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var loader = Devebot.require("loader");
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const loader = Devebot.require("loader");
+const assert = require("chai").assert;
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 describe("tdd:lib:core:runhook-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var issueInspector = lab.getIssueInspector();
+  let issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
@@ -30,13 +31,13 @@ describe("tdd:lib:core:runhook-manager", function() {
   });
 
   describe("definition", function() {
-    var loggingStore = {};
+    let loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "runhookManager"), "definition" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "runhookManager"), "definition" ],
           storeTo: "definition"
         }]
       }]);
@@ -47,8 +48,8 @@ describe("tdd:lib:core:runhook-manager", function() {
     });
 
     it("load all of command definitions from routines", function() {
-      var runhookManager = lab.createRunhookManager("fullapp");
-      var commands = lab.simplifyCommands(runhookManager.getDefinitions());
+      let runhookManager = lab.createRunhookManager("fullapp");
+      let commands = lab.simplifyCommands(runhookManager.getDefinitions());
       false && console.log(JSON.stringify(commands, null, 2));
       assert.sameDeepMembers(commands, [
         {
@@ -167,28 +168,28 @@ describe("tdd:lib:core:runhook-manager", function() {
           "options": []
         },
         {
-          "package": constx.FRAMEWORK.NAME,
+          "package": FRAMEWORK_PACKAGE_NAME,
           "name": "applica-info",
           "alias": "app-info",
           "description": "[String]",
           "options": []
         },
         {
-          "package": constx.FRAMEWORK.NAME,
+          "package": FRAMEWORK_PACKAGE_NAME,
           "name": "logger-info",
           "alias": "log-info",
           "description": "[String]",
           "options": []
         },
         {
-          "package": constx.FRAMEWORK.NAME,
+          "package": FRAMEWORK_PACKAGE_NAME,
           "name": "logger-reset",
           "alias": "log-reset",
           "description": "[String]",
           "options": []
         },
         {
-          "package": constx.FRAMEWORK.NAME,
+          "package": FRAMEWORK_PACKAGE_NAME,
           "name": "logger-set",
           "alias": "log-set",
           "description": "[String]",
@@ -214,14 +215,14 @@ describe("tdd:lib:core:runhook-manager", function() {
           ]
         },
         {
-          "package": constx.FRAMEWORK.NAME,
+          "package": FRAMEWORK_PACKAGE_NAME,
           "name": "sandbox-info",
           "alias": "sb-info",
           "description": "[String]",
           "options": []
         },
         {
-          "package": constx.FRAMEWORK.NAME,
+          "package": FRAMEWORK_PACKAGE_NAME,
           "name": "system-info",
           "alias": "sys-info",
           "description": "[String]",
@@ -231,7 +232,7 @@ describe("tdd:lib:core:runhook-manager", function() {
     });
 
     it("check command is available correctly", function() {
-      var runhookManager = lab.createRunhookManager("fullapp");
+      let runhookManager = lab.createRunhookManager("fullapp");
       assert.isFalse(runhookManager.isAvailable({ name: "main-cmd0" }));
       assert.isFalse(runhookManager.isAvailable({ name: "main-cmd0", package: "fullapp" }));
 
@@ -243,7 +244,7 @@ describe("tdd:lib:core:runhook-manager", function() {
       assert.isTrue(runhookManager.isAvailable({ name: "plugin2-routine3", package: "plugin2" }));
       assert.isTrue(runhookManager.isAvailable({ name: "plugin3-routine3", package: "plugin3" }));
       assert.isTrue(runhookManager.isAvailable({ name: "applica-info" }));
-      assert.isTrue(runhookManager.isAvailable({ name: "system-info", package: constx.FRAMEWORK.NAME }));
+      assert.isTrue(runhookManager.isAvailable({ name: "system-info", package: FRAMEWORK_PACKAGE_NAME }));
 
       assert.isFalse(runhookManager.isAvailable({ name: "routine0" }));
       assert.isTrue(runhookManager.isAvailable({ name: "routine0", package: "sub-plugin1" }));
@@ -253,24 +254,24 @@ describe("tdd:lib:core:runhook-manager", function() {
     });
 
     it("retrieve the unique named routine with or without suggested package", function() {
-      var runhookManager = lab.createRunhookManager("fullapp");
+      let runhookManager = lab.createRunhookManager("fullapp");
 
-      var runhook1 = runhookManager.getRunhook({ name: "routine1" });
+      let runhook1 = runhookManager.getRunhook({ name: "routine1" });
       assert.isFunction(runhook1.handler);
 
-      var runhook1_1 = runhookManager.getRunhook({ name: "routine1", package: "sub-routine1" });
+      let runhook1_1 = runhookManager.getRunhook({ name: "routine1", package: "sub-routine1" });
       assert.equal(runhook1_1, runhook1);
 
-      var runhook1_2 = runhookManager.getRunhook({ name: "routine1", package: "sub-routine2" });
+      let runhook1_2 = runhookManager.getRunhook({ name: "routine1", package: "sub-routine2" });
       assert.equal(runhook1_2, runhook1);
 
-      var runhook2 = runhookManager.getRunhook({ name: "routine2" });
+      let runhook2 = runhookManager.getRunhook({ name: "routine2" });
       assert.isFunction(runhook2.handler);
 
-      var runhook2_1 = runhookManager.getRunhook({ name: "routine2", package: "sub-routine1" });
+      let runhook2_1 = runhookManager.getRunhook({ name: "routine2", package: "sub-routine1" });
       assert.equal(runhook2_1, runhook2);
 
-      var runhook2_2 = runhookManager.getRunhook({ name: "routine2", package: "sub-routine2" });
+      let runhook2_2 = runhookManager.getRunhook({ name: "routine2", package: "sub-routine2" });
       assert.equal(runhook2_2, runhook2);
 
       assert.notEqual(runhook1, runhook2);
@@ -278,12 +279,12 @@ describe("tdd:lib:core:runhook-manager", function() {
     });
 
     it("retrieve the same named routines from different packages", function() {
-      var runhookManager = lab.createRunhookManager("fullapp");
+      let runhookManager = lab.createRunhookManager("fullapp");
 
-      var runhook0_1 = runhookManager.getRunhook({ name: "routine0", package: "sub-plugin1" });
+      let runhook0_1 = runhookManager.getRunhook({ name: "routine0", package: "sub-plugin1" });
       assert.isFunction(runhook0_1.handler);
 
-      var runhook0_2 = runhookManager.getRunhook({ name: "routine0", package: "sub-plugin2" });
+      let runhook0_2 = runhookManager.getRunhook({ name: "routine0", package: "sub-plugin2" });
       assert.isFunction(runhook0_2.handler);
 
       assert.notEqual(runhook0_1, runhook0_2);

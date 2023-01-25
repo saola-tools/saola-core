@@ -11,7 +11,6 @@ const envcloak = require("envcloak").instance;
 const util = require("util");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 describe("bdd:app:application", function() {

@@ -1,25 +1,26 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var Injektor = Devebot.require("injektor");
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var loader = Devebot.require("loader");
-var errors = Devebot.require("errors");
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
-var sinon = require("sinon");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const Injektor = Devebot.require("injektor");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const loader = Devebot.require("loader");
+const errors = Devebot.require("errors");
+const assert = require("chai").assert;
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
+const sinon = require("sinon");
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 describe("tdd:lib:core:sandbox-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var issueInspector = lab.getIssueInspector();
+  let issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
@@ -33,7 +34,7 @@ describe("tdd:lib:core:sandbox-manager", function() {
   });
 
   it("getBridgeDialectNames() - retrieve bridge dialect names correctly", function() {
-    var sandboxManager = lab.createSandboxManager("fullapp");
+    let sandboxManager = lab.createSandboxManager("fullapp");
     if (!chores.isUpgradeSupported("bridge-full-ref")) {
       assert.deepEqual(sandboxManager.getBridgeDialectNames(), [
         "bridge1/anyname1a",
@@ -61,7 +62,7 @@ describe("tdd:lib:core:sandbox-manager", function() {
   });
 
   it("getPluginServiceNames() - retrieve plugin service names correctly", function() {
-    var sandboxManager = lab.createSandboxManager("fullapp");
+    let sandboxManager = lab.createSandboxManager("fullapp");
     assert.deepEqual(sandboxManager.getPluginServiceNames(), [
       chores.toFullname("application", "mainService"),
       chores.toFullname("sub-plugin1", "sublibService"),
@@ -73,7 +74,7 @@ describe("tdd:lib:core:sandbox-manager", function() {
   });
 
   it("getPluginTriggerNames() - retrieve plugin trigger names correctly", function() {
-    var sandboxManager = lab.createSandboxManager("fullapp");
+    let sandboxManager = lab.createSandboxManager("fullapp");
     assert.deepEqual(sandboxManager.getPluginTriggerNames(), [
       chores.toFullname("application", "mainTrigger"),
       chores.toFullname("sub-plugin1", "sublibTrigger"),
@@ -85,17 +86,17 @@ describe("tdd:lib:core:sandbox-manager", function() {
   });
 
   it("getSandboxService() - retrieve the unique named service with or without suggested scope", function() {
-    var sandboxManager = lab.createSandboxManager("fullapp");
+    let sandboxManager = lab.createSandboxManager("fullapp");
 
-    var plugin2Service0 = sandboxManager.getSandboxService("plugin2Service");
+    let plugin2Service0 = sandboxManager.getSandboxService("plugin2Service");
     assert.isNotNull(plugin2Service0);
 
-    var plugin2Service1 = sandboxManager.getSandboxService("plugin2Service", {
+    let plugin2Service1 = sandboxManager.getSandboxService("plugin2Service", {
       scope: "plugin1"
     });
     assert.isNotNull(plugin2Service1);
 
-    var plugin2Service2 = sandboxManager.getSandboxService("plugin2Service", {
+    let plugin2Service2 = sandboxManager.getSandboxService("plugin2Service", {
       scope: "plugin2"
     });
     assert.isNotNull(plugin2Service2);
@@ -105,20 +106,20 @@ describe("tdd:lib:core:sandbox-manager", function() {
   });
 
   it("getSandboxService() - retrieve the same named services from different plugins", function() {
-    var sandboxManager = lab.createSandboxManager("fullapp");
+    let sandboxManager = lab.createSandboxManager("fullapp");
 
     assert.throws(function() {
-      var sublibService = sandboxManager.getSandboxService("sublibService");
+      let sublibService = sandboxManager.getSandboxService("sublibService");
     }, Injektor.errors.DuplicatedRelativeNameError, "name [sublibService] is duplicated");
 
-    var sublibService1 = sandboxManager.getSandboxService("sublibService", {
+    let sublibService1 = sandboxManager.getSandboxService("sublibService", {
       scope: "sub-plugin1"
     });
     false && console.log(sublibService1.getConfig());
     assert.isNotNull(sublibService1);
     assert.deepEqual(sublibService1.getConfig(), { host: "localhost", port: 17721 });
 
-    var sublibService2 = sandboxManager.getSandboxService("sublibService", {
+    let sublibService2 = sandboxManager.getSandboxService("sublibService", {
       scope: "sub-plugin2"
     });
     false && console.log(sublibService2.getConfig());
@@ -127,13 +128,13 @@ describe("tdd:lib:core:sandbox-manager", function() {
   });
 
   describe("logging-interception", function() {
-    var loggingStore = {};
+    let loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "sandboxManager"), "excluded-internal-services" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "sandboxManager"), "excluded-internal-services" ],
           storeTo: "list"
         }]
       }]);
@@ -144,11 +145,11 @@ describe("tdd:lib:core:sandbox-manager", function() {
     });
 
     it("excludedServices should be defined properly", function() {
-      var sandboxManager = lab.createSandboxManager("fullapp");
-      var excluded = lodash.get(loggingStore, "list.0.excludedServices", {});
+      let sandboxManager = lab.createSandboxManager("fullapp");
+      let excluded = lodash.get(loggingStore, "list.0.excludedServices", {});
       if (true) {
         assert.deepEqual(excluded, [
-          chores.toFullname(constx.FRAMEWORK.NAME, "sandboxRegistry")
+          chores.toFullname(FRAMEWORK_PACKAGE_NAME, "sandboxRegistry")
         ]);
       } else {
         console.log(JSON.stringify(loggingStore, null, 2));
@@ -161,30 +162,30 @@ describe("tdd:lib:core:sandbox-manager", function() {
   });
 
   describe("SandboxRegistry", function() {
-    var SandboxManager = lab.acquireDevebotModule("backbone/sandbox-manager");
-    var SandboxRegistry = SandboxManager.__get__("SandboxRegistry");
+    let SandboxManager = lab.acquireDevebotModule("backbone/sandbox-manager");
+    let SandboxRegistry = SandboxManager.__get__("SandboxRegistry");
 
     function SampleService () {}
-    var serviceName = "sampleService";
-    var context = { scope: "testing" };
-    var serviceFullname = [context.scope, serviceName].join(chores.getSeparator());
+    let serviceName = "sampleService";
+    let context = { scope: "testing" };
+    let serviceFullname = [context.scope, serviceName].join(chores.getSeparator());
 
     before(function() {
     });
 
     it("make sure that deprecated methods are available", function() {
-      var injektor = new Injektor({ separator: chores.getSeparator() });
-      var sandboxRegistry = new SandboxRegistry({ injektor });
+      let injektor = new Injektor({ separator: chores.getSeparator() });
+      let sandboxRegistry = new SandboxRegistry({ injektor });
       assert.isFunction(sandboxRegistry.lookupService);
     });
 
     it("lookup() - retrieves beans properly", function() {
-      var bean1 = {}; var bean2 = {};
-      var injektor = new Injektor({ separator: chores.getSeparator() });
+      let bean1 = {}; let bean2 = {};
+      let injektor = new Injektor({ separator: chores.getSeparator() });
       injektor.registerObject("bean1", bean1);
       injektor.registerObject("bean2", bean2, context);
 
-      var sandboxRegistry = new SandboxRegistry({ injektor });
+      let sandboxRegistry = new SandboxRegistry({ injektor });
 
       assert.isNull(sandboxRegistry.lookup("bean0"));
       assert.isNull(sandboxRegistry.lookup("testing/bean1"));
@@ -194,46 +195,46 @@ describe("tdd:lib:core:sandbox-manager", function() {
     });
 
     it("lookup() - isExcluded() is supported", function() {
-      var context = { scope: constx.FRAMEWORK.NAME };
-      var bean1 = {}; var bean2 = {}; var bean3 = {};
-      var injektor = new Injektor({ separator: chores.getSeparator() });
+      let context = { scope: FRAMEWORK_PACKAGE_NAME };
+      let bean1 = {}; let bean2 = {}; let bean3 = {};
+      let injektor = new Injektor({ separator: chores.getSeparator() });
       injektor.registerObject("devebot-co-sample", bean1);
       injektor.registerObject("example", bean2, context);
       injektor.registerObject("testing/example", bean3);
-      var isExcluded = function(beanFullName) {
+      let isExcluded = function(beanFullName) {
         return (typeof beanFullName !== "string") || (beanFullName.match(/devebot/));
       };
-      var sandboxRegistry = new SandboxRegistry({ injektor, isExcluded });
+      let sandboxRegistry = new SandboxRegistry({ injektor, isExcluded });
       assert.isNull(sandboxRegistry.lookup("devebot-co-sample"));
       assert.isNull(sandboxRegistry.lookup("example"));
-      assert.isNull(sandboxRegistry.lookup(chores.toFullname(constx.FRAMEWORK.NAME, "example")));
+      assert.isNull(sandboxRegistry.lookup(chores.toFullname(FRAMEWORK_PACKAGE_NAME, "example")));
       assert.deepEqual(sandboxRegistry.lookup("testing/example"), bean3);
     });
 
     it("lookup() - excludedServices list is supported", function() {
-      var context = { scope: constx.FRAMEWORK.NAME };
-      var bean1 = {}; var bean2 = {}; var bean3 = {};
-      var injektor = new Injektor({ separator: chores.getSeparator() });
+      let context = { scope: FRAMEWORK_PACKAGE_NAME };
+      let bean1 = {}; let bean2 = {}; let bean3 = {};
+      let injektor = new Injektor({ separator: chores.getSeparator() });
       injektor.registerObject("devebot-co-sample", bean1);
       injektor.registerObject("example", bean2, context);
       injektor.registerObject("testing/example", bean3);
-      var excludedServices = [ chores.toFullname(constx.FRAMEWORK.NAME, "example") ];
-      var sandboxRegistry = new SandboxRegistry({ injektor, excludedServices });
+      let excludedServices = [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "example") ];
+      let sandboxRegistry = new SandboxRegistry({ injektor, excludedServices });
       assert.deepEqual(sandboxRegistry.lookup("devebot-co-sample"), bean1);
       assert.isNull(sandboxRegistry.lookup("example"));
-      assert.isNull(sandboxRegistry.lookup(chores.toFullname(constx.FRAMEWORK.NAME, "example")));
+      assert.isNull(sandboxRegistry.lookup(chores.toFullname(FRAMEWORK_PACKAGE_NAME, "example")));
       assert.deepEqual(sandboxRegistry.lookup("testing/example"), bean3);
     });
 
     it("defineService() - RestrictedDevebotError", function() {
-      var context = { scope: constx.FRAMEWORK.NAME };
+      let context = { scope: FRAMEWORK_PACKAGE_NAME };
 
-      var injektor = new Injektor({ separator: chores.getSeparator() });
-      var _parseName = sinon.spy(injektor, "parseName");
-      var _resolveName = sinon.spy(injektor, "resolveName");
-      var _defineService = sinon.spy(injektor, "defineService");
+      let injektor = new Injektor({ separator: chores.getSeparator() });
+      let _parseName = sinon.spy(injektor, "parseName");
+      let _resolveName = sinon.spy(injektor, "resolveName");
+      let _defineService = sinon.spy(injektor, "defineService");
 
-      var sandboxRegistry = new SandboxRegistry({ injektor });
+      let sandboxRegistry = new SandboxRegistry({ injektor });
 
       assert.throws(function() {
         sandboxRegistry.defineService(serviceName, SampleService, context);
@@ -245,14 +246,14 @@ describe("tdd:lib:core:sandbox-manager", function() {
     });
 
     it("defineService() - DuplicatedDevebotError", function() {
-      var injektor = new Injektor({ separator: chores.getSeparator() });
+      let injektor = new Injektor({ separator: chores.getSeparator() });
       injektor.registerObject(serviceFullname, {});
 
-      var _parseName = sinon.spy(injektor, "parseName");
-      var _resolveName = sinon.spy(injektor, "resolveName");
-      var _defineService = sinon.spy(injektor, "defineService");
+      let _parseName = sinon.spy(injektor, "parseName");
+      let _resolveName = sinon.spy(injektor, "resolveName");
+      let _defineService = sinon.spy(injektor, "defineService");
 
-      var sandboxRegistry = new SandboxRegistry({ injektor });
+      let sandboxRegistry = new SandboxRegistry({ injektor });
 
       assert.throws(function() {
         sandboxRegistry.defineService(serviceName, SampleService, context);
@@ -264,12 +265,12 @@ describe("tdd:lib:core:sandbox-manager", function() {
     });
 
     it("defineService() - [scope in context]", function() {
-      var injektor = new Injektor({ separator: chores.getSeparator() });
-      var _parseName = sinon.spy(injektor, "parseName");
-      var _resolveName = sinon.spy(injektor, "resolveName");
-      var _defineService = sinon.spy(injektor, "defineService");
+      let injektor = new Injektor({ separator: chores.getSeparator() });
+      let _parseName = sinon.spy(injektor, "parseName");
+      let _resolveName = sinon.spy(injektor, "resolveName");
+      let _defineService = sinon.spy(injektor, "defineService");
 
-      var sandboxRegistry = new SandboxRegistry({ injektor });
+      let sandboxRegistry = new SandboxRegistry({ injektor });
 
       sandboxRegistry.defineService(serviceName, SampleService, context);
 
@@ -289,12 +290,12 @@ describe("tdd:lib:core:sandbox-manager", function() {
     });
 
     it("defineService() - [name contains scope]", function() {
-      var injektor = new Injektor({ separator: chores.getSeparator() });
-      var _parseName = sinon.spy(injektor, "parseName");
-      var _resolveName = sinon.spy(injektor, "resolveName");
-      var _defineService = sinon.spy(injektor, "defineService");
+      let injektor = new Injektor({ separator: chores.getSeparator() });
+      let _parseName = sinon.spy(injektor, "parseName");
+      let _resolveName = sinon.spy(injektor, "resolveName");
+      let _defineService = sinon.spy(injektor, "defineService");
 
-      var sandboxRegistry = new SandboxRegistry({ injektor });
+      let sandboxRegistry = new SandboxRegistry({ injektor });
 
       sandboxRegistry.defineService(serviceFullname, SampleService);
 

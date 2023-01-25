@@ -1,43 +1,43 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var loader = Devebot.require("loader");
-var assert = require("chai").assert;
-var path = require("path");
-var ConfigLoader = require(lab.getDevebotModule("backbone/config-loader"));
-var NameResolver = require(lab.getDevebotModule("backbone/name-resolver"));
-var ManifestHandler = require(lab.getDevebotModule("backbone/manifest-handler"));
-var Envcloak = require("envcloak");
-var envcloak = Envcloak.instance;
-var sinon = require("sinon");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const loader = Devebot.require("loader");
+const assert = require("chai").assert;
+const path = require("path");
+const ConfigLoader = require(lab.getDevebotModule("backbone/config-loader"));
+const NameResolver = require(lab.getDevebotModule("backbone/name-resolver"));
+const ManifestHandler = require(lab.getDevebotModule("backbone/manifest-handler"));
+const Envcloak = require("envcloak");
+const envcloak = Envcloak.instance;
+const sinon = require("sinon");
 
-describe("tdd:devebot:core:config-loader", function() {
-  var issueInspector = lab.getIssueInspector();
-  var stateInspector = lab.getStateInspector();
-  var loggingFactory = lab.createLoggingFactoryMock();
+describe("tdd:lib:core:config-loader", function() {
+  let issueInspector = lab.getIssueInspector();
+  let stateInspector = lab.getStateInspector();
+  let loggingFactory = lab.createLoggingFactoryMock();
 
-  var CTX = {
+  let CTX = {
     L: loggingFactory.getLogger(),
     T: loggingFactory.getTracer(),
     issueInspector: issueInspector,
   };
 
-  var appRef = {
+  let appRef = {
     name: "tdd-cfg",
     type: "application",
     path: lab.getAppHome("tdd-cfg")
   };
 
-  var devebotRef = {
+  let devebotRef = {
     name: "devebot",
     type: "framework",
     path: lab.getDevebotHome()
   };
 
-  var pluginRefs = {
+  let pluginRefs = {
     "plugin1": {
       name: "plugin1",
       type: "plugin",
@@ -50,26 +50,26 @@ describe("tdd:devebot:core:config-loader", function() {
     }
   };
 
-  var bridgeRefs = {};
+  let bridgeRefs = {};
 
-  var nameResolver = new NameResolver({
+  let nameResolver = new NameResolver({
     issueInspector,
     bridgeList: lodash.values(bridgeRefs),
     pluginList: lodash.values(pluginRefs),
   });
 
-  var manifestHandler = new ManifestHandler({
+  let manifestHandler = new ManifestHandler({
     issueInspector,
     bridgeList: lodash.values(bridgeRefs),
     bundleList: lodash.concat(appRef, lodash.values(pluginRefs), devebotRef),
     nameResolver,
   });
 
-  var stepEnv = new Envcloak();
+  let stepEnv = new Envcloak();
 
   describe("readVariable(): read environment variables", function() {
-    var ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
-    var readVariable = ConfigLoader.__get__("readVariable");
+    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let readVariable = ConfigLoader.__get__("readVariable");
     assert.isFunction(readVariable);
 
     beforeEach(function() {
@@ -122,8 +122,8 @@ describe("tdd:devebot:core:config-loader", function() {
   });
 
   describe("extractEnvironConfig(): extract the configuration from the environment variables", function() {
-    var ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
-    var extractEnvironConfig = ConfigLoader.__get__("extractEnvironConfig");
+    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let extractEnvironConfig = ConfigLoader.__get__("extractEnvironConfig");
 
     it("support both default and customized prefixes", function() {
       envcloak.setup({
@@ -134,7 +134,7 @@ describe("tdd:devebot:core:config-loader", function() {
         DEVEBOT_CONFIG_ENV: "dev"
       });
 
-      var { store, paths } = extractEnvironConfig(CTX, "EXAMPLE");
+      let { store, paths } = extractEnvironConfig(CTX, "EXAMPLE");
       false && console.log(JSON.stringify(store, null, 2));
       assert.deepInclude(store, {
         "sandbox": {
@@ -154,8 +154,8 @@ describe("tdd:devebot:core:config-loader", function() {
   });
 
   describe("fillConfigByEnvVars(): load the configuration from the environment variables", function() {
-    var ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
-    var fillConfigByEnvVars = ConfigLoader.__get__("fillConfigByEnvVars");
+    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let fillConfigByEnvVars = ConfigLoader.__get__("fillConfigByEnvVars");
 
     it("support both default and customized prefixes", function() {
       envcloak.setup({
@@ -169,7 +169,7 @@ describe("tdd:devebot:core:config-loader", function() {
         DEVEBOT_CONFIG_ENV: "dev"
       });
 
-      var environCfg = {
+      let environCfg = {
         "sandbox": {
           "mixture": {
             "plugins": {
@@ -227,19 +227,19 @@ describe("tdd:devebot:core:config-loader", function() {
   });
 
   describe("transformConfig(): standardizing loaded configuration data", function() {
-    var NameResolver = lab.acquireDevebotModule("backbone/name-resolver");
-    var extractAliasNames = NameResolver.__get__("extractAliasNames");
-    var buildAbsoluteAliasMap = NameResolver.__get__("buildAbsoluteAliasMap");
-    var buildRelativeAliasMap = NameResolver.__get__("buildRelativeAliasMap");
-    var ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
-    var applyAliasMap = ConfigLoader.__get__("applyAliasMap");
-    var doAliasMap = ConfigLoader.__get__("doAliasMap");
-    var transformConfig = ConfigLoader.__get__("transformConfig");
+    let NameResolver = lab.acquireDevebotModule("backbone/name-resolver");
+    let extractAliasNames = NameResolver.__get__("extractAliasNames");
+    let buildAbsoluteAliasMap = NameResolver.__get__("buildAbsoluteAliasMap");
+    let buildRelativeAliasMap = NameResolver.__get__("buildRelativeAliasMap");
+    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let applyAliasMap = ConfigLoader.__get__("applyAliasMap");
+    let doAliasMap = ConfigLoader.__get__("doAliasMap");
+    let transformConfig = ConfigLoader.__get__("transformConfig");
 
     it("should transform relative names into default full names", function() {
       if (!chores.isUpgradeSupported(["bridge-full-ref", "standardizing-config"])) this.skip();
 
-      var originalCfg = {
+      let originalCfg = {
         "bridges": {
           "bridgeKebabCase1": {
             "wrapper1": {
@@ -272,7 +272,7 @@ describe("tdd:devebot:core:config-loader", function() {
         }
       };
 
-      var expectedCfg = {
+      let expectedCfg = {
         "bridges": {
           "bridge-kebab-case1": {
             "devebot-dp-wrapper1": {
@@ -305,7 +305,7 @@ describe("tdd:devebot:core:config-loader", function() {
         }
       };
 
-      var absoluteAliasMap = {
+      let absoluteAliasMap = {
         plugin: buildAbsoluteAliasMap(extractAliasNames(CTX, "plugin", {
           "path/to/devebot-dp-wrapper1": {
             name: "devebot-dp-wrapper1"
@@ -329,7 +329,7 @@ describe("tdd:devebot:core:config-loader", function() {
           }
         })),
       };
-      var convertedCfg = transformConfig(lodash.assign({
+      let convertedCfg = transformConfig(lodash.assign({
         nameResolver: {
           getAbsoluteAliasMap: function() {
             return absoluteAliasMap;
@@ -347,7 +347,7 @@ describe("tdd:devebot:core:config-loader", function() {
     it("should transform absolute names into relative names", function() {
       if (!chores.isUpgradeSupported(["bridge-full-ref", "standardizing-config"])) this.skip();
 
-      var originalCfg = {
+      let originalCfg = {
         "bridges": {
           "bridgeKebabCase1": {
             "wrapper1": {
@@ -380,7 +380,7 @@ describe("tdd:devebot:core:config-loader", function() {
         }
       };
 
-      var expectedCfg = {
+      let expectedCfg = {
         "bridges": {
           "bridgeKebabCase1": {
             "wrapper1": {
@@ -413,7 +413,7 @@ describe("tdd:devebot:core:config-loader", function() {
         }
       };
 
-      var pluginRefs = extractAliasNames(CTX, "plugin", {
+      let pluginRefs = extractAliasNames(CTX, "plugin", {
         "path/to/devebot-dp-wrapper1": {
           name: "devebot-dp-wrapper1"
         },
@@ -422,7 +422,7 @@ describe("tdd:devebot:core:config-loader", function() {
         }
       });
 
-      var bridgeRefs = extractAliasNames(CTX, "bridge", {
+      let bridgeRefs = extractAliasNames(CTX, "bridge", {
         "path/to/bridge-kebab-case1": {
           name: "bridge-kebab-case1"
         },
@@ -437,11 +437,11 @@ describe("tdd:devebot:core:config-loader", function() {
         }
       });
 
-      var absoluteAliasMap = {
+      let absoluteAliasMap = {
         plugin: buildAbsoluteAliasMap(pluginRefs),
         bridge: buildAbsoluteAliasMap(bridgeRefs),
       };
-      var absoluteCfg = transformConfig(lodash.assign({
+      let absoluteCfg = transformConfig(lodash.assign({
         nameResolver: {
           getAbsoluteAliasMap: function() {
             return absoluteAliasMap;
@@ -452,11 +452,11 @@ describe("tdd:devebot:core:config-loader", function() {
         }
       }, CTX), "sandbox", originalCfg, "plugin", "cfg-example", {});
 
-      var relativeAliasMap = {
+      let relativeAliasMap = {
         plugin: buildRelativeAliasMap(pluginRefs),
         bridge: buildRelativeAliasMap(bridgeRefs),
       };
-      var relativeCfg = null;
+      let relativeCfg = null;
       if (doAliasMap) {
         relativeCfg = doAliasMap(CTX, absoluteCfg, relativeAliasMap.plugin, relativeAliasMap.bridge);
       } else {
@@ -471,10 +471,10 @@ describe("tdd:devebot:core:config-loader", function() {
   });
 
   describe("extractConfigManifest()", function() {
-    var ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
-    var extractConfigManifest = ConfigLoader.__get__("extractConfigManifest");
-    var nameResolver = lab.getNameResolver(["sub-plugin1", "sub-plugin2"], ["sub-bridge1", "sub-bridge2", "devebot-co-vps"]);
-    var ctx = { nameResolver: nameResolver };
+    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let extractConfigManifest = ConfigLoader.__get__("extractConfigManifest");
+    let nameResolver = lab.getNameResolver(["sub-plugin1", "sub-plugin2"], ["sub-bridge1", "sub-bridge2", "devebot-co-vps"]);
+    let ctx = { nameResolver: nameResolver };
 
     it("return empty configManifest map if the moduleRef is empty or null", function() {
       assert.deepEqual(extractConfigManifest(ctx, null), {});
@@ -482,7 +482,7 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("return the correct configManifest with normal bridgeRefs", function() {
-      var bridgeRefs = {
+      let bridgeRefs = {
         "/test/lib/sub-bridge1": {
           "name": "sub-bridge1",
           "type": "bridge",
@@ -517,7 +517,7 @@ describe("tdd:devebot:core:config-loader", function() {
           },
         }
       };
-      var expected = {
+      let expected = {
         "sub-bridge1": {
           "version": "0.1.1",
           "manifest": {
@@ -547,7 +547,7 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("return the correct configManifest with normal pluginRefs", function() {
-      var pluginRefs = {
+      let pluginRefs = {
         "/test/app/default": {
           "name": "fullapp",
           "type": "application",
@@ -609,7 +609,7 @@ describe("tdd:devebot:core:config-loader", function() {
           },
         }
       };
-      var expected = {
+      let expected = {
         "application": {
           "version": "0.1.0",
           "manifest": {
@@ -648,13 +648,13 @@ describe("tdd:devebot:core:config-loader", function() {
   });
 
   describe("applyManifestMigration()", function() {
-    var ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
-    var applyManifestMigration = ConfigLoader.__get__("applyManifestMigration");
-    var nameResolver = lab.getNameResolver(["sub-plugin1", "sub-plugin2", "sub-plugin3"], []);
-    var loggingFactory = lab.createLoggingFactoryMock();
-    var L = loggingFactory.getLogger();
-    var T = loggingFactory.getTracer();
-    var ctx = { L, T, nameResolver };
+    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let applyManifestMigration = ConfigLoader.__get__("applyManifestMigration");
+    let nameResolver = lab.getNameResolver(["sub-plugin1", "sub-plugin2", "sub-plugin3"], []);
+    let loggingFactory = lab.createLoggingFactoryMock();
+    let L = loggingFactory.getLogger();
+    let T = loggingFactory.getTracer();
+    let ctx = { L, T, nameResolver };
 
     beforeEach(function() {
       loggingFactory.resetHistory();
@@ -770,37 +770,37 @@ describe("tdd:devebot:core:config-loader", function() {
   });
 
   describe("modernizeConfig(): upgrade the old configuration to current version", function() {
-    var ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
-    var modernizeConfig = ConfigLoader.__get__("modernizeConfig");
-    var nameResolver = lab.getNameResolver(["simple-plugin"], ["simple-bridge"]);
-    var loggingFactory = lab.createLoggingFactoryMock();
-    var L = loggingFactory.getLogger();
-    var T = loggingFactory.getTracer();
-    var CTX = { L, T, issueInspector, nameResolver };
+    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let modernizeConfig = ConfigLoader.__get__("modernizeConfig");
+    let nameResolver = lab.getNameResolver(["simple-plugin"], ["simple-bridge"]);
+    let loggingFactory = lab.createLoggingFactoryMock();
+    let L = loggingFactory.getLogger();
+    let T = loggingFactory.getTracer();
+    let CTX = { L, T, issueInspector, nameResolver };
 
-    var moduleInfo = { name: "example", type: "application", presets: {} };
+    let moduleInfo = { name: "example", type: "application", presets: {} };
 
     beforeEach(function() {
       loggingFactory.resetHistory();
     });
 
     it("do nothing if manifests are omitted", function() {
-      var configType = "sandbox";
-      var configStore = {};
-      var result = modernizeConfig(CTX, configType, configStore, moduleInfo);
+      let configType = "sandbox";
+      let configStore = {};
+      let result = modernizeConfig(CTX, configType, configStore, moduleInfo);
       assert.deepEqual(result, configStore);
     });
 
     it("do nothing if manifests are empty", function() {
-      var configType = "sandbox";
-      var configStore = {};
-      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, {}, {});
+      let configType = "sandbox";
+      let configStore = {};
+      let result = modernizeConfig(CTX, configType, configStore, moduleInfo, {}, {});
       assert.deepEqual(result, configStore);
     });
 
     it("keep configure unchange if manifests are disabled or not found", function() {
-      var configType = "sandbox";
-      var configStore = {
+      let configType = "sandbox";
+      let configStore = {
         "plugins": {
           "subPlugin1": {
             "host": "localhost",
@@ -848,10 +848,10 @@ describe("tdd:devebot:core:config-loader", function() {
           },
         }
       };
-      var pluginTransform1 = sinon.stub().callsFake(function(source) {
+      let pluginTransform1 = sinon.stub().callsFake(function(source) {
         return { "httpserver": source };
       });
-      var pluginManifests = {
+      let pluginManifests = {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
@@ -870,13 +870,13 @@ describe("tdd:devebot:core:config-loader", function() {
           "version": "0.1.2",
         },
       };
-      var bridgeTransform1 = sinon.stub().callsFake(function(source) {
+      let bridgeTransform1 = sinon.stub().callsFake(function(source) {
         return {
           name: source.refName,
           path: source.refPath
         };
       });
-      var bridgeManifests = {
+      let bridgeManifests = {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
@@ -897,11 +897,11 @@ describe("tdd:devebot:core:config-loader", function() {
         },
       };
 
-      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
+      let result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
       false && console.log("modernizeConfig(): %s", JSON.stringify(result, null, 2));
 
-      var expected = {
+      let expected = {
         "plugins": {
           "subPlugin1": {
             "host": "localhost",
@@ -956,8 +956,8 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("keep configure unchange if __manifest__ block not found", function() {
-      var configType = "sandbox";
-      var configStore = {
+      let configType = "sandbox";
+      let configStore = {
         "plugins": {
           "subPlugin1": {
             "host": "localhost",
@@ -997,13 +997,13 @@ describe("tdd:devebot:core:config-loader", function() {
           },
         }
       };
-      var pluginTransform1 = sinon.stub().callsFake(function(source) {
+      let pluginTransform1 = sinon.stub().callsFake(function(source) {
         return { "httpserver": source };
       });
-      var pluginTransform2 = sinon.stub().callsFake(function(source) {
+      let pluginTransform2 = sinon.stub().callsFake(function(source) {
         return { "httpserver": source };
       });
-      var pluginManifests = {
+      let pluginManifests = {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
@@ -1031,19 +1031,19 @@ describe("tdd:devebot:core:config-loader", function() {
           }
         },
       };
-      var bridgeTransform1 = sinon.stub().callsFake(function(source) {
+      let bridgeTransform1 = sinon.stub().callsFake(function(source) {
         return {
           name: source.refName,
           path: source.refPath
         };
       });
-      var bridgeTransform2 = sinon.stub().callsFake(function(source) {
+      let bridgeTransform2 = sinon.stub().callsFake(function(source) {
         return {
           name: source.refName,
           path: source.refPath
         };
       });
-      var bridgeManifests = {
+      let bridgeManifests = {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
@@ -1072,11 +1072,11 @@ describe("tdd:devebot:core:config-loader", function() {
         },
       };
 
-      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
+      let result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
       false && console.log("modernizeConfig(): %s", JSON.stringify(result, null, 2));
 
-      var expected = {
+      let expected = {
         "plugins": {
           "subPlugin1": {
             "host": "localhost",
@@ -1126,8 +1126,8 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("keep configure unchange if configVersion is not less than moduleVersion", function() {
-      var configType = "sandbox";
-      var configStore = {
+      let configType = "sandbox";
+      let configStore = {
         "plugins": {
           "subPlugin1": {
             "host": "localhost",
@@ -1175,13 +1175,13 @@ describe("tdd:devebot:core:config-loader", function() {
           },
         }
       };
-      var pluginTransform1 = sinon.stub().callsFake(function(source) {
+      let pluginTransform1 = sinon.stub().callsFake(function(source) {
         return { "httpserver": source };
       });
-      var pluginTransform2 = sinon.stub().callsFake(function(source) {
+      let pluginTransform2 = sinon.stub().callsFake(function(source) {
         return { "httpserver": source };
       });
-      var pluginManifests = {
+      let pluginManifests = {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
@@ -1209,19 +1209,19 @@ describe("tdd:devebot:core:config-loader", function() {
           }
         },
       };
-      var bridgeTransform1 = sinon.stub().callsFake(function(source) {
+      let bridgeTransform1 = sinon.stub().callsFake(function(source) {
         return {
           name: source.refName,
           path: source.refPath
         };
       });
-      var bridgeTransform2 = sinon.stub().callsFake(function(source) {
+      let bridgeTransform2 = sinon.stub().callsFake(function(source) {
         return {
           name: source.refName,
           path: source.refPath
         };
       });
-      var bridgeManifests = {
+      let bridgeManifests = {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
@@ -1250,11 +1250,11 @@ describe("tdd:devebot:core:config-loader", function() {
         },
       };
 
-      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
+      let result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
       false && console.log("modernizeConfig(): %s", JSON.stringify(result, null, 2));
 
-      var expected = {
+      let expected = {
         "plugins": {
           "subPlugin1": {
             "host": "localhost",
@@ -1311,8 +1311,8 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("upgrade the configuration corresponding to manifests", function() {
-      var configType = "sandbox";
-      var configStore = {
+      let configType = "sandbox";
+      let configStore = {
         "plugins": {
           "subPlugin1": {
             host: "localhost",
@@ -1368,13 +1368,13 @@ describe("tdd:devebot:core:config-loader", function() {
           },
         }
       };
-      var subPlugin1Transform = sinon.stub().callsFake(function(source) {
+      let subPlugin1Transform = sinon.stub().callsFake(function(source) {
         return { "httpserver": source };
       });
-      var subPlugin2Transform = sinon.stub().callsFake(function(source) {
+      let subPlugin2Transform = sinon.stub().callsFake(function(source) {
         return { "webservice": source };
       });
-      var pluginManifests = {
+      let pluginManifests = {
         "subPlugin1": {
           "version": "0.1.1",
           "manifest": {
@@ -1402,13 +1402,13 @@ describe("tdd:devebot:core:config-loader", function() {
           }
         },
       };
-      var bridgeTransformer = sinon.stub().callsFake(function(source) {
+      let bridgeTransformer = sinon.stub().callsFake(function(source) {
         return {
           name: source.refName,
           path: source.refPath
         };
       });
-      var bridgeManifests = {
+      let bridgeManifests = {
         "bridge1": {
           "version": "0.1.1",
           "manifest": {
@@ -1450,11 +1450,11 @@ describe("tdd:devebot:core:config-loader", function() {
         },
       };
 
-      var result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
+      let result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
       false && console.log("modernizeConfig(): %s", JSON.stringify(result, null, 2));
 
-      var expected = {
+      let expected = {
         "plugins": {
           "subPlugin1": {
             "httpserver": {
@@ -1529,12 +1529,12 @@ describe("tdd:devebot:core:config-loader", function() {
       });
     });
 
-    var ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
-    var convertPreciseConfig = ConfigLoader.__get__("convertPreciseConfig");
-    var RELOADING_FORCED = ConfigLoader.__get__("RELOADING_FORCED");
+    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let convertPreciseConfig = ConfigLoader.__get__("convertPreciseConfig");
+    let RELOADING_FORCED = ConfigLoader.__get__("RELOADING_FORCED");
 
     it("transform sandboxConfig.bridges from application", function() {
-      var sandboxConfig = {
+      let sandboxConfig = {
         "plugins": {
           "plugin1": {},
           "plugin2": {}
@@ -1559,7 +1559,7 @@ describe("tdd:devebot:core:config-loader", function() {
           }
         }
       };
-      var exptectedConfig = {
+      let exptectedConfig = {
         "plugins": {
           "plugin1": {},
           "plugin2": {}
@@ -1584,13 +1584,13 @@ describe("tdd:devebot:core:config-loader", function() {
           }
         }
       };
-      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, "application");
+      let convertedCfg = convertPreciseConfig(CTX, sandboxConfig, "application");
       false && console.log(JSON.stringify(convertedCfg, null, 2));
       assert.deepInclude(convertedCfg, exptectedConfig);
     });
 
     it("transform sandboxConfig.bridges from a plugin (without name)", function() {
-      var sandboxConfig = {
+      let sandboxConfig = {
         "plugins": {
           "plugin1": {},
           "plugin2": {}
@@ -1613,7 +1613,7 @@ describe("tdd:devebot:core:config-loader", function() {
           }
         }
       };
-      var exptectedConfig = lodash.cloneDeep(sandboxConfig);
+      let exptectedConfig = lodash.cloneDeep(sandboxConfig);
       if (chores.isUpgradeSupported(["bridge-full-ref", "presets"])) {
         exptectedConfig.bridges = {
           "bridge1": {
@@ -1638,7 +1638,7 @@ describe("tdd:devebot:core:config-loader", function() {
           exptectedConfig.bridges.__status__ = true;
         }
       }
-      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, "plugin", null, {
+      let convertedCfg = convertPreciseConfig(CTX, sandboxConfig, "plugin", null, {
         configTags: ["bridge[dialect-bridge]"]
       });
       false && console.log(JSON.stringify(convertedCfg, null, 2));
@@ -1646,7 +1646,7 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("transform sandboxConfig.bridges from a named plugin", function() {
-      var sandboxConfig = {
+      let sandboxConfig = {
         "plugins": {
           "plugin1": {},
           "plugin2": {}
@@ -1669,7 +1669,7 @@ describe("tdd:devebot:core:config-loader", function() {
           }
         }
       };
-      var exptectedConfig = lodash.cloneDeep(sandboxConfig);
+      let exptectedConfig = lodash.cloneDeep(sandboxConfig);
       if (chores.isUpgradeSupported(["bridge-full-ref", "presets"])) {
         exptectedConfig.bridges = {
           "bridge1": {
@@ -1694,7 +1694,7 @@ describe("tdd:devebot:core:config-loader", function() {
           exptectedConfig.bridges.__status__ = true;
         }
       }
-      var convertedCfg = convertPreciseConfig(CTX, sandboxConfig, "plugin", "plugin1", {
+      let convertedCfg = convertPreciseConfig(CTX, sandboxConfig, "plugin", "plugin1", {
         configTags: "bridge[dialect-bridge]"
       });
       false && console.log(JSON.stringify(convertedCfg, null, 2));
@@ -1707,11 +1707,11 @@ describe("tdd:devebot:core:config-loader", function() {
   });
 
   describe("ConfigLoader.load(): propagates a method call to local functions", function() {
-    var ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
-    var loadConfig = lab.stubModuleFunction(ConfigLoader, "loadConfig");
-    var validateConfig = sinon.spy(manifestHandler, "validateConfig");
+    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let loadConfig = lab.stubModuleFunction(ConfigLoader, "loadConfig");
+    let validateConfig = sinon.spy(manifestHandler, "validateConfig");
 
-    var configLoader = new ConfigLoader({
+    let configLoader = new ConfigLoader({
       appRef, devebotRef, pluginRefs, bridgeRefs,
       nameResolver, issueInspector, stateInspector, manifestHandler
     });
@@ -1723,10 +1723,10 @@ describe("tdd:devebot:core:config-loader", function() {
 
     it("dispatch a function call to other functions properly (popular case)", function() {
       // prepare a call
-      var expectedConfig = { profile: { mixture: {} }, sandbox: { mixture: { application: {} } } };
+      let expectedConfig = { profile: { mixture: {} }, sandbox: { mixture: { application: {} } } };
       loadConfig.returns(lodash.cloneDeep(expectedConfig));
       // make the request
-      var configStore = configLoader.load();
+      let configStore = configLoader.load();
       // verify results
       assert.deepEqual(configStore, expectedConfig);
       // verify arguments
@@ -1742,8 +1742,8 @@ describe("tdd:devebot:core:config-loader", function() {
   describe("ConfigLoader.load(): default configuration (without profile & sandbox)", function() {
     it("load configuration of nothing (empty loader)", function() {
       // options: null, appRootDir: null, libRootDirs: null
-      var cfgLoader = new ConfigLoader({issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
+      let cfgLoader = new ConfigLoader({issueInspector, stateInspector, nameResolver});
+      let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
       assert.deepEqual(config, {
         "profile": {
@@ -1763,9 +1763,9 @@ describe("tdd:devebot:core:config-loader", function() {
 
     it("load configuration of empty application", function() {
       // options: null, appRootDir: null, libRootDirs: [...]
-      var appRef = { type: "application", name: "empty-app" };
-      var cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
+      let appRef = { type: "application", name: "empty-app" };
+      let cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
       // Profile configuration
@@ -1790,8 +1790,8 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("load application configuration (without options)", function() {
-      var cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
+      let cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
       // Profile configuration
@@ -1829,8 +1829,8 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("load application configuration (without customized profile, sandbox)", function() {
-      var cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
+      let cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
       // Profile configuration
@@ -1884,8 +1884,8 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("load application configuration (without private sandboxes)", function() {
-      var cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
+      let cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
       // Profile configuration
@@ -2025,10 +2025,10 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("load application configuration with single private sandboxes", function() {
-      var cfgLoader = new ConfigLoader({options: {
+      let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: "bs1"
       }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
+      let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
       // Profile configuration
@@ -2067,10 +2067,10 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("load application configuration with multiple private sandboxes", function() {
-      var cfgLoader = new ConfigLoader({options: {
+      let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: ["bs1", "bs2"]
       }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
+      let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
       // Profile configuration
@@ -2110,10 +2110,10 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("load application configuration with underscore suffixes", function() {
-      var cfgLoader = new ConfigLoader({options: {
+      let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: ["bs_p1", "bs_p2"]
       }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
+      let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
       // Profile configuration
@@ -2153,10 +2153,10 @@ describe("tdd:devebot:core:config-loader", function() {
     });
 
     it("the order of listed sandbox labels is sensitive", function() {
-      var cfgLoader = new ConfigLoader({options: {
+      let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: "bs2, bs1"
       }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
-      var config = cfgLoader.load();
+      let config = cfgLoader.load();
 
       // Profile configuration
       assert.deepEqual(
@@ -2232,17 +2232,17 @@ describe("tdd:devebot:core:config-loader", function() {
       chores.clearCache();
     });
 
-    var appRef = {
+    let appRef = {
       name: "tdd-cfg-customized-names",
       type: "application",
       path: lab.getAppHome("tdd-cfg-customized-names")
     };
 
     it("load application configuration with multiple private sandboxes", function() {
-      var cfgLoader = new ConfigLoader({options: {
+      let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: ["bs1", "bs2"]
       }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver, manifestHandler});
-      var config = cfgLoader.load();
+      let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
       // Profile configuration

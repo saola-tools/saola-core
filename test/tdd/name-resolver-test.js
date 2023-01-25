@@ -1,27 +1,27 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var chores = Devebot.require("chores");
-var assert = require("chai").assert;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+const assert = require("chai").assert;
 
 describe("tdd:lib:core:name-resolver", function() {
-  var loggingFactory = lab.createLoggingFactoryMock();
-  var CTX = {
+  let loggingFactory = lab.createLoggingFactoryMock();
+  let CTX = {
     L: loggingFactory.getLogger(),
     T: loggingFactory.getTracer(),
   };
 
   describe("standardizing loaded configuration data", function() {
-    var NameResolver = lab.acquireDevebotModule("backbone/name-resolver");
-    var extractAliasNames = NameResolver.__get__("extractAliasNames");
-    var buildAbsoluteAliasMap = NameResolver.__get__("buildAbsoluteAliasMap");
-    var buildRelativeAliasMap = NameResolver.__get__("buildRelativeAliasMap");
+    let NameResolver = lab.acquireDevebotModule("backbone/name-resolver");
+    let extractAliasNames = NameResolver.__get__("extractAliasNames");
+    let buildAbsoluteAliasMap = NameResolver.__get__("buildAbsoluteAliasMap");
+    let buildRelativeAliasMap = NameResolver.__get__("buildRelativeAliasMap");
 
     it("should build the map of plugin-names transformation correctly", function() {
       if (!chores.isUpgradeSupported("standardizing-config")) this.skip();
 
-      var pluginDefs = {
+      let pluginDefs = {
         "path/to/devebot-dp-wrapper1": {
           name: "devebot-dp-wrapper1"
         },
@@ -45,7 +45,7 @@ describe("tdd:lib:core:name-resolver", function() {
         }
       };
 
-      var pluginRefs = {
+      let pluginRefs = {
         "path/to/devebot-dp-wrapper1": {
           name: "devebot-dp-wrapper1",
           nameInCamel: "devebotDpWrapper1",
@@ -92,7 +92,7 @@ describe("tdd:lib:core:name-resolver", function() {
 
       assert.deepEqual(extractAliasNames(CTX, "plugin", pluginDefs), pluginRefs);
 
-      var expectedMap = {
+      let expectedMap = {
         "devebot-dp-wrapper1": "devebot-dp-wrapper1",
         "devebotDpWrapper1": "devebot-dp-wrapper1",
         "wrapper1": "devebot-dp-wrapper1",
@@ -113,7 +113,7 @@ describe("tdd:lib:core:name-resolver", function() {
         "subWrapper2": "sub-wrapper2"
       };
 
-      var pluginAliasMap = buildAbsoluteAliasMap(pluginRefs);
+      let pluginAliasMap = buildAbsoluteAliasMap(pluginRefs);
 
       false && console.log(JSON.stringify(pluginAliasMap, null, 2));
       assert.deepEqual(pluginAliasMap, expectedMap);
@@ -121,7 +121,7 @@ describe("tdd:lib:core:name-resolver", function() {
   });
 
   describe("converting and reverting the plugin & bridge names", function() {
-    var nameResolver = lab.getNameResolver([
+    let nameResolver = lab.getNameResolver([
       "sub-plugin1", "devebot-dp-wrapper1", "sub-plugin2", "devebot-dp-wrapper2"
     ], [
       "bridge1", "bridge-kebab-case1", "devebot-co-connector1", "bridge2", "bridge-kebab-case2", "devebot-co-connector2"
@@ -129,7 +129,7 @@ describe("tdd:lib:core:name-resolver", function() {
     it("should build absoluteAliasMap correctly", function() {
       if (chores.isUpgradeSupported("simplify-name-resolver")) this.skip();
 
-      var absoluteAliasMap = nameResolver.getAbsoluteAliasMap();
+      let absoluteAliasMap = nameResolver.getAbsoluteAliasMap();
       false && console.log("absoluteAliasMap: %s", JSON.stringify(absoluteAliasMap, null, 2));
       assert.deepEqual(absoluteAliasMap, {
         "plugin": {
@@ -164,7 +164,7 @@ describe("tdd:lib:core:name-resolver", function() {
     it("should build relativeAliasMap correctly", function() {
       if (chores.isUpgradeSupported("simplify-name-resolver")) this.skip();
 
-      var relativeAliasMap = nameResolver.getRelativeAliasMap();
+      let relativeAliasMap = nameResolver.getRelativeAliasMap();
       false && console.log("relativeAliasMap: %s", JSON.stringify(relativeAliasMap, null, 2));
       assert.deepEqual(relativeAliasMap, {
         "plugin": {
@@ -185,7 +185,7 @@ describe("tdd:lib:core:name-resolver", function() {
     });
 
     it("getOriginalNameOf(_, \"bridge\")", function() {
-      var result = [
+      let result = [
         "bridge1",
         "bridge-kebab-case1",
         "bridgeKebabCase1",
@@ -238,7 +238,7 @@ describe("tdd:lib:core:name-resolver", function() {
     });
 
     it("getOriginalNameOf(_, \"plugin\")", function() {
-      var result = [
+      let result = [
         "sub-plugin1",
         "subPlugin1",
         "devebot-dp-wrapper1",
@@ -286,7 +286,7 @@ describe("tdd:lib:core:name-resolver", function() {
     });
 
     it("getDefaultAliasOf(_, \"bridge\")", function() {
-      var result = [
+      let result = [
         "bridge1", "bridge-kebab-case1", "devebot-co-connector1", "unknown", null
       ].map(function(name) {
         return {
@@ -320,7 +320,7 @@ describe("tdd:lib:core:name-resolver", function() {
     });
 
     it("getDefaultAliasOf(_, \"plugin\")", function() {
-      var result = [
+      let result = [
         "sub-plugin1", "sub-plugin2", "devebot-dp-wrapper1", "devebot-dp-wrapper2", "unknown", null
       ].map(function(name) {
         return {

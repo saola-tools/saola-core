@@ -1,21 +1,21 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var Envcloak = require("envcloak");
-var envcloak = Envcloak.instance;
-var sinon = require("sinon");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const Envcloak = require("envcloak");
+const envcloak = Envcloak.instance;
+const sinon = require("sinon");
 
-describe("tdd:devebot:core:manifest-handler", function() {
+describe("tdd:lib:core:manifest-handler", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var stepEnv = new Envcloak();
-  var issueInspector = lab.getIssueInspector();
+  let stepEnv = new Envcloak();
+  let issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
@@ -31,17 +31,17 @@ describe("tdd:devebot:core:manifest-handler", function() {
   });
 
   describe(".validateConfig()", function() {
-    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
-    var combineBridgeSchema = lab.stubModuleFunction(ManifestHandler, "combineBridgeSchema");
-    var validateBridgeConfig = lab.stubModuleFunction(ManifestHandler, "validateBridgeConfig");
-    var combineBundleSchema = lab.stubModuleFunction(ManifestHandler, "combineBundleSchema");
-    var validateBundleConfig = lab.stubModuleFunction(ManifestHandler, "validateBundleConfig");
-    var bridgeList = [];
-    var bundleList = [];
-    var pluginList = lab.extractPluginList(bundleList);
-    var nameResolver = lab.getNameResolver(lodash.map(pluginList, "name"), lodash.map(bridgeList, "name"));
+    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let combineBridgeSchema = lab.stubModuleFunction(ManifestHandler, "combineBridgeSchema");
+    let validateBridgeConfig = lab.stubModuleFunction(ManifestHandler, "validateBridgeConfig");
+    let combineBundleSchema = lab.stubModuleFunction(ManifestHandler, "combineBundleSchema");
+    let validateBundleConfig = lab.stubModuleFunction(ManifestHandler, "validateBundleConfig");
+    let bridgeList = [];
+    let bundleList = [];
+    let pluginList = lab.extractPluginList(bundleList);
+    let nameResolver = lab.getNameResolver(lodash.map(pluginList, "name"), lodash.map(bridgeList, "name"));
 
-    var manifestHandler = new ManifestHandler({
+    let manifestHandler = new ManifestHandler({
       nameResolver, issueInspector, bridgeList, bundleList
     });
 
@@ -55,7 +55,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
     it("should return empty result if method is invoked without arguments", function() {
       combineBridgeSchema.returns({});
       combineBundleSchema.returns({});
-      var result = manifestHandler.validateConfig();
+      let result = manifestHandler.validateConfig();
       // verify output
       assert.isArray(result);
       assert.lengthOf(result, 0);
@@ -66,17 +66,17 @@ describe("tdd:devebot:core:manifest-handler", function() {
       assert.isTrue(validateBundleConfig.calledOnce);
       // verify arguments
       assert.lengthOf(validateBridgeConfig.firstCall.args, 4);
-      var bridgeConfig = validateBridgeConfig.firstCall.args[1];
+      let bridgeConfig = validateBridgeConfig.firstCall.args[1];
       assert.deepEqual(bridgeConfig, {});
       assert.lengthOf(validateBundleConfig.firstCall.args, 4);
-      var pluginConfig = validateBundleConfig.firstCall.args[1];
+      let pluginConfig = validateBundleConfig.firstCall.args[1];
       assert.deepEqual(pluginConfig, { profile: {}, sandbox: {} });
     });
 
     it("dispatch a function call to other functions properly (popular case)", function() {
       combineBridgeSchema.returns({});
       combineBundleSchema.returns({});
-      var configStore = {
+      let configStore = {
         "sandbox": {
           "mixture": {
             "application": {
@@ -137,7 +137,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
           }
         }
       };
-      var result = manifestHandler.validateConfig(configStore);
+      let result = manifestHandler.validateConfig(configStore);
       // verify output
       assert.isArray(result);
       assert.lengthOf(result, 0);
@@ -148,7 +148,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
       assert.isTrue(validateBundleConfig.calledOnce);
       // verify arguments
       assert.lengthOf(validateBridgeConfig.firstCall.args, 4);
-      var bridgeConfig = validateBridgeConfig.firstCall.args[1];
+      let bridgeConfig = validateBridgeConfig.firstCall.args[1];
       assert.deepEqual(bridgeConfig, {
         "bridge1": {
           "subPlugin1": {
@@ -183,7 +183,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
         },
       });
       assert.lengthOf(validateBundleConfig.firstCall.args, 4);
-      var pluginConfig = validateBundleConfig.firstCall.args[1];
+      let pluginConfig = validateBundleConfig.firstCall.args[1];
       assert.deepEqual(pluginConfig, {
         profile: {},
         sandbox: {
@@ -218,11 +218,11 @@ describe("tdd:devebot:core:manifest-handler", function() {
   });
 
   describe("extractBundleSchema()", function() {
-    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
-    var combineBundleSchema = ManifestHandler.__get__("combineBundleSchema");
-    var {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
-    var L = loggingFactory.getLogger();
-    var T = loggingFactory.getTracer();
+    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let combineBundleSchema = ManifestHandler.__get__("combineBundleSchema");
+    let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
+    let L = loggingFactory.getLogger();
+    let T = loggingFactory.getTracer();
 
     after(function() {
       stepEnv.reset();
@@ -233,10 +233,10 @@ describe("tdd:devebot:core:manifest-handler", function() {
       if (!chores.isUpgradeSupported("manifest-refiner") || chores.isUpgradeSupported("metadata-refiner")) {
         this.skip();
       }
-      var nameResolver = lab.getNameResolver(["devebot-dp-wrapper1", "devebot-dp-wrapper2"], []);
-      var C = {L, T, schemaValidator, nameResolver};
+      let nameResolver = lab.getNameResolver(["devebot-dp-wrapper1", "devebot-dp-wrapper2"], []);
+      let C = {L, T, schemaValidator, nameResolver};
       // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
-      var bundleList = [
+      let bundleList = [
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper1",
@@ -295,7 +295,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
         }
       ];
 
-      var bundleSchema = combineBundleSchema(C, bundleList);
+      let bundleSchema = combineBundleSchema(C, bundleList);
       false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, {
         "profile": {},
@@ -344,13 +344,13 @@ describe("tdd:devebot:core:manifest-handler", function() {
       if (!chores.isUpgradeSupported("manifest-refiner") || chores.isUpgradeSupported("metadata-refiner")) {
         this.skip();
       }
-      var nameResolver = lab.getNameResolver([
+      let nameResolver = lab.getNameResolver([
         "sub-plugin1", "sub-plugin2", "plugin1", "plugin2", "plugin3"
       ], [
         "bridge1", "bridge2", "bridge3"
       ]);
-      var C = {L, T, schemaValidator, nameResolver};
-      var bundleList = [
+      let C = {L, T, schemaValidator, nameResolver};
+      let bundleList = [
         {
           "type": "application",
           "name": "fullapp",
@@ -457,7 +457,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
           "pluginDepends": [],
         }
       ];
-      var expectedBundleSchema = {
+      let expectedBundleSchema = {
         "profile": {},
         "sandbox": {
           "application": {
@@ -521,19 +521,19 @@ describe("tdd:devebot:core:manifest-handler", function() {
           }
         }
       };
-      var bundleSchema = combineBundleSchema(C, bundleList);
+      let bundleSchema = combineBundleSchema(C, bundleList);
       false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, expectedBundleSchema);
     });
   });
 
   describe("validateBundleConfig()", function() {
-    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
-    var checkSandboxConstraintsOfCrates = ManifestHandler.__get__("checkSandboxConstraintsOfCrates");
-    var {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
-    var L = loggingFactory.getLogger();
-    var T = loggingFactory.getTracer();
-    var C = {L, T, schemaValidator};
+    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let checkSandboxConstraintsOfCrates = ManifestHandler.__get__("checkSandboxConstraintsOfCrates");
+    let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
+    let L = loggingFactory.getLogger();
+    let T = loggingFactory.getTracer();
+    let C = {L, T, schemaValidator};
 
     after(function() {
       stepEnv.reset();
@@ -544,8 +544,8 @@ describe("tdd:devebot:core:manifest-handler", function() {
       if (!chores.isUpgradeSupported("metadata-refiner") || chores.isUpgradeSupported("manifest-refiner")) {
         this.skip();
       }
-      var result = [];
-      var fakedCheckers = {};
+      let result = [];
+      let fakedCheckers = {};
       lodash.forEach(["application", "subPlugin1", "subPlugin2"], function(pluginName) {
         fakedCheckers[pluginName] = sinon.stub();
         fakedCheckers[pluginName].callsFake(function(depends) {
@@ -553,7 +553,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
           return true;
         });
       });
-      var sandboxConfig = {
+      let sandboxConfig = {
         "application": {
           "contextPath": "path/to/appbox"
         },
@@ -610,7 +610,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
           },
         }
       };
-      var sandboxSchema = {
+      let sandboxSchema = {
         "application": {
           "crateScope": "application",
           "schema": {
@@ -783,17 +783,17 @@ describe("tdd:devebot:core:manifest-handler", function() {
   });
 
   describe("extractBridgeSchema()", function() {
-    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
-    var combineBridgeSchema = ManifestHandler.__get__("combineBridgeSchema");
-    var {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
-    var nameResolver = lab.getNameResolver([], [
+    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let combineBridgeSchema = ManifestHandler.__get__("combineBridgeSchema");
+    let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
+    let nameResolver = lab.getNameResolver([], [
       "bridge1", "bridge2", "bridge3", "bridge4", "devebot-co-connector1", "devebot-co-connector2"
     ]);
-    var L = loggingFactory.getLogger();
-    var T = loggingFactory.getTracer();
-    var CTX = {L, T, schemaValidator, nameResolver};
+    let L = loggingFactory.getLogger();
+    let T = loggingFactory.getTracer();
+    let CTX = {L, T, schemaValidator, nameResolver};
 
-    var expectedSchema = {
+    let expectedSchema = {
       "bridge1": {},
       "bridge2": {
         "enabled": false,
@@ -842,7 +842,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
       if (!chores.isUpgradeSupported("manifest-refiner") || chores.isUpgradeSupported("metadata-refiner")) {
         this.skip();
       }
-      var bridgeList = lodash.values({
+      let bridgeList = lodash.values({
         "/test/lib/bridge1": {
           "name": "bridge1",
           "type": "bridge",
@@ -920,7 +920,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
         },
       });
 
-      var bridgeSchema = combineBridgeSchema(CTX, bridgeList);
+      let bridgeSchema = combineBridgeSchema(CTX, bridgeList);
 
       false && console.log("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);
@@ -928,11 +928,11 @@ describe("tdd:devebot:core:manifest-handler", function() {
   });
 
   describe("validateBridgeConfig()", function() {
-    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
-    var validateBridgeConfig = ManifestHandler.__get__("validateBridgeConfig");
-    var {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
-    var L = loggingFactory.getLogger();
-    var T = loggingFactory.getTracer();
+    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let validateBridgeConfig = ManifestHandler.__get__("validateBridgeConfig");
+    let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
+    let L = loggingFactory.getLogger();
+    let T = loggingFactory.getTracer();
 
     after(function() {
       stepEnv.reset();
@@ -943,7 +943,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
       if (!chores.isUpgradeSupported("metadata-refiner") || chores.isUpgradeSupported("manifest-refiner")) {
         this.skip();
       }
-      var bridgeConfig = {
+      let bridgeConfig = {
         "bridge1": {
           "application": {
             "anyname1z": {
@@ -1030,7 +1030,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
           }
         }
       };
-      var bridgeSchema = {
+      let bridgeSchema = {
         "bridge1": {
           "name": "bridge1"
         },
@@ -1075,7 +1075,7 @@ describe("tdd:devebot:core:manifest-handler", function() {
           }
         }
       };
-      var result = [];
+      let result = [];
       validateBridgeConfig({L, T, schemaValidator}, bridgeConfig, bridgeSchema, result);
       false && console.log("validation result: %s", JSON.stringify(result, null, 2));
       if (!chores.isUpgradeSupported("bridge-full-ref")) return;
@@ -1097,13 +1097,13 @@ describe("tdd:devebot:core:manifest-handler", function() {
   });
 
   describe("loadManifest()", function() {
-    var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
-    var loadManifest = ManifestHandler.__get__("loadManifest");
+    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let loadManifest = ManifestHandler.__get__("loadManifest");
     assert.isFunction(loadManifest);
 
     it("load manifest of modules properly", function() {
-      var appName = "setting-with-metadata";
-      var manifest = loadManifest({
+      let appName = "setting-with-metadata";
+      let manifest = loadManifest({
         type: "application",
         name: appName,
         path: lab.getAppHome(appName),
@@ -1114,8 +1114,8 @@ describe("tdd:devebot:core:manifest-handler", function() {
     });
 
     it("return null if manifest not found", function() {
-      var appName = "plugin-reference-alias";
-      var manifest = loadManifest({
+      let appName = "plugin-reference-alias";
+      let manifest = loadManifest({
         type: "application",
         name: appName,
         path: lab.getAppHome(appName),
@@ -1124,9 +1124,9 @@ describe("tdd:devebot:core:manifest-handler", function() {
     });
 
     it("raise an issue if manifest is invalid", function() {
-      var issueInspector = { collect: sinon.stub() };
-      var appName = "invalid-manifest-schema";
-      var manifest = loadManifest({
+      let issueInspector = { collect: sinon.stub() };
+      let appName = "invalid-manifest-schema";
+      let manifest = loadManifest({
         type: "application",
         name: appName,
         path: lab.getAppHome(appName),
@@ -1136,9 +1136,9 @@ describe("tdd:devebot:core:manifest-handler", function() {
       assert.isString(lodash.get(manifest, ["config", "validation", "schema"]));
       // issueInspector.collect
       assert.isTrue(issueInspector.collect.calledOnce);
-      var collectArgs = lodash.cloneDeep(issueInspector.collect.firstCall.args);
+      let collectArgs = lodash.cloneDeep(issueInspector.collect.firstCall.args);
       assert.lengthOf(collectArgs, 1);
-      var collectArg = collectArgs[0];
+      let collectArg = collectArgs[0];
       collectArg.stack = JSON.parse(collectArg.stack);
       assert.deepEqual(collectArg, {
         "stage": "manifest",

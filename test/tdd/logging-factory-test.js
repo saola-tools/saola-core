@@ -1,21 +1,22 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var debugx = Devebot.require("pinbug")("tdd:devebot:core:logging-factory");
-var LoggingFactory = require(lab.getDevebotModule("backbone/logging-factory"));
-var LogAdapter = Devebot.require("logolite").LogAdapter;
-var MockLogger = Devebot.require("logolite").MockLogger;
-var envcloak = require("envcloak").instance;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const debugx = Devebot.require("pinbug")("tdd:devebot:core:logging-factory");
+const LoggingFactory = require(lab.getDevebotModule("backbone/logging-factory"));
+const LogAdapter = Devebot.require("logolite").LogAdapter;
+const MockLogger = Devebot.require("logolite").MockLogger;
+const envcloak = require("envcloak").instance;
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
-describe("tdd:devebot:core:logging-factory", function() {
+describe("tdd:lib:core:logging-factory", function() {
   describe("logging backward compatible", function() {
-    var LoggingFactory = lab.acquireDevebotModule("backbone/logging-factory");
-    var transformLoggingLabels = LoggingFactory.__get__("transformLoggingLabels");
+    let LoggingFactory = lab.acquireDevebotModule("backbone/logging-factory");
+    let transformLoggingLabels = LoggingFactory.__get__("transformLoggingLabels");
     assert.isNotNull(transformLoggingLabels);
 
     before(function() {
@@ -30,19 +31,19 @@ describe("tdd:devebot:core:logging-factory", function() {
     });
 
     it("transformLoggingLabels() accept null parameter", function() {
-      var output = transformLoggingLabels(null);
+      let output = transformLoggingLabels(null);
       false && console.log("transformLoggingLabels(): ", output);
       assert.deepEqual(output, {});
     });
 
     it("transformLoggingLabels() accept empty parameter", function() {
-      var output = transformLoggingLabels({});
+      let output = transformLoggingLabels({});
       false && console.log("transformLoggingLabels(): ", output);
       assert.deepEqual(output, {});
     });
 
     it("transformLoggingLabels() transform logging labels correctly", function() {
-      var loggerCfg = {
+      let loggerCfg = {
         labels: {
           verbose: {
             level: 6,
@@ -81,7 +82,7 @@ describe("tdd:devebot:core:logging-factory", function() {
         }
       };
 
-      var expected = {
+      let expected = {
         levels: {
           verbose: 6,
           debug: 5,
@@ -110,13 +111,13 @@ describe("tdd:devebot:core:logging-factory", function() {
         }
       };
 
-      var output = transformLoggingLabels(loggerCfg.labels);
+      let output = transformLoggingLabels(loggerCfg.labels);
       false && console.log("transformLoggingLabels(): ", output);
       assert.deepEqual(output, expected);
     });
 
     it("transformLoggingLabels() transform logging labels + mappings correctly", function() {
-      var loggerCfg = {
+      let loggerCfg = {
         labels: {
           verbose: {
             level: 6,
@@ -159,7 +160,7 @@ describe("tdd:devebot:core:logging-factory", function() {
         }
       };
 
-      var expected = {
+      let expected = {
         levels: {
           verbose: 6,
           debug: 5,
@@ -192,13 +193,13 @@ describe("tdd:devebot:core:logging-factory", function() {
         }
       };
 
-      var output = transformLoggingLabels(loggerCfg.labels, loggerCfg.mappings);
+      let output = transformLoggingLabels(loggerCfg.labels, loggerCfg.mappings);
       false && console.log("transformLoggingLabels(): ", output);
       assert.deepEqual(output, expected);
     });
 
     it("old logging messages are mapped to new logging labels", function() {
-      var factory = new LoggingFactory({
+      let factory = new LoggingFactory({
         profileConfig: {
           logger: {
             labels: {
@@ -250,9 +251,9 @@ describe("tdd:devebot:core:logging-factory", function() {
         }
       });
 
-      var rootTracer = factory.getTracer();
-      var rootLogger = factory.getLogger();
-      var mockLogger = new MockLogger({
+      let rootTracer = factory.getTracer();
+      let rootLogger = factory.getLogger();
+      let mockLogger = new MockLogger({
         levels: {
           level_s: 5,
           level_d: 4,
@@ -273,7 +274,7 @@ describe("tdd:devebot:core:logging-factory", function() {
       rootLogger.log("trail", "Trail message #1");
       rootLogger.log("fatal", "Error message #3");
 
-      var msgs = mockLogger._reset();
+      let msgs = mockLogger._reset();
       false && console.log(JSON.stringify(msgs, null, 2));
 
       assert.deepEqual(msgs, [
@@ -323,7 +324,7 @@ describe("tdd:devebot:core:logging-factory", function() {
     });
 
     it("default Tracer must contain framework information", function() {
-      var mockLogger = new MockLogger({
+      let mockLogger = new MockLogger({
         levels: {
           silly: 5,
           debug: 4,
@@ -335,7 +336,7 @@ describe("tdd:devebot:core:logging-factory", function() {
       });
       LogAdapter.clearInterceptors().addInterceptor(mockLogger);
 
-      var factory = new LoggingFactory({
+      let factory = new LoggingFactory({
         profileConfig: {
           logger: {
             labels: {
@@ -386,9 +387,9 @@ describe("tdd:devebot:core:logging-factory", function() {
         }
       });
 
-      var rootTracer = factory.getTracer();
+      let rootTracer = factory.getTracer();
 
-      var queue = mockLogger._reset();
+      let queue = mockLogger._reset();
 
       debugx.enabled && debugx("Logging messages: %s", JSON.stringify(queue, null, 2));
       /*
@@ -429,7 +430,7 @@ describe("tdd:devebot:core:logging-factory", function() {
       });
 
       assert.equal(lodash.get(queue, [0, "severity"]), "info");
-      assert.equal(lodash.get(queue, [0, "payload", "lib_name"]), constx.FRAMEWORK.NAME);
+      assert.equal(lodash.get(queue, [0, "payload", "lib_name"]), FRAMEWORK_PACKAGE_NAME);
       assert.containsAllKeys(lodash.get(queue, [0, "payload"]), [
         "instanceId",
         "message",
@@ -441,7 +442,7 @@ describe("tdd:devebot:core:logging-factory", function() {
       ]);
 
       assert.equal(lodash.get(queue, [1, "severity"]), "info");
-      assert.equal(lodash.get(queue, [1, "payload", "blockName"]), constx.FRAMEWORK.NAME);
+      assert.equal(lodash.get(queue, [1, "payload", "blockName"]), FRAMEWORK_PACKAGE_NAME);
       assert.containsAllKeys(lodash.get(queue, [1, "payload"]), [
         "instanceId",
         "blockId",
@@ -455,7 +456,7 @@ describe("tdd:devebot:core:logging-factory", function() {
         lodash.get(queue, [1, "payload", "instanceId"])
       );
 
-      var logObject_1 = rootTracer.toMessage();
+      let logObject_1 = rootTracer.toMessage();
       assert.deepEqual(
         lodash.pick(JSON.parse(logObject_1), ["instanceId", "blockId"]),
         lodash.pick(lodash.get(queue, [1, "payload"]), ["instanceId", "blockId"])
@@ -463,7 +464,7 @@ describe("tdd:devebot:core:logging-factory", function() {
     });
 
     it("recursive branch() calls will return hierarchical loggingFactory objects", function() {
-      var mockLogger = new MockLogger({
+      let mockLogger = new MockLogger({
         levels: {
           silly: 5,
           debug: 4,
@@ -475,7 +476,7 @@ describe("tdd:devebot:core:logging-factory", function() {
       });
       LogAdapter.clearInterceptors().addInterceptor(mockLogger);
 
-      var factory = new LoggingFactory({
+      let factory = new LoggingFactory({
         profileConfig: {
           logger: {
             labels: {
@@ -526,14 +527,14 @@ describe("tdd:devebot:core:logging-factory", function() {
         }
       });
 
-      var childFactory1 = factory.branch("child1");
-      var childFactory2 = factory.branch("child2");
-      var factory_2_1 = childFactory2.branch("grand-child-1");
-      var factory_2_2 = childFactory2.branch("grand-child-2");
+      let childFactory1 = factory.branch("child1");
+      let childFactory2 = factory.branch("child2");
+      let factory_2_1 = childFactory2.branch("grand-child-1");
+      let factory_2_2 = childFactory2.branch("grand-child-2");
 
-      var logObject_1 = childFactory1.getTracer().toMessage();
+      let logObject_1 = childFactory1.getTracer().toMessage();
 
-      var queue = mockLogger._reset();
+      let queue = mockLogger._reset();
 
       debugx.enabled && debugx("Logging messages: %s", JSON.stringify(queue, null, 2));
       assert.equal(queue.length, 2 + 4);
@@ -541,9 +542,9 @@ describe("tdd:devebot:core:logging-factory", function() {
         item.payload = JSON.parse(item.payload);
       });
 
-      var logObject_2 = childFactory2.getTracer().toMessage();
-      var logObject_2_1 = factory_2_1.getTracer().toMessage();
-      var logObject_2_2 = factory_2_2.getTracer().toMessage();
+      let logObject_2 = childFactory2.getTracer().toMessage();
+      let logObject_2_1 = factory_2_1.getTracer().toMessage();
+      let logObject_2_2 = factory_2_2.getTracer().toMessage();
 
       assert.isTrue(factory.getLogger() === factory.getLogger());
       assert.isTrue(factory.getTracer() === factory.getTracer());
@@ -553,7 +554,7 @@ describe("tdd:devebot:core:logging-factory", function() {
       assert.isTrue(factory.getTracer() !== factory_2_1.getTracer());
       assert.isTrue(factory.getLogger() !== factory_2_1.getLogger());
 
-      assert.equal(lodash.get(queue, [1, "payload", "blockName"]), constx.FRAMEWORK.NAME);
+      assert.equal(lodash.get(queue, [1, "payload", "blockName"]), FRAMEWORK_PACKAGE_NAME);
       assert.equal(lodash.get(queue, [2, "payload", "blockName"]), "child1");
       assert.equal(lodash.get(queue, [3, "payload", "blockName"]), "child2");
       assert.equal(lodash.get(queue, [4, "payload", "blockName"]), "grand-child-1");

@@ -1,15 +1,15 @@
 "use strict";
 
-var lab = require("..");
-var Devebot = lab.getDevebot();
-var lodash = Devebot.require("lodash");
-var chores = Devebot.require("chores");
-var assert = require("chai").assert;
-var BeanProxy = require(lab.getDevebotModule("utils/proxy"));
+const lab = require("..");
+const Devebot = lab.getDevebot();
+const lodash = Devebot.require("lodash");
+const chores = Devebot.require("chores");
+const assert = require("chai").assert;
+const BeanProxy = require(lab.getDevebotModule("utils/proxy"));
 
 describe("tdd:lib:utils:proxy", function() {
   describe("BeanProxy ~ normal proxy", function() {
-    var BeanConstructor = function() {
+    let BeanConstructor = function() {
       this.factor = 1.1;
       this.calc = function(cost) {
         return cost * this.factor;
@@ -17,8 +17,8 @@ describe("tdd:lib:utils:proxy", function() {
     };
 
     it("proxy with empty handler should be tranparent", function() {
-      var beanObject = new BeanConstructor();
-      var emptyProxy = new BeanProxy(beanObject, {});
+      let beanObject = new BeanConstructor();
+      let emptyProxy = new BeanProxy(beanObject, {});
       assert.instanceOf(emptyProxy, BeanConstructor);
       assert.equal(emptyProxy.factor, 1.1);
       assert.isFunction(emptyProxy.calc);
@@ -27,7 +27,7 @@ describe("tdd:lib:utils:proxy", function() {
     });
 
     it("should work like a normal proxy for constructor", function() {
-      var wrappedConstructor = new BeanProxy(BeanConstructor, {
+      let wrappedConstructor = new BeanProxy(BeanConstructor, {
         construct (target, argumentsList, newTarget) {
           assert.equal(target, BeanConstructor);
           assert.equal(newTarget, wrappedConstructor);
@@ -38,14 +38,14 @@ describe("tdd:lib:utils:proxy", function() {
           };
         }
       });
-      var beanObject = new wrappedConstructor(1, "hello", true);
+      let beanObject = new wrappedConstructor(1, "hello", true);
       assert.instanceOf(beanObject.bean, BeanConstructor);
       assert.deepEqual(beanObject.args, [1, "hello", true]);
     });
 
     it("should work like a normal proxy for object", function() {
-      var beanObject = new BeanConstructor();
-      var beanProxy = new BeanProxy(beanObject, {
+      let beanObject = new BeanConstructor();
+      let beanProxy = new BeanProxy(beanObject, {
         get (target, property, receiver) {
           assert.equal(target, beanObject);
           assert.equal(receiver, beanProxy);
@@ -61,11 +61,11 @@ describe("tdd:lib:utils:proxy", function() {
     });
 
     it("should work like a normal proxy for function", function() {
-      var simpleCalc = function(amount, unit) {
-        var factor = this && this.factor || 1;
+      let simpleCalc = function(amount, unit) {
+        let factor = this && this.factor || 1;
         return amount * unit * factor;
       };
-      var wrappedCalc = new BeanProxy(simpleCalc, {
+      let wrappedCalc = new BeanProxy(simpleCalc, {
         apply (target, thisArg, argumentsList) {
           assert.equal(target, simpleCalc);
           assert.isArray(argumentsList);
@@ -75,18 +75,18 @@ describe("tdd:lib:utils:proxy", function() {
           };
         }
       });
-      var object = {
+      let object = {
         factor: 1.1,
         calc: wrappedCalc
       };
-      var output = object.calc(2, 100);
+      let output = object.calc(2, 100);
       assert.equal(output.thisArg, object);
       assert.equal(Math.round(output.result), 220);
     });
   });
 
   describe("BeanProxy ~ wrapped proxy", function() {
-    var BeanConstructor = function() {
+    let BeanConstructor = function() {
       this.factor = 1.1;
       this.calc = function(cost) {
         return cost * this.factor;
@@ -106,8 +106,8 @@ describe("tdd:lib:utils:proxy", function() {
       };
     };
     it("should create a chain of wrapped proxies using internal wrap() method (1)", function() {
-      var beanObject = new BeanConstructor();
-      var beanProxy = new BeanProxy(beanObject, {
+      let beanObject = new BeanConstructor();
+      let beanProxy = new BeanProxy(beanObject, {
         get (target, property, receiver) {
           let node = target[property];
           if (lodash.isFunction(node) || lodash.isObject(node)) {
@@ -134,8 +134,8 @@ describe("tdd:lib:utils:proxy", function() {
       assert.equal(beanProxy.product.attrs.price.calc(100), 108);
     });
     it("should create a chain of wrapped proxies using internal wrap() method (2)", function() {
-      var beanObject = new BeanConstructor();
-      var beanProxy = new BeanProxy(beanObject, {
+      let beanObject = new BeanConstructor();
+      let beanProxy = new BeanProxy(beanObject, {
         get (target, property, receiver) {
           let parent = beanObject;
           if (!lodash.isEmpty(this.path)) {
@@ -170,7 +170,7 @@ describe("tdd:lib:utils:proxy", function() {
       assert.equal(beanProxy.product.attrs.price.calc(100), 108);
     });
     it("should access hierarchical proxy-wrapped descendants correctly", function() {
-      var BeanConstructor = function() {
+      let BeanConstructor = function() {
         this.factor = 1.1;
         this.calc = function(unit, amount) {
           return this.factor * this.product.attrs.price.calc(unit, amount);
@@ -189,9 +189,9 @@ describe("tdd:lib:utils:proxy", function() {
           }
         };
       };
-      var requestTags = [];
-      var beanObject = new BeanConstructor();
-      var beanProxy = new BeanProxy(beanObject, {
+      let requestTags = [];
+      let beanObject = new BeanConstructor();
+      let beanProxy = new BeanProxy(beanObject, {
         get (target, property, receiver) {
           let node = target[property];
           if (lodash.isFunction(node) || lodash.isObject(node)) {
@@ -208,7 +208,7 @@ describe("tdd:lib:utils:proxy", function() {
       assert.deepEqual(requestTags, [["calc"], ["product", "attrs", "price", "calc"]]);
     });
     it("should access hierarchical descendants that contain a sequence of method calls", function() {
-      var BeanConstructor = function() {
+      let BeanConstructor = function() {
         this.factor = 1.1;
         this.calc = function(unit, amount) {
           return this.factor * this.product.attrs.price.getInstance().calc(unit, amount);
@@ -231,9 +231,9 @@ describe("tdd:lib:utils:proxy", function() {
           }
         };
       };
-      var requestTags = [];
-      var beanObject = new BeanConstructor();
-      var beanProxy = new BeanProxy(beanObject, {
+      let requestTags = [];
+      let beanObject = new BeanConstructor();
+      let beanProxy = new BeanProxy(beanObject, {
         get (target, property, receiver) {
           let node = target[property];
           if (lodash.isFunction(node) || lodash.isObject(node)) {
@@ -260,7 +260,7 @@ describe("tdd:lib:utils:proxy", function() {
     });
 
     it("should provide a solution to cache the hierarchical structure", function() {
-      var BeanConstructor = function() {
+      let BeanConstructor = function() {
         this.factor = 1.1;
         this.calc = function(unit, amount) {
           return this.factor * this.product.attrs.price.getInstance().calc(unit, amount);
@@ -290,9 +290,9 @@ describe("tdd:lib:utils:proxy", function() {
           return this;
         };
       };
-      var beanCached = {};
-      var beanObject = new BeanConstructor();
-      var beanProxy = new BeanProxy(beanObject, {
+      let beanCached = {};
+      let beanObject = new BeanConstructor();
+      let beanProxy = new BeanProxy(beanObject, {
         get (target, property, receiver) {
           let node = target[property];
           if (chores.isOwnOrInheritedProperty(target, property)) {
@@ -325,7 +325,7 @@ describe("tdd:lib:utils:proxy", function() {
   });
 
   describe("BeanProxy ~ with lodash", function() {
-    var BeanConstructor = function() {
+    let BeanConstructor = function() {
       this.factor = 1.1;
       this.calc = function(unit, amount) {
         return this.factor * this.product.attrs.price.getInstance().calc(unit, amount);
@@ -354,8 +354,8 @@ describe("tdd:lib:utils:proxy", function() {
         }
       };
     };
-    var beanObject = new BeanConstructor();
-    var beanProxy = new BeanProxy(beanObject, {
+    let beanObject = new BeanConstructor();
+    let beanProxy = new BeanProxy(beanObject, {
       get (target, property, receiver) {
         let node = target[property];
         if (lodash.isFunction(node) || lodash.isObject(node)) {
@@ -371,7 +371,7 @@ describe("tdd:lib:utils:proxy", function() {
         return node;
       }
     });
-    var safeProxy = new BeanProxy(beanObject, {
+    let safeProxy = new BeanProxy(beanObject, {
       get (target, property, receiver) {
         let node = target[property];
         if (chores.isOwnOrInheritedProperty(target, property)) {
@@ -410,12 +410,12 @@ describe("tdd:lib:utils:proxy", function() {
 
     it("should not conflict with lodash collection methods (merge, assign, defaults) - array", function() {
       assert.throw(function() {
-        var rates = lodash.map(beanProxy.product.attrs.units, function(unit) {
+        let rates = lodash.map(beanProxy.product.attrs.units, function(unit) {
           return lodash.assign({}, unit);
         });
       }, TypeError);
       assert.doesNotThrow(function() {
-        var rates = lodash.map(safeProxy.product.attrs.units, function(unit) {
+        let rates = lodash.map(safeProxy.product.attrs.units, function(unit) {
           return lodash.assign({}, unit);
         });
       });

@@ -8,7 +8,6 @@ const chores = Devebot.require("chores");
 const debugx = Devebot.require("pinbug")("bdd:devebot:core:configuration");
 const assert = require("chai").assert;
 const expect = require("chai").expect;
-const util = require("util");
 
 describe("bdd:app:configuration", function() {
   this.timeout(lab.getDefaultTimeout());

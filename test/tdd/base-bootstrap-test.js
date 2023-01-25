@@ -1,20 +1,21 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var path = require("path");
-var bootstrap = require(lab.getDevebotModule("bootstrap"));
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const path = require("path");
+const bootstrap = require(lab.getDevebotModule("bootstrap"));
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
 
-var constx = require("../../lib/utils/constx");
-var frameworkName = chores.getFrameworkName(constx.FRAMEWORK.NAME);
+const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_NAME = chores.getFrameworkName(constx.FRAMEWORK.NAME);
 
-var CONFIG_EXTENDED_FIELDS = [
+const CONFIG_EXTENDED_FIELDS = [
   "profile", "sandbox", "texture",
   "appName", "appInfo", "bridgeList", "bundleList",
 ];
@@ -22,7 +23,7 @@ if (!chores.isUpgradeSupported("config-extended-fields")) {
   CONFIG_EXTENDED_FIELDS.push("bridgeRefs", "pluginRefs");
 }
 
-describe("tdd:devebot:base:bootstrap", function() {
+describe("tdd:lib:base:bootstrap", function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
@@ -36,25 +37,25 @@ describe("tdd:devebot:base:bootstrap", function() {
 
   describe("Prerequisite", function() {
     it("launchApplication() load configure only (not server/runner)", function() {
-      var loggingStore = {};
+      let loggingStore = {};
       LogTracer.reset().setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
           allTags: [ "constructor-begin", "appLoader" ],
           countTo: "appLoader"
         }, {
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "kernel"), "constructor-begin" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "kernel"), "constructor-begin" ],
           countTo: "loadingKernel"
         }, {
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "server"), "constructor-begin" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "server"), "constructor-begin" ],
           countTo: "loadingServer"
         }, {
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "runner"), "constructor-begin" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "runner"), "constructor-begin" ],
           countTo: "loadingRunner"
         }]
       }]);
 
-      var app = bootstrap.launchApplication({
+      let app = bootstrap.launchApplication({
         appRootPath: lab.getAppHome("fullapp")
       });
 
@@ -106,7 +107,7 @@ describe("tdd:devebot:base:bootstrap", function() {
   });
 
   describe("require()", function() {
-    var pkgs = {
+    let pkgs = {
       chores: path.join(lab.getDevebotHome(), "lib/utils/chores.js"),
       errors: path.join(lab.getDevebotHome(), "lib/utils/errors.js"),
       loader: path.join(lab.getDevebotHome(), "lib/utils/loader.js"),
@@ -123,14 +124,14 @@ describe("tdd:devebot:base:bootstrap", function() {
   });
 
   describe("locatePackage()", function() {
-    var issueInspector = lab.getIssueInspector();
-    var bootstrap = lab.acquireDevebotModule("bootstrap");
-    var locatePackage = bootstrap.__get__("locatePackage");
+    let issueInspector = lab.getIssueInspector();
+    let bootstrap = lab.acquireDevebotModule("bootstrap");
+    let locatePackage = bootstrap.__get__("locatePackage");
     assert.isFunction(locatePackage);
 
     it("locate a valid package successfully", function() {
-      var providedPkg = lab.getAppHome("locating-package-json");
-      var detectedPkg = locatePackage({issueInspector}, {
+      let providedPkg = lab.getAppHome("locating-package-json");
+      let detectedPkg = locatePackage({issueInspector}, {
         name: "locating-package-json",
         type: "application",
         path: providedPkg
@@ -139,7 +140,7 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("locate a deep packages with default [main] script files (index.js)", function() {
-      var detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
+      let detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: "locating-package-json-foo",
         type: "application",
         path: lab.getAppHome("locating-package-json/foo")
@@ -169,7 +170,7 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("locate a deep packages with customized [main] script files", function() {
-      var detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
+      let detectedPkg = replaceLibPath(locatePackage({issueInspector}, {
         name: "locating-package-json-bar",
         type: "application",
         path: lab.getAppHome("locating-package-json/bar")
@@ -200,12 +201,12 @@ describe("tdd:devebot:base:bootstrap", function() {
   });
 
   describe("expandExtensions()", function() {
-    var bootstrap = lab.acquireDevebotModule("bootstrap");
-    var expandExtensions = bootstrap.__get__("expandExtensions");
+    let bootstrap = lab.acquireDevebotModule("bootstrap");
+    let expandExtensions = bootstrap.__get__("expandExtensions");
     assert.isFunction(expandExtensions);
 
     it("expand empty parameters", function() {
-      var output = expandExtensions();
+      let output = expandExtensions();
       false && console.log("expandExtensions(): ", output);
       assert.deepEqual(output, {
         libRootPaths: [],
@@ -215,7 +216,7 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("expand empty context with a list of plugins", function() {
-      var output = expandExtensions(null, [
+      let output = expandExtensions(null, [
         {
           name: "plugin1",
           path: lab.getLibHome("plugin1")
@@ -284,7 +285,7 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("expand empty context with a list of bridges", function() {
-      var output = expandExtensions(null, [], [
+      let output = expandExtensions(null, [], [
         {
           name: "bridge1",
           path: lab.getLibHome("bridge1")
@@ -326,7 +327,7 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("expand empty context with a list of plugins and a list of bridges", function() {
-      var output = expandExtensions(null, [
+      let output = expandExtensions(null, [
         {
           name: "plugin1",
           path: lab.getLibHome("plugin1")
@@ -418,7 +419,7 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("expand empty context with nested and overlap plugins", function() {
-      var output = expandExtensions(null, [
+      let output = expandExtensions(null, [
         {
           name: "sub-plugin1",
           path: lab.getLibHome("sub-plugin1")
@@ -532,7 +533,7 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("expand empty context with complete plugins (nested and overlap plugins)", function() {
-      var output = expandExtensions(null, [
+      let output = expandExtensions(null, [
         {
           name: "sub-plugin1",
           path: lab.getLibHome("sub-plugin1")
@@ -697,11 +698,11 @@ describe("tdd:devebot:base:bootstrap", function() {
   });
 
   describe("launchApplication()", function() {
-    var assertAppConfig = function(app) {
-      var cfg = app.config;
+    function assertAppConfig (app) {
+      let cfg = app.config;
       false && console.log("SHOW [app.config]: ", cfg);
       assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
-      assert.equal(cfg.appName, frameworkName + "-application");
+      assert.equal(cfg.appName, FRAMEWORK_NAME + "-application");
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
@@ -711,20 +712,20 @@ describe("tdd:devebot:base:bootstrap", function() {
         return lodash.pick(item, ["type", "name"]);
       }), [{
         type: "application",
-        name: frameworkName + "-application"
+        name: FRAMEWORK_NAME + "-application"
       },
       {
         type: "framework",
-        name: constx.FRAMEWORK.NAME
+        name: FRAMEWORK_PACKAGE_NAME
       }]);
     };
 
-    var assertAppRunner = function(app) {
-      var runner = app.runner;
+    function assertAppRunner (app) {
+      return app.runner;
     };
 
-    var assertAppServer = function(app) {
-      var runner = app.runner;
+    function assertAppServer (app) {
+      return app.server;
     };
 
     beforeEach(function() {
@@ -732,10 +733,10 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("launch application with empty parameters", function() {
-      var app = bootstrap.launchApplication();
-      var cfg = replaceObjectFields(app.config);
+      let app = bootstrap.launchApplication();
+      let cfg = replaceObjectFields(app.config);
       false && console.log("Application config: ", JSON.stringify(cfg, null, 2));
-      assert.equal(cfg.appName, frameworkName + "-application");
+      assert.equal(cfg.appName, FRAMEWORK_NAME + "-application");
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
@@ -743,11 +744,11 @@ describe("tdd:devebot:base:bootstrap", function() {
       assert.sameDeepMembers(cfg.bridgeList, []);
       assert.sameDeepMembers(cfg.bundleList, [
         {
-          "name": frameworkName + "-application",
+          "name": FRAMEWORK_NAME + "-application",
           "type": "application",
         },
         {
-          "name": constx.FRAMEWORK.NAME,
+          "name": FRAMEWORK_PACKAGE_NAME,
           "type": "framework",
           "path": "/devebot",
         }
@@ -755,12 +756,12 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("launch application with empty root directory (as string)", function() {
-      var app = bootstrap.launchApplication(lab.getAppHome("empty"), [], []);
+      let app = bootstrap.launchApplication(lab.getAppHome("empty"), [], []);
       assertAppConfig(app);
     });
 
     it("launch application with empty root directory (in context)", function() {
-      var app = bootstrap.launchApplication({
+      let app = bootstrap.launchApplication({
         appRootPath: lab.getAppHome("empty")
       }, [], []);
       assertAppConfig(app);
@@ -769,9 +770,9 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("launch application with full components", function() {
-      var app = lab.getApp("fullapp");
+      let app = lab.getApp("fullapp");
       false && console.log("fullapp app.config: ", JSON.stringify(app.config, null, 2));
-      var cfg = replaceObjectFields(app.config, DEFAULT_CONTEXT);
+      let cfg = replaceObjectFields(app.config, DEFAULT_CONTEXT);
       false && console.log("fullapp cfg: ", JSON.stringify(cfg, null, 2));
       assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
       // verify appInfo
@@ -828,7 +829,7 @@ describe("tdd:devebot:base:bootstrap", function() {
         "framework": lab.getFrameworkInfo()
       });
       // verify bridgeRefs
-      var expectedBridgeRefs = [
+      let expectedBridgeRefs = [
         {
           "type": "bridge",
           "name": "bridge3",
@@ -897,7 +898,7 @@ describe("tdd:devebot:base:bootstrap", function() {
       }
       assert.sameDeepMembers(cfg.bridgeList, expectedBridgeRefs);
       // verify pluginRefs
-      var expectedPluginRefs = [
+      let expectedPluginRefs = [
         {
           "type": "application",
           "name": "fullapp",
@@ -976,7 +977,7 @@ describe("tdd:devebot:base:bootstrap", function() {
         },
         {
           "type": "framework",
-          "name": constx.FRAMEWORK.NAME,
+          "name": FRAMEWORK_PACKAGE_NAME,
           "path": "/devebot",
         }
       ];
@@ -1000,14 +1001,14 @@ describe("tdd:devebot:base:bootstrap", function() {
     });
 
     it("register a new plugin with empty parameters", function() {
-      var pluginLauncher = bootstrap.registerLayerware();
-      var pluginStore = removeLoggingUtils(pluginLauncher());
+      let pluginLauncher = bootstrap.registerLayerware();
+      let pluginStore = removeLoggingUtils(pluginLauncher());
       false && console.log(JSON.stringify(pluginStore, null, 2));
       assert.deepEqual(pluginStore, { libRootPaths: [], bridgeRefs: {}, pluginRefs: {} });
     });
 
     it("register a new plugin with nested and overlap sub-plugins", function() {
-      var pluginLauncher = bootstrap.registerLayerware(null, [
+      let pluginLauncher = bootstrap.registerLayerware(null, [
         {
           name: "sub-plugin1",
           path: lab.getLibHome("sub-plugin1")
@@ -1017,7 +1018,7 @@ describe("tdd:devebot:base:bootstrap", function() {
           path: lab.getLibHome("sub-plugin2")
         }
       ], []);
-      var output = replaceObjectFields(removeLoggingUtils(pluginLauncher()), DEFAULT_CONTEXT);
+      let output = replaceObjectFields(removeLoggingUtils(pluginLauncher()), DEFAULT_CONTEXT);
       false && console.log("pluginLauncher(): ", JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
@@ -1127,7 +1128,7 @@ describe("tdd:devebot:base:bootstrap", function() {
   });
 });
 
-var DEFAULT_CONTEXT = {
+const DEFAULT_CONTEXT = {
   replacers: [
     {
       pattern: /^(?!https).*\/(devebot|test\/lib|test\/app)\/([^\/].*)(\/?.*)/g,
@@ -1136,13 +1137,13 @@ var DEFAULT_CONTEXT = {
   ]
 };
 
-var replaceLibPath = function(p, context) {
+let replaceLibPath = function(p, context) {
   if (typeof p !== "string") return p;
-  var output = p;
+  let output = p;
   context = context || DEFAULT_CONTEXT;
   context.replacers = context.replacers || [];
-  for (var i=0; i<context.replacers.length; i++) {
-    var replacer = context.replacers[i];
+  for (let i=0; i<context.replacers.length; i++) {
+    let replacer = context.replacers[i];
     if (p.match(replacer.pattern)) {
       output = p.replace(replacer.pattern, replacer.replacement);
       break;
@@ -1154,10 +1155,10 @@ var replaceLibPath = function(p, context) {
   return output;
 };
 
-var replaceObjectFields = function(obj, context) {
-  var replaceFields = function(queue) {
+let replaceObjectFields = function(obj, context) {
+  let replaceFields = function(queue) {
     if (queue.length > 0) {
-      var o = queue.shift();
+      let o = queue.shift();
       if (lodash.isObject(o)) {
         lodash.forEach(lodash.keys(o), function(key) {
           if (lodash.isObject(o[key])) {
@@ -1189,6 +1190,6 @@ var replaceObjectFields = function(obj, context) {
   return obj;
 };
 
-var removeLoggingUtils = function(config) {
+let removeLoggingUtils = function(config) {
   return lodash.omit(config, ["logger", "tracer"]);
 };

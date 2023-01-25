@@ -1,25 +1,26 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var Envcloak = require("envcloak");
-var envcloak = Envcloak.instance;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const Envcloak = require("envcloak");
+const envcloak = Envcloak.instance;
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
-var ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
-var SELECTED_FIELDS = ManifestHandler.__get__("SELECTED_FIELDS");
+const ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+const SELECTED_FIELDS = ManifestHandler.__get__("SELECTED_FIELDS");
 
-describe("tdd:devebot:base:kernel", function() {
+describe("tdd:lib:base:kernel", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var stepEnv = new Envcloak();
-  var issueInspector = lab.getIssueInspector();
+  let stepEnv = new Envcloak();
+  let issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
@@ -35,8 +36,8 @@ describe("tdd:devebot:base:kernel", function() {
   });
 
   describe("extractBundleSchema()", function() {
-    var Kernel = lab.acquireDevebotModule("kernel");
-    var extractBundleSchema = Kernel.__get__("extractBundleSchema");
+    let Kernel = lab.acquireDevebotModule("kernel");
+    let extractBundleSchema = Kernel.__get__("extractBundleSchema");
 
     beforeEach(function() {
       stepEnv.reset();
@@ -52,7 +53,7 @@ describe("tdd:devebot:base:kernel", function() {
       if (!chores.isUpgradeSupported("metadata-refiner") || chores.isUpgradeSupported("manifest-refiner")) {
         this.skip();
       }
-      var bundleMetadata = {
+      let bundleMetadata = {
         "devebot-dp-wrapper1/sandbox": {
           "default": {
             "crateScope": "devebot-dp-wrapper1",
@@ -93,7 +94,7 @@ describe("tdd:devebot:base:kernel", function() {
         }
       };
 
-      var bundleSchema = extractBundleSchema(SELECTED_FIELDS, bundleMetadata);
+      let bundleSchema = extractBundleSchema(SELECTED_FIELDS, bundleMetadata);
       false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, {
         "profile": {},
@@ -136,7 +137,7 @@ describe("tdd:devebot:base:kernel", function() {
       if (!chores.isUpgradeSupported("metadata-refiner") || chores.isUpgradeSupported("manifest-refiner")) {
         this.skip();
       }
-      var bundleMetadata = {
+      let bundleMetadata = {
         "application/sandbox": {
           "default": {
             "crateScope": "application",
@@ -215,7 +216,7 @@ describe("tdd:devebot:base:kernel", function() {
           }
         }
       };
-      var expectedBundleSchema = {
+      let expectedBundleSchema = {
         "profile": {},
         "sandbox": {
           "application": {
@@ -273,17 +274,17 @@ describe("tdd:devebot:base:kernel", function() {
           }
         }
       };
-      var bundleSchema = extractBundleSchema(SELECTED_FIELDS, bundleMetadata);
+      let bundleSchema = extractBundleSchema(SELECTED_FIELDS, bundleMetadata);
       false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, expectedBundleSchema);
     });
   });
 
   describe("extractBridgeSchema()", function() {
-    var Kernel = lab.acquireDevebotModule("kernel");
-    var extractBridgeSchema = Kernel.__get__("extractBridgeSchema");
+    let Kernel = lab.acquireDevebotModule("kernel");
+    let extractBridgeSchema = Kernel.__get__("extractBridgeSchema");
 
-    var expectedSchema = {
+    let expectedSchema = {
       "bridge1": {},
       "bridge2": {},
       "bridge3": {},
@@ -333,7 +334,7 @@ describe("tdd:devebot:base:kernel", function() {
       if (!chores.isUpgradeSupported("metadata-refiner") || chores.isUpgradeSupported("manifest-refiner")) {
         this.skip();
       }
-      var bridgeMetadata = {
+      let bridgeMetadata = {
         "bridge1": {
           "name": "bridge1"
         },
@@ -379,7 +380,7 @@ describe("tdd:devebot:base:kernel", function() {
         },
       };
 
-      var bridgeSchema = extractBridgeSchema(SELECTED_FIELDS, bridgeMetadata);
+      let bridgeSchema = extractBridgeSchema(SELECTED_FIELDS, bridgeMetadata);
 
       false && console.log("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);
@@ -392,30 +393,30 @@ describe("tdd:devebot:base:kernel", function() {
       if (!chores.isUpgradeSupported("metadata-refiner")) return this.skip();
     });
 
-    var loggingStore = {};
+    let loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "bridge-config-schema-input" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "manifestHandler"), "bridge-config-schema-input" ],
           storeTo: "bridgeInput"
         }, {
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "plugin-config-schema-input" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "manifestHandler"), "plugin-config-schema-input" ],
           storeTo: "pluginInput"
         }, {
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "validate-bridge-config-by-schema" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "manifestHandler"), "validate-bridge-config-by-schema" ],
           storeTo: "bridgeData"
         }, {
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "validate-bundle-config-by-schema" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "manifestHandler"), "validate-bundle-config-by-schema" ],
           storeTo: "pluginData"
         }, {
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"), "validating-config-by-schema-result" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "manifestHandler"), "validating-config-by-schema-result" ],
           storeTo: "outputValidation"
         }, {
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "issueInspector"), "examine", "metadata-validating" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "issueInspector"), "examine", "metadata-validating" ],
           matchingField: "invoker",
-          matchingRule: chores.toFullname(constx.FRAMEWORK.NAME, "kernel"),
+          matchingRule: chores.toFullname(FRAMEWORK_PACKAGE_NAME, "kernel"),
           storeTo: "errorSummary"
         }]
       }]);
@@ -432,24 +433,24 @@ describe("tdd:devebot:base:kernel", function() {
     });
 
     it("kernel constructor is ok if no error has occurred in validating", function() {
-      var unhook = lab.preventExit();
+      let unhook = lab.preventExit();
 
-      var kernel = lab.createKernel("fullapp");
+      let kernel = lab.createKernel("fullapp");
 
-      var bundleMetadata = lodash.get(loggingStore, "pluginInput.0.metadata", {});
+      let bundleMetadata = lodash.get(loggingStore, "pluginInput.0.metadata", {});
       false && console.log("bundleMetadata: %s", JSON.stringify(bundleMetadata, null, 2));
 
-      var bridgeConfig = lodash.get(loggingStore, "bridgeData.0.bridgeConfig", {});
-      var bridgeSchema = lodash.get(loggingStore, "bridgeData.0.bridgeSchema", {});
+      let bridgeConfig = lodash.get(loggingStore, "bridgeData.0.bridgeConfig", {});
+      let bridgeSchema = lodash.get(loggingStore, "bridgeData.0.bridgeSchema", {});
       false && console.log("bridgeConfig: %s", JSON.stringify(bridgeConfig, null, 2));
       false && console.log("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
 
-      var bundleConfig = lodash.get(loggingStore, "pluginData.0.bundleConfig", {});
-      var bundleSchema = lodash.get(loggingStore, "pluginData.0.bundleSchema", {});
+      let bundleConfig = lodash.get(loggingStore, "pluginData.0.bundleConfig", {});
+      let bundleSchema = lodash.get(loggingStore, "pluginData.0.bundleSchema", {});
       false && console.log("bundleConfig: %s", JSON.stringify(bundleConfig, null, 2));
       false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
 
-      var result = lodash.get(loggingStore, "outputValidation.0.result", []);
+      let result = lodash.get(loggingStore, "outputValidation.0.result", []);
       false && lodash.forEach(result, function(item) {
         console.log("- validation result: %s", JSON.stringify(lodash.omit(item, ["stack"])));
         if (item.hasError) {
@@ -457,7 +458,7 @@ describe("tdd:devebot:base:kernel", function() {
         }
       });
 
-      var expectedBridges = {
+      let expectedBridges = {
         "bridge1": {
           "application": {
             "anyname1z": {
@@ -640,7 +641,7 @@ describe("tdd:devebot:base:kernel", function() {
         }
       });
 
-      var expectedBundleSchemaSandbox = {
+      let expectedBundleSchemaSandbox = {
         "application": {
           "crateScope": "application",
           "schema": {
@@ -721,7 +722,7 @@ describe("tdd:devebot:base:kernel", function() {
       // errorSummary.0 <= configLoader, errorSummary.1 <= kernel
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.deepEqual(errorSummary, { totalOfErrors: 0, errors: [] });
@@ -729,18 +730,18 @@ describe("tdd:devebot:base:kernel", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 0);
     });
 
     it("loading an invalid bridge's configure make program exit", function() {
-      var unhook = lab.preventExit();
-      var kernel = lab.createKernel("invalid-bridge-config");
+      let unhook = lab.preventExit();
+      let kernel = lab.createKernel("invalid-bridge-config");
 
       // errorSummary.0 <= kernel
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
@@ -749,19 +750,19 @@ describe("tdd:devebot:base:kernel", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 2);
     });
 
     it("loading an invalid bridge's configure but skipping validation", function() {
       if (!chores.isUpgradeSupported("presets")) this.skip();
-      var unhook = lab.preventExit();
-      var kernel = lab.createKernel("invalid-bridge-config-but-skip");
+      let unhook = lab.preventExit();
+      let kernel = lab.createKernel("invalid-bridge-config-but-skip");
 
       // errorSummary.0 <= kernel
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.equal(errorSummary.totalOfErrors, 0);
@@ -770,18 +771,18 @@ describe("tdd:devebot:base:kernel", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 0);
     });
 
     it("loading an invalid plugin's configure make program exit", function() {
-      var unhook = lab.preventExit();
-      var kernel = lab.createKernel("invalid-plugin-config");
+      let unhook = lab.preventExit();
+      let kernel = lab.createKernel("invalid-plugin-config");
 
       // errorSummary.0 <= kernel
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.equal(errorSummary.totalOfErrors, 2);
@@ -790,19 +791,19 @@ describe("tdd:devebot:base:kernel", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 2);
     });
 
     it("loading an invalid plugin's configure but skipping validation", function() {
       if (!chores.isUpgradeSupported("presets")) return this.skip();
-      var unhook = lab.preventExit();
-      var kernel = lab.createKernel("invalid-plugin-config-but-skip");
+      let unhook = lab.preventExit();
+      let kernel = lab.createKernel("invalid-plugin-config-but-skip");
 
       // errorSummary.0 <= kernel
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.equal(errorSummary.totalOfErrors, 0);
@@ -811,7 +812,7 @@ describe("tdd:devebot:base:kernel", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 0);
     });
 

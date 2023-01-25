@@ -8,6 +8,7 @@ const assert = require("chai").assert;
 const DevebotApi = require("devebot-api");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 describe("bdd:api:command:system-info", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -34,7 +35,7 @@ describe("bdd:api:command:system-info", function() {
       false && console.log(cmd);
       assert.isNotNull(cmd);
       assert.deepEqual(cmd, {
-        package: constx.FRAMEWORK.NAME,
+        package: FRAMEWORK_PACKAGE_NAME,
         name: "system-info",
         alias: "sys-info",
         description: "Display the system information (configuration, logger, sandbox)",

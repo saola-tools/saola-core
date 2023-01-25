@@ -8,6 +8,7 @@ const assert = require("chai").assert;
 const DevebotApi = require("devebot-api");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 describe("bdd:api:routine:applica-info", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -36,7 +37,7 @@ describe("bdd:api:routine:applica-info", function() {
         false && console.log(cmd);
         assert.isNotNull(cmd);
         assert.deepEqual(cmd, {
-          package: constx.FRAMEWORK.NAME,
+          package: FRAMEWORK_PACKAGE_NAME,
           name: "applica-info",
           alias: "app-info",
           description: "Display application information",
@@ -125,7 +126,7 @@ describe("bdd:api:routine:applica-info", function() {
         false && console.log(cmd);
         assert.isNotNull(cmd);
         assert.deepEqual(cmd, {
-          package: constx.FRAMEWORK.NAME,
+          package: FRAMEWORK_PACKAGE_NAME,
           name: "applica-info",
           alias: "app-info",
           description: "Display application information",
