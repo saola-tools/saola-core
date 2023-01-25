@@ -1,6 +1,6 @@
+/* global Devebot */
 'use strict';
 
-var Promise = Devebot.require('bluebird');
 var lodash = Devebot.require('lodash');
 
 var Service = function(params={}) {

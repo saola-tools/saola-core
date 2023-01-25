@@ -1,3 +1,4 @@
+/* global Devebot */
 'use strict';
 
 var Promise = Devebot.require('bluebird');

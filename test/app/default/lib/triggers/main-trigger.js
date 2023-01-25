@@ -1,3 +1,4 @@
+/* global Devebot */
 'use strict';
 
 var http = require('http');
@@ -24,23 +25,23 @@ var Service = function(params={}) {
   var configPort = lodash.get(mainCfg, 'port', 8080);
 
   this.start = function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       var serverInstance = server.listen(configPort, configHost, function () {
         var host = serverInstance.address().address;
         var port = serverInstance.address().port;
         chores.isVerboseForced(packageName, mainCfg) &&
-        console.log('%s is listening at http://%s:%s', packageName, host, port);
-        resolved(serverInstance);
+        chores.logConsole('%s is listening at http://%s:%s', packageName, host, port);
+        resolve(serverInstance);
       });
     });
   };
 
   this.stop = function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       server.close(function () {
         chores.isVerboseForced(packageName, mainCfg) &&
-        console.log('%s has been closed', packageName);
-        resolved();
+        chores.logConsole('%s has been closed', packageName);
+        resolve();
       });
     });
   };
