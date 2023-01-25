@@ -5,8 +5,8 @@ module.exports = {
     "verbose": true
   },
   common: {
-    ev1: ['environment variable', 0],
-    ev2: ['environment variable', 0]
+    ev1: ["environment variable", 0],
+    ev2: ["environment variable", 0]
   },
   bridges: {
     "bridge1": {
@@ -37,4 +37,4 @@ module.exports = {
       "port": 17702
     }
   }
-}
+};

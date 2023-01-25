@@ -1,7 +1,7 @@
 module.exports = {
   devebot: {
     verbose: false,
-    mode: 'heartbeat',
+    mode: "heartbeat",
     jobqueue: {
       enabled: true
     }
@@ -9,12 +9,12 @@ module.exports = {
   logger: {
     transports: {
       console: {
-        type: 'console',
-        level: 'debug',
+        type: "console",
+        level: "debug",
         json: false,
         timestamp: true,
         colorize: true
       }
     }
   }
-}
+};

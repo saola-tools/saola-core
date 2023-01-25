@@ -33,4 +33,4 @@ module.exports = {
       "port": 17702
     }
   }
-}
+};
