@@ -1,4 +1,4 @@
-var lodash = require('lodash');
+var lodash = require("lodash");
 
 module.exports = {
   plugins: {
@@ -33,7 +33,7 @@ module.exports = {
                     return {
                       error_code: error.code,
                       error_message: error.message
-                    }
+                    };
                   },
                   template: "Request[#{requestId}] #{objectName}.#{methodName} - failed"
                 }
@@ -55,7 +55,7 @@ module.exports = {
                       return true;
                     },
                     generate: function(opts) {
-                      return { msg: "hello world" }
+                      return { msg: "hello world" };
                     }
                   }
                 }
@@ -96,7 +96,7 @@ module.exports = {
                     return args && args[0] && args[0].reqId;
                   },
                   extractInfo: function(args, context) {
-                    return lodash.omit(args[0], ['reqId']);
+                    return lodash.omit(args[0], ["reqId"]);
                   },
                   template: "#{objectName} - #{methodName} - Request[#{requestId}]"
                 },
@@ -111,7 +111,7 @@ module.exports = {
                     return {
                       error_code: error.code,
                       error_message: error.message
-                    }
+                    };
                   },
                   template: "#{objectName}.#{methodName} - Request[#{requestId}]"
                 }
@@ -122,4 +122,4 @@ module.exports = {
       }
     },
   }
-}
+};

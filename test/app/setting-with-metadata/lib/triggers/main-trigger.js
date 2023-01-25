@@ -1,50 +1,51 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var http = require('http');
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var chores = Devebot.require('chores');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
+const http = require("http");
+const Promise = Devebot.require("bluebird");
+const lodash = Devebot.require("lodash");
+const chores = Devebot.require("chores");
+const debugx = Devebot.require("pinbug")("devebot:test:lab:main:mainTrigger");
 
-var Service = function(params={}) {
-  var packageName = params.packageName || 'setting-with-metadata';
-  var mainCfg = params.sandboxConfig || {};
+const Service = function(params={}) {
+  const packageName = params.packageName || "setting-with-metadata";
+  const mainCfg = params.sandboxConfig || {};
 
-  console.log('External merge config: ', params.mainService.mergeConfig({
+  chores.logConsole("External merge config: ", params.mainService.mergeConfig({
     reqId: chores.getUUID()
   }));
 
-  var server = http.createServer();
+  const server = http.createServer();
 
-  server.on('error', function(err) {
-    debugx.enabled && debugx('Server Error: %s', JSON.stringify(err));
+  server.on("error", function(err) {
+    debugx.enabled && debugx("Server Error: %s", JSON.stringify(err));
   });
 
   this.getServer = function() {
     return server;
   };
 
-  var configHost = lodash.get(mainCfg, ['server', 'host'], '0.0.0.0');
-  var configPort = lodash.get(mainCfg, ['server', 'port'], 8080);
+  const configHost = lodash.get(mainCfg, ["server", "host"], "0.0.0.0");
+  const configPort = lodash.get(mainCfg, ["server", "port"], 8080);
 
   this.start = function() {
-    return new Promise(function(resolved, rejected) {
-      var serverInstance = server.listen(configPort, configHost, function () {
-        var host = serverInstance.address().address;
-        var port = serverInstance.address().port;
+    return new Promise(function(resolve, reject) {
+      const serverInstance = server.listen(configPort, configHost, function () {
+        const host = serverInstance.address().address;
+        const port = serverInstance.address().port;
         chores.isVerboseForced(packageName, mainCfg) &&
-        console.log('%s is listening at http://%s:%s', packageName, host, port);
-        resolved(serverInstance);
+        chores.logConsole("%s is listening at http://%s:%s", packageName, host, port);
+        resolve(serverInstance);
       });
     });
   };
 
   this.stop = function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       server.close(function () {
         chores.isVerboseForced(packageName, mainCfg) &&
-        console.log('%s has been closed', packageName);
-        resolved();
+        chores.logConsole("%s has been closed", packageName);
+        resolve();
       });
     });
   };
@@ -53,6 +54,6 @@ var Service = function(params={}) {
 Service.referenceHash = {
   "dialect": "application/bridge4#instance",
   "mainService": "application/mainService"
-}
+};
 
 module.exports = Service;

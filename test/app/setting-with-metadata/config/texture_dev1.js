@@ -1,4 +1,4 @@
-var lodash = require('lodash');
+"use strict";
 
 module.exports = {
   application: {
@@ -31,7 +31,7 @@ module.exports = {
                   return {
                     error_name: error.name,
                     error_message: error.message
-                  }
+                  };
                 },
                 template: "Request[#{requestId}](#{objectName}.#{methodName}) - failed"
               }
@@ -42,4 +42,4 @@ module.exports = {
       }
     }
   }
-}
+};

@@ -1,6 +1,6 @@
 module.exports = {
   devebot: {
-    mode: 'tictac',
+    mode: "tictac",
     verbose: false,
     jobqueue: {
       enabled: false
@@ -9,19 +9,19 @@ module.exports = {
   decorator: {
     logging: {
       streamIdExtractor: function(appInfo, instanceId) {
-        return instanceId + '@' + appInfo.version;
+        return instanceId + "@" + appInfo.version;
       }
     }
   },
   logger: {
     transports: {
       console: {
-        type: 'console',
-        level: 'debug',
+        type: "console",
+        level: "debug",
         json: false,
         timestamp: true,
         colorize: true
       }
     }
   }
-}
+};
