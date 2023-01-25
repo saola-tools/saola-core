@@ -1,23 +1,22 @@
 'use strict';
 
-var path = require('path');
-var freshy = require('freshy');
-var rewire = require('rewire');
-var sinon = require('sinon');
+const path = require('path');
+const freshy = require('freshy');
+const rewire = require('rewire');
+const sinon = require('sinon');
 
-var chores = require('../lib/utils/chores');
-var constx = require('../lib/utils/constx');
-var errors = require('../lib/utils/errors');
-var debugx = require('../lib/utils/pinbug')('devebot:test:lab');
-var NameResolver = require('../lib/backbone/name-resolver');
-var ManifestHandler = require('../lib/backbone/manifest-handler');
-var issueInspector = require('../lib/backbone/issue-inspector').instance;
-var stateInspector = require('../lib/backbone/state-inspector').instance;
-var Devebot = require(path.join(__dirname, '../'));
-var LogConfig = Devebot.require('logolite').LogConfig;
-var LogTracer = Devebot.require('logolite').LogTracer;
-var Injektor = Devebot.require('injektor');
-var lodash = Devebot.require('lodash');
+const chores = require('../lib/utils/chores');
+const constx = require('../lib/utils/constx');
+const errors = require('../lib/utils/errors');
+const NameResolver = require('../lib/backbone/name-resolver');
+const ManifestHandler = require('../lib/backbone/manifest-handler');
+const issueInspector = require('../lib/backbone/issue-inspector').instance;
+const stateInspector = require('../lib/backbone/state-inspector').instance;
+const Devebot = require(path.join(__dirname, '../'));
+const LogConfig = Devebot.require('logolite').LogConfig;
+const LogTracer = Devebot.require('logolite').LogTracer;
+const Injektor = Devebot.require('injektor');
+const lodash = Devebot.require('lodash');
 
 // EventEmitter memory leak detecting
 var max = 12;
@@ -456,7 +455,6 @@ lab.preventExit = function(options, block) {
 
   process.exit = function(code) {
     counter += 1;
-    debugx.enabled && debugx(' - process.exit(%s) is invoked', code);
     if (options.throwException) {
       throw new lab.ProcessExitError('process.exit() is invoked', {
         code: code,

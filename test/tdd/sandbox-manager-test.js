@@ -16,7 +16,7 @@ var sinon = require("sinon");
 
 var constx = require("../../lib/utils/constx");
 
-describe("tdd:devebot:core:sandbox-manager", function() {
+describe("tdd:lib:core:sandbox-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();

@@ -13,7 +13,7 @@ var envcloak = require("envcloak").instance;
 
 var constx = require("../../lib/utils/constx");
 
-describe("tdd:devebot:core:runhook-manager", function() {
+describe("tdd:lib:core:runhook-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();

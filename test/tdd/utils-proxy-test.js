@@ -7,7 +7,7 @@ var chores = Devebot.require("chores");
 var assert = require("chai").assert;
 var BeanProxy = require(lab.getDevebotModule("utils/proxy"));
 
-describe("tdd:devebot:utils:proxy", function() {
+describe("tdd:lib:utils:proxy", function() {
   describe("BeanProxy ~ normal proxy", function() {
     var BeanConstructor = function() {
       this.factor = 1.1;

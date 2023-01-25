@@ -9,7 +9,7 @@ var path = require("path");
 
 var constx = require("../../lib/utils/constx");
 
-describe("tdd:devebot:utils:chores", function() {
+describe("tdd:lib:utils:chores", function() {
   describe("loadServiceByNames()", function() {
     var serviceFolder = lab.getLibHome("testcode/services");
     var serviceNames = ["service1", "service2"];

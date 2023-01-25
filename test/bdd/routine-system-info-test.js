@@ -1,18 +1,18 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var DevebotApi = require("devebot-api");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const DevebotApi = require("devebot-api");
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
 
-describe("bdd:devebot:command:system-info", function() {
+describe("bdd:api:command:system-info", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var app, api;
+  let app, api;
 
   before(function() {
     app = lab.getApp();
@@ -30,7 +30,7 @@ describe("bdd:devebot:command:system-info", function() {
         resolved(obj.payload);
       });
     }).then(function(defs) {
-      var cmd = lodash.keyBy(defs.commands, "name")["system-info"];
+      let cmd = lodash.keyBy(defs.commands, "name")["system-info"];
       false && console.log(cmd);
       assert.isNotNull(cmd);
       assert.deepEqual(cmd, {
@@ -64,7 +64,7 @@ describe("bdd:devebot:command:system-info", function() {
         "options": {}
       });
       assert.lengthOf(result.payload, 1);
-      var info = result.payload[0];
+      let info = result.payload[0];
       assert.deepInclude(lodash.pick(info, ["type", "title", "label"]), {
         "type": "record",
         "title": "OS information",

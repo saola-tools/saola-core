@@ -1,23 +1,23 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var debugx = Devebot.require("pinbug")("bdd:devebot:command:execution");
-var assert = require("chai").assert;
-var DevebotApi = require("devebot-api");
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const debugx = Devebot.require("pinbug")("bdd:devebot:command:execution");
+const assert = require("chai").assert;
+const DevebotApi = require("devebot-api");
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
 
-describe("bdd:devebot:command:execution", function() {
+describe("bdd:api:command:execution", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var app, api;
-  var logStats = {};
-  var logCounter = LogTracer.accumulationAppender.bind(null, logStats, [
+  let app, api;
+  let logStats = {};
+  let logCounter = LogTracer.accumulationAppender.bind(null, logStats, [
     {
       matchingField: "checkpoint",
       matchingRule: /plugin1-routine1-.*/g,
@@ -29,7 +29,7 @@ describe("bdd:devebot:command:execution", function() {
       countTo: "plugin1Routine2Count"
     }
   ]);
-  var logScraper = LogTracer.accumulationAppender.bind(null, logStats, [
+  let logScraper = LogTracer.accumulationAppender.bind(null, logStats, [
     {
       anyTags: [ "logolite-metadata", "devebot-metadata" ],
       storeTo: "blockLoggingState"
@@ -47,7 +47,7 @@ describe("bdd:devebot:command:execution", function() {
       storeTo: "plugin1Routine2State"
     }
   ]);
-  var injectedServiceNames = [];
+  let injectedServiceNames = [];
 
   before(function() {
     envcloak.setup({
@@ -102,7 +102,7 @@ describe("bdd:devebot:command:execution", function() {
         resolved(obj.payload);
       });
     }).then(function(defs) {
-      var cmd = lodash.keyBy(defs.commands, "name")["plugin1-routine1"];
+      let cmd = lodash.keyBy(defs.commands, "name")["plugin1-routine1"];
       assert.isNotNull(cmd);
     });
   });

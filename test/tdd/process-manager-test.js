@@ -10,7 +10,7 @@ var LogTracer = Devebot.require("logolite").LogTracer;
 var Envcloak = require("envcloak");
 var envcloak = Envcloak.instance;
 
-describe("tdd:devebot:core:process-manager", function() {
+describe("tdd:lib:core:process-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();

@@ -1,20 +1,19 @@
 "use strict";
 
-var lab = require("../index");
-var constx = require(lab.getDevebotModule("utils/constx"));
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
-var sinon = require("sinon");
+const lab = require("../index");
+const constx = require(lab.getDevebotModule("utils/constx"));
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
 
-var constx = require("../../lib/utils/constx");
+const assert = require("chai").assert;
+const sinon = require("sinon");
 
-describe("tdd:devebot:core:script-renderer", function() {
+describe("tdd:lib:core:script-renderer", function() {
   this.timeout(lab.getDefaultTimeout());
 
   var issueInspector = lab.getIssueInspector();
@@ -43,13 +42,13 @@ describe("tdd:devebot:core:script-renderer", function() {
       });
     var testSend = function(state, supposed, expected) {
       var wsStub = null;
-      var output = new Promise(function(onResolved, onRejected) {
+      var output = new Promise(function(resolve, reject) {
         wsStub = sinon.stub(ws, "send").callsFake(function(message) {
           false && console.log("Received message: %s", message);
           if (lodash.isEqual(JSON.parse(message), expected)) {
-            onResolved(message);
+            resolve(message);
           } else {
-            onRejected(message);
+            reject(message);
           }
         });
         outlet.render(state, supposed);

@@ -12,7 +12,7 @@ var LogTracer = Devebot.require("logolite").LogTracer;
 var envcloak = require("envcloak").instance;
 var sinon = require("sinon");
 
-describe("tdd:devebot:core:object-decorator", function() {
+describe("tdd:lib:core:object-decorator", function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {

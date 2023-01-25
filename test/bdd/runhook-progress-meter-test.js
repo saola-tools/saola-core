@@ -1,17 +1,17 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
-var debugx = Devebot.require("pinbug")("bdd:devebot:runhook:progress:meter");
-var assert = require("chai").assert;
-var DevebotApi = require("devebot-api");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const lodash = Devebot.require("lodash");
+const debugx = Devebot.require("pinbug")("bdd:devebot:runhook:progress:meter");
+const assert = require("chai").assert;
+const DevebotApi = require("devebot-api");
 
-describe("bdd:devebot:runhook:progress:meter", function() {
+describe("bdd:api:runhook:progress:meter", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var app, api;
+  let app, api;
 
   before(function() {
     app = lab.getApp();
@@ -23,13 +23,13 @@ describe("bdd:devebot:runhook:progress:meter", function() {
   });
 
   it("direct runhook should return correct result", function() {
-    var number = 15;
-    var expectedValue = fibonacci(number);
-    var expectedPrgr = [];
+    let number = 15;
+    let expectedValue = fibonacci(number);
+    let expectedPrgr = [];
     lodash.range(number).map(function(n) {
       expectedPrgr.push(lodash.round((n + 1) * 100 / number));
     });
-    var returnedPrgr = [];
+    let returnedPrgr = [];
     return new Promise(function(resolve, reject) {
       debugx.enabled && debugx("Invoke the command");
       api.on("failed", function(result) {
@@ -59,13 +59,13 @@ describe("bdd:devebot:runhook:progress:meter", function() {
   });
 
   it("remote runhook should return correct result", function() {
-    var number = 20;
-    var expectedValue = fibonacci(number);
-    var expectedPrgr = [];
+    let number = 20;
+    let expectedValue = fibonacci(number);
+    let expectedPrgr = [];
     lodash.range(number).map(function(n) {
       expectedPrgr.push(lodash.round((n + 1) * 100 / number));
     });
-    var returnedPrgr = [];
+    let returnedPrgr = [];
     return new Promise(function(resolve, reject) {
       api.on("failed", function(result) {
         reject(result);
@@ -94,7 +94,7 @@ describe("bdd:devebot:runhook:progress:meter", function() {
   });
 
   it("return error when input data is invalid with schema", function() {
-    var number = 101;
+    let number = 101;
     return new Promise(function(resolve, reject) {
       api.on("failed", function(result) {
         reject(result);
@@ -118,7 +118,7 @@ describe("bdd:devebot:runhook:progress:meter", function() {
   });
 
   it("return error when input data cannot pass validate()", function() {
-    var number = 101;
+    let number = 101;
     return new Promise(function(resolve, reject) {
       api.on("failed", function(result) {
         reject(result);
@@ -146,7 +146,7 @@ describe("bdd:devebot:runhook:progress:meter", function() {
   });
 });
 
-var fibonacci = function fibonacci (n) {
+function fibonacci (n) {
   if (n == 0 || n == 1) return n;
   return fibonacci(n - 1) + fibonacci(n - 2);
 };

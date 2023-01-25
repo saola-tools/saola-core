@@ -1,17 +1,17 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var util = require("util");
-var DevebotApi = require("devebot-api");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const util = require("util");
+const DevebotApi = require("devebot-api");
 
-describe("bdd:devebot:command:definition", function() {
+describe("bdd:api:command:definition", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var app, api;
+  let app, api;
 
   before(function() {
     app = lab.getApp();
@@ -29,23 +29,23 @@ describe("bdd:devebot:command:definition", function() {
         resolve(obj.payload);
       });
     }).then(function(defs) {
-      var cmdNames = lodash.map(defs.commands, function(cmd) {
+      let cmdNames = lodash.map(defs.commands, function(cmd) {
         return cmd.name;
       });
 
-      var fwCmdNames = [
+      let fwCmdNames = [
         "applica-info",
         "logger-info", "logger-reset", "logger-set",
         "sandbox-info", "system-info"
       ];
       assert.includeMembers(cmdNames, fwCmdNames);
 
-      var appCmdNames = [
+      let appCmdNames = [
         "main-cmd1", "main-cmd2"
       ];
       assert.includeMembers(cmdNames, appCmdNames);
 
-      var pluginCmdNames = [
+      let pluginCmdNames = [
         "plugin1-routine1", "plugin1-routine2",
         "plugin2-routine1", "plugin2-routine3"
       ];

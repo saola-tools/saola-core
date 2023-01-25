@@ -1,25 +1,23 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var path = require("path");
-var util = require("util");
-var errors = require(lab.getDevebotModule("utils/errors"));
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const assert = require("chai").assert;
+const util = require("util");
+const errors = require(lab.getDevebotModule("utils/errors"));
 
-describe("tdd:devebot:utils:errors", function() {
+describe("tdd:lib:utils:errors", function() {
   describe("stackTraceLimit", function() {
     it("stackTraceLimit effects the stackTrace output", function() {
+      const limit = 3;
+      const message = util.format("stack must have %s lines", limit);
       try {
-        var SomeError = errors.createConstructor("SomeError");
-        var limit = 3;
-        var message = util.format("stack must have %s lines", limit);
+        const SomeError = errors.createConstructor("SomeError");
         errors.stackTraceLimit = limit;
         throw new SomeError(message);
       } catch (err) {
-        var output = err.stack.split("\n");
+        const output = err.stack.split("\n");
         assert.lengthOf(output, limit + 1);
         assert.equal(output[0], "SomeError: " + message);
         return Promise.resolve();
@@ -37,10 +35,10 @@ describe("tdd:devebot:utils:errors", function() {
   });
 
   describe("createConstructor()", function() {
-    var MyError = errors.createConstructor("MyError");
+    const MyError = errors.createConstructor("MyError");
 
     it("createConstructor() should create an error constructor correctly", function() {
-      var anyError = new MyError();
+      const anyError = new MyError();
       assert.isTrue(errors.isDerivative(MyError));
       assert.isTrue(errors.isDescendant(anyError));
       assert.instanceOf(anyError, MyError);
@@ -48,8 +46,8 @@ describe("tdd:devebot:utils:errors", function() {
     });
 
     it("createConstructor() should create independent new error constructor", function() {
-      var AnotherError = errors.createConstructor("MyError");
-      var anotherError = new AnotherError();
+      const AnotherError = errors.createConstructor("MyError");
+      const anotherError = new AnotherError();
       assert.isTrue(errors.isDerivative(AnotherError));
       assert.notEqual(AnotherError, MyError);
       assert.isTrue(errors.isDescendant(anotherError));
@@ -57,28 +55,28 @@ describe("tdd:devebot:utils:errors", function() {
     });
 
     it("[code], [message], [payload] properties of empty error object must be undefined", function() {
-      var emptyError = new MyError();
+      const emptyError = new MyError();
       assert.isUndefined(emptyError.code);
       assert.isUndefined(emptyError.message);
       assert.isUndefined(emptyError.payload);
     });
 
     it("[message] properties of error object must be set properly", function() {
-      var messageError = new MyError("This is a string");
+      const messageError = new MyError("This is a string");
       assert.isUndefined(messageError.code);
       assert.equal(messageError.message, "This is a string");
       assert.isUndefined(messageError.payload);
     });
 
     it("[code] properties of error object must be set properly", function() {
-      var codeError = new MyError(1024);
+      const codeError = new MyError(1024);
       assert.isUndefined(codeError.message);
       assert.equal(codeError.code, 1024);
       assert.isUndefined(codeError.payload);
     });
 
     it("[payload] properties of error object must be set properly", function() {
-      var payloadError = new MyError({
+      const payloadError = new MyError({
         field1: "This is an object",
         field2: true,
         field3: 3.14159
@@ -93,7 +91,7 @@ describe("tdd:devebot:utils:errors", function() {
     });
 
     it("[code], [message], [payload] properties can be provided together", function() {
-      var fullError = new MyError("This is complete arguments error", -1, {
+      const fullError = new MyError("This is complete arguments error", -1, {
         host: "0.0.0.0",
         port: 1024
       });

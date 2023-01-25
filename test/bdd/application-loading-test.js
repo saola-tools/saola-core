@@ -1,18 +1,20 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
-var util = require("util");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
+const util = require("util");
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
 
-describe("bdd:devebot:application", function() {
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+
+describe("bdd:app:application", function() {
   this.timeout(lab.getDefaultTimeout());
 
   before(function() {
@@ -25,9 +27,9 @@ describe("bdd:devebot:application", function() {
   });
 
   describe("application[default]", function() {
-    var app;
-    var serverStats = {};
-    var moduleStats = {};
+    let app;
+    let serverStats = {};
+    let moduleStats = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([
@@ -35,11 +37,11 @@ describe("bdd:devebot:application", function() {
           accumulator: serverStats,
           mappings: [
             {
-              allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "server"), "start()" ],
+              allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "server"), "start()" ],
               countTo: "startingCount"
             },
             {
-              allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "server"), "close()" ],
+              allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "server"), "close()" ],
               countTo: "stoppingCount"
             }
           ]
@@ -48,7 +50,7 @@ describe("bdd:devebot:application", function() {
           accumulator: moduleStats,
           mappings: [
             {
-              anyTags: [ constx.FRAMEWORK.NAME + "-metadata" ],
+              anyTags: [ FRAMEWORK_PACKAGE_NAME + "-metadata" ],
               storeTo: "metadata"
             },
             {
@@ -70,47 +72,47 @@ describe("bdd:devebot:application", function() {
 
     it("total of constructor startpoints must equal to constructor endpoints", function(done) {
       app = lab.getApp();
-      var devebotScopes = [
-        constx.FRAMEWORK.NAME,
-        chores.toFullname(constx.FRAMEWORK.NAME, "bootstrap"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "appinfoLoader"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "nameResolver"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "manifestHandler"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "configLoader"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "contextManager"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "kernel"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "server"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "bridgeLoader"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "schemaValidator"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "bundleLoader"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "objectDecorator"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "sandboxManager"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "jobqueueBinder"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "processManager"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "runhookManager"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "scriptExecutor"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "scriptRenderer"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "securityManager"),
-        chores.toFullname(constx.FRAMEWORK.NAME, "repeatedTimer")
+      let devebotScopes = [
+        FRAMEWORK_PACKAGE_NAME,
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "bootstrap"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "appinfoLoader"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "nameResolver"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "manifestHandler"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "configLoader"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "contextManager"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "kernel"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "server"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "bridgeLoader"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "schemaValidator"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "bundleLoader"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "objectDecorator"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "sandboxManager"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "jobqueueBinder"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "processManager"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "runhookManager"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "scriptExecutor"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "scriptRenderer"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "securityManager"),
+        chores.toFullname(FRAMEWORK_PACKAGE_NAME, "repeatedTimer")
       ];
       if (chores.isUpgradeSupported("builtin-mapping-loader")) {
-        devebotScopes.push(chores.toFullname(constx.FRAMEWORK.NAME, "mappingLoader"));
+        devebotScopes.push(chores.toFullname(FRAMEWORK_PACKAGE_NAME, "mappingLoader"));
       }
-      var plugin1Scopes = [
+      let plugin1Scopes = [
         chores.toFullname("plugin1", "plugin1Service"),
         chores.toFullname("plugin1", "plugin1Trigger")
       ];
-      var plugin2Scopes = [
+      let plugin2Scopes = [
         chores.toFullname("plugin2", "plugin2Service"),
         chores.toFullname("plugin2", "plugin2Trigger")
       ];
-      var mainScopes = [
+      let mainScopes = [
         chores.toFullname("demo-app", "mainService"),
         chores.toFullname("demo-app", "mainTrigger")
       ];
 
-      var bridge1Scopes = [];
-      var bridge2Scopes = [];
+      let bridge1Scopes = [];
+      let bridge2Scopes = [];
 
       if (chores.isUpgradeSupported(["bridge-full-ref", "presets"])) {
         bridge1Scopes = [
@@ -148,7 +150,7 @@ describe("bdd:devebot:application", function() {
           false && console.log(JSON.stringify(moduleStats, null, 2));
           assert.isAbove(moduleStats.constructorBeginTotal, 0);
           assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
-          var metadata = lodash.map(moduleStats.metadata, function(item) {
+          let metadata = lodash.map(moduleStats.metadata, function(item) {
             return item && item.blockName;
           });
           // block 'bootstrap' appears 3 times
@@ -186,8 +188,8 @@ describe("bdd:devebot:application", function() {
   });
 
   describe("other applications", function() {
-    var app;
-    var moduleStats = {};
+    let app;
+    let moduleStats = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([
@@ -195,7 +197,7 @@ describe("bdd:devebot:application", function() {
           accumulator: moduleStats,
           mappings: [
             {
-              allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "sandboxManager"), "instantiateObject" ],
+              allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "sandboxManager"), "instantiateObject" ],
               storeTo: "dependencyInfo"
             },
             {
@@ -235,7 +237,7 @@ describe("bdd:devebot:application", function() {
       assert.isAbove(moduleStats.constructorBeginTotal, 0);
       assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
-      var expectedDependencies = [
+      let expectedDependencies = [
         {
           "handlerName": chores.toFullname("application", "mainService"),
           "handlerType": "SERVICE"
@@ -304,7 +306,7 @@ describe("bdd:devebot:application", function() {
         });
       };
 
-      var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
+      let dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
         return lodash.pick(item, ["handlerName", "handlerType"]);
       });
       false && console.log(JSON.stringify(dependencyInfo, null, 2));
@@ -318,12 +320,12 @@ describe("bdd:devebot:application", function() {
       }
       app = lab.getApp("naming-convention/index1");
       app.runner.invoke(function(injektor) {
-        var sandboxManager = injektor.lookup("sandboxManager");
-        var service1 = sandboxManager.getSandboxService("sublibService", {
+        let sandboxManager = injektor.lookup("sandboxManager");
+        let service1 = sandboxManager.getSandboxService("sublibService", {
           scope: "devebot-dp-wrapper1"
         });
         assert(service1.getConfig(), { port: 17741, host: "localhost" });
-        var service2 = sandboxManager.getSandboxService(chores.toFullname("devebot-dp-wrapper2", "sublibService"));
+        let service2 = sandboxManager.getSandboxService(chores.toFullname("devebot-dp-wrapper2", "sublibService"));
         assert(service2.getConfig(), { port: 17742, host: "localhost" });
         return done();
       });
@@ -341,8 +343,8 @@ describe("bdd:devebot:application", function() {
       app.server;
 
       false && console.log(JSON.stringify(moduleStats, null, 2));
-      for (var k=1; k<=2; k++) {
-        var config = lodash.map(moduleStats["bridgeConfigOfWrapper" + k], function(item) {
+      for (let k=1; k<=2; k++) {
+        let config = lodash.map(moduleStats["bridgeConfigOfWrapper" + k], function(item) {
           return lodash.get(item, "config");
         });
         false && console.log(JSON.stringify(config, null, 2));
@@ -376,7 +378,7 @@ describe("bdd:devebot:application", function() {
       assert.isAbove(moduleStats.constructorBeginTotal, 0);
       assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
-      var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
+      let dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
         return lodash.pick(item, ["handlerName", "handlerType"]);
       });
       false && console.log(JSON.stringify(dependencyInfo, null, 2));
@@ -413,7 +415,7 @@ describe("bdd:devebot:application", function() {
       assert.isAbove(moduleStats.constructorBeginTotal, 0);
       assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
-      var dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
+      let dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
         return lodash.pick(item, ["handlerName", "handlerType"]);
       });
       false && console.log(JSON.stringify(dependencyInfo, null, 2));

@@ -1,19 +1,19 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var DevebotApi = require("devebot-api");
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const Promise = Devebot.require("bluebird");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const DevebotApi = require("devebot-api");
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
 
-describe("bdd:devebot:routine:applica-info", function() {
+describe("bdd:api:routine:applica-info", function() {
   this.timeout(lab.getDefaultTimeout());
 
   describe("app.runner", function() {
-    var app, api;
+    let app, api;
 
     before(function() {
       app = lab.getApp();
@@ -32,7 +32,7 @@ describe("bdd:devebot:routine:applica-info", function() {
           resolved(obj.payload);
         });
       }).then(function(defs) {
-        var cmd = lodash.keyBy(defs.commands, "name")["applica-info"];
+        let cmd = lodash.keyBy(defs.commands, "name")["applica-info"];
         false && console.log(cmd);
         assert.isNotNull(cmd);
         assert.deepEqual(cmd, {
@@ -103,7 +103,7 @@ describe("bdd:devebot:routine:applica-info", function() {
   });
 
   describe("app.server", function() {
-    var app, api;
+    let app, api;
 
     before(function() {
       app = lab.getApp();
@@ -121,7 +121,7 @@ describe("bdd:devebot:routine:applica-info", function() {
           resolved(obj.payload);
         });
       }).then(function(defs) {
-        var cmd = lodash.keyBy(defs.commands, "name")["applica-info"];
+        let cmd = lodash.keyBy(defs.commands, "name")["applica-info"];
         false && console.log(cmd);
         assert.isNotNull(cmd);
         assert.deepEqual(cmd, {

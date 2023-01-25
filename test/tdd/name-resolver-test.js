@@ -5,7 +5,7 @@ var Devebot = lab.getDevebot();
 var chores = Devebot.require("chores");
 var assert = require("chai").assert;
 
-describe("tdd:devebot:core:name-resolver", function() {
+describe("tdd:lib:core:name-resolver", function() {
   var loggingFactory = lab.createLoggingFactoryMock();
   var CTX = {
     L: loggingFactory.getLogger(),

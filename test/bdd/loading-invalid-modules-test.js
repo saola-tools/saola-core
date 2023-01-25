@@ -1,20 +1,20 @@
 "use strict";
 
-var lab = require("../index");
-var Devebot = lab.getDevebot();
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var assert = require("chai").assert;
-var LogConfig = Devebot.require("logolite").LogConfig;
-var LogTracer = Devebot.require("logolite").LogTracer;
-var envcloak = require("envcloak").instance;
+const lab = require("../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const assert = require("chai").assert;
+const LogConfig = Devebot.require("logolite").LogConfig;
+const LogTracer = Devebot.require("logolite").LogTracer;
+const envcloak = require("envcloak").instance;
 
-var constx = require("../../lib/utils/constx");
+const constx = require(lab.getDevebotModule("utils/constx"));
 
-describe("bdd:devebot:loading-invalid-modules", function() {
+describe("bdd:app:loading-invalid-modules", function() {
   this.timeout(lab.getDefaultTimeout());
 
-  var issueInspector = lab.getIssueInspector();
+  let issueInspector = lab.getIssueInspector();
 
   before(function() {
     envcloak.setup({
@@ -29,7 +29,7 @@ describe("bdd:devebot:loading-invalid-modules", function() {
   });
 
   describe("not-found-packages", function() {
-    var loggingStore = {};
+    let loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
@@ -50,19 +50,19 @@ describe("bdd:devebot:loading-invalid-modules", function() {
     });
 
     it("loading application with not found packages will be failed", function() {
-      var unhook = lab.preventExit({ throwException: true });
+      let unhook = lab.preventExit({ throwException: true });
 
       assert.throws(function() {
-        var app = lab.getApp("not-found-packages");
+        let app = lab.getApp("not-found-packages");
       }, lab.ProcessExitError);
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.equal(errorSummary.totalOfErrors, 2);
-        var errs = lodash.map(errorSummary.errors, function(err) {
+        let errs = lodash.map(errorSummary.errors, function(err) {
           return lodash.pick(err, ["stage", "type", "name"]);
         });
         false && console.log(JSON.stringify(errs, null, 2));
@@ -82,7 +82,7 @@ describe("bdd:devebot:loading-invalid-modules", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
     });
 
@@ -92,7 +92,7 @@ describe("bdd:devebot:loading-invalid-modules", function() {
   });
 
   describe("invalid-bridge-modules", function() {
-    var loggingStore = {};
+    let loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
@@ -112,17 +112,17 @@ describe("bdd:devebot:loading-invalid-modules", function() {
     });
 
     it("loading invalid-bridge-booter will be failed", function() {
-      var unhook = lab.preventExit();
-      var app = lab.getApp("invalid-bridge-booter");
+      let unhook = lab.preventExit();
+      let app = lab.getApp("invalid-bridge-booter");
       app.server;
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         // BridgeLoader.loadMetadata() & BridgeLoader.loadDialects()
-        var expectedTotalOfErrors = 2;
+        let expectedTotalOfErrors = 2;
         if (!chores.isUpgradeSupported("metadata-refiner")) {
           expectedTotalOfErrors = 1;
         }
@@ -131,8 +131,8 @@ describe("bdd:devebot:loading-invalid-modules", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
-      var expectedTotalOfExits = 2;
+      let totalOfExit = unhook();
+      let expectedTotalOfExits = 2;
       if (!chores.isUpgradeSupported("metadata-refiner")) {
         expectedTotalOfExits = 1;
       }
@@ -140,13 +140,13 @@ describe("bdd:devebot:loading-invalid-modules", function() {
     });
 
     it("loading invalid-bridge-dialect will be failed", function() {
-      var unhook = lab.preventExit();
-      var app = lab.getApp("invalid-bridge-dialect");
+      let unhook = lab.preventExit();
+      let app = lab.getApp("invalid-bridge-dialect");
       app.server;
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
@@ -154,7 +154,7 @@ describe("bdd:devebot:loading-invalid-modules", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
     });
 
@@ -164,7 +164,7 @@ describe("bdd:devebot:loading-invalid-modules", function() {
   });
 
   describe("invalid-plugin-modules", function() {
-    var loggingStore = {};
+    let loggingStore = {};
 
     before(function() {
       LogTracer.setupDefaultInterceptors([{
@@ -184,13 +184,13 @@ describe("bdd:devebot:loading-invalid-modules", function() {
     });
 
     it("loading invalid-plugin-booter will be failed", function() {
-      var unhook = lab.preventExit();
-      var app = lab.getApp("invalid-plugin-booter");
+      let unhook = lab.preventExit();
+      let app = lab.getApp("invalid-plugin-booter");
       app.server;
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         // -- examining in sandboxManager --
@@ -205,18 +205,18 @@ describe("bdd:devebot:loading-invalid-modules", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
     });
 
     it("loading invalid-plugin-service will be failed", function() {
-      var unhook = lab.preventExit();
-      var app = lab.getApp("invalid-plugin-service");
+      let unhook = lab.preventExit();
+      let app = lab.getApp("invalid-plugin-service");
       app.server;
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
@@ -224,18 +224,18 @@ describe("bdd:devebot:loading-invalid-modules", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
     });
 
     it("loading invalid-plugin-trigger will be failed", function() {
-      var unhook = lab.preventExit();
-      var app = lab.getApp("invalid-plugin-trigger");
+      let unhook = lab.preventExit();
+      let app = lab.getApp("invalid-plugin-trigger");
       app.server;
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
@@ -243,18 +243,18 @@ describe("bdd:devebot:loading-invalid-modules", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
     });
 
     it("loading invalid-plugin-trigger-methods will be failed", function() {
-      var unhook = lab.preventExit();
-      var app = lab.getApp("invalid-plugin-trigger-methods");
+      let unhook = lab.preventExit();
+      let app = lab.getApp("invalid-plugin-trigger-methods");
       app.server;
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
-        var errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
+        let errorSummary = lodash.pick(lodash.get(loggingStore, "errorSummary.0", {}), [
           "totalOfErrors", "errors"
         ]);
         assert.equal(errorSummary.totalOfErrors, 3);
@@ -267,7 +267,7 @@ describe("bdd:devebot:loading-invalid-modules", function() {
         console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
-      var totalOfExit = unhook();
+      let totalOfExit = unhook();
       assert.equal(totalOfExit, 1);
     });
 
