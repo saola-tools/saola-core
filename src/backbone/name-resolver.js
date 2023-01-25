@@ -7,6 +7,9 @@ const constx = require("../utils/constx");
 const nodash = require("../utils/nodash");
 const blockRef = chores.getBlockRef(__filename);
 
+const FRAMEWORK_NAME = chores.getFrameworkName(constx.FRAMEWORK.NAME);
+const PACKAGE_NAME = constx.FRAMEWORK.NAME;
+
 function NameResolver (params = {}) {
   const {issueInspector, bridgeList, pluginList} = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
@@ -144,13 +147,15 @@ module.exports = NameResolver;
 
 const LIB_NAME_PATTERNS = {
   bridge: [
-    new RegExp("^" + constx.FRAMEWORK.NAME + "/" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^devebot-co-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^@" + FRAMEWORK_NAME + "/" + "(bridge-[a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^@" + FRAMEWORK_NAME + "/" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^" + FRAMEWORK_NAME + "-" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
     /^([a-z][a-z0-9-]*[a-z0-9])$/g
   ],
   plugin: [
-    new RegExp("^" + constx.FRAMEWORK.NAME + "/" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^devebot-dp-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^@" + FRAMEWORK_NAME + "/" + "(plugin-[a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^@" + FRAMEWORK_NAME + "/" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^" + FRAMEWORK_NAME + "-" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
     /^([a-z][a-z0-9-]*[a-z0-9])$/g
   ]
 };

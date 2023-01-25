@@ -347,6 +347,10 @@ chores.printError = function(err) {
   }
 };
 
+chores.logConsole = function () {
+  return console.log.apply(console, arguments);
+}
+
 chores.injektorOptions = store.injektorOptions;
 
 chores.injektorContext = store.injektorContext;
@@ -499,7 +503,7 @@ chores.isVersionSatisfied = function (version, versionMask) {
 chores.getVersionOf = function (packageName) {
   if (packageName === "devebot") {
     const pkg = require(path.join(__dirname, "../../package.json"));
-    return pkg.version;
+    return pkg && pkg.version;
   } else {
     let parentPath, modulePath;
     try {
