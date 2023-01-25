@@ -1,34 +1,34 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var assert = require('assert');
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainService');
+const assert = require("assert");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const debugx = Devebot.require("pinbug")("devebot:test:lab:main:mainService");
 
-var Service = function(params={}) {
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
+const Service = function(params={}) {
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
 
-  var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
-  debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));
+  const mainCfg = lodash.get(params, ["sandboxConfig", "application"], {});
+  debugx.enabled && debugx("configuration: %s", JSON.stringify(mainCfg));
 
-  if (chores.isUpgradeSupported('bridge-full-ref')) {
-    var anyname1z_a = params[chores.toFullname('application', 'bridge1#anyname1z')];
-    var anyname1z_b = params[chores.toFullname('bridge1#anyname1z')];
+  if (chores.isUpgradeSupported("bridge-full-ref")) {
+    const anyname1zCaseA = params[chores.toFullname("application", "bridge1#anyname1z")];
+    const anyname1zCaseB = params[chores.toFullname("bridge1#anyname1z")];
 
-    assert.equal(anyname1z_a, anyname1z_b);
-    assert.deepEqual(anyname1z_a.getConfig(), anyname1z_b.getConfig());
+    assert.strict.equal(anyname1zCaseA, anyname1zCaseB);
+    assert.strict.deepEqual(anyname1zCaseA.getConfig(), anyname1zCaseB.getConfig());
   }
 };
 
-if (chores.isUpgradeSupported('bridge-full-ref')) {
+if (chores.isUpgradeSupported("bridge-full-ref")) {
   Service.referenceList = [
-    chores.toFullname('bridge1#anyname1z'),
-    chores.toFullname('application', 'bridge1#anyname1z'),
-    chores.toFullname('plugin1', 'bridge1#anyname1a'),
-    chores.toFullname('plugin1', 'bridge2#anyname2a')
-  ]
+    chores.toFullname("bridge1#anyname1z"),
+    chores.toFullname("application", "bridge1#anyname1z"),
+    chores.toFullname("plugin1", "bridge1#anyname1a"),
+    chores.toFullname("plugin1", "bridge2#anyname2a")
+  ];
 }
 
 module.exports = Service;

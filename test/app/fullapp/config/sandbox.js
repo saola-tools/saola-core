@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-var lab = require('../../../index');
+var lab = require("../../../index");
 
 module.exports = {
   application: {
@@ -101,9 +101,9 @@ module.exports = {
       "verbose": false
     }
   }
-}
+};
 
-if (!lab.isUpgradeSupported('bridge-full-ref')) {
+if (!lab.isUpgradeSupported("bridge-full-ref")) {
   module.exports.bridges = {
     "anyname1a": {
       "bridge1": {
@@ -130,5 +130,5 @@ if (!lab.isUpgradeSupported('bridge-full-ref')) {
         "refPath": "sandbox -> bridge2 -> anyname2c"
       }
     }
-  }
+  };
 };
