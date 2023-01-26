@@ -3,8 +3,9 @@
 const lab = require("../index");
 const Devebot = lab.getDevebot();
 const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
-const debugx = Devebot.require("pinbug")("bdd:devebot:runhook:progress:meter");
+const debugx = Devebot.require("pinbug")("bdd:api:runhook:progress:meter");
 const assert = require("chai").assert;
 const DevebotApi = require("devebot-api");
 
@@ -14,7 +15,17 @@ describe("bdd:api:runhook:progress:meter", function() {
   let app, api;
 
   before(function() {
+    chores.setEnvironments({
+      NODE_ENV: "test",
+      LOGOLITE_FULL_LOG_MODE: "false",
+      LOGOLITE_ALWAYS_ENABLED: "all",
+      LOGOLITE_ALWAYS_MUTED: "all"
+    });
     app = lab.getApp();
+  });
+
+  after(function() {
+    chores.clearCache();
   });
 
   beforeEach(function(done) {
