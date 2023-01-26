@@ -14,7 +14,7 @@ describe("bdd:app:configuration", function() {
   let app;
   describe("default configuration (without profile & sandbox)", function() {
     before(function() {
-      app = lab.getApp();
+      app = lab.getApp("default");
     });
 
     it("configuration has been loaded correctly", function(done) {

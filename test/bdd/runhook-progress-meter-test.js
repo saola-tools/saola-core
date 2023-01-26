@@ -21,7 +21,7 @@ describe("bdd:api:runhook:progress:meter", function() {
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all"
     });
-    app = lab.getApp();
+    app = lab.getApp("default");
   });
 
   after(function() {

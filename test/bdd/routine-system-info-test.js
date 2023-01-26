@@ -16,7 +16,7 @@ describe("bdd:api:command:system-info", function() {
   let app, api;
 
   before(function() {
-    app = lab.getApp();
+    app = lab.getApp("default");
     api = new DevebotApi(lab.getApiConfig());
   });
 

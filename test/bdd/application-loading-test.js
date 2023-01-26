@@ -72,7 +72,7 @@ describe("bdd:app:application", function() {
     });
 
     it("total of constructor startpoints must equal to constructor endpoints", function(done) {
-      app = lab.getApp();
+      app = lab.getApp("default");
       let devebotScopes = [
         FRAMEWORK_PACKAGE_NAME,
         chores.toFullname(FRAMEWORK_PACKAGE_NAME, "bootstrap"),

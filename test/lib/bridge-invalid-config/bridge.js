@@ -20,4 +20,4 @@ const Service = function(params) {
 
 module.exports = Service;
 
-Service.devebotMetadata = require('./metadata');
+Service.metadata = require('./metadata');

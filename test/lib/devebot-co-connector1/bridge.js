@@ -18,6 +18,6 @@ const Service = function(params) {
   devlog.enabled && devlog(' - constructor end!');
 };
 
-Service.devebotMetadata = require('./metadata');
+Service.metadata = require('./metadata');
 
 module.exports = Service;

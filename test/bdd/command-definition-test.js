@@ -14,7 +14,7 @@ describe("bdd:api:command:definition", function() {
   let app, api;
 
   before(function() {
-    app = lab.getApp();
+    app = lab.getApp("default");
     api = new DevebotApi(lab.getApiConfig());
   });
 
