@@ -2264,7 +2264,7 @@ describe("tdd:lib:core:config-loader", function() {
 
       // Sandbox configuration
       // Sandbox overriden order:
-      //   [devebot]/sandbox
+      //   [framework]/sandbox
       //    <- [lib:plugin1]/sandbox
       //    <- [lib:plugin2]/sandbox
       //    <- [app:default]/sandbox <- [app:external]/sandbox

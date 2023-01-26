@@ -1,40 +1,59 @@
 /* global Devebot */
 "use strict";
 
-var http = require("http");
-var Promise = Devebot.require("bluebird");
-var chores = Devebot.require("chores");
-var lodash = Devebot.require("lodash");
-var debugx = Devebot.require("pinbug")("devebot:test:lab:main:mainTrigger");
+const http = require("http");
+const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
 
-var Service = function(params={}) {
-  var packageName = params.packageName || "fullapp";
-  var mainCfg = lodash.get(params, ["sandboxConfig", "application"], {});
+const Service = function(params={}) {
+  const sandboxConfig = lodash.get(params, ["sandboxConfig", "application"], {});
 
-  var server = http.createServer();
+  const { packageName, loggingFactory, mainService } = params;
+
+  const L = loggingFactory && loggingFactory.getLogger();
+  const T = loggingFactory && loggingFactory.getTracer();
+  const blockRef = chores.getBlockRef(__filename, packageName);
+
+  const self = this;
+  const server = http.createServer();
 
   server.on("error", function(err) {
-    debugx.enabled && debugx("Server Error: %s", JSON.stringify(err));
+    L && L.has("silly") && L.log("silly", T && T.add({ blockRef }).toMessage({
+      tags: [ blockRef, "http-server-error" ],
+      text: "Server error: " + JSON.stringify(err)
+    }));
   });
 
   server.on("request", function(req, res) {
-    res.writeHead(200);
-    res.end("fullapp webserver");
+    res.writeHead(200, {
+      "Content-Type": "application/json"
+    });
+    res.end(JSON.stringify({
+      packageName: packageName,
+      config: self.getConfig(),
+    }, null, 2));
   });
 
   this.getServer = function() {
     return server;
   };
 
-  var configHost = lodash.get(mainCfg, "host", "0.0.0.0");
-  var configPort = lodash.get(mainCfg, "port", 8080);
+  this.getConfig = function() {
+    return lodash.assign(mainService && mainService.getConfig() || {}, {
+      [blockRef]: sandboxConfig
+    });
+  };
+
+  const configHost = lodash.get(sandboxConfig, "host", "0.0.0.0");
+  const configPort = lodash.get(sandboxConfig, "port", 8080);
 
   this.start = function() {
     return new Promise(function(resolve, reject) {
-      var serverInstance = server.listen(configPort, configHost, function () {
-        var host = serverInstance.address().address;
-        var port = serverInstance.address().port;
-        chores.isVerboseForced(packageName, mainCfg) &&
+      const serverInstance = server.listen(configPort, configHost, function () {
+        const host = serverInstance.address().address;
+        const port = serverInstance.address().port;
+        chores.isVerboseForced(packageName, sandboxConfig) &&
         chores.logConsole("%s is listening at http://%s:%s", packageName, host, port);
         resolve(serverInstance);
       });
@@ -44,7 +63,7 @@ var Service = function(params={}) {
   this.stop = function() {
     return new Promise(function(resolve, reject) {
       server.close(function () {
-        chores.isVerboseForced(packageName, mainCfg) &&
+        chores.isVerboseForced(packageName, sandboxConfig) &&
         chores.logConsole("%s has been closed", packageName);
         resolve();
       });
