@@ -4,7 +4,6 @@ const fs = require("fs");
 const Promise = require("bluebird");
 const lodash = require("lodash");
 const chores = require("../utils/chores");
-const constx = require("../utils/constx");
 const blockRef = chores.getBlockRef(__filename);
 
 function SecurityManager (params = {}) {

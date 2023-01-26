@@ -7,8 +7,8 @@ const constx = require("../utils/constx");
 const nodash = require("../utils/nodash");
 const blockRef = chores.getBlockRef(__filename);
 
-const FRAMEWORK_NAME = chores.getFrameworkName(constx.FRAMEWORK.NAME);
-const PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_NAME = chores.getFrameworkName(FRAMEWORK_PACKAGE_NAME);
 
 function NameResolver (params = {}) {
   const {issueInspector, bridgeList, pluginList} = params;

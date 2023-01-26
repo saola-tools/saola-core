@@ -4,7 +4,6 @@ const lodash = require("lodash");
 const path = require("path");
 const Injektor = require("injektor");
 const LoggingWrapper = require("./backbone/logging-wrapper");
-const constx = require("./utils/constx");
 const chores = require("./utils/chores");
 const blockRef = chores.getBlockRef(__filename);
 

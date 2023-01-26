@@ -263,7 +263,7 @@ chores.getProfileConfigFrameworkSection = function (subpath) {
     return location.concat(subpath);
   }
   return location;
-}
+};
 
 chores.getFrameworkName = function (packageName) {
   if (!scopedNamePattern) {
@@ -348,8 +348,9 @@ chores.printError = function(err) {
 };
 
 chores.logConsole = function () {
+  /* eslint-disable no-console */
   return console.log.apply(console, arguments);
-}
+};
 
 chores.injektorOptions = store.injektorOptions;
 

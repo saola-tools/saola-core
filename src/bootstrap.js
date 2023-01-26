@@ -41,7 +41,7 @@ function appLoader (params = {}) {
   const topRootPath = path.join(__dirname, "/..");
 
   const appInfo = appinfoLoader(appRootPath, libRootPaths, topRootPath);
-  const appName = params.appName || appInfo.name || chores.getFrameworkName(constx.FRAMEWORK.NAME) + "-application";
+  const appName = params.appName || appInfo.name || FRAMEWORK_NAME + "-application";
   const options = {
     privateProfile: params.privateProfile || params.privateProfiles,
     privateSandbox: params.privateSandbox || params.privateSandboxes,

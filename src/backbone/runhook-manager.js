@@ -217,7 +217,7 @@ function RunhookManager (params = {}) {
       });
     } else {
       promize = params.jobqueueBinder.instance.enqueueJob(command).then(function(task) {
-        return new Promise(function(onResolved, onRejected) {
+        return new Promise(function(resolve, reject) {
           task
             .on("started", function(info) {
               context.outlet && context.outlet.render("started", info);
@@ -227,19 +227,19 @@ function RunhookManager (params = {}) {
             })
             .on("timeout", function(info) {
               context.outlet && context.outlet.render("timeout", info);
-              onRejected({ state: "timeout", data: info });
+              reject({ state: "timeout", data: info });
             })
             .on("cancelled", function(info) {
               context.outlet && context.outlet.render("cancelled", info);
-              onRejected({ state: "cancelled", data: info });
+              reject({ state: "cancelled", data: info });
             })
             .on("failed", function(error) {
               context.outlet && context.outlet.render("failed", error);
-              onRejected({ state: "failed", data: error });
+              reject({ state: "failed", data: error });
             })
             .on("completed", function(result) {
               context.outlet && context.outlet.render("completed", result);
-              onResolved(result);
+              resolve(result);
             });
         });
       });
