@@ -300,7 +300,7 @@ function loadAppboxConfig (ctx, config, aliasesOf, tileNames, appRef, bridgeMani
   const { L, T } = ctx;
   if (configDir) {
     L.has("dunce") && L.log("dunce", T.add({ configType, configDir }).toMessage({
-      text: " + load the \"${configType}\" configuration in \"${configDir}\""
+      text: " + load the '${configType}' configuration in '${configDir}'"
     }));
     const configFiles = chores.filterFiles(configDir, ".*\.js");
     const configInfos = lodash.map(configFiles, function(file) {
@@ -316,7 +316,7 @@ function loadAppboxConfig (ctx, config, aliasesOf, tileNames, appRef, bridgeMani
     }));
 
     L.has("dunce") && L.log("dunce", T.add({ configType }).toMessage({
-      text: " - load the application default config of \"${configType}\""
+      text: " - load the application default config of '${configType}'"
     }));
     for (const i in aliasesOf[configType]) {
       const defaultFile = path.join(configDir, aliasesOf[configType][i] + ".js");
@@ -328,7 +328,7 @@ function loadAppboxConfig (ctx, config, aliasesOf, tileNames, appRef, bridgeMani
     config[configType]["default"] = lodash.defaultsDeep({}, config[configType]["expanse"], config[configType]["default"]);
 
     L.has("dunce") && L.log("dunce", T.add({ configType }).toMessage({
-      text: " - load the application customized config of \"${configType}\""
+      text: " - load the application customized config of '${configType}'"
     }));
     const expanseNames = filterConfigBy(ctx, configInfos, tileNames, configType, aliasesOf);
     L.has("dunce") && L.log("dunce", T.add({ expanseNames }).toMessage({
@@ -353,12 +353,12 @@ function loadConfigFile (ctx, configFile) {
   let content;
   try {
     L.has("dunce") && L.log("dunce", T.add({ configFile }).toMessage({
-      text: " - load config file: \"${configFile}\""
+      text: " - load config file: '${configFile}'"
     }));
     content = loader(configFile, { stopWhenError: true });
     opStatus.hasError = false;
     L.has("dunce") && L.log("dunce", T.add({ configFile }).toMessage({
-      text: " - loading config file: \"${configFile}\" has done."
+      text: " - loading config file: '${configFile}' has done."
     }));
   } catch (err) {
     if (err.code !== "MODULE_NOT_FOUND") {

@@ -76,7 +76,7 @@ function loadTokenStore (ctx, storefile) {
         storefile: storefile
       }).toMessage({
         tags: [ blockRef, "loadTokenStore", "invalid" ],
-        text: " - invalid tokenStore ({storefile}), \"tokens\" must be an array"
+        text: " - invalid tokenStore ({storefile}), 'tokens' must be an array"
       }));
       return {};
     }

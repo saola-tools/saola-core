@@ -80,7 +80,7 @@ function Server (params = {}) {
     }
   });
 
-  const mode = ["silent", "tictac", "server"].indexOf(getDevebotMode(frameworkCfg.mode));
+  const mode = ["silent", "tictac", "server"].indexOf(getServiceMode(frameworkCfg.mode));
 
   this.start = function() {
     L.has("silly") && L.log("silly", T.toMessage({
@@ -216,6 +216,6 @@ const MODE_MAP = {
   "heartbeat": "tictac"
 };
 
-function getDevebotMode (mode) {
+function getServiceMode (mode) {
   return MODE_MAP[mode] || mode;
 }

@@ -121,7 +121,7 @@ function loadBridgeContructor (ctx, bridgeRef) {
       opStatus.hasError = false;
     } else {
       L.has("dunce") && L.log("dunce", T.add(bridgeRef).toMessage({
-        text: " - bridge \"${name}\" is not a constructor"
+        text: " - bridge '${name}' is not a constructor"
       }));
       opStatus.hasError = true;
     }

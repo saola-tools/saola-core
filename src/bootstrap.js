@@ -81,7 +81,7 @@ function appLoader (params = {}) {
       name: appName,
       stack: duplicated.map(function(ev) {
         const evName = chores.stringLabelCase(appName) + "_" + ev.name;
-        return util.format("- Environment Variable \"%s\" has already been defined", evName);
+        return util.format("- Environment Variable '%s' has already been defined", evName);
       }).join("\n")
     });
   } else {
@@ -370,13 +370,13 @@ function expandExtensions (accumulator, pluginNames, bridgeNames) {
         libRootPath: accumulator.libRootPath,
         crateObject: crateRef
       }).toMessage({
-        text: " - crate \"${libRootPath}\" object: ${crateObject}"
+        text: " - crate '${libRootPath}' object: ${crateObject}"
       }));
     } else {
       L.has("warn") && L.log("warn", T.add({
         libRootPath: accumulator.libRootPath
       }).toMessage({
-        text: " - crate \"${libRootPath}\" hasnot defined"
+        text: " - crate '${libRootPath}' hasnot defined"
       }));
     }
   }
