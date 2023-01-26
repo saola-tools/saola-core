@@ -1,7 +1,8 @@
 "use strict";
 
-var lab = require("../../../index");
+const lab = require("../../../index");
 
+// swaps the values of 'host' <=> 'port'
 module.exports = {
   bridges: {
     "bridgeInvalidConfig": {

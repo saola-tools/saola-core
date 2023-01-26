@@ -1,25 +1,27 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var dgx = Devebot.require('pinbug')('devebot:test:lab:bridge-invalid-booter');
+const lodash = Devebot.require("lodash");
+const devlog = Devebot.require("pinbug")("devebot:test:lab:bridge-invalid-booter");
 
-const MY_CONST = 'BEGIN';
+/* eslint-disable no-unused-vars */
+const MY_CONST = "BEGIN";
 
-var Service = function(params) {
-  dgx.enabled && dgx(' + constructor start ...');
+function Service (params) {
+  devlog.enabled && devlog(" + constructor start ...");
 
   params = params || {};
 
-  dgx.enabled && dgx(' - params: %s', JSON.stringify(params, null, 2));
+  devlog.enabled && devlog(" - params: %s", JSON.stringify(params, null, 2));
 
   this.getConfig = function() {
     return lodash.cloneDeep(params);
-  }
+  };
 
-  dgx.enabled && dgx(' - constructor end!');
+  devlog.enabled && devlog(" - constructor end!");
 };
 
-MY_CONST = 'END';
+/* eslint-disable no-const-assign */
+MY_CONST = "END";
 
 module.exports = Service;

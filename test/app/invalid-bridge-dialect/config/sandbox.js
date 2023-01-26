@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-var lab = require('../../../index');
+var lab = require("../../../index");
 
 module.exports = {
   bridges: {
@@ -14,14 +14,14 @@ module.exports = {
       }
     }
   }
-}
+};
 
-if (!lab.isUpgradeSupported('bridge-full-ref')) {
+if (!lab.isUpgradeSupported("bridge-full-ref")) {
   module.exports.bridges = {
     "invalidInstance": {
       "bridgeInvalidDialect": {
         "refPath": "sandbox -> bridge-invalid-dialect -> invalid-instance"
       }
     }
-  }
+  };
 };

@@ -1,10 +1,10 @@
+/* global Devebot */
 'use strict';
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var dgx = Devebot.require('pinbug')('devebot:test:lab:bridge-invalid-config');
+const lodash = Devebot.require('lodash');
+const dgx = Devebot.require('pinbug')('devebot:test:lab:bridge-invalid-config');
 
-var Service = function(params) {
+const Service = function(params) {
   dgx.enabled && dgx(' + constructor start ...');
 
   params = params || {};

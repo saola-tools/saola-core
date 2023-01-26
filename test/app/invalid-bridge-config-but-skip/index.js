@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-var lab = require('../../index');
+var lab = require("../../index");
 var Devebot = lab.getDevebot();
 
 var app = Devebot.launchApplication({
   appRootPath: __dirname
 }, [], [
   {
-    name: 'bridge-invalid-config',
-    path: lab.getLibHome('bridge-invalid-config'),
+    name: "bridge-invalid-config",
+    path: lab.getLibHome("bridge-invalid-config"),
     presets: {
       schemaValidation: false
     }
