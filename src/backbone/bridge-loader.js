@@ -34,7 +34,7 @@ function BridgeLoader (params = {}) {
     const bridgeDescriptors = loadBridgeConstructors(CTX, params.bridgeList);
     lodash.defaultsDeep(metadataMap, lodash.mapValues(bridgeDescriptors, function(entrypoint) {
       const construktor = lodash.get(entrypoint, "construktor", {});
-      const metadata = construktor.devebotMetadata || construktor.metainf || construktor.metadata || {};
+      const metadata = construktor.metadata || construktor.metainfo || construktor.metainf || {};
       metadata.name = entrypoint.name;
       return metadata;
     }));

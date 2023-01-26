@@ -3,6 +3,7 @@
 const assert = require("assert");
 const Promise = require("bluebird");
 const lodash = require("lodash");
+const constx = require("../utils/constx");
 const chores = require("../utils/chores");
 const nodash = require("../utils/nodash");
 const errors = require("../utils/errors");
@@ -10,8 +11,10 @@ const getenv = require("../utils/getenv");
 const BeanProxy = require("../utils/proxy");
 const blockRef = chores.getBlockRef(__filename);
 
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.ORG_NAME);
+
 const NOOP = function() {};
-const MODE = getenv(["DEVEBOT_NODE_ENV", "NODE_ENV"]) === "test" ? null : "direct";
+const MODE = getenv([FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV", "NODE_ENV"]) === "test" ? null : "direct";
 
 function ObjectDecorator (params = {}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);

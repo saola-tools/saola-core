@@ -1,7 +1,12 @@
 "use strict";
 
+const lodash = require("lodash");
 const util = require("util");
+
 const getenv = require("./getenv");
+const constx = require("./constx");
+
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.ORG_NAME);
 
 function ErrorCollection () {
   const cachedErrors = {};
@@ -71,7 +76,7 @@ function ErrorCollection () {
   });
 
   const _ref_ = {
-    stackTraceLimit: parseInt(getenv("DEVEBOT_STACK_TRACE_LIMIT")) || Error.stackTraceLimit
+    stackTraceLimit: parseInt(getenv(FRAMEWORK_NAMESPACE_UCASE + "_STACK_TRACE_LIMIT")) || Error.stackTraceLimit
   };
 
   function AbstractError (message, code, payload) {

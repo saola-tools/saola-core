@@ -19,6 +19,7 @@ const nodash = require("./nodash");
 const getenv = require("./getenv");
 
 const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAME);
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 const codetags = require("codetags")
@@ -31,7 +32,7 @@ const codetags = require("codetags")
   .register(constx.UPGRADE_TAGS);
 
 const store = {
-  defaultScope: getenv("DEVEBOT_DEFAULT_SCOPE", FRAMEWORK_PACKAGE_NAME),
+  defaultScope: getenv(FRAMEWORK_NAMESPACE_UCASE + "_DEFAULT_SCOPE", FRAMEWORK_PACKAGE_NAME),
   injektorOptions: {
     namePatternTemplate: "^[@a-zA-Z]{1}[a-zA-Z0-9&#\\-_%s]*$",
     separator: "/"
@@ -337,7 +338,7 @@ chores.parseScriptTree = function (scriptType, scriptFile, scriptInstance, isHie
 };
 
 chores.printError = function(err) {
-  if (getenv(["DEVEBOT_ENV", "NODE_ENV"]) !== "test") {
+  if (getenv([FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV", "NODE_ENV"]) !== "test") {
     [
       "",
       "========== FATAL ERROR ==========",
