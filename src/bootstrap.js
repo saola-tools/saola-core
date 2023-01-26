@@ -61,7 +61,7 @@ function appLoader (params = {}) {
     appRef.presets = lodash.cloneDeep(params.presets);
   }
 
-  const devebotRef = {
+  const frameworkRef = {
     type: "framework",
     name: FRAMEWORK_PACKAGE_NAME,
     path: topRootPath
@@ -96,7 +96,7 @@ function appLoader (params = {}) {
 
   const bridgeList = lodash.values(params.bridgeRefs);
   const pluginList = lodash.values(params.pluginRefs);
-  const bundleList = [].concat(appRef, pluginList, devebotRef);
+  const bundleList = [].concat(appRef, pluginList, frameworkRef);
 
   const nameResolver = new NameResolver({ issueInspector, bridgeList, pluginList });
   const manifestHandler = new ManifestHandler({ nameResolver, issueInspector, bridgeList, bundleList });
@@ -104,7 +104,7 @@ function appLoader (params = {}) {
   stateInspector.register({ nameResolver, bridgeList, pluginList });
 
   const configLoader = new ConfigLoader({ options,
-    appRef, devebotRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,
+    appRef, frameworkRef, pluginRefs: params.pluginRefs, bridgeRefs: params.bridgeRefs,
     nameResolver, issueInspector, stateInspector, manifestHandler
   });
 

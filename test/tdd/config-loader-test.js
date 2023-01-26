@@ -31,7 +31,7 @@ describe("tdd:lib:core:config-loader", function() {
     path: lab.getAppHome("tdd-cfg")
   };
 
-  let devebotRef = {
+  let frameworkRef = {
     name: "devebot",
     type: "framework",
     path: lab.getDevebotHome()
@@ -61,7 +61,7 @@ describe("tdd:lib:core:config-loader", function() {
   let manifestHandler = new ManifestHandler({
     issueInspector,
     bridgeList: lodash.values(bridgeRefs),
-    bundleList: lodash.concat(appRef, lodash.values(pluginRefs), devebotRef),
+    bundleList: lodash.concat(appRef, lodash.values(pluginRefs), frameworkRef),
     nameResolver,
   });
 
@@ -1712,7 +1712,7 @@ describe("tdd:lib:core:config-loader", function() {
     let validateConfig = sinon.spy(manifestHandler, "validateConfig");
 
     let configLoader = new ConfigLoader({
-      appRef, devebotRef, pluginRefs, bridgeRefs,
+      appRef, frameworkRef, pluginRefs, bridgeRefs,
       nameResolver, issueInspector, stateInspector, manifestHandler
     });
 
@@ -1764,7 +1764,7 @@ describe("tdd:lib:core:config-loader", function() {
     it("load configuration of empty application", function() {
       // options: null, appRootDir: null, libRootDirs: [...]
       let appRef = { type: "application", name: "empty-app" };
-      let cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      let cfgLoader = new ConfigLoader({appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -1790,7 +1790,7 @@ describe("tdd:lib:core:config-loader", function() {
     });
 
     it("load application configuration (without options)", function() {
-      let cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      let cfgLoader = new ConfigLoader({appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -1829,7 +1829,7 @@ describe("tdd:lib:core:config-loader", function() {
     });
 
     it("load application configuration (without customized profile, sandbox)", function() {
-      let cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      let cfgLoader = new ConfigLoader({appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -1884,7 +1884,7 @@ describe("tdd:lib:core:config-loader", function() {
     });
 
     it("load application configuration (without private sandboxes)", function() {
-      let cfgLoader = new ConfigLoader({appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      let cfgLoader = new ConfigLoader({appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -2027,7 +2027,7 @@ describe("tdd:lib:core:config-loader", function() {
     it("load application configuration with single private sandboxes", function() {
       let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: "bs1"
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      }, appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -2069,7 +2069,7 @@ describe("tdd:lib:core:config-loader", function() {
     it("load application configuration with multiple private sandboxes", function() {
       let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: ["bs1", "bs2"]
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      }, appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -2112,7 +2112,7 @@ describe("tdd:lib:core:config-loader", function() {
     it("load application configuration with underscore suffixes", function() {
       let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: ["bs_p1", "bs_p2"]
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      }, appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 
@@ -2155,7 +2155,7 @@ describe("tdd:lib:core:config-loader", function() {
     it("the order of listed sandbox labels is sensitive", function() {
       let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: "bs2, bs1"
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
+      }, appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
 
       // Profile configuration
@@ -2241,7 +2241,7 @@ describe("tdd:lib:core:config-loader", function() {
     it("load application configuration with multiple private sandboxes", function() {
       let cfgLoader = new ConfigLoader({options: {
         privateSandboxes: ["bs1", "bs2"]
-      }, appRef, devebotRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver, manifestHandler});
+      }, appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver, manifestHandler});
       let config = cfgLoader.load();
       false && console.log(JSON.stringify(config, null, 2));
 

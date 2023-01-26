@@ -22,7 +22,7 @@ const CONFIG_METADATA_BLOCK = "__manifest__";
 const RELOADING_FORCED = true;
 
 function ConfigLoader (params = {}) {
-  const { options, appRef, devebotRef, pluginRefs, bridgeRefs } = params;
+  const { options, appRef, frameworkRef, pluginRefs, bridgeRefs } = params;
   const { issueInspector, stateInspector, nameResolver, manifestHandler } = params;
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
@@ -31,13 +31,13 @@ function ConfigLoader (params = {}) {
   const appName = appRef && appRef.name;
   const label = chores.stringLabelCase(appName);
 
-  L.has("silly") && L.log("silly", T.add({ appName, options, appRef, devebotRef, pluginRefs, bridgeRefs, label }).toMessage({
+  L.has("silly") && L.log("silly", T.add({ appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs, label }).toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + Config of application (${appName}) is loaded in name: ${label}"
   }));
 
   this.load = function() {
-    const configObject = loadConfig.bind(null, CTX, appName, options, appRef, devebotRef, pluginRefs, bridgeRefs)
+    const configObject = loadConfig.bind(null, CTX, appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs)
         .apply(null, CONFIG_VAR_NAMES.map(readVariable.bind(null, CTX, label)));
     if (chores.isUpgradeSupported("manifest-refiner")) {
       if (manifestHandler) {
@@ -78,7 +78,7 @@ function readVariable (ctx = {}, appLabel, varName) {
   return undefined;
 }
 
-function loadConfig (ctx = {}, appName, options, appRef, devebotRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
+function loadConfig (ctx = {}, appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
   const { L, T, issueInspector, stateInspector, nameResolver } = ctx;
 
   const aliasesOf = buildConfigTypeAliases();
@@ -94,7 +94,7 @@ function loadConfig (ctx = {}, appName, options, appRef, devebotRef, pluginRefs,
     text: " + included names: ${tileNames}"
   }));
 
-  loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv);
+  loadConfigOfModules(ctx, config, aliasesOf, tileNames, appName, appRef, frameworkRef, pluginRefs, bridgeRefs, customDir, customEnv);
 
   fillConfigByEnvVars(ctx, config, appName);
 
@@ -152,18 +152,18 @@ function buildConfigTileNames (ctx, options = {}, profileName, sandboxName, text
   return tileNames;
 }
 
-function loadConfigOfModules (ctx = {}, config, aliasesOf, tileNames, appName, appRef, devebotRef, pluginRefs, bridgeRefs, customDir, customEnv) {
+function loadConfigOfModules (ctx = {}, config, aliasesOf, tileNames, appName, appRef, frameworkRef, pluginRefs, bridgeRefs, customDir, customEnv) {
   const { L, T } = ctx;
 
   const libRefs = lodash.values(pluginRefs);
-  if (devebotRef) {
-    libRefs.push(devebotRef);
+  if (frameworkRef) {
+    libRefs.push(frameworkRef);
   }
 
   const bundleRefs = {};
   if (appRef && appRef.path) bundleRefs[appRef.path] = appRef;
   lodash.assign(bundleRefs, pluginRefs);
-  if (devebotRef && devebotRef.path) bundleRefs[devebotRef.path] = devebotRef;
+  if (frameworkRef && frameworkRef.path) bundleRefs[frameworkRef.path] = frameworkRef;
 
   let bridgeManifests = extractConfigManifest(ctx, bridgeRefs);
   let pluginManifests = extractConfigManifest(ctx, bundleRefs);

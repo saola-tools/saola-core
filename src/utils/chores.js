@@ -505,7 +505,7 @@ chores.isVersionSatisfied = function (version, versionMask) {
 };
 
 chores.getVersionOf = function (packageName) {
-  if (packageName === "devebot") {
+  if (packageName === FRAMEWORK_PACKAGE_NAME) {
     const pkg = require(path.join(__dirname, "../../package.json"));
     return pkg && pkg.version;
   } else {
