@@ -18,9 +18,9 @@ const envbox = require("./envbox");
 const nodash = require("./nodash");
 const getenv = require("./getenv");
 
-const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 const codetags = require("codetags")
   .getInstance(FRAMEWORK_PACKAGE_NAME, {

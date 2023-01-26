@@ -8,7 +8,7 @@ const assert = require("chai").assert;
 const DevebotApi = require("devebot-api");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("bdd:api:routine:applica-info", function() {
   this.timeout(lab.getDefaultTimeout());

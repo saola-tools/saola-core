@@ -11,7 +11,7 @@ const getenv = require("../utils/getenv");
 const BeanProxy = require("../utils/proxy");
 const blockRef = chores.getBlockRef(__filename);
 
-const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.ORG_NAME);
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.NAMESPACE);
 
 const NOOP = function() {};
 const MODE = getenv([FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV", "NODE_ENV"]) === "test" ? null : "direct";

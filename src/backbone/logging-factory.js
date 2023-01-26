@@ -10,8 +10,8 @@ const constx = require("../utils/constx");
 const nodash = require("../utils/nodash");
 const DEFAULT_SECTOR_NAME = chores.getBlockRef(__filename);
 
-const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 const FRAMEWORK_METADATA = FRAMEWORK_NAMESPACE + "-metadata";
 
 const STAMP = constx.LOGGER.STARTING_POINT;

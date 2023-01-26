@@ -8,7 +8,7 @@ const assert = require("chai").assert;
 const path = require("path");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:utils:chores", function() {
   describe("loadServiceByNames()", function() {

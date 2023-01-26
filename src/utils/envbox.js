@@ -5,8 +5,8 @@ const Envcloak = require("envcloak");
 
 const constx = require("./constx");
 
-const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 Envcloak.NAMESPACE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 

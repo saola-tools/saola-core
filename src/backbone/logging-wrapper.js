@@ -5,7 +5,7 @@ const LogTracer = require("logolite").LogTracer;
 const chores = require("../utils/chores");
 const constx = require("../utils/constx");
 
-const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_METADATA = FRAMEWORK_NAMESPACE + "-metadata";
 
 const CHECK = constx.LOGGER.INTERNAL_LEVEL;

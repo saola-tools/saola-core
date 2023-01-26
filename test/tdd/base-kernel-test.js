@@ -11,7 +11,7 @@ const Envcloak = require("envcloak");
 const envcloak = Envcloak.instance;
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 const ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
 const SELECTED_FIELDS = ManifestHandler.__get__("SELECTED_FIELDS");

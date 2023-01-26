@@ -9,7 +9,7 @@ const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:issue-inspector", function() {
   this.timeout(lab.getDefaultTimeout());

@@ -13,7 +13,7 @@ const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_METADATA = FRAMEWORK_NAMESPACE + "-metadata";
 
 describe("bdd:api:command:execution", function() {

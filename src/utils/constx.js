@@ -93,8 +93,8 @@ const SEMVER_PATTERN = ".+";
 
 module.exports = {
   FRAMEWORK: {
-    ORG_NAME: getFrameworkName(PKG_INFO.name),
-    NAME: PKG_INFO.name,
+    NAMESPACE: getFrameworkName(PKG_INFO.name),
+    PACKAGE_NAME: PKG_INFO.name,
     VERSION: PKG_INFO.version,
   },
   APPINFO: {

@@ -8,7 +8,7 @@ const constx = require("../utils/constx");
 const LoggingWrapper = require("./logging-wrapper");
 const blockRef = chores.getBlockRef(__filename);
 
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 function IssueInspector (params = {}) {
   const loggingWrapper = new LoggingWrapper(blockRef);

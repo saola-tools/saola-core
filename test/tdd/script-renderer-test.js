@@ -13,7 +13,7 @@ const assert = require("chai").assert;
 const sinon = require("sinon");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:script-renderer", function() {
   this.timeout(lab.getDefaultTimeout());

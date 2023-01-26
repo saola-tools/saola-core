@@ -11,7 +11,7 @@ const MockLogger = Devebot.require("logolite").MockLogger;
 const envcloak = require("envcloak").instance;
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:logging-factory", function() {
   describe("logging backward compatible", function() {

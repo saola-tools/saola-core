@@ -11,7 +11,7 @@ const errors = require("../utils/errors");
 const nodash = require("../utils/nodash");
 const blockRef = chores.getBlockRef(__filename);
 
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 const DEFAULT_SERVICES = [ "jobqueue-binder" ];
 

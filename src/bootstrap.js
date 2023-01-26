@@ -23,8 +23,8 @@ const blockRef = chores.getBlockRef(__filename);
 const issueInspector = IssueInspector.instance;
 const stateInspector = StateInspector.instance;
 
-const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
-const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 const FRAMEWORK_CAPNAME = lodash.capitalize(FRAMEWORK_NAMESPACE);
 
 function appLoader (params = {}) {

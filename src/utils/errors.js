@@ -6,7 +6,7 @@ const util = require("util");
 const getenv = require("./getenv");
 const constx = require("./constx");
 
-const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.ORG_NAME);
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.NAMESPACE);
 
 function ErrorCollection () {
   const cachedErrors = {};

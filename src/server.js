@@ -15,7 +15,7 @@ const constx = require("./utils/constx");
 const chores = require("./utils/chores");
 const blockRef = chores.getBlockRef(__filename);
 
-const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 
 function Server (params = {}) {
   Kernel.call(this, params);
