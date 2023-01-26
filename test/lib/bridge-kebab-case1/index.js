@@ -1,26 +1,26 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var dgx = Devebot.require('pinbug')('devebot:test:lab:bridge-kebab-case1');
+const lodash = Devebot.require("lodash");
+const devlog = Devebot.require("pinbug")("devebot:test:lab:bridge-kebab-case1");
 
-var Service = function(params) {
-  dgx.enabled && dgx(' + constructor start ...');
+const Service = function(params) {
+  devlog.enabled && devlog(" + constructor start ...");
 
   params = params || {};
 
-  var L = this.logger, T = this.tracer;
+  const L = this.logger; const T = this.tracer;
 
-  L.has('debug') && L.log('debug', T.add({ data: params }).toMessage({
-    tags: [ 'bridge-kebab-case1', 'configuration' ],
-    message: 'Configuration: ${data}'
+  L.has("debug") && L.log("debug", T.add({ data: params }).toMessage({
+    tags: [ "bridge-kebab-case1", "configuration" ],
+    message: "Configuration: ${data}"
   }));
 
   this.getConfig = function() {
     return lodash.cloneDeep(params);
-  }
+  };
 
-  dgx.enabled && dgx(' - constructor end!');
+  devlog.enabled && devlog(" - constructor end!");
 };
 
 module.exports = Service;

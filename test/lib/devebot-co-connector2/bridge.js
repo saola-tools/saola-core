@@ -1,23 +1,23 @@
+/* global Devebot */
 'use strict';
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var dgx = Devebot.require('pinbug')('devebot:test:lab:devebot-co-connector2');
+const lodash = Devebot.require('lodash');
+const devlog = Devebot.require('pinbug')('devebot:test:lab:devebot-co-connector2');
 
-var Service = function(params) {
-  dgx.enabled && dgx(' + constructor start ...');
+const Service = function(params) {
+  devlog.enabled && devlog(' + constructor start ...');
 
   params = params || {};
 
-  dgx.enabled && dgx(' - params: %s', JSON.stringify(params, null, 2));
+  devlog.enabled && devlog(' - params: %s', JSON.stringify(params, null, 2));
 
   this.getConfig = function() {
     return lodash.cloneDeep(params);
   }
 
-  dgx.enabled && dgx(' - constructor end!');
+  devlog.enabled && devlog(' - constructor end!');
 };
 
-module.exports = Service;
-
 Service.devebotMetadata = require('./metadata');
+
+module.exports = Service;

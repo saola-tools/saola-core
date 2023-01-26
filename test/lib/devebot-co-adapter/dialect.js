@@ -1,14 +1,14 @@
+/* global Devebot */
 'use strict';
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+const lodash = Devebot.require('lodash');
 
-function Dialect(params = {}) {
+function Dialect (params = {}) {
   this.getConfig = function() {
     return lodash.cloneDeep(params);
   }
 };
 
-module.exports = Dialect;
-
 Dialect.manifest = require('./manifest');
+
+module.exports = Dialect;
