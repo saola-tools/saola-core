@@ -9,39 +9,39 @@ module.exports = {
     labels: {
       silly: {
         level: 5,
-        color: 'gray',
-        admit: ['info', 'silly']
+        color: "gray",
+        admit: ["info", "silly"]
       },
       debug: {
         level: 4,
-        color: 'blue',
-        admit: 'debug'
+        color: "blue",
+        admit: "debug"
       },
       trace: {
         level: 3,
-        color: 'cyan',
-        admit: 'trace'
+        color: "cyan",
+        admit: "trace"
       },
       info: {
         level: 2,
-        color: 'green',
-        admit: 'nothing'
+        color: "green",
+        admit: "nothing"
       },
       warn: {
         level: 1,
-        color: 'yellow',
-        admit: 'warn'
+        color: "yellow",
+        admit: "warn"
       },
       error: {
         level: 0,
-        color: 'red',
-        admit: ['error', 'fatal']
+        color: "red",
+        admit: ["error", "fatal"]
       }
     },
     transports: {
       console: {
-        type: 'console',
-        level: 'debug',
+        type: "console",
+        level: "debug",
         json: false,
         timestamp: true,
         colorize: true
@@ -60,4 +60,4 @@ module.exports = {
       sandboxConfig: false
     }
   }
-}
+};
