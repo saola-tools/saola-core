@@ -1,24 +1,24 @@
-'use strict';
+"use strict";
 
-var lab = require('../../index');
-var Devebot = lab.getDevebot();
+const lab = require("../../index");
+const Devebot = lab.getDevebot();
 
-var app = Devebot.launchApplication({
+const app = Devebot.launchApplication({
   appRootPath: __dirname,
   presets: {
     componentDir: {
-      ROUTINE: '/lib/routines',
-      SERVICE: 'lib/services',
-      TRIGGER: './lib/servlets'
+      ROUTINE: "/lib/routines",
+      SERVICE: "lib/services",
+      TRIGGER: "./lib/servlets"
     }
   }
 }, [
   {
-    name: 'plugin-rename-comp-dir',
-    path: lab.getLibHome('plugin-rename-comp-dir'),
+    name: "plugin-rename-comp-dir",
+    path: lab.getLibHome("plugin-rename-comp-dir"),
     presets: {
       componentDir: {
-        TRIGGER: '/lib/comp3'
+        TRIGGER: "/lib/comp3"
       }
     }
   }

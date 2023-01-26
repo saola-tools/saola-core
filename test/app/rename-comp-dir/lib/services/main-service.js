@@ -1,23 +1,24 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainService');
+const chores = Devebot.require("chores");
 
-var Service = function(params) {
-  debugx.enabled && debugx(' + constructor begin ...');
+function Service (params = {}) {
+  const { packageName, loggingFactory, sandboxConfig } = params;
 
-  params = params || {};
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
+  const blockRef = chores.getBlockRef(__filename, packageName);
 
-  var logger = params.loggingFactory.getLogger();
-
-  var mainCfg = lodash.get(params, ['sandboxConfig'], {});
-  debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));
-
-  debugx.enabled && debugx(' - constructor end!');
+  this.getConfig = function () {
+    return {
+      [blockRef]: sandboxConfig,
+    };
+  };
+  L && L.has("debug") && L.log("debug", T && T.add({ blockRef }).toMessage({
+    tags: [ blockRef, "configuration" ],
+    text: "Configuration: " + JSON.stringify(this.getConfig())
+  }));
 };
-
-Service.referenceList = [ 'mainTrigger' ]
 
 module.exports = Service;
