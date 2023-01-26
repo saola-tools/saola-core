@@ -1,3 +1,4 @@
-'use strict';
+"use strict";
 
-console.log('Level 2');
+/* eslint-disable no-console */
+console.log("Level 2");

@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  name: 'bar/level#1'
-}
+  name: "bar/level#1"
+};
