@@ -1,77 +1,76 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var http = require('http');
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainTrigger');
+const http = require("http");
+const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
 
-var Service = function(params) {
+const Service = function(params) {
   params = params || {};
 
-  var packageName = params.packageName || 'naming-convention';
-  var blockRef = chores.getBlockRef(__filename, packageName);
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
+  const packageName = params.packageName || "naming-convention";
+  const blockRef = chores.getBlockRef(__filename, packageName);
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
 
-  debugx.enabled && debugx(' + constructor begin ...');
-
-  var mainCfg = lodash.get(params, ['sandboxConfig'], {});
+  const mainCfg = lodash.get(params, ["sandboxConfig"], {});
 
   this.getConfig = function() {
     return lodash.cloneDeep(mainCfg);
-  }
+  };
 
-  var server = http.createServer();
+  const server = http.createServer();
 
-  server.on('error', function(err) {
-    debugx.enabled && debugx('Server Error: %s', JSON.stringify(err));
+  server.on("error", function(err) {
+    L && L.has("silly") && L.log("silly", T && T.add({ blockRef }).toMessage({
+      tags: [ blockRef ],
+      text: "Server error: " + JSON.stringify(err)
+    }));
   });
 
-  server.on('request', function(req, res) {
+  server.on("request", function(req, res) {
     res.writeHead(200);
-    res.end('naming-convention webserver');
+    res.end("naming-convention webserver");
   });
 
   this.getServer = function() {
     return server;
   };
 
-  var configHost = lodash.get(mainCfg, 'host', '0.0.0.0');
-  var configPort = lodash.get(mainCfg, 'port', 8080);
+  const configHost = lodash.get(mainCfg, "host", "0.0.0.0");
+  const configPort = lodash.get(mainCfg, "port", 8080);
 
   this.start = function() {
-    return new Promise(function(resolved, rejected) {
-      var serverInstance = server.listen(configPort, configHost, function () {
-        var host = serverInstance.address().address;
-        var port = serverInstance.address().port;
+    return new Promise(function(resolve, reject) {
+      const serverInstance = server.listen(configPort, configHost, function () {
+        const host = serverInstance.address().address;
+        const port = serverInstance.address().port;
         chores.isVerboseForced(packageName, mainCfg) &&
-        console.log('%s is listening at http://%s:%s', packageName, host, port);
-        resolved(serverInstance);
+        chores.logConsole("%s is listening at http://%s:%s", packageName, host, port);
+        resolve(serverInstance);
       });
     });
   };
 
   this.stop = function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       server.close(function () {
         chores.isVerboseForced(packageName, mainCfg) &&
-        console.log('%s has been closed', packageName);
-        resolved();
+        chores.logConsole("%s has been closed", packageName);
+        resolve();
       });
     });
   };
-
-  debugx.enabled && debugx(' - constructor end!');
 };
 
-if (chores.isUpgradeSupported('bridge-full-ref')) {
+if (chores.isUpgradeSupported("bridge-full-ref")) {
   Service.referenceList = [
-    chores.toFullname('application', 'connector1#wrapper'),
-    chores.toFullname('application', 'connector2#wrapper'),
-    chores.toFullname('devebot-dp-wrapper1', 'sublibTrigger'),
-    chores.toFullname('devebot-dp-wrapper2', 'sublibTrigger')
-  ]
+    chores.toFullname("application", "connector1#wrapper"),
+    chores.toFullname("application", "connector2#wrapper"),
+    chores.toFullname("devebot-dp-wrapper1", "sublibTrigger"),
+    chores.toFullname("devebot-dp-wrapper2", "sublibTrigger")
+  ];
 }
 
 module.exports = Service;

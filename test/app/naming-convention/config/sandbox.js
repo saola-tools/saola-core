@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-var lab = require('../../../index');
+var lab = require("../../../index");
 
 module.exports = {
   application: {
@@ -56,8 +56,8 @@ module.exports = {
       "port": 17742
     }
   }
-}
+};
 
-if (!lab.isUpgradeSupported('bridge-full-ref')) {
-  module.exports.bridges = {}
+if (!lab.isUpgradeSupported("bridge-full-ref")) {
+  module.exports.bridges = {};
 };
