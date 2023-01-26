@@ -95,6 +95,7 @@ module.exports = {
   FRAMEWORK: {
     NAMESPACE: getFrameworkName(PKG_INFO.name),
     PACKAGE_NAME: PKG_INFO.name,
+    NAME: PKG_INFO.name, // just for backward compatible
     VERSION: PKG_INFO.version,
   },
   APPINFO: {
