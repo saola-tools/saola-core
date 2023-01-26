@@ -7,8 +7,8 @@ const constx = require("../utils/constx");
 const nodash = require("../utils/nodash");
 const blockRef = chores.getBlockRef(__filename);
 
+const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
-const FRAMEWORK_NAME = chores.getFrameworkName(FRAMEWORK_PACKAGE_NAME);
 
 function NameResolver (params = {}) {
   const {issueInspector, bridgeList, pluginList} = params;
@@ -168,6 +168,12 @@ function hasSupportFields (moduleRef) {
 function extractAliasNames (ctx, type, moduleRefs) {
   const {issueInspector} = ctx;
   function buildSupportFields (moduleRef) {
+    if (moduleRef.name == FRAMEWORK_PACKAGE_NAME) {
+      moduleRef.code = FRAMEWORK_NAME;
+      moduleRef.codeInCamel = chores.stringCamelCase(moduleRef.code);
+      moduleRef.nameInCamel = chores.stringCamelCase(moduleRef.name);
+      return moduleRef;
+    }
     const info = chores.extractCodeByPattern(LIB_NAME_PATTERNS[type], moduleRef.name);
     if (info.i >= 0) {
       moduleRef.code = info.code;

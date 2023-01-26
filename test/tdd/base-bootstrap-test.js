@@ -12,8 +12,8 @@ const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
 const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
-const FRAMEWORK_NAME = chores.getFrameworkName(constx.FRAMEWORK.NAME);
 
 const CONFIG_EXTENDED_FIELDS = [
   "profile", "sandbox", "texture",

@@ -9,7 +9,11 @@ const chores = require("../utils/chores");
 const constx = require("../utils/constx");
 const nodash = require("../utils/nodash");
 const DEFAULT_SECTOR_NAME = chores.getBlockRef(__filename);
-const FRAMEWORK_METADATA = constx.FRAMEWORK.NAME + "-metadata";
+
+const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+const FRAMEWORK_METADATA = FRAMEWORK_NAME + "-metadata";
+
 const STAMP = constx.LOGGER.STARTING_POINT;
 
 function LoggingService (params = {}) {
@@ -23,7 +27,7 @@ function LoggingService (params = {}) {
   }));
 
   return new LoggingFactory({
-    sectorName: constx.FRAMEWORK.NAME,
+    sectorName: FRAMEWORK_PACKAGE_NAME,
     mappings: more.mappings,
     originalLogger: logFactory.getLogger()
   });

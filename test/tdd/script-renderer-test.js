@@ -1,7 +1,6 @@
 "use strict";
 
 const lab = require("../index");
-const constx = require(lab.getDevebotModule("utils/constx"));
 const Devebot = lab.getDevebot();
 const Promise = Devebot.require("bluebird");
 const chores = Devebot.require("chores");
@@ -12,6 +11,9 @@ const envcloak = require("envcloak").instance;
 
 const assert = require("chai").assert;
 const sinon = require("sinon");
+
+const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 describe("tdd:lib:core:script-renderer", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -65,7 +67,7 @@ describe("tdd:lib:core:script-renderer", function() {
       LogTracer.setupDefaultInterceptors([{
         accumulator: loggingStore,
         mappings: [{
-          allTags: [ chores.toFullname(constx.FRAMEWORK.NAME, "scriptRenderer"), "definition" ],
+          allTags: [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "scriptRenderer"), "definition" ],
           storeTo: "definition"
         }]
       }]);

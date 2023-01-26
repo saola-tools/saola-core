@@ -3,6 +3,23 @@
 const fs = require("fs");
 const path = require("path");
 
+function isString (s) {
+  return typeof s === "string";
+}
+
+function getFrameworkName (packageName) {
+  const scopedNamePattern = /^@(?<scope>.+)\/(?<name>[a-zA-Z]{1}[a-zA-Z0-9-_]*)$/;
+  const match = packageName.match(scopedNamePattern);
+  if (match && match.groups) {
+    const scope = match.groups["scope"];
+    if (isString(scope)) {
+      return scope;
+    }
+  }
+  //
+  return packageName;
+};
+
 const PKG_INFO = JSON.parse(fs.readFileSync(path.join(__dirname, "/../../package.json"), "utf8"));
 
 const PRESETS_SCHEMA = {
@@ -76,6 +93,7 @@ const SEMVER_PATTERN = ".+";
 
 module.exports = {
   FRAMEWORK: {
+    ORG_NAME: getFrameworkName(PKG_INFO.name),
     NAME: PKG_INFO.name,
     VERSION: PKG_INFO.version,
   },

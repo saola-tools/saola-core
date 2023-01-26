@@ -4,8 +4,11 @@ const LogAdapter = require("logolite").LogAdapter;
 const LogTracer = require("logolite").LogTracer;
 const chores = require("../utils/chores");
 const constx = require("../utils/constx");
+
+const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_METADATA = FRAMEWORK_NAME + "-metadata";
+
 const CHECK = constx.LOGGER.INTERNAL_LEVEL;
-const FRAMEWORK_METADATA = constx.FRAMEWORK.NAME + "-metadata";
 
 function LoggingWrapper (sectorName) {
   sectorName = sectorName || chores.getBlockRef(__filename);

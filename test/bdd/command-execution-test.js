@@ -12,6 +12,10 @@ const LogConfig = Devebot.require("logolite").LogConfig;
 const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
+const constx = require(lab.getDevebotModule("utils/constx"));
+const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_METADATA = FRAMEWORK_NAME + "-metadata";
+
 describe("bdd:api:command:execution", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -31,7 +35,7 @@ describe("bdd:api:command:execution", function() {
   ]);
   let logScraper = LogTracer.accumulationAppender.bind(null, logStats, [
     {
-      anyTags: [ "logolite-metadata", "devebot-metadata" ],
+      anyTags: [ "logolite-metadata", FRAMEWORK_METADATA ],
       storeTo: "blockLoggingState"
     },
     {

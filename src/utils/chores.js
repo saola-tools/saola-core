@@ -18,9 +18,12 @@ const envbox = require("./envbox");
 const nodash = require("./nodash");
 const getenv = require("./getenv");
 
+const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+
 const codetags = require("codetags")
-  .getInstance(constx.FRAMEWORK.NAME, {
-    namespace: constx.FRAMEWORK.NAME,
+  .getInstance(FRAMEWORK_PACKAGE_NAME, {
+    namespace: FRAMEWORK_NAME,
     INCLUDED_TAGS: "UPGRADE_ENABLED",
     EXCLUDED_TAGS: "UPGRADE_DISABLED",
     version: constx.FRAMEWORK.VERSION,
@@ -28,12 +31,12 @@ const codetags = require("codetags")
   .register(constx.UPGRADE_TAGS);
 
 const store = {
-  defaultScope: getenv("DEVEBOT_DEFAULT_SCOPE", constx.FRAMEWORK.NAME),
+  defaultScope: getenv("DEVEBOT_DEFAULT_SCOPE", FRAMEWORK_PACKAGE_NAME),
   injektorOptions: {
     namePatternTemplate: "^[@a-zA-Z]{1}[a-zA-Z0-9&#\\-_%s]*$",
     separator: "/"
   },
-  injektorContext: { scope: constx.FRAMEWORK.NAME },
+  injektorContext: { scope: FRAMEWORK_PACKAGE_NAME },
   validatorOptions: { schemaVersion: 4 }
 };
 const chores = {};
@@ -200,7 +203,7 @@ chores.homedir = (typeof os.homedir === "function") ? os.homedir : function() {
   return home || null;
 };
 
-const SPECIAL_BUNDLES = ["application", "framework", constx.FRAMEWORK.NAME];
+const SPECIAL_BUNDLES = ["application", "framework", FRAMEWORK_PACKAGE_NAME];
 
 chores.isSpecialBundle = function(bundle) {
   return (SPECIAL_BUNDLES.indexOf(_getBundleType(bundle)) >= 0);

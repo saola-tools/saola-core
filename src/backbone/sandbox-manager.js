@@ -4,12 +4,14 @@ const util = require("util");
 const lodash = require("lodash");
 const Promise = require("bluebird");
 const Injektor = require("injektor");
+const RunhookManager = require("./runhook-manager");
 const chores = require("../utils/chores");
 const constx = require("../utils/constx");
 const errors = require("../utils/errors");
 const nodash = require("../utils/nodash");
-const RunhookManager = require("./runhook-manager");
 const blockRef = chores.getBlockRef(__filename);
+
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 const DEFAULT_SERVICES = [ "jobqueue-binder" ];
 
@@ -382,7 +384,7 @@ if (chores.isUpgradeSupported("builtin-mapping-loader")) {
 module.exports = SandboxManager;
 
 function getComponentLabel (compName) {
-  return constx.FRAMEWORK.NAME + chores.getSeparator() + compName;
+  return FRAMEWORK_PACKAGE_NAME + chores.getSeparator() + compName;
 }
 
 function mergeSandboxServiceHelps (serviceNames, blocks) {
@@ -412,9 +414,9 @@ function SandboxRegistry (params = {}) {
   const {injektor, isExcluded, excludedServices} = params;
   function validateBeanName (beanName, context = {}) {
     const info = injektor.parseName(beanName, context);
-    if (info.scope === constx.FRAMEWORK.NAME) {
+    if (info.scope === FRAMEWORK_PACKAGE_NAME) {
       const RestrictedError = errors.assertConstructor("RestrictedDevebotError");
-      throw new RestrictedError(util.format("dependency scope [%s] is restricted", constx.FRAMEWORK.NAME));
+      throw new RestrictedError(util.format("dependency scope [%s] is restricted", FRAMEWORK_PACKAGE_NAME));
     }
     const exceptions = [];
     const fullname = injektor.resolveName(beanName, {

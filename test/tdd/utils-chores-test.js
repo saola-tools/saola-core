@@ -57,7 +57,7 @@ describe("tdd:lib:utils:chores", function() {
   describe("getBlockRef()", function() {
     it("should generate blockRef correctly", function() {
       let file = path.join(lab.getLibHome("plugin1"), "lib/services/plugin1-service.js");
-      assert.equal(chores.getBlockRef(file), chores.toFullname(constx.FRAMEWORK.NAME, "plugin1Service"));
+      assert.equal(chores.getBlockRef(file), chores.toFullname(FRAMEWORK_PACKAGE_NAME, "plugin1Service"));
       assert.equal(chores.getBlockRef(file, "mymodule"), chores.toFullname("mymodule", "plugin1Service"));
       assert.equal(chores.getBlockRef(file, [ "mymodule" ]), chores.toFullname("mymodule", "plugin1Service"));
       assert.equal(chores.getBlockRef(file, [ "part1", "part2" ]), chores.toFullname("part1", "part2", "plugin1Service"));

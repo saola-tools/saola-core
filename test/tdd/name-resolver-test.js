@@ -184,7 +184,7 @@ describe("tdd:lib:core:name-resolver", function() {
       });
     });
 
-    it("getOriginalNameOf(_, \"bridge\")", function() {
+    it("getOriginalNameOf(_, 'bridge')", function() {
       let result = [
         "bridge1",
         "bridge-kebab-case1",
@@ -237,7 +237,7 @@ describe("tdd:lib:core:name-resolver", function() {
       ]);
     });
 
-    it("getOriginalNameOf(_, \"plugin\")", function() {
+    it("getOriginalNameOf(_, 'plugin')", function() {
       let result = [
         "sub-plugin1",
         "subPlugin1",
@@ -285,7 +285,7 @@ describe("tdd:lib:core:name-resolver", function() {
       ]);
     });
 
-    it("getDefaultAliasOf(_, \"bridge\")", function() {
+    it("getDefaultAliasOf(_, 'bridge')", function() {
       let result = [
         "bridge1", "bridge-kebab-case1", "devebot-co-connector1", "unknown", null
       ].map(function(name) {
@@ -319,7 +319,7 @@ describe("tdd:lib:core:name-resolver", function() {
       ]);
     });
 
-    it("getDefaultAliasOf(_, \"plugin\")", function() {
+    it("getDefaultAliasOf(_, 'plugin')", function() {
       let result = [
         "sub-plugin1", "sub-plugin2", "devebot-dp-wrapper1", "devebot-dp-wrapper2", "unknown", null
       ].map(function(name) {

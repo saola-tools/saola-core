@@ -3,9 +3,9 @@
 const lodash = require("lodash");
 const path = require("path");
 const util = require("util");
+const LoggingWrapper = require("./logging-wrapper");
 const chores = require("../utils/chores");
 const constx = require("../utils/constx");
-const LoggingWrapper = require("./logging-wrapper");
 const blockRef = chores.getBlockRef(__filename);
 
 const SELECTED_FIELDS = [ "crateScope", "extension", "schema", "checkConstraints" ];

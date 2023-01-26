@@ -23,7 +23,8 @@ const blockRef = chores.getBlockRef(__filename);
 const issueInspector = IssueInspector.instance;
 const stateInspector = StateInspector.instance;
 
-const FRAMEWORK_NAME = chores.getFrameworkName(constx.FRAMEWORK.NAME);
+const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 const FRAMEWORK_CAPNAME = lodash.capitalize(FRAMEWORK_NAME);
 
 function appLoader (params = {}) {
@@ -62,7 +63,7 @@ function appLoader (params = {}) {
 
   const devebotRef = {
     type: "framework",
-    name: constx.FRAMEWORK.NAME,
+    name: FRAMEWORK_PACKAGE_NAME,
     path: topRootPath
   };
 

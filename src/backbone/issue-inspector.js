@@ -8,6 +8,8 @@ const constx = require("../utils/constx");
 const LoggingWrapper = require("./logging-wrapper");
 const blockRef = chores.getBlockRef(__filename);
 
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+
 function IssueInspector (params = {}) {
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
@@ -65,7 +67,7 @@ function IssueInspector (params = {}) {
             switch (fsv.type) {
               case "appbox":
               case "application":
-              case constx.FRAMEWORK.NAME: {
+              case FRAMEWORK_PACKAGE_NAME: {
                 console.error(chalk.errorMessage("--> [%s:%s] lauching bootstrap has failed, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
@@ -90,7 +92,7 @@ function IssueInspector (params = {}) {
             switch (fsv.type) {
               case "appbox":
               case "application":
-              case constx.FRAMEWORK.NAME: {
+              case FRAMEWORK_PACKAGE_NAME: {
                 console.error(chalk.errorMessage("--> [%s:%s] loading manifest has failed, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
@@ -133,7 +135,7 @@ function IssueInspector (params = {}) {
           if (fsv.stage === "config/schema") {
             switch (fsv.type) {
               case "application":
-              case constx.FRAMEWORK.NAME:
+              case FRAMEWORK_PACKAGE_NAME:
               case "plugin": {
                 console.error(chalk.errorMessage("--> [%s:%s] plugin's configure is invalid, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));

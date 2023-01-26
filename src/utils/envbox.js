@@ -1,9 +1,14 @@
 "use strict";
 
-const constx = require("./constx");
+const lodash = require("lodash");
 const Envcloak = require("envcloak");
 
-Envcloak.NAMESPACE = "DEVEBOT";
+const constx = require("./constx");
+
+const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
+
+Envcloak.NAMESPACE = lodash.toUpper(FRAMEWORK_NAME);
 
 const ENV_DEF_DEFAULT = [
   {
@@ -113,7 +118,7 @@ const ENV_DEF_DEFAULT = [
   {
     name: "DEFAULT_SCOPE",
     type: "string",
-    defaultValue: constx.FRAMEWORK.NAME,
+    defaultValue: FRAMEWORK_PACKAGE_NAME,
     scope: "framework",
     description: "Default scope as debug's namespace"
   },
