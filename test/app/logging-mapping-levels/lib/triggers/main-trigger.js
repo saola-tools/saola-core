@@ -20,7 +20,7 @@ const Service = function(params={}) {
 
   server.on("error", function(err) {
     L && L.has("silly") && L.log("silly", T && T.add({ blockRef }).toMessage({
-      tags: [ blockRef ],
+      tags: [ blockRef, "http-server-error" ],
       text: "Server error: " + JSON.stringify(err)
     }));
   });
@@ -29,10 +29,10 @@ const Service = function(params={}) {
     res.writeHead(200, {
       "Content-Type": "application/json"
     });
-    res.end({
+    res.end(JSON.stringify({
       packageName: packageName,
       info: "webserver is running"
-    });
+    }, null, 2));
   });
 
   this.getServer = function() {

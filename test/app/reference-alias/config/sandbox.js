@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   application: {
@@ -12,5 +12,4 @@ module.exports = {
       "verbose": true
     }
   }
-}
-
+};
