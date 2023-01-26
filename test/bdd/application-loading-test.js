@@ -11,9 +11,9 @@ const envcloak = require("envcloak").instance;
 const util = require("util");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
-const FRAMEWORK_METADATA = FRAMEWORK_NAME + "-metadata";
+const FRAMEWORK_METADATA = FRAMEWORK_NAMESPACE + "-metadata";
 
 describe("bdd:app:application", function() {
   this.timeout(lab.getDefaultTimeout());

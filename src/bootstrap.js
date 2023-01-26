@@ -23,9 +23,9 @@ const blockRef = chores.getBlockRef(__filename);
 const issueInspector = IssueInspector.instance;
 const stateInspector = StateInspector.instance;
 
-const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
-const FRAMEWORK_CAPNAME = lodash.capitalize(FRAMEWORK_NAME);
+const FRAMEWORK_CAPNAME = lodash.capitalize(FRAMEWORK_NAMESPACE);
 
 function appLoader (params = {}) {
   const {logger: L, tracer: T} = params;
@@ -42,7 +42,7 @@ function appLoader (params = {}) {
   const topRootPath = path.join(__dirname, "/..");
 
   const appInfo = appinfoLoader(appRootPath, libRootPaths, topRootPath);
-  const appName = params.appName || appInfo.name || FRAMEWORK_NAME + "-application";
+  const appName = params.appName || appInfo.name || FRAMEWORK_NAMESPACE + "-application";
   const options = {
     privateProfile: params.privateProfile || params.privateProfiles,
     privateSandbox: params.privateSandbox || params.privateSandboxes,
@@ -529,4 +529,4 @@ function locatePackage ({issueInspector} = {}, pkgInfo, pkgType) {
   }
 }
 
-module.exports = global[FRAMEWORK_NAME] = global[FRAMEWORK_CAPNAME] = bootstrap;
+module.exports = global[FRAMEWORK_NAMESPACE] = global[FRAMEWORK_CAPNAME] = bootstrap;

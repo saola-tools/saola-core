@@ -15,7 +15,7 @@ const constx = require("./utils/constx");
 const chores = require("./utils/chores");
 const blockRef = chores.getBlockRef(__filename);
 
-const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
 
 function Server (params = {}) {
   Kernel.call(this, params);
@@ -97,7 +97,7 @@ function Server (params = {}) {
           const proto = sslEnabled ? "wss" : "ws";
           const host = serverInstance.address().address;
           const port = serverInstance.address().port;
-          chores.isVerboseForced(FRAMEWORK_NAME, frameworkCfg) &&
+          chores.isVerboseForced(FRAMEWORK_NAMESPACE, frameworkCfg) &&
               console.info("%s is listening on %s://%s:%s%s", appName, proto, host, port, appRootUrl);
           resolve(serverInstance);
         });
@@ -156,7 +156,7 @@ function Server (params = {}) {
         tags: [ blockRef, "close()", "webserver-stopped" ],
         text: "webserver has stopped"
       }));
-      chores.isVerboseForced(FRAMEWORK_NAME, frameworkCfg) &&
+      chores.isVerboseForced(FRAMEWORK_NAMESPACE, frameworkCfg) &&
           console.info("%s has been closed", appName);
       return Promise.resolve();
     });

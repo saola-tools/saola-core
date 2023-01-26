@@ -12,7 +12,7 @@ const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
 const constx = require(lab.getDevebotModule("utils/constx"));
-const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 const CONFIG_EXTENDED_FIELDS = [
@@ -702,7 +702,7 @@ describe("tdd:lib:base:bootstrap", function() {
       let cfg = app.config;
       false && console.log("SHOW [app.config]: ", cfg);
       assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
-      assert.equal(cfg.appName, FRAMEWORK_NAME + "-application");
+      assert.equal(cfg.appName, FRAMEWORK_NAMESPACE + "-application");
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
@@ -712,7 +712,7 @@ describe("tdd:lib:base:bootstrap", function() {
         return lodash.pick(item, ["type", "name"]);
       }), [{
         type: "application",
-        name: FRAMEWORK_NAME + "-application"
+        name: FRAMEWORK_NAMESPACE + "-application"
       },
       {
         type: "framework",
@@ -736,7 +736,7 @@ describe("tdd:lib:base:bootstrap", function() {
       let app = bootstrap.launchApplication();
       let cfg = replaceObjectFields(app.config);
       false && console.log("Application config: ", JSON.stringify(cfg, null, 2));
-      assert.equal(cfg.appName, FRAMEWORK_NAME + "-application");
+      assert.equal(cfg.appName, FRAMEWORK_NAMESPACE + "-application");
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
         framework: lab.getFrameworkInfo()
@@ -744,7 +744,7 @@ describe("tdd:lib:base:bootstrap", function() {
       assert.sameDeepMembers(cfg.bridgeList, []);
       assert.sameDeepMembers(cfg.bundleList, [
         {
-          "name": FRAMEWORK_NAME + "-application",
+          "name": FRAMEWORK_NAMESPACE + "-application",
           "type": "application",
         },
         {

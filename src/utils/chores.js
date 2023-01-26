@@ -18,13 +18,13 @@ const envbox = require("./envbox");
 const nodash = require("./nodash");
 const getenv = require("./getenv");
 
-const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
-const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAME);
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 const codetags = require("codetags")
   .getInstance(FRAMEWORK_PACKAGE_NAME, {
-    namespace: FRAMEWORK_NAME,
+    namespace: FRAMEWORK_NAMESPACE,
     INCLUDED_TAGS: "UPGRADE_ENABLED",
     EXCLUDED_TAGS: "UPGRADE_DISABLED",
     version: constx.FRAMEWORK.VERSION,
@@ -216,7 +216,7 @@ chores.isAppboxBundle = function(bundle) {
 
 chores.isFrameworkBundle = function(bundle) {
   const type = _getBundleType(bundle);
-  return type === "framework" || type === FRAMEWORK_NAME;
+  return type === "framework" || type === FRAMEWORK_NAMESPACE;
 };
 
 function _getBundleType (bundle) {

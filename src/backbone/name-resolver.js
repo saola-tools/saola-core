@@ -7,7 +7,7 @@ const constx = require("../utils/constx");
 const nodash = require("../utils/nodash");
 const blockRef = chores.getBlockRef(__filename);
 
-const FRAMEWORK_NAME = constx.FRAMEWORK.ORG_NAME;
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.ORG_NAME;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.NAME;
 
 function NameResolver (params = {}) {
@@ -147,15 +147,15 @@ module.exports = NameResolver;
 
 const LIB_NAME_PATTERNS = {
   bridge: [
-    new RegExp("^@" + FRAMEWORK_NAME + "/" + "(bridge-[a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^@" + FRAMEWORK_NAME + "/" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^" + FRAMEWORK_NAME + "-" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^@" + FRAMEWORK_NAMESPACE + "/" + "(bridge-[a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^@" + FRAMEWORK_NAMESPACE + "/" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^" + FRAMEWORK_NAMESPACE + "-" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
     /^([a-z][a-z0-9-]*[a-z0-9])$/g
   ],
   plugin: [
-    new RegExp("^@" + FRAMEWORK_NAME + "/" + "(plugin-[a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^@" + FRAMEWORK_NAME + "/" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^" + FRAMEWORK_NAME + "-" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^@" + FRAMEWORK_NAMESPACE + "/" + "(plugin-[a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^@" + FRAMEWORK_NAMESPACE + "/" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp("^" + FRAMEWORK_NAMESPACE + "-" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
     /^([a-z][a-z0-9-]*[a-z0-9])$/g
   ]
 };
@@ -169,7 +169,7 @@ function extractAliasNames (ctx, type, moduleRefs) {
   const {issueInspector} = ctx;
   function buildSupportFields (moduleRef) {
     if (moduleRef.name == FRAMEWORK_PACKAGE_NAME) {
-      moduleRef.code = FRAMEWORK_NAME;
+      moduleRef.code = FRAMEWORK_NAMESPACE;
       moduleRef.codeInCamel = chores.stringCamelCase(moduleRef.code);
       moduleRef.nameInCamel = chores.stringCamelCase(moduleRef.name);
       return moduleRef;
