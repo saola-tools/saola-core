@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-var lab = require('../../../index');
+var lab = require("../../../index");
 
-module.exports = {}
+module.exports = {};
 
-if (!lab.isUpgradeSupported('bridge-full-ref')) {}
+if (!lab.isUpgradeSupported("bridge-full-ref")) {}

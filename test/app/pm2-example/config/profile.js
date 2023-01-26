@@ -1,7 +1,7 @@
 module.exports = {
   devebot: {
     verbose: true,
-    mode: 'tictac',
+    mode: "tictac",
     jobqueue: {
       enabled: false
     }
@@ -9,12 +9,12 @@ module.exports = {
   logger: {
     transports: {
       console: {
-        type: 'console',
-        level: 'error',
+        type: "console",
+        level: "error",
         json: false,
         timestamp: true,
         colorize: true
       }
     }
   }
-}
+};

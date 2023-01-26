@@ -1,20 +1,21 @@
-'use strict';
+"use strict";
 
-var lab = require('../../index');
-var Devebot = lab.getDevebot();
-var chores = Devebot.require('chores');
-var app = Devebot.initialize('features', {
-  defaultFeatures: ['abc', 'def']
+const lab = require("../../index");
+const Devebot = lab.getDevebot();
+const chores = Devebot.require("chores");
+
+const app = Devebot.initialize("features", {
+  defaultFeatures: ["abc", "def"]
 }).launchApplication({
   appRootPath: __dirname
 }, [], []);
 
-app.server;
+chores.logConsole("PM2_id: %s / Total: %s", process.env.pm_id, process.env.instances);
 
-console.log('PM2_id: %s / Total: %s', process.env.pm_id, process.env.instances);
+chores.logConsole("isFeatureSupport: [%s]", lab.isUpgradeSupported("abcd"));
 
-console.log('isFeatureSupport: [%s]', lab.isUpgradeSupported('abcd'));
-
-if (require.main === module) app.server.start();
+if (require.main === module) {
+  app.server.start();
+}
 
 module.exports = app;
