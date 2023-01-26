@@ -15,7 +15,7 @@ function JobqueueBinder (params = {}) {
     text: " + constructor start in sandbox <{sandboxName}>"
   }));
 
-  const jqCfg = lodash.get(params.profileConfig, chores.getProfileConfigFrameworkSection(["jobqueue"]), {});
+  const jqCfg = chores.getFrameworkProfileConfig(params.profileConfig, ["jobqueue"]);
   const _ref_ = { jobqueueMasterName: null, jobqueueMaster: null };
 
   function getJobqueueMasterName () {

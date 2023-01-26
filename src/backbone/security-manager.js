@@ -17,7 +17,7 @@ function SecurityManager (params = {}) {
     text: " + constructor start ..."
   }));
 
-  const authenCfg = lodash.get(params.profileConfig, chores.getProfileConfigFrameworkSection(["authen"]), {});
+  const authenCfg = chores.getFrameworkProfileConfig(params.profileConfig, ["authen"]);
 
   this.authenticate = function(tokens) {
     const output = Promise.resolve({ result: true });

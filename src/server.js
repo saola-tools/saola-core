@@ -46,7 +46,7 @@ function Server (params = {}) {
   const appRootUrl = "/" + chores.stringKebabCase(appName);
 
   // framework configures
-  const frameworkCfg = lodash.get(profileConfig, chores.getProfileConfigFrameworkSection(), {});
+  const frameworkCfg = chores.getFrameworkProfileConfig(profileConfig);
 
   const tunnelCfg = lodash.get(frameworkCfg, ["tunnel"], {});
   const sslEnabled = tunnelCfg.enabled && tunnelCfg.key_file && tunnelCfg.crt_file;

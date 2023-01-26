@@ -57,13 +57,13 @@ describe("bdd:app:configuration", function() {
         expect(profileConfig)
           .to.be.an("object")
           .to.include.all.keys("devebot");
-        expect(lodash.get(profileConfig, chores.getProfileConfigFrameworkSection()))
+        expect(chores.getFrameworkProfileConfig(profileConfig))
           .to.be.an("object")
           .to.include.all.keys("host", "port", "authen", "tunnel");
-        expect(lodash.get(profileConfig, chores.getProfileConfigFrameworkSection(["authen"])))
+        expect(chores.getFrameworkProfileConfig(profileConfig, ["authen"]))
           .to.be.an("object")
           .to.include.all.keys("disabled", "tokenStoreFile");
-        expect(lodash.get(profileConfig, chores.getProfileConfigFrameworkSection(["tunnel"])))
+        expect(chores.getFrameworkProfileConfig(profileConfig, ["tunnel"]))
           .to.be.an("object")
           .to.include.all.keys("enabled", "key_file", "crt_file");
       }).then(done);

@@ -216,7 +216,7 @@ chores.isAppboxBundle = function(bundle) {
 
 chores.isFrameworkBundle = function(bundle) {
   const type = _getBundleType(bundle);
-  return type === "framework" || type === "devebot";
+  return type === "framework" || type === FRAMEWORK_NAME;
 };
 
 function _getBundleType (bundle) {
@@ -259,30 +259,26 @@ chores.getSeparator = function() {
   return store.injektorOptions.separator;
 };
 
-let scopedNamePattern = null;
-
-chores.getProfileConfigFrameworkSection = function (subpath) {
-  const location = [ "devebot" ];
+const _getFrameworkProfileConfig = function (profileConfig, section, subpath) {
+  let location = [ section ];
   if (subpath) {
-    return location.concat(subpath);
+    location = location.concat(subpath);
   }
-  return location;
+  return lodash.get(profileConfig, location, null);
 };
 
-chores.getFrameworkName = function (packageName) {
-  if (!scopedNamePattern) {
-    const scopedNamePatternStr = util.format("^@(?<scope>.+)%s(?<name>[a-zA-Z]{1}[a-zA-Z0-9-_]*)$", this.getSeparator());
-    scopedNamePattern = new RegExp(scopedNamePatternStr);
-  }
-  const match = packageName.match(scopedNamePattern);
-  if (match && match.groups) {
-    const scope = match.groups["scope"];
-    if (lodash.isString(scope)) {
-      return scope;
-    }
+chores.getFrameworkProfileConfig = function (profileConfig, subpath) {
+  const o1 = _getFrameworkProfileConfig(profileConfig, "framework", subpath);
+  if (o1 != null) {
+    return o1;
   }
   //
-  return packageName;
+  const o2 = _getFrameworkProfileConfig(profileConfig, "devebot", subpath);
+  if (o2 != null) {
+    return o2;
+  }
+  //
+  return {};
 };
 
 chores.getFullname = function(parts, separator) {
