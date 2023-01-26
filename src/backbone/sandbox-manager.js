@@ -415,7 +415,7 @@ function SandboxRegistry (params = {}) {
   function validateBeanName (beanName, context = {}) {
     const info = injektor.parseName(beanName, context);
     if (info.scope === FRAMEWORK_PACKAGE_NAME) {
-      const RestrictedError = errors.assertConstructor("RestrictedDevebotError");
+      const RestrictedError = errors.assertConstructor("RestrictedBeanError");
       throw new RestrictedError(util.format("dependency scope [%s] is restricted", FRAMEWORK_PACKAGE_NAME));
     }
     const exceptions = [];
@@ -424,7 +424,7 @@ function SandboxRegistry (params = {}) {
       exceptions: exceptions
     });
     if (fullname != null) {
-      const DuplicatedError = errors.assertConstructor("DuplicatedDevebotError");
+      const DuplicatedError = errors.assertConstructor("DuplicatedBeanError");
       throw new DuplicatedError("dependency item is duplicated");
     }
   }

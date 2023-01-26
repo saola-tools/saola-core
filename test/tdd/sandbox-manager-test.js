@@ -226,7 +226,7 @@ describe("tdd:lib:core:sandbox-manager", function() {
       assert.deepEqual(sandboxRegistry.lookup("testing/example"), bean3);
     });
 
-    it("defineService() - RestrictedDevebotError", function() {
+    it("defineService() - RestrictedBeanError", function() {
       let context = { scope: FRAMEWORK_PACKAGE_NAME };
 
       let injektor = new Injektor({ separator: chores.getSeparator() });
@@ -238,14 +238,14 @@ describe("tdd:lib:core:sandbox-manager", function() {
 
       assert.throws(function() {
         sandboxRegistry.defineService(serviceName, SampleService, context);
-      }, errors.assertConstructor("RestrictedDevebotError"));
+      }, errors.assertConstructor("RestrictedBeanError"));
 
       assert.isTrue(_parseName.calledOnce);
       assert.isTrue(_resolveName.notCalled);
       assert.isTrue(_defineService.notCalled);
     });
 
-    it("defineService() - DuplicatedDevebotError", function() {
+    it("defineService() - DuplicatedBeanError", function() {
       let injektor = new Injektor({ separator: chores.getSeparator() });
       injektor.registerObject(serviceFullname, {});
 
@@ -257,7 +257,7 @@ describe("tdd:lib:core:sandbox-manager", function() {
 
       assert.throws(function() {
         sandboxRegistry.defineService(serviceName, SampleService, context);
-      }, errors.assertConstructor("DuplicatedDevebotError"));
+      }, errors.assertConstructor("DuplicatedBeanError"));
 
       assert.isTrue(_parseName.calledOnce);
       assert.isTrue(_resolveName.calledOnce);
