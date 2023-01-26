@@ -256,7 +256,7 @@ describe("tdd:lib:core:object-decorator", function() {
       assert.equal(WrappedConstructor, ExampleConstructor);
     });
 
-    it("should wrap a constructor that will be invoked by the \"new\" operator", function() {
+    it("should wrap a constructor that will be invoked by the 'new' operator", function() {
       let opts = { textureOfBean: {} };
 
       let ExampleConstructor = function () {};
@@ -3214,7 +3214,7 @@ describe("tdd:lib:core:object-decorator", function() {
       assert.equal(method.callCount, 2);
     });
 
-    it("mocking return a Promise when texture.methodType is \"promise", function() {
+    it("mocking return a Promise when texture.methodType is 'promise", function() {
       let generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
@@ -3261,7 +3261,7 @@ describe("tdd:lib:core:object-decorator", function() {
       return p;
     });
 
-    it("mocking push result to callback if texture.methodType is \"callback\" and the last argument is a callback", function() {
+    it("mocking push result to callback if texture.methodType is 'callback' and the last argument is a callback", function() {
       let generate = sinon.stub();
       generate.withArgs("Will be success").returns("Action completed");
       generate.withArgs("Will be failure").throws(new Error("Failed anyway"));
