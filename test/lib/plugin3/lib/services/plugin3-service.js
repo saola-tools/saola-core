@@ -1,21 +1,21 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+const lodash = Devebot.require("lodash");
 
-var Service = function(params) {
+const Service = function(params) {
   params = params || {};
 
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
-  var packageName = params.packageName || 'plugin3';
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
+  const packageName = params.packageName || "plugin3";
 
-  var pluginCfg = lodash.get(params, ['sandboxConfig', 'plugins', 'plugin3'], {});
-  L.has('dunce') && L.log('dunce', T.add({
+  const pluginCfg = lodash.get(params, ["sandboxConfig", "plugins", "plugin3"], {});
+  L.has("dunce") && L.log("dunce", T.add({
     pluginCfg: pluginCfg
   }).toMessage({
-    tags: [ packageName, 'configuration' ],
-    text: ' - configuration: {pluginCfg}'
+    tags: [ packageName, "configuration" ],
+    text: " - configuration: {pluginCfg}"
   }));
 };
 

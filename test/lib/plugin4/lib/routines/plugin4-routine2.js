@@ -1,47 +1,47 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+const Promise = Devebot.require("bluebird");
 
-var runhookSetting;
+let runhookSetting;
 
-var runhookDialect = {
+const runhookDialect = {
   info: {
-    description: 'Plugin4 - Routine2',
+    description: "Plugin4 - Routine2",
     options: []
   },
-  mode: 'remote',
+  mode: "remote",
   handler: function(opts, payload, ctx) {
-    var L = this.loggingFactory.getLogger();
-    var T = this.loggingFactory.getTracer();
+    const L = this.loggingFactory.getLogger();
+    const T = this.loggingFactory.getTracer();
 
-    L.has('dunce') && L.log('dunce', T.add({
-      checkpoint: 'plugin4-routine2-begin'
+    L.has("dunce") && L.log("dunce", T.add({
+      checkpoint: "plugin4-routine2-begin"
     }).toMessage({
-      text: ' - runhook start',
+      text: " - runhook start",
       reset: true
     }));
 
-    var result = { runhookName: 'Plugin4 - Routine2' }
+    const result = { runhookName: "Plugin4 - Routine2" };
 
-    L.has('dunce') && L.log('dunce', T.add({
-      checkpoint: 'plugin4-routine2-injected-names',
+    L.has("dunce") && L.log("dunce", T.add({
+      checkpoint: "plugin4-routine2-injected-names",
       injectedServiceNames: Object.keys(this.injectedServices)
     }).toMessage({
-      text: ' - injectedServices names: {injectedServiceNames}',
+      text: " - injectedServices names: {injectedServiceNames}",
       reset: true
     }));
 
-    var output = Promise.resolve([{
-        type: 'json',
-        title: 'Plugin4 - Routine2',
-        data: {}
+    const output = Promise.resolve([{
+        type: "json",
+        title: "Plugin4 - Routine2",
+        data: result
     }]);
 
-    L.has('dunce') && L.log('dunce', T.add({
-      checkpoint: 'plugin4-routine2-end'
+    L.has("dunce") && L.log("dunce", T.add({
+      checkpoint: "plugin4-routine2-end"
     }).toMessage({
-      text: ' - runhook end',
+      text: " - runhook end",
       reset: true
     }));
 

@@ -1,16 +1,16 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:plugin1:plugin1Service');
+const lodash = Devebot.require("lodash");
+const debugx = Devebot.require("pinbug")("devebot:test:lab:plugin1:plugin1Service");
 
-var Service = function(params) {
-  debugx.enabled && debugx(' + constructor begin ...');
+const Service = function(params = {}) {
+  debugx.enabled && debugx(" + constructor begin ...");
 
-  var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
-  debugx.enabled && debugx('configuration: %s', JSON.stringify(pluginCfg));
+  const pluginCfg = lodash.get(params, ["sandboxConfig"], {});
+  debugx.enabled && debugx("configuration: %s", JSON.stringify(pluginCfg));
 
-  debugx.enabled && debugx(' - constructor end!');
+  debugx.enabled && debugx(" - constructor end!");
 };
 
 Service.argumentSchema = {

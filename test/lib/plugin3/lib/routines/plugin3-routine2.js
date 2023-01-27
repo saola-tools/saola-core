@@ -1,20 +1,20 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+const Promise = Devebot.require("bluebird");
 
-var runhookSetting;
+let runhookSetting;
 
-var runhookDialect = {
+const runhookDialect = {
   enabled: false,
   info: {
-    description: 'Plugin3 - Routine2',
+    description: "Plugin3 - Routine2",
     options: []
   },
   handler: function(opts, payload, ctx) {
     return Promise.resolve([{
-        type: 'json',
-        title: 'Plugin3 - Routine2',
+        type: "json",
+        title: "Plugin3 - Routine2",
         data: {}
     }]);
   }

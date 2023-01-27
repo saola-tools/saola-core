@@ -1,47 +1,47 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+const Promise = Devebot.require("bluebird");
 
-var runhookSetting;
+let runhookSetting;
 
-var runhookDialect = {
+const runhookDialect = {
   info: {
-    description: 'Plugin1 - Routine1',
+    description: "Plugin1 - Routine1",
     options: []
   },
-  mode: 'direct',
+  mode: "direct",
   handler: function(opts, payload, ctx) {
-    var L = this.loggingFactory.getLogger();
-    var T = this.loggingFactory.getTracer();
+    const L = this.loggingFactory.getLogger();
+    const T = this.loggingFactory.getTracer();
 
-    L.has('dunce') && L.log('dunce', T.add({
-      checkpoint: 'plugin1-routine1-begin'
+    L.has("dunce") && L.log("dunce", T.add({
+      checkpoint: "plugin1-routine1-begin"
     }).toMessage({
-      text: ' - runhook start',
+      text: " - runhook start",
       reset: true
     }));
 
-    var result = { runhookName: 'Plugin1 - Routine1' }
+    const result = { runhookName: "Plugin1 - Routine1" };
 
-    L.has('dunce') && L.log('dunce', T.add({
-      checkpoint: 'plugin1-routine1-injected-names',
+    L.has("dunce") && L.log("dunce", T.add({
+      checkpoint: "plugin1-routine1-injected-names",
       injectedServiceNames: Object.keys(this.injectedServices)
     }).toMessage({
-      text: ' - injectedServices names: {injectedServiceNames}',
+      text: " - injectedServices names: {injectedServiceNames}",
       reset: true
     }));
 
-    var output = Promise.resolve([{
-        type: 'json',
-        title: 'Plugin1 - Routine1',
+    const output = Promise.resolve([{
+        type: "json",
+        title: "Plugin1 - Routine1",
         data: result
     }]);
 
-    L.has('dunce') && L.log('dunce', T.add({
-      checkpoint: 'plugin1-routine1-end'
+    L.has("dunce") && L.log("dunce", T.add({
+      checkpoint: "plugin1-routine1-end"
     }).toMessage({
-      text: ' - runhook end',
+      text: " - runhook end",
       reset: true
     }));
 
