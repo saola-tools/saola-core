@@ -1,36 +1,34 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
 
-var Service = function(params) {
-  params = params || {};
+const Service = function(params = {}) {
+  const packageName = params.packageName || "plugin-invalid-service";
+  const blockRef = chores.getBlockRef(__filename, packageName);
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
 
-  var packageName = params.packageName || 'plugin-invalid-service';
-  var blockRef = chores.getBlockRef(__filename, packageName);
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
-
-  L.has('dunce') && L.log('dunce', T.toMessage({
-    tags: [ blockRef, 'constructor-begin' ],
-    text: ' + constructor begin'
+  L.has("dunce") && L.log("dunce", T.toMessage({
+    tags: [ blockRef, "constructor-begin" ],
+    text: " + constructor begin"
   }));
 
-  var pluginCfg = lodash.get(params, 'sandboxConfig', {});
-  L.has('dunce') && L.log('dunce', T.add({
+  const pluginCfg = lodash.get(params, "sandboxConfig", {});
+  L.has("dunce") && L.log("dunce", T.add({
     pluginCfg: pluginCfg
   }).toMessage({
     tags: [ blockRef ],
-    text: ' - configuration: {pluginCfg}'
+    text: " - configuration: {pluginCfg}"
   }));
 
-  // invalid code
-  unknownVar = 1024;
+  /* eslint-disable no-undef */
+  unknownconst = 1024; // invalid code
 
-  L.has('dunce') && L.log('dunce', T.toMessage({
-    tags: [ blockRef, 'constructor-end' ],
-    text: ' - constructor end!'
+  L.has("dunce") && L.log("dunce", T.toMessage({
+    tags: [ blockRef, "constructor-end" ],
+    text: " - constructor end!"
   }));
 };
 
