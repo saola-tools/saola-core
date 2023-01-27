@@ -1,13 +1,14 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+var Promise = Devebot.require("bluebird");
+var lodash = Devebot.require("lodash");
 
 var runhookSetting;
 
 var runhookDialect = {
   info: {
-    description: 'sub-plugin2/Routine2',
+    description: "sub-plugin2/Routine2",
     validate: function(data) {
       return data && data.number < 10;
     },
@@ -15,8 +16,8 @@ var runhookDialect = {
   },
   handler: function(opts, payload, ctx) {
     return Promise.resolve([{
-        type: 'json',
-        title: 'sub-plugin2 - Routine2',
+        type: "json",
+        title: "sub-plugin2 - Routine2",
         data: {}
     }]);
   }

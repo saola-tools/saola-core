@@ -117,14 +117,18 @@ describe("tdd:lib:core:sandbox-manager", function() {
     });
     false && console.log(sublibService1.getConfig());
     assert.isNotNull(sublibService1);
-    assert.deepEqual(sublibService1.getConfig(), { host: "localhost", port: 17721 });
+    assert.deepEqual(sublibService1.getConfig(), {
+      "sub-plugin1/sublibService": { host: "localhost", port: 17721 }
+    });
 
     let sublibService2 = sandboxManager.getSandboxService("sublibService", {
       scope: "sub-plugin2"
     });
     false && console.log(sublibService2.getConfig());
     assert.isNotNull(sublibService2);
-    assert.deepEqual(sublibService2.getConfig(), { host: "localhost", port: 17722 });
+    assert.deepEqual(sublibService2.getConfig(), {
+      "sub-plugin2/sublibService": { host: "localhost", port: 17722 }
+    });
   });
 
   describe("logging-interception", function() {

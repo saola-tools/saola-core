@@ -1,22 +1,25 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
+const chores = Devebot.require("chores");
 
-var Service = function(params) {
-  params = params || {};
+const Service = function(params = {}) {
+  const { packageName, loggingFactory, sandboxConfig } = params;
 
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
-
-  var packageName = params.packageName || 'sub-plugin1';
-  var blockRef = chores.getBlockRef(__filename, packageName);
-  var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
+  const blockRef = chores.getBlockRef(__filename, packageName);
 
   this.getConfig = function() {
-    return pluginCfg;
-  }
+    return {
+      [blockRef]: sandboxConfig
+    };
+  };
+
+  L && L.has("silly") && L.log("silly", T && T.add({ blockRef }).toMessage({
+    tags: [ blockRef, "configuration" ],
+    text: "Configuration: " + JSON.stringify(this.getConfig())
+  }));
 };
 
 Service.argumentSchema = {
@@ -27,6 +30,6 @@ Service.argumentSchema = {
       "type": "object"
     }
   }
-}
+};
 
 module.exports = Service;
