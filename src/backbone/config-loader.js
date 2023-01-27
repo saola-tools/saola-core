@@ -557,6 +557,13 @@ function ModernizingResultCollector () {
 
 function transformConfig (ctx, configType, configStore, crateInfo) {
   const { nameResolver } = ctx || this;
+  if (configType === CONFIG_PROFILE_NAME) {
+    if (chores.isUpgradeSupported("profile-config-field-framework")) {
+      configStore = chores.renameJsonFields(configStore, {
+        "devebot": "framework"
+      });
+    }
+  }
   if (configType === CONFIG_SANDBOX_NAME) {
     configStore = convertPreciseConfig(ctx, configStore, crateInfo.type, crateInfo.name, crateInfo.presets);
     configStore = applyAliasMap(ctx, configStore, nameResolver.getOriginalNameOf);

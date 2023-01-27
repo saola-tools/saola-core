@@ -236,6 +236,35 @@ describe("tdd:lib:core:config-loader", function() {
     let doAliasMap = ConfigLoader.__get__("doAliasMap");
     let transformConfig = ConfigLoader.__get__("transformConfig");
 
+    it("[profile] should rename the field 'devebot' to 'framework'", function() {
+      if (!chores.isUpgradeSupported(["profile-config-field-framework"])) this.skip();
+      //
+      const appRef = new Object();
+      //
+      const originalCfg = {
+        "devebot": {
+          "verbose": true,
+          "jobqueue": {
+            "enabled": true
+          }
+        }
+      };
+      //
+      const expectedCfg = {
+        "framework": {
+          "verbose": true,
+          "jobqueue": {
+            "enabled": true
+          }
+        }
+      };
+      //
+      let convertedCfg = transformConfig(CTX, "profile", originalCfg, appRef);
+      //
+      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      assert.deepInclude(convertedCfg, expectedCfg);
+    });
+
     it("[sandbox] should transform relative names into default full names", function() {
       if (!chores.isUpgradeSupported(["bridge-full-ref", "standardizing-config"])) this.skip();
 

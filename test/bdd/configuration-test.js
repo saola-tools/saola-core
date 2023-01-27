@@ -17,10 +17,11 @@ describe("bdd:app:configuration", function() {
       app = lab.getApp("default");
     });
 
-    it("configuration has been loaded correctly", function(done) {
-      app.runner.invoke(function(injektor) {
+    it("configuration has been loaded correctly", function() {
+      return app.runner.invoke(function(injektor) {
         let appInfo = injektor.lookup("appInfo");
         debugx.enabled && debugx("appInfo: %s", JSON.stringify(appInfo, null, 2));
+        //
         expect(appInfo).to.deep.include({
           "version": "0.1.0",
           "name": "demo-app",
@@ -30,7 +31,7 @@ describe("bdd:app:configuration", function() {
           "license": "ISC",
           "framework": lab.getFrameworkInfo()
         });
-
+        //
         expect(appInfo).to.deep.include({
           "layerware": [
             {
@@ -56,7 +57,7 @@ describe("bdd:app:configuration", function() {
         debugx.enabled && debugx("profileConfig: %s", JSON.stringify(profileConfig, null, 2));
         expect(profileConfig)
           .to.be.an("object")
-          .to.include.all.keys("devebot");
+          .to.include.all.keys("devebot", "logger", "newFeatures");
         expect(chores.getFrameworkProfileConfig(profileConfig))
           .to.be.an("object")
           .to.include.all.keys("host", "port", "authen", "tunnel");
@@ -66,7 +67,7 @@ describe("bdd:app:configuration", function() {
         expect(chores.getFrameworkProfileConfig(profileConfig, ["tunnel"]))
           .to.be.an("object")
           .to.include.all.keys("enabled", "key_file", "crt_file");
-      }).then(done);
+      });
     });
   });
 });
