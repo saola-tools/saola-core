@@ -1,97 +1,99 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var http = require('http');
+const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const http = require("http");
+const util = require("util");
 
-var Service = function(params) {
+const Service = function(params) {
   params = params || {};
 
-  var packageName = params.packageName || 'devebot-dp-wrapper2';
-  var blockRef = chores.getBlockRef(__filename, packageName);
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
+  const packageName = params.packageName || "devebot-dp-wrapper2";
+  const blockRef = chores.getBlockRef(__filename, packageName);
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [blockRef, 'constructor-begin'],
-    text: ' + constructor begin ...'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [blockRef, "constructor-begin"],
+    text: " + constructor begin ..."
   }));
 
-  if (chores.isUpgradeSupported('bridge-full-ref')) {
-    var connector1 = params["connector1#bean"];
-    L.has('silly') && L.log('silly', T.add({
+  if (chores.isUpgradeSupported("bridge-full-ref")) {
+    const connector1 = params["connector1#bean"];
+    L.has("silly") && L.log("silly", T.add({
       config: connector1.getConfig()
     }).toMessage({
-      tags: [blockRef, 'connector1#bean', 'bridge-config'],
-      text: ' - connector1#bean.config: ${config}'
+      tags: [blockRef, "connector1#bean", "bridge-config"],
+      text: " - connector1#bean.config: ${config}"
     }));
 
-    var connector2 = params["connector2#bean"];
-    L.has('silly') && L.log('silly', T.add({
+    const connector2 = params["connector2#bean"];
+    L.has("silly") && L.log("silly", T.add({
       config: connector2.getConfig()
     }).toMessage({
-      tags: [blockRef, 'connector2#bean', 'bridge-config'],
-      text: ' - connector2#bean.config: ${config}'
+      tags: [blockRef, "connector2#bean", "bridge-config"],
+      text: " - connector2#bean.config: ${config}"
     }));
   }
 
-  var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
+  const pluginCfg = lodash.get(params, ["sandboxConfig"], {});
 
   this.getConfig = function() {
     return pluginCfg;
-  }
+  };
 
-  var server = http.createServer();
+  const server = http.createServer();
 
-  server.on('error', function(err) {
-    L.has('silly') && L.log('silly', T.add({
+  server.on("error", function(err) {
+    L.has("silly") && L.log("silly", T.add({
       error: err
     }).toMessage({
-      tags: [blockRef, 'webserver-error'],
-      text: 'Server Error: ${error}'
+      tags: [blockRef, "webserver-error"],
+      text: "Server Error: ${error}"
     }));
   });
 
-  server.on('request', function(req, res) {
+  server.on("request", function(req, res) {
     res.writeHead(200);
-    res.end(util.format('%s webserver', packageName));
+    res.end(util.format("%s webserver", packageName));
   });
 
   this.getServer = function() {
     return server;
   };
 
-  var configHost = lodash.get(pluginCfg, 'host', '0.0.0.0');
-  var configPort = lodash.get(pluginCfg, 'port', 8080);
+  const configHost = lodash.get(pluginCfg, "host", "0.0.0.0");
+  const configPort = lodash.get(pluginCfg, "port", 8080);
 
   this.start = function() {
-    return new Promise(function(resolved, rejected) {
-      var serverInstance = server.listen(configPort, configHost, function () {
-        var host = serverInstance.address().address;
-        var port = serverInstance.address().port;
+    return new Promise(function(resolve, reject) {
+      const serverInstance = server.listen(configPort, configHost, function () {
+        const host = serverInstance.address().address;
+        const port = serverInstance.address().port;
         if (chores.isVerboseForced(packageName, pluginCfg)) {
-          console.log('%s webserver is listening at http://%s:%s', packageName, host, port);
+          chores.logConsole("%s webserver is listening at http://%s:%s", packageName, host, port);
         }
-        resolved(serverInstance);
+        resolve(serverInstance);
       });
     });
   };
 
   this.stop = function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       server.close(function () {
         if (chores.isVerboseForced(packageName, pluginCfg)) {
-          console.log('%s webserver has been closed', packageName);
+          chores.logConsole("%s webserver has been closed", packageName);
         }
-        resolved();
+        resolve();
       });
     });
   };
 
-  L.has('silly') && L.log('silly', T.toMessage({
-    tags: [blockRef, 'constructor-end'],
-    text: ' + constructor end!'
+  L.has("silly") && L.log("silly", T.toMessage({
+    tags: [blockRef, "constructor-end"],
+    text: " + constructor end!"
   }));
 };
 
@@ -100,7 +102,7 @@ Service.referenceList = [
   "connector2#bean"
 ];
 
-if (!chores.isUpgradeSupported('bridge-full-ref')) {
+if (!chores.isUpgradeSupported("bridge-full-ref")) {
   Service.referenceList = [];
 };
 

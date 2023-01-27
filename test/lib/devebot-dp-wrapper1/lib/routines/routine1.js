@@ -1,25 +1,22 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+const Promise = Devebot.require("bluebird");
 
-var runhookSetting;
-
-var runhookDialect = {
+const runhookDialect = {
   info: {
-    description: 'devebot-dp-wrapper1/Routine1',
+    description: "devebot-dp-wrapper1/Routine1",
     options: []
   },
   handler: function(opts, payload, ctx) {
     return Promise.resolve([{
-        type: 'json',
-        title: 'devebot-dp-wrapper1 - Routine1',
+        type: "json",
+        title: "devebot-dp-wrapper1 - Routine1",
         data: {}
     }]);
   }
 };
 
 module.exports = function(params) {
-  runhookSetting = params || {};
   return runhookDialect;
 };

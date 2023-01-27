@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-var lab = require('../../../index');
+const lab = require("../../../index");
 
 module.exports = {
   plugins: {
@@ -51,8 +51,8 @@ module.exports = {
       }
     }
   }
-}
+};
 
-if (!lab.isUpgradeSupported('bridge-full-ref')) {
-  module.exports.bridges = {}
+if (!lab.isUpgradeSupported("bridge-full-ref")) {
+  module.exports.bridges = {};
 };
