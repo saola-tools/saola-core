@@ -1,52 +1,46 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var http = require('http');
+const chores = Devebot.require("chores");
+const http = require("http");
 
-var Service = function(params) {
+const Service = function(params) {
   params = params || {};
 
-  var packageName = params.packageName || 'plugin-invalid-trigger-methods';
-  var blockRef = chores.getBlockRef(__filename, packageName);
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
+  const packageName = params.packageName || "plugin-invalid-trigger-methods";
+  const blockRef = chores.getBlockRef(__filename, packageName);
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
 
-  L.has('dunce') && L.log('dunce', T.toMessage({
-    tags: [ blockRef, 'constructor-begin' ],
-    text: ' + constructor begin'
+  L.has("dunce") && L.log("dunce", T.toMessage({
+    tags: [ blockRef, "constructor-begin" ],
+    text: " + constructor begin"
   }));
 
-  var pluginCfg = lodash.get(params, 'sandboxConfig', {});
+  const server = http.createServer();
 
-  var server = http.createServer();
-
-  server.on('error', function(err) {
-    L.has('error') && L.log('error', T.add({
+  server.on("error", function(err) {
+    L.has("error") && L.log("error", T.add({
       error: err
     }).toMessage({
-      tags: [ blockRef, 'server-error' ],
-      text: ' - Server Error: {error}',
+      tags: [ blockRef, "server-error" ],
+      text: " - Server Error: {error}",
       reset: true
     }));
   });
 
-  server.on('request', function(req, res) {
+  server.on("request", function(req, res) {
     res.writeHead(200);
-    res.end('plugin-invalid-trigger webserver');
+    res.end("plugin-invalid-trigger webserver");
   });
 
   this.getServer = function() {
     return server;
   };
 
-  var configHost = lodash.get(pluginCfg, 'host', '0.0.0.0');
-  var configPort = lodash.get(pluginCfg, 'port', 8080);
-
-  L.has('dunce') && L.log('dunce', T.toMessage({
-    tags: [ blockRef, 'constructor-end' ],
-    text: ' - constructor end!'
+  L.has("dunce") && L.log("dunce", T.toMessage({
+    tags: [ blockRef, "constructor-end" ],
+    text: " - constructor end!"
   }));
 };
 

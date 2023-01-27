@@ -1,64 +1,65 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var http = require('http');
+const Promise = Devebot.require("bluebird");
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
+const http = require("http");
 
-var Service = function(params) {
+const Service = function(params) {
   params = params || {};
 
-  var packageName = params.packageName || 'plugin-invalid-trigger-methods';
-  var blockRef = chores.getBlockRef(__filename, packageName);
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
+  const packageName = params.packageName || "plugin-invalid-trigger-methods";
+  const blockRef = chores.getBlockRef(__filename, packageName);
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
 
-  L.has('dunce') && L.log('dunce', T.toMessage({
-    tags: [ blockRef, 'constructor-begin' ],
-    text: ' + constructor begin'
+  L.has("dunce") && L.log("dunce", T.toMessage({
+    tags: [ blockRef, "constructor-begin" ],
+    text: " + constructor begin"
   }));
 
-  var pluginCfg = lodash.get(params, 'sandboxConfig', {});
+  const pluginCfg = lodash.get(params, "sandboxConfig", {});
 
-  var server = http.createServer();
+  const server = http.createServer();
 
-  server.on('error', function(err) {
-    L.has('error') && L.log('error', T.add({
+  server.on("error", function(err) {
+    L.has("error") && L.log("error", T.add({
       error: err
     }).toMessage({
-      tags: [ blockRef, 'server-error' ],
-      text: ' - Server Error: {error}',
+      tags: [ blockRef, "server-error" ],
+      text: " - Server Error: {error}",
       reset: true
     }));
   });
 
-  server.on('request', function(req, res) {
+  server.on("request", function(req, res) {
     res.writeHead(200);
-    res.end('plugin-invalid-trigger webserver');
+    res.end("plugin-invalid-trigger webserver");
   });
 
   this.getServer = function() {
     return server;
   };
 
-  var configHost = lodash.get(pluginCfg, 'host', '0.0.0.0');
-  var configPort = lodash.get(pluginCfg, 'port', 8080);
+  const configHost = lodash.get(pluginCfg, "host", "0.0.0.0");
+  const configPort = lodash.get(pluginCfg, "port", 8080);
 
   this.start = function() {
-    return new Promise(function(resolved, rejected) {
-      var serverInstance = server.listen(configPort, configHost, function () {
-        var host = serverInstance.address().address;
-        var port = serverInstance.address().port;
-        chores.isVerboseForced(params.packageName, pluginCfg) &&
-        console.log('%s#webserver is listening at http://%s:%s', params.packageName, host, port);
-        resolved(serverInstance);
+    return new Promise(function(resolve, reject) {
+      const serverInstance = server.listen(configPort, configHost, function () {
+        const host = serverInstance.address().address;
+        const port = serverInstance.address().port;
+        chores.isVerboseForced(packageName, pluginCfg) &&
+        chores.logConsole("%s webserver is listening at http://%s:%s", packageName, host, port);
+        resolve(serverInstance);
       });
     });
   };
 
-  L.has('dunce') && L.log('dunce', T.toMessage({
-    tags: [ blockRef, 'constructor-end' ],
-    text: ' - constructor end!'
+  L.has("dunce") && L.log("dunce", T.toMessage({
+    tags: [ blockRef, "constructor-end" ],
+    text: " - constructor end!"
   }));
 };
 
