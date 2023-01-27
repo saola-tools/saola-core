@@ -4,4 +4,4 @@ module.exports = {
     "port": 17790,
     "verbose": true
   }
-}
+};
