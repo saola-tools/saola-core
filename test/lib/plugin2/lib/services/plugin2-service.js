@@ -1,20 +1,14 @@
-/* global Devebot */
+//* global Devebot */
 "use strict";
 
-const Service = function(params) {
-  params = params || {};
+const Service = function(params = {}) {
+  const { componentId: blockRef, loggingFactory, sandboxConfig } = params;
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
 
-  const L = params.loggingFactory.getLogger();
-  const T = params.loggingFactory.getTracer();
-
-  const blockRef = params.componentId;
-  const pluginCfg = params.sandboxConfig || {};
-
-  L.has("dunce") && L.log("dunce", T.add({
-    pluginCfg: pluginCfg
-  }).toMessage({
+  L.has("dunce") && L.log("dunce", T.add({ sandboxConfig }).toMessage({
     tags: [ blockRef, "configuration" ],
-    text: " - configuration: {pluginCfg}"
+    text: " - configuration: ${sandboxConfig}"
   }));
 };
 

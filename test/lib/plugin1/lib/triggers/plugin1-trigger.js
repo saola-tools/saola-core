@@ -4,21 +4,19 @@
 const Promise = Devebot.require("bluebird");
 const lodash = Devebot.require("lodash");
 const chores = Devebot.require("chores");
-const debugx = Devebot.require("pinbug")("devebot:test:lab:plugin1:plugin1Trigger");
+const devlog = Devebot.require("pinbug")("devebot:test:lab:plugin1:plugin1Trigger");
 const http = require("http");
 const util = require("util");
 
 const Service = function(params = {}) {
-  debugx.enabled && debugx(" + constructor begin ...");
+  devlog.enabled && devlog(" + constructor begin ...");
 
-  const packageName = params.packageName || "plugin1-default-name";
-  const blockRef = params.componentId;
-  const pluginCfg = lodash.get(params, ["sandboxConfig"], {});
+  const { packageName, sandboxConfig } = params;
 
   const server = http.createServer();
 
   server.on("error", function(err) {
-    debugx.enabled && debugx("Server Error: %s", JSON.stringify(err));
+    devlog.enabled && devlog("Server Error: %s", JSON.stringify(err));
   });
 
   server.on("request", function(req, res) {
@@ -30,15 +28,15 @@ const Service = function(params = {}) {
     return server;
   };
 
-  const configHost = lodash.get(pluginCfg, "host", "0.0.0.0");
-  const configPort = lodash.get(pluginCfg, "port", 8080);
+  const configHost = lodash.get(sandboxConfig, "host", "0.0.0.0");
+  const configPort = lodash.get(sandboxConfig, "port", 8080);
 
   this.start = function() {
     return new Promise(function(resolve, reject) {
       const serverInstance = server.listen(configPort, configHost, function () {
         const host = serverInstance.address().address;
         const port = serverInstance.address().port;
-        chores.isVerboseForced(packageName, pluginCfg) &&
+        chores.isVerboseForced(packageName, sandboxConfig) &&
             chores.logConsole("%s webserver is listening at http://%s:%s", packageName, host, port);
         resolve(serverInstance);
       });
@@ -48,14 +46,14 @@ const Service = function(params = {}) {
   this.stop = function() {
     return new Promise(function(resolve, reject) {
       server.close(function () {
-        chores.isVerboseForced(packageName, pluginCfg) &&
+        chores.isVerboseForced(packageName, sandboxConfig) &&
             chores.logConsole("%s webserver has been closed", packageName);
         resolve();
       });
     });
   };
 
-  debugx.enabled && debugx(" - constructor end!");
+  devlog.enabled && devlog(" - constructor end!");
 };
 
 Service.argumentSchema = {

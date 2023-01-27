@@ -5,14 +5,23 @@ const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
 
 const Service = function(params = {}) {
-  const L = params.loggingFactory.getLogger();
-  const T = params.loggingFactory.getTracer();
+  const sandboxConfig = lodash.get(params, ["sandboxConfig"], {});
+  const { loggingFactory, packageName } = params;
 
-  const mainCfg = lodash.get(params, ["sandboxConfig"], {});
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
+  const blockRef = chores.getBlockRef(__filename, packageName);
 
-  this.getConfig = function() {
-    return lodash.cloneDeep(mainCfg);
+  this.getConfig = function () {
+    return {
+      [blockRef]: sandboxConfig,
+    };
   };
+
+  L && L.has("debug") && L.log("debug", T && T.add({ blockRef }).toMessage({
+    tags: [ blockRef, "configuration" ],
+    text: "Configuration: " + JSON.stringify(this.getConfig())
+  }));
 };
 
 if (chores.isUpgradeSupported("bridge-full-ref")) {

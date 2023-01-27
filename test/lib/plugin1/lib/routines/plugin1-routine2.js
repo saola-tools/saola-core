@@ -35,7 +35,7 @@ const runhookDialect = {
     const output = Promise.resolve([{
         type: "json",
         title: "Plugin1 - Routine2",
-        data: {}
+        data: result
     }]);
 
     L.has("dunce") && L.log("dunce", T.add({

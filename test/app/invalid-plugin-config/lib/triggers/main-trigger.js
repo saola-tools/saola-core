@@ -11,16 +11,21 @@ const util = require("util");
 const Service = function(params = {}) {
   devlog.enabled && devlog(" + constructor begin ...");
 
-  const L = params.loggingFactory.getLogger();
-  const T = params.loggingFactory.getTracer();
-  const packageName = params.packageName;
+  const { packageName, loggingFactory } = params;
+
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
+  const blockRef = chores.getBlockRef(__filename, packageName);
 
   const sandboxConfig = lodash.get(params, ["sandboxConfig", "application"], {});
 
   const server = http.createServer();
 
   server.on("error", function(err) {
-    devlog.enabled && devlog("Server Error: %s", JSON.stringify(err));
+    L && L.has("silly") && L.log("silly", T && T.add({ blockRef }).toMessage({
+      tags: [ blockRef, "http-server-error" ],
+      text: "Server error: " + JSON.stringify(err)
+    }));
   });
 
   server.on("request", function(req, res) {

@@ -11,16 +11,21 @@ const util = require("util");
 const Service = function(params = {}) {
   devlog.enabled && devlog(" + constructor begin ...");
 
-  const L = params.loggingFactory.getLogger();
-  const T = params.loggingFactory.getTracer();
-  const packageName = params.packageName;
+  const { packageName, loggingFactory } = params;
 
-  const mainCfg = lodash.get(params, ["sandboxConfig", "application"], {});
+  const L = loggingFactory.getLogger();
+  const T = loggingFactory.getTracer();
+  const blockRef = chores.getBlockRef(__filename, packageName);
+
+  const sandboxConfig = lodash.get(params, ["sandboxConfig", "application"], {});
 
   const server = http.createServer();
 
   server.on("error", function(err) {
-    devlog.enabled && devlog("Server Error: %s", JSON.stringify(err));
+    L && L.has("silly") && L.log("silly", T && T.add({ blockRef }).toMessage({
+      tags: [ blockRef, "http-server-error" ],
+      text: "Server error: " + JSON.stringify(err)
+    }));
   });
 
   server.on("request", function(req, res) {
@@ -32,15 +37,15 @@ const Service = function(params = {}) {
     return server;
   };
 
-  const configHost = lodash.get(mainCfg, "host", "0.0.0.0");
-  const configPort = lodash.get(mainCfg, "port", 8080);
+  const configHost = lodash.get(sandboxConfig, "host", "0.0.0.0");
+  const configPort = lodash.get(sandboxConfig, "port", 8080);
 
   this.start = function() {
     return new Promise(function(resolve, reject) {
       const serverInstance = server.listen(configPort, configHost, function () {
         const host = serverInstance.address().address;
         const port = serverInstance.address().port;
-        chores.isVerboseForced(packageName, mainCfg) &&
+        chores.isVerboseForced(packageName, sandboxConfig) &&
         chores.logConsole("%s webserver is listening at http://%s:%s", packageName, host, port);
         resolve(serverInstance);
       });
@@ -50,7 +55,7 @@ const Service = function(params = {}) {
   this.stop = function() {
     return new Promise(function(resolve, reject) {
       server.close(function () {
-        chores.isVerboseForced(packageName, mainCfg) &&
+        chores.isVerboseForced(packageName, sandboxConfig) &&
         chores.logConsole("%s webserver has been closed", packageName);
         resolve();
       });
