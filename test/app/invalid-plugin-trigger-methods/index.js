@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-var lab = require('../../index');
+var lab = require("../../index");
 var Devebot = lab.getDevebot();
 
 var app = Devebot.launchApplication({
   appRootPath: __dirname
 }, [
   {
-    name: 'plugin-invalid-trigger-methods',
-    path: lab.getLibHome('plugin-invalid-trigger-methods')
+    name: "plugin-invalid-trigger-methods",
+    path: lab.getLibHome("plugin-invalid-trigger-methods")
   }
 ]);
 
