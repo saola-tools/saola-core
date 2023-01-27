@@ -15,7 +15,7 @@ function Service (params = {}) {
       "plugin-reference-alias/sublibService": params.addonService.getConfig(),
       [blockRef]: sandboxConfig,
     };
-  }
+  };
   L && L.has("debug") && L.log("debug", T && T.add({ blockRef }).toMessage({
     tags: [ blockRef, "configuration" ],
     text: "Configuration: " + JSON.stringify(this.getConfig())

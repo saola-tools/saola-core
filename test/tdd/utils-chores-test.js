@@ -227,4 +227,61 @@ describe("tdd:lib:utils:chores", function() {
       assert.isNull(chores.getVersionOf("version-not-found"));
     });
   });
+
+  describe("renameJsonFields()", function() {
+    const mappings = {
+      "_id": "id",
+      "profile.phone": "profile.phoneNumber",
+      "form.e-mail": "profile.email",
+    };
+    //
+    it("skip to transform a non plain object", function () {
+      const func = function() {};
+      assert.isNull(chores.renameJsonFields(null, mappings));
+      assert.equal(chores.renameJsonFields("hello", mappings), "hello");
+      assert.equal(chores.renameJsonFields(func, mappings), func);
+    });
+    //
+    it("do nothing when no field matching with the mappings", function () {
+      const data = {
+        firstName: "John",
+        lastName: "Doe"
+      };
+      assert.deepEqual(chores.renameJsonFields(data, mappings), data);
+    });
+    //
+    it("renames the fields which matches with the mappings", function () {
+      const data = {
+        "_id": "18EA8B71-FD96-4DC7-89AB-DD58C6A019DA",
+        "firstName": "John",
+        "lastName": "Doe",
+        "profile": {
+          "phone": "+84982508124",
+          "phoneNumber": "911"
+        },
+        "form": {
+          "e-mail": "john.doe@example.com",
+          "note": "registration form"
+        },
+      };
+      //
+      const expected = {
+        "id": "18EA8B71-FD96-4DC7-89AB-DD58C6A019DA",
+        "firstName": "John",
+        "lastName": "Doe",
+        "profile": {
+          "phoneNumber": "+84982508124",
+          "email": "john.doe@example.com"
+        },
+        "form": {
+          "note": "registration form"
+        }
+      };
+      //
+      const result = chores.renameJsonFields(data, mappings);
+      false && console.log(JSON.stringify(result, null, 2));
+      //
+      assert.deepEqual(result, expected);
+    });
+  });
 });
