@@ -8,8 +8,8 @@ module.exports = {
   logger: {
     transports: {
       console: {
-        type: 'console',
-        level: 'error',
+        type: "console",
+        level: "error",
         json: false,
         timestamp: true,
         colorize: true
@@ -22,4 +22,4 @@ module.exports = {
       sandboxConfig: false
     }
   }
-}
+};
