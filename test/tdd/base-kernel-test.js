@@ -95,7 +95,7 @@ describe("tdd:lib:base:kernel", function() {
       };
 
       let bundleSchema = extractBundleSchema(SELECTED_FIELDS, bundleMetadata);
-      false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
+      false && console.info("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, {
         "profile": {},
         "sandbox": {
@@ -275,7 +275,7 @@ describe("tdd:lib:base:kernel", function() {
         }
       };
       let bundleSchema = extractBundleSchema(SELECTED_FIELDS, bundleMetadata);
-      false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
+      false && console.info("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, expectedBundleSchema);
     });
   });
@@ -382,7 +382,7 @@ describe("tdd:lib:base:kernel", function() {
 
       let bridgeSchema = extractBridgeSchema(SELECTED_FIELDS, bridgeMetadata);
 
-      false && console.log("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
+      false && console.info("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);
     });
   });
@@ -438,17 +438,17 @@ describe("tdd:lib:base:kernel", function() {
       let kernel = lab.createKernel("fullapp");
 
       let bundleMetadata = lodash.get(loggingStore, "pluginInput.0.metadata", {});
-      false && console.log("bundleMetadata: %s", JSON.stringify(bundleMetadata, null, 2));
+      false && console.info("bundleMetadata: %s", JSON.stringify(bundleMetadata, null, 2));
 
       let bridgeConfig = lodash.get(loggingStore, "bridgeData.0.bridgeConfig", {});
       let bridgeSchema = lodash.get(loggingStore, "bridgeData.0.bridgeSchema", {});
-      false && console.log("bridgeConfig: %s", JSON.stringify(bridgeConfig, null, 2));
-      false && console.log("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
+      false && console.info("bridgeConfig: %s", JSON.stringify(bridgeConfig, null, 2));
+      false && console.info("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
 
       let bundleConfig = lodash.get(loggingStore, "pluginData.0.bundleConfig", {});
       let bundleSchema = lodash.get(loggingStore, "pluginData.0.bundleSchema", {});
-      false && console.log("bundleConfig: %s", JSON.stringify(bundleConfig, null, 2));
-      false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
+      false && console.info("bundleConfig: %s", JSON.stringify(bundleConfig, null, 2));
+      false && console.info("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
 
       let result = lodash.get(loggingStore, "outputValidation.0.result", []);
       false && lodash.forEach(result, function(item) {

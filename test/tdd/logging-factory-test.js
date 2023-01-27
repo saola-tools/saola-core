@@ -32,13 +32,13 @@ describe("tdd:lib:core:logging-factory", function() {
 
     it("transformLoggingLabels() accept null parameter", function() {
       let output = transformLoggingLabels(null);
-      false && console.log("transformLoggingLabels(): ", output);
+      false && console.info("transformLoggingLabels(): ", output);
       assert.deepEqual(output, {});
     });
 
     it("transformLoggingLabels() accept empty parameter", function() {
       let output = transformLoggingLabels({});
-      false && console.log("transformLoggingLabels(): ", output);
+      false && console.info("transformLoggingLabels(): ", output);
       assert.deepEqual(output, {});
     });
 
@@ -112,7 +112,7 @@ describe("tdd:lib:core:logging-factory", function() {
       };
 
       let output = transformLoggingLabels(loggerCfg.labels);
-      false && console.log("transformLoggingLabels(): ", output);
+      false && console.info("transformLoggingLabels(): ", output);
       assert.deepEqual(output, expected);
     });
 
@@ -194,7 +194,7 @@ describe("tdd:lib:core:logging-factory", function() {
       };
 
       let output = transformLoggingLabels(loggerCfg.labels, loggerCfg.mappings);
-      false && console.log("transformLoggingLabels(): ", output);
+      false && console.info("transformLoggingLabels(): ", output);
       assert.deepEqual(output, expected);
     });
 
@@ -275,7 +275,7 @@ describe("tdd:lib:core:logging-factory", function() {
       rootLogger.log("fatal", "Error message #3");
 
       let msgs = mockLogger._reset();
-      false && console.log(JSON.stringify(msgs, null, 2));
+      false && console.info(JSON.stringify(msgs, null, 2));
 
       assert.deepEqual(msgs, [
         {

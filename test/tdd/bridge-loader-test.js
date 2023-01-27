@@ -33,14 +33,14 @@ describe("tdd:lib:core:bridge-loader", function() {
       let bridgeLoader = lab.createBridgeLoader();
       let metadataMap = {};
       bridgeLoader.loadMetadata(metadataMap);
-      false && console.log("metadataMap: %s", JSON.stringify(metadataMap, null, 2));
+      false && console.info("metadataMap: %s", JSON.stringify(metadataMap, null, 2));
       assert.deepEqual(metadataMap, {});
     });
     it("load bridge's metadata from simplest application", function() {
       let bridgeLoader = lab.createBridgeLoader("simple");
       let metadataMap = {};
       bridgeLoader.loadMetadata(metadataMap);
-      false && console.log("metadataMap: ", JSON.stringify(metadataMap, null, 2));
+      false && console.info("metadataMap: ", JSON.stringify(metadataMap, null, 2));
       assert.deepEqual(metadataMap, {});
     });
     it("load all of valid bridge's metadata from complete application", function() {
@@ -48,7 +48,7 @@ describe("tdd:lib:core:bridge-loader", function() {
       let metadataMap = {};
       bridgeLoader.loadMetadata(metadataMap);
       issueInspector.barrier({exitOnError: true});
-      false && console.log("metadataMap: %s", JSON.stringify(metadataMap, null, 2));
+      false && console.info("metadataMap: %s", JSON.stringify(metadataMap, null, 2));
       assert.deepInclude(metadataMap, {
         "bridge1": {
           "name": "bridge1"
@@ -107,7 +107,7 @@ describe("tdd:lib:core:bridge-loader", function() {
       let bridgeLoader = lab.createBridgeLoader();
       let dialectMap = {};
       bridgeLoader.loadDialects(dialectMap);
-      false && console.log("dialectMap: ", JSON.stringify(dialectMap, null, 2));
+      false && console.info("dialectMap: ", JSON.stringify(dialectMap, null, 2));
       assert.deepEqual(dialectMap, {});
     });
 
@@ -115,7 +115,7 @@ describe("tdd:lib:core:bridge-loader", function() {
       let bridgeLoader = lab.createBridgeLoader("simple");
       let dialectMap = {};
       bridgeLoader.loadDialects(dialectMap);
-      false && console.log("dialectMap: ", JSON.stringify(dialectMap, null, 2));
+      false && console.info("dialectMap: ", JSON.stringify(dialectMap, null, 2));
       assert.deepEqual(dialectMap, {});
     });
 
@@ -124,14 +124,14 @@ describe("tdd:lib:core:bridge-loader", function() {
       let originMap = {};
       bridgeLoader.loadDialects(originMap); // dialectOptions is omitted
       issueInspector.barrier({exitOnError: true});
-      false && console.log("dialectMap: ", util.inspect(originMap, { depth: 5 }));
+      false && console.info("dialectMap: ", util.inspect(originMap, { depth: 5 }));
       let dialectMap = lodash.mapValues(originMap, function(dialect) {
         return lodash.assign(lodash.pick(dialect, [
             "construktor.argumentProperties",
             "construktor.argumentSchema"
           ]), lodash.omit(dialect, ["construktor"]));
       });
-      false && console.log("dialectMap: ", JSON.stringify(dialectMap, null, 2));
+      false && console.info("dialectMap: ", JSON.stringify(dialectMap, null, 2));
       assert.deepInclude(dialectMap, {});
     });
 
@@ -231,14 +231,14 @@ describe("tdd:lib:core:bridge-loader", function() {
       let originMap = {};
       bridgeLoader.loadDialects(originMap, bridgeConfig);
       issueInspector.barrier({exitOnError: true});
-      false && console.log("dialectMap: ", util.inspect(originMap, { depth: 5 }));
+      false && console.info("dialectMap: ", util.inspect(originMap, { depth: 5 }));
       let dialectMap = lodash.mapValues(originMap, function(dialect) {
         return lodash.assign(lodash.pick(dialect, [
             "construktor.argumentProperties",
             "construktor.argumentSchema"
           ]), lodash.omit(dialect, ["construktor"]));
       });
-      false && console.log("dialectMap: ", JSON.stringify(dialectMap, null, 2));
+      false && console.info("dialectMap: ", JSON.stringify(dialectMap, null, 2));
       // uniqueName = [pluginName, bridgeName, dialectName].join(chores.getSeparator());
       let expectedMap = {};
       expectedMap[chores.toFullname("application", "bridge1", "anyname1z")] = {

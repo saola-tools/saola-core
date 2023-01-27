@@ -115,7 +115,7 @@ describe("tdd:lib:core:name-resolver", function() {
 
       let pluginAliasMap = buildAbsoluteAliasMap(pluginRefs);
 
-      false && console.log(JSON.stringify(pluginAliasMap, null, 2));
+      false && console.info(JSON.stringify(pluginAliasMap, null, 2));
       assert.deepEqual(pluginAliasMap, expectedMap);
     });
   });
@@ -130,7 +130,7 @@ describe("tdd:lib:core:name-resolver", function() {
       if (chores.isUpgradeSupported("simplify-name-resolver")) this.skip();
 
       let absoluteAliasMap = nameResolver.getAbsoluteAliasMap();
-      false && console.log("absoluteAliasMap: %s", JSON.stringify(absoluteAliasMap, null, 2));
+      false && console.info("absoluteAliasMap: %s", JSON.stringify(absoluteAliasMap, null, 2));
       assert.deepEqual(absoluteAliasMap, {
         "plugin": {
           "sub-plugin1": "sub-plugin1",
@@ -165,7 +165,7 @@ describe("tdd:lib:core:name-resolver", function() {
       if (chores.isUpgradeSupported("simplify-name-resolver")) this.skip();
 
       let relativeAliasMap = nameResolver.getRelativeAliasMap();
-      false && console.log("relativeAliasMap: %s", JSON.stringify(relativeAliasMap, null, 2));
+      false && console.info("relativeAliasMap: %s", JSON.stringify(relativeAliasMap, null, 2));
       assert.deepEqual(relativeAliasMap, {
         "plugin": {
           "sub-plugin1": "subPlugin1",
@@ -200,7 +200,7 @@ describe("tdd:lib:core:name-resolver", function() {
           target: nameResolver.getOriginalNameOf(name, "bridge")
         };
       });
-      false && console.log(JSON.stringify(result, null, 2));
+      false && console.info(JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
         {
           "source": "bridge1",
@@ -252,7 +252,7 @@ describe("tdd:lib:core:name-resolver", function() {
           target: nameResolver.getOriginalNameOf(name, "plugin")
         };
       });
-      false && console.log(JSON.stringify(result, null, 2));
+      false && console.info(JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
         {
           "source": "sub-plugin1",
@@ -294,7 +294,7 @@ describe("tdd:lib:core:name-resolver", function() {
           target: nameResolver.getDefaultAliasOf(name, "bridge")
         };
       });
-      false && console.log(JSON.stringify(result, null, 2));
+      false && console.info(JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
         {
           "source": "bridge1",
@@ -328,7 +328,7 @@ describe("tdd:lib:core:name-resolver", function() {
           target: nameResolver.getDefaultAliasOf(name, "plugin")
         };
       });
-      false && console.log(JSON.stringify(result, null, 2));
+      false && console.info(JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
         {
           "source": "sub-plugin1",

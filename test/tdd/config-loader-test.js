@@ -135,7 +135,7 @@ describe("tdd:lib:core:config-loader", function() {
       });
 
       let { store, paths } = extractEnvironConfig(CTX, "EXAMPLE");
-      false && console.log(JSON.stringify(store, null, 2));
+      false && console.info(JSON.stringify(store, null, 2));
       assert.deepInclude(store, {
         "sandbox": {
           "plugins": {
@@ -188,7 +188,7 @@ describe("tdd:lib:core:config-loader", function() {
         }
       };
       fillConfigByEnvVars(CTX, environCfg, "my-demo");
-      false && console.log(JSON.stringify(environCfg, null, 2));
+      false && console.info(JSON.stringify(environCfg, null, 2));
       assert.deepInclude(environCfg, {
         "profile": {},
         "sandbox": {
@@ -261,7 +261,7 @@ describe("tdd:lib:core:config-loader", function() {
       //
       let convertedCfg = transformConfig(CTX, "profile", originalCfg, appRef);
       //
-      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      false && console.info(JSON.stringify(convertedCfg, null, 2));
       assert.deepInclude(convertedCfg, expectedCfg);
     });
 
@@ -369,7 +369,7 @@ describe("tdd:lib:core:config-loader", function() {
         }
       }, CTX), "sandbox", originalCfg, "plugin", "cfg-example", {});
 
-      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      false && console.info(JSON.stringify(convertedCfg, null, 2));
       assert.deepInclude(convertedCfg, expectedCfg);
     });
 
@@ -494,7 +494,7 @@ describe("tdd:lib:core:config-loader", function() {
         });
       }
 
-      false && console.log(JSON.stringify(relativeCfg, null, 2));
+      false && console.info(JSON.stringify(relativeCfg, null, 2));
       assert.deepInclude(relativeCfg, expectedCfg);
     });
   });
@@ -754,7 +754,7 @@ describe("tdd:lib:core:config-loader", function() {
         return applyManifestMigration(ctx, configStore, configPath, moduleVersion, manifest);
       });
 
-      false && console.log(JSON.stringify(result, null, 2));
+      false && console.info(JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
         {
           "migrated": true,
@@ -928,7 +928,7 @@ describe("tdd:lib:core:config-loader", function() {
 
       let result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
-      false && console.log("modernizeConfig(): %s", JSON.stringify(result, null, 2));
+      false && console.info("modernizeConfig(): %s", JSON.stringify(result, null, 2));
 
       let expected = {
         "plugins": {
@@ -1103,7 +1103,7 @@ describe("tdd:lib:core:config-loader", function() {
 
       let result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
-      false && console.log("modernizeConfig(): %s", JSON.stringify(result, null, 2));
+      false && console.info("modernizeConfig(): %s", JSON.stringify(result, null, 2));
 
       let expected = {
         "plugins": {
@@ -1281,7 +1281,7 @@ describe("tdd:lib:core:config-loader", function() {
 
       let result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
-      false && console.log("modernizeConfig(): %s", JSON.stringify(result, null, 2));
+      false && console.info("modernizeConfig(): %s", JSON.stringify(result, null, 2));
 
       let expected = {
         "plugins": {
@@ -1481,7 +1481,7 @@ describe("tdd:lib:core:config-loader", function() {
 
       let result = modernizeConfig(CTX, configType, configStore, moduleInfo, bridgeManifests, pluginManifests);
 
-      false && console.log("modernizeConfig(): %s", JSON.stringify(result, null, 2));
+      false && console.info("modernizeConfig(): %s", JSON.stringify(result, null, 2));
 
       let expected = {
         "plugins": {
@@ -1614,7 +1614,7 @@ describe("tdd:lib:core:config-loader", function() {
         }
       };
       let convertedCfg = convertPreciseConfig(CTX, sandboxConfig, "application");
-      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      false && console.info(JSON.stringify(convertedCfg, null, 2));
       assert.deepInclude(convertedCfg, exptectedConfig);
     });
 
@@ -1670,7 +1670,7 @@ describe("tdd:lib:core:config-loader", function() {
       let convertedCfg = convertPreciseConfig(CTX, sandboxConfig, "plugin", null, {
         configTags: ["bridge[dialect-bridge]"]
       });
-      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      false && console.info(JSON.stringify(convertedCfg, null, 2));
       assert.deepInclude(convertedCfg, exptectedConfig);
     });
 
@@ -1726,7 +1726,7 @@ describe("tdd:lib:core:config-loader", function() {
       let convertedCfg = convertPreciseConfig(CTX, sandboxConfig, "plugin", "plugin1", {
         configTags: "bridge[dialect-bridge]"
       });
-      false && console.log(JSON.stringify(convertedCfg, null, 2));
+      false && console.info(JSON.stringify(convertedCfg, null, 2));
       assert.deepInclude(convertedCfg, exptectedConfig);
     });
 
@@ -1773,7 +1773,7 @@ describe("tdd:lib:core:config-loader", function() {
       // options: null, appRootDir: null, libRootDirs: null
       let cfgLoader = new ConfigLoader({issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
+      false && console.info(JSON.stringify(config, null, 2));
       assert.deepEqual(config, {
         "profile": {
           "mixture": {},
@@ -1795,7 +1795,7 @@ describe("tdd:lib:core:config-loader", function() {
       let appRef = { type: "application", name: "empty-app" };
       let cfgLoader = new ConfigLoader({appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
+      false && console.info(JSON.stringify(config, null, 2));
 
       // Profile configuration
       assert.deepEqual(lodash.get(config, "profile.names"), ["default"]);
@@ -1821,7 +1821,7 @@ describe("tdd:lib:core:config-loader", function() {
     it("load application configuration (without options)", function() {
       let cfgLoader = new ConfigLoader({appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
+      false && console.info(JSON.stringify(config, null, 2));
 
       // Profile configuration
       assert.deepEqual(lodash.get(config, "profile.default"),
@@ -1860,7 +1860,7 @@ describe("tdd:lib:core:config-loader", function() {
     it("load application configuration (without customized profile, sandbox)", function() {
       let cfgLoader = new ConfigLoader({appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
+      false && console.info(JSON.stringify(config, null, 2));
 
       // Profile configuration
       assert.deepInclude(
@@ -1915,7 +1915,7 @@ describe("tdd:lib:core:config-loader", function() {
     it("load application configuration (without private sandboxes)", function() {
       let cfgLoader = new ConfigLoader({appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
+      false && console.info(JSON.stringify(config, null, 2));
 
       // Profile configuration
       assert.deepEqual(
@@ -2058,7 +2058,7 @@ describe("tdd:lib:core:config-loader", function() {
         privateSandboxes: "bs1"
       }, appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
+      false && console.info(JSON.stringify(config, null, 2));
 
       // Profile configuration
       assert.deepEqual(
@@ -2100,7 +2100,7 @@ describe("tdd:lib:core:config-loader", function() {
         privateSandboxes: ["bs1", "bs2"]
       }, appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
+      false && console.info(JSON.stringify(config, null, 2));
 
       // Profile configuration
       assert.deepEqual(
@@ -2143,7 +2143,7 @@ describe("tdd:lib:core:config-loader", function() {
         privateSandboxes: ["bs_p1", "bs_p2"]
       }, appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver});
       let config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
+      false && console.info(JSON.stringify(config, null, 2));
 
       // Profile configuration
       assert.deepEqual(
@@ -2272,7 +2272,7 @@ describe("tdd:lib:core:config-loader", function() {
         privateSandboxes: ["bs1", "bs2"]
       }, appRef, frameworkRef, pluginRefs, bridgeRefs, issueInspector, stateInspector, nameResolver, manifestHandler});
       let config = cfgLoader.load();
-      false && console.log(JSON.stringify(config, null, 2));
+      false && console.info(JSON.stringify(config, null, 2));
 
       // Profile configuration
       // Profile overriden order: [devebot]/profile <- [app:default]/profile <- [app:external]/profile

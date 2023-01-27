@@ -33,16 +33,16 @@ describe("tdd:lib:core:bundle-loader", function() {
       let bundleLoader = lab.createBundleLoader();
       let routineMap = {};
       bundleLoader.loadRoutines(routineMap);
-      false && console.log("routineMap: ", JSON.stringify(routineMap, null, 2));
+      false && console.info("routineMap: ", JSON.stringify(routineMap, null, 2));
       assert.deepEqual(routineMap, {});
     });
     it("load routines from simplest application", function() {
       let bundleLoader = lab.createBundleLoader("simple");
       let originMap = {};
       bundleLoader.loadRoutines(originMap);
-      false && console.log("routineMap: ", JSON.stringify(originMap, null, 2));
+      false && console.info("routineMap: ", JSON.stringify(originMap, null, 2));
       let routineMap = lab.simplifyRoutines(originMap);
-      false && console.log("routineMap: ", JSON.stringify(routineMap, null, 2));
+      false && console.info("routineMap: ", JSON.stringify(routineMap, null, 2));
       let expectedMap = {};
       expectedMap[chores.toFullname(FRAMEWORK_PACKAGE_NAME, "applica-info")] = {
         "crateScope": FRAMEWORK_PACKAGE_NAME,
@@ -141,9 +141,9 @@ describe("tdd:lib:core:bundle-loader", function() {
       let bundleLoader = lab.createBundleLoader("fullapp");
       let originMap = {};
       bundleLoader.loadRoutines(originMap);
-      false && console.log("routineMap: ", JSON.stringify(originMap, null, 2));
+      false && console.info("routineMap: ", JSON.stringify(originMap, null, 2));
       let routineMap = lab.simplifyRoutines(originMap);
-      false && console.log("routineMap: ", JSON.stringify(routineMap, null, 2));
+      false && console.info("routineMap: ", JSON.stringify(routineMap, null, 2));
       let expectedMap = {};
       expectedMap[chores.toFullname("application", "main-cmd1")] = {
         "crateScope": "application",
@@ -360,14 +360,14 @@ describe("tdd:lib:core:bundle-loader", function() {
       let bundleLoader = lab.createBundleLoader();
       let metadataMap = {};
       bundleLoader.loadMetadata(metadataMap);
-      false && console.log("metadataMap: ", JSON.stringify(metadataMap, null, 2));
+      false && console.info("metadataMap: ", JSON.stringify(metadataMap, null, 2));
       assert.deepEqual(metadataMap, {});
     });
     it("load schemas from simplest application", function() {
       let bundleLoader = lab.createBundleLoader("simple");
       let metadataMap = {};
       bundleLoader.loadMetadata(metadataMap);
-      false && console.log("metadataMap: ", JSON.stringify(metadataMap, null, 2));
+      false && console.info("metadataMap: ", JSON.stringify(metadataMap, null, 2));
       assert.deepEqual(metadataMap, {});
     });
     it("load all of valid schemas from complete application", function() {
@@ -375,7 +375,7 @@ describe("tdd:lib:core:bundle-loader", function() {
       let metadataMap = {};
       bundleLoader.loadMetadata(metadataMap);
       issueInspector.barrier({exitOnError: true});
-      false && console.log("metadataMap: ", JSON.stringify(metadataMap, null, 2));
+      false && console.info("metadataMap: ", JSON.stringify(metadataMap, null, 2));
       let expectedMap = {};
       expectedMap[chores.toFullname("application", "sandbox")] = {
         "default": {
@@ -447,14 +447,14 @@ describe("tdd:lib:core:bundle-loader", function() {
       let bundleLoader = lab.createBundleLoader();
       let serviceMap = {};
       bundleLoader.loadServices(serviceMap);
-      false && console.log("serviceMap: ", JSON.stringify(serviceMap, null, 2));
+      false && console.info("serviceMap: ", JSON.stringify(serviceMap, null, 2));
       assert.deepEqual(serviceMap, {});
     });
     it("load services from simplest application", function() {
       let bundleLoader = lab.createBundleLoader("simple");
       let serviceMap = {};
       bundleLoader.loadServices(serviceMap);
-      false && console.log("serviceMap: ", JSON.stringify(serviceMap, null, 2));
+      false && console.info("serviceMap: ", JSON.stringify(serviceMap, null, 2));
       assert.deepEqual(serviceMap, {});
     });
     it("load all of valid services from complete application", function() {
@@ -462,14 +462,14 @@ describe("tdd:lib:core:bundle-loader", function() {
       let originMap = {};
       bundleLoader.loadServices(originMap);
       issueInspector.barrier({exitOnError: true});
-      false && console.log("serviceMap: ", util.inspect(originMap, { depth: 5 }));
+      false && console.info("serviceMap: ", util.inspect(originMap, { depth: 5 }));
       let serviceMap = lodash.mapValues(originMap, function(service) {
         return lodash.assign(lodash.pick(service, [
             "construktor.argumentProperties",
             "construktor.argumentSchema"
           ]), lodash.omit(service, ["construktor"]));
       });
-      false && console.log("serviceMap: ", JSON.stringify(serviceMap, null, 2));
+      false && console.info("serviceMap: ", JSON.stringify(serviceMap, null, 2));
       let mainServiceField = chores.toFullname("application", "mainService");
       let mainServiceDepends = lodash.map([
         ["bridge1#anyname1z"],
@@ -648,14 +648,14 @@ describe("tdd:lib:core:bundle-loader", function() {
       let bundleLoader = lab.createBundleLoader();
       let triggerMap = {};
       bundleLoader.loadTriggers(triggerMap);
-      false && console.log("triggerMap: ", JSON.stringify(triggerMap, null, 2));
+      false && console.info("triggerMap: ", JSON.stringify(triggerMap, null, 2));
       assert.deepEqual(triggerMap, {});
     });
     it("load triggers from simplest application", function() {
       let bundleLoader = lab.createBundleLoader("simple");
       let triggerMap = {};
       bundleLoader.loadTriggers(triggerMap);
-      false && console.log("triggerMap: ", JSON.stringify(triggerMap, null, 2));
+      false && console.info("triggerMap: ", JSON.stringify(triggerMap, null, 2));
       assert.deepEqual(triggerMap, {});
     });
     it("load all of valid triggers from complete application", function() {
@@ -663,14 +663,14 @@ describe("tdd:lib:core:bundle-loader", function() {
       let originMap = {};
       bundleLoader.loadTriggers(originMap);
       issueInspector.barrier({exitOnError: true});
-      false && console.log("triggerMap: ", util.inspect(originMap, { depth: 5 }));
+      false && console.info("triggerMap: ", util.inspect(originMap, { depth: 5 }));
       let triggerMap = lodash.mapValues(originMap, function(trigger) {
         return lodash.assign(lodash.pick(trigger, [
             "construktor.argumentProperties",
             "construktor.argumentSchema"
           ]), lodash.omit(trigger, ["construktor"]));
       });
-      false && console.log("triggerMap: ", JSON.stringify(triggerMap, null, 2));
+      false && console.info("triggerMap: ", JSON.stringify(triggerMap, null, 2));
       let mainTriggerField = chores.toFullname("application", "mainTrigger");
       let mainTriggerDepends = lodash.map([
         ["application", "bridge1#anyname1z"],

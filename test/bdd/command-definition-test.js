@@ -54,10 +54,10 @@ describe("bdd:api:command:definition", function() {
       assert(cmdNames.length >= fwCmdNames.length + appCmdNames.length + pluginCmdNames.length);
 
       lodash.forEach(defs.commands, function(cmd) {
-        false && console.log("%s: %s", cmd.name, util.inspect(cmd, {depth: 8}));
+        false && console.info("%s: %s", cmd.name, util.inspect(cmd, {depth: 8}));
         assert.containsAllKeys(cmd, ["name", "description", "options"]);
       });
-      false && console.log("Definition: %s", JSON.stringify(defs, null, 2));
+      false && console.info("Definition: %s", JSON.stringify(defs, null, 2));
     });
   });
 

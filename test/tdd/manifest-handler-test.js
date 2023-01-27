@@ -296,7 +296,7 @@ describe("tdd:lib:core:manifest-handler", function() {
       ];
 
       let bundleSchema = combineBundleSchema(C, bundleList);
-      false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
+      false && console.info("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, {
         "profile": {},
         "sandbox": {
@@ -522,7 +522,7 @@ describe("tdd:lib:core:manifest-handler", function() {
         }
       };
       let bundleSchema = combineBundleSchema(C, bundleList);
-      false && console.log("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
+      false && console.info("bundleSchema: %s", JSON.stringify(bundleSchema, null, 2));
       assert.deepEqual(bundleSchema, expectedBundleSchema);
     });
   });
@@ -549,7 +549,7 @@ describe("tdd:lib:core:manifest-handler", function() {
       lodash.forEach(["application", "subPlugin1", "subPlugin2"], function(pluginName) {
         fakedCheckers[pluginName] = sinon.stub();
         fakedCheckers[pluginName].callsFake(function(depends) {
-          false && console.log("config of dependencies: %s", JSON.stringify(depends, null, 2));
+          false && console.info("config of dependencies: %s", JSON.stringify(depends, null, 2));
           return true;
         });
       });
@@ -758,7 +758,7 @@ describe("tdd:lib:core:manifest-handler", function() {
           }
         }
       });
-      false && console.log("Result: %s", JSON.stringify(result, null, 2));
+      false && console.info("Result: %s", JSON.stringify(result, null, 2));
       assert.deepEqual(result, [
         {
           "stage": "config/constraints",
@@ -922,7 +922,7 @@ describe("tdd:lib:core:manifest-handler", function() {
 
       let bridgeSchema = combineBridgeSchema(CTX, bridgeList);
 
-      false && console.log("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
+      false && console.info("bridgeSchema: %s", JSON.stringify(bridgeSchema, null, 2));
       assert.deepEqual(bridgeSchema, expectedSchema);
     });
   });
@@ -1077,7 +1077,7 @@ describe("tdd:lib:core:manifest-handler", function() {
       };
       let result = [];
       validateBridgeConfig({L, T, schemaValidator}, bridgeConfig, bridgeSchema, result);
-      false && console.log("validation result: %s", JSON.stringify(result, null, 2));
+      false && console.info("validation result: %s", JSON.stringify(result, null, 2));
       if (!chores.isUpgradeSupported("bridge-full-ref")) return;
       assert.sameDeepMembers(result, [
         {

@@ -100,10 +100,10 @@ describe("bdd:api:command:execution", function() {
   });
 
   it("definition should contain runhook-call command", function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       api.loadDefinition(function(err, obj) {
-        if (err) return rejected(err);
-        resolved(obj.payload);
+        if (err) return reject(err);
+        resolve(obj.payload);
       });
     }).then(function(defs) {
       let cmd = lodash.keyBy(defs.commands, "name")["plugin1-routine1"];
@@ -112,12 +112,12 @@ describe("bdd:api:command:execution", function() {
   });
 
   it("remote runhook should return correct result", function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       api.on("failed", function(result) {
-        rejected(result);
+        reject(result);
       });
       api.on("completed", function(result) {
-        resolved(result);
+        resolve(result);
       });
       api.execCommand({
         name: "plugin1-routine1",
@@ -137,12 +137,12 @@ describe("bdd:api:command:execution", function() {
   });
 
   it("direct runhook should return correct result", function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       api.on("failed", function(result) {
-        rejected(result);
+        reject(result);
       });
       api.on("completed", function(result) {
-        resolved(result);
+        resolve(result);
       });
       api.execCommand({
         name: "plugin1-routine2",

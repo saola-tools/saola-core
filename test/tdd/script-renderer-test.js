@@ -46,7 +46,7 @@ describe("tdd:lib:core:script-renderer", function() {
       let wsStub = null;
       let output = new Promise(function(resolve, reject) {
         wsStub = sinon.stub(ws, "send").callsFake(function(message) {
-          false && console.log("Received message: %s", message);
+          false && console.info("Received message: %s", message);
           if (lodash.isEqual(JSON.parse(message), expected)) {
             resolve(message);
           } else {

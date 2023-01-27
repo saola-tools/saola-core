@@ -2,11 +2,9 @@
 
 const lab = require("../index");
 const Devebot = lab.getDevebot();
-const Promise = Devebot.require("bluebird");
 const Injektor = Devebot.require("injektor");
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
-const loader = Devebot.require("loader");
 const errors = Devebot.require("errors");
 const assert = require("chai").assert;
 const LogConfig = Devebot.require("logolite").LogConfig;
@@ -115,7 +113,7 @@ describe("tdd:lib:core:sandbox-manager", function() {
     let sublibService1 = sandboxManager.getSandboxService("sublibService", {
       scope: "sub-plugin1"
     });
-    false && console.log(sublibService1.getConfig());
+    false && console.info(sublibService1.getConfig());
     assert.isNotNull(sublibService1);
     assert.deepEqual(sublibService1.getConfig(), {
       "sub-plugin1/sublibService": { host: "localhost", port: 17721 }
@@ -124,7 +122,7 @@ describe("tdd:lib:core:sandbox-manager", function() {
     let sublibService2 = sandboxManager.getSandboxService("sublibService", {
       scope: "sub-plugin2"
     });
-    false && console.log(sublibService2.getConfig());
+    false && console.info(sublibService2.getConfig());
     assert.isNotNull(sublibService2);
     assert.deepEqual(sublibService2.getConfig(), {
       "sub-plugin2/sublibService": { host: "localhost", port: 17722 }
@@ -156,7 +154,7 @@ describe("tdd:lib:core:sandbox-manager", function() {
           chores.toFullname(FRAMEWORK_PACKAGE_NAME, "sandboxRegistry")
         ]);
       } else {
-        console.log(JSON.stringify(loggingStore, null, 2));
+        console.info(JSON.stringify(loggingStore, null, 2));
       }
     });
 

@@ -50,7 +50,7 @@ describe("tdd:lib:core:runhook-manager", function() {
     it("load all of command definitions from routines", function() {
       let runhookManager = lab.createRunhookManager("fullapp");
       let commands = lab.simplifyCommands(runhookManager.getDefinitions());
-      false && console.log(JSON.stringify(commands, null, 2));
+      false && console.info(JSON.stringify(commands, null, 2));
       assert.sameDeepMembers(commands, [
         {
           "package": "application",

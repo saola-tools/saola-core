@@ -2,11 +2,8 @@
 
 const lab = require("../index");
 const Devebot = lab.getDevebot();
-const Promise = Devebot.require("bluebird");
-const lodash = Devebot.require("lodash");
 const chores = Devebot.require("chores");
 const debugx = Devebot.require("pinbug")("bdd:devebot:core:configuration");
-const assert = require("chai").assert;
 const expect = require("chai").expect;
 
 describe("bdd:app:configuration", function() {

@@ -59,7 +59,7 @@ describe("tdd:lib:base:bootstrap", function() {
         appRootPath: lab.getAppHome("fullapp")
       });
 
-      false && console.log(loggingStore);
+      false && console.info(loggingStore);
       assert.deepEqual(loggingStore, { appLoader: 1 });
 
       LogTracer.clearInterceptors();
@@ -207,7 +207,7 @@ describe("tdd:lib:base:bootstrap", function() {
 
     it("expand empty parameters", function() {
       let output = expandExtensions();
-      false && console.log("expandExtensions(): ", output);
+      false && console.info("expandExtensions(): ", output);
       assert.deepEqual(output, {
         libRootPaths: [],
         bridgeRefs: {},
@@ -227,7 +227,7 @@ describe("tdd:lib:base:bootstrap", function() {
         }
       ], null);
       output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
-      false && console.log("expandExtensions(): ", JSON.stringify(output, null, 2));
+      false && console.info("expandExtensions(): ", JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [
@@ -296,7 +296,7 @@ describe("tdd:lib:base:bootstrap", function() {
         }
       ]);
       output = replaceObjectFields(output, DEFAULT_CONTEXT);
-      false && console.log("expandExtensions(): ", output);
+      false && console.info("expandExtensions(): ", output);
       if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           libRootPaths: [],
@@ -351,7 +351,7 @@ describe("tdd:lib:base:bootstrap", function() {
         }
       ]);
       output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
-      false && console.log("expandExtensions(): ", JSON.stringify(output, null, 2));
+      false && console.info("expandExtensions(): ", JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [
@@ -430,7 +430,7 @@ describe("tdd:lib:base:bootstrap", function() {
         }
       ]);
       output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
-      false && console.log("expandExtensions(): ", JSON.stringify(output, null, 2));
+      false && console.info("expandExtensions(): ", JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [
@@ -577,7 +577,7 @@ describe("tdd:lib:base:bootstrap", function() {
         }
       ]);
       output = replaceObjectFields(removeLoggingUtils(output), DEFAULT_CONTEXT);
-      false && console.log("expandExtensions(): ", JSON.stringify(output, null, 2));
+      false && console.info("expandExtensions(): ", JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [
@@ -700,7 +700,7 @@ describe("tdd:lib:base:bootstrap", function() {
   describe("launchApplication()", function() {
     function assertAppConfig (app) {
       let cfg = app.config;
-      false && console.log("SHOW [app.config]: ", cfg);
+      false && console.info("SHOW [app.config]: ", cfg);
       assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
       assert.equal(cfg.appName, FRAMEWORK_NAMESPACE + "-application");
       assert.deepEqual(cfg.appInfo, {
@@ -735,7 +735,7 @@ describe("tdd:lib:base:bootstrap", function() {
     it("launch application with empty parameters", function() {
       let app = bootstrap.launchApplication();
       let cfg = replaceObjectFields(app.config);
-      false && console.log("Application config: ", JSON.stringify(cfg, null, 2));
+      false && console.info("Application config: ", JSON.stringify(cfg, null, 2));
       assert.equal(cfg.appName, FRAMEWORK_NAMESPACE + "-application");
       assert.deepEqual(cfg.appInfo, {
         layerware: [],
@@ -771,9 +771,9 @@ describe("tdd:lib:base:bootstrap", function() {
 
     it("launch application with full components", function() {
       let app = lab.getApp("fullapp");
-      false && console.log("fullapp app.config: ", JSON.stringify(app.config, null, 2));
+      false && console.info("fullapp app.config: ", JSON.stringify(app.config, null, 2));
       let cfg = replaceObjectFields(app.config, DEFAULT_CONTEXT);
-      false && console.log("fullapp cfg: ", JSON.stringify(cfg, null, 2));
+      false && console.info("fullapp cfg: ", JSON.stringify(cfg, null, 2));
       assert.hasAllKeys(cfg, CONFIG_EXTENDED_FIELDS);
       // verify appInfo
       assert.equal(cfg.appName, "fullapp");
@@ -1003,7 +1003,7 @@ describe("tdd:lib:base:bootstrap", function() {
     it("register a new plugin with empty parameters", function() {
       let pluginLauncher = bootstrap.registerLayerware();
       let pluginStore = removeLoggingUtils(pluginLauncher());
-      false && console.log(JSON.stringify(pluginStore, null, 2));
+      false && console.info(JSON.stringify(pluginStore, null, 2));
       assert.deepEqual(pluginStore, { libRootPaths: [], bridgeRefs: {}, pluginRefs: {} });
     });
 
@@ -1019,7 +1019,7 @@ describe("tdd:lib:base:bootstrap", function() {
         }
       ], []);
       let output = replaceObjectFields(removeLoggingUtils(pluginLauncher()), DEFAULT_CONTEXT);
-      false && console.log("pluginLauncher(): ", JSON.stringify(output, null, 2));
+      false && console.info("pluginLauncher(): ", JSON.stringify(output, null, 2));
       if (chores.isUpgradeSupported("presets")) {
         assert.deepEqual(output, {
           "libRootPaths": [

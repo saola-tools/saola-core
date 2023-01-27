@@ -251,7 +251,7 @@ describe("tdd:lib:utils:proxy", function() {
         }
       });
       assert.equal(lodash.round(beanProxy.calc(100, 1), 5), 118.8);
-      false && console.log(JSON.stringify(requestTags));
+      false && console.info(JSON.stringify(requestTags));
       assert.deepEqual(requestTags, [
         ["calc"],
         ["product", "attrs", "price", "getInstance"],

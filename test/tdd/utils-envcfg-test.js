@@ -17,7 +17,7 @@ describe("tdd:lib:utils:envcfg", function() {
 
     it("filters and extracts configuration values properly", function() {
       const cfgMap = envcfg.extractEnv("A_PREFIX_OF_ENVCFG_");
-      false && console.log("Configuration: %s", JSON.stringify(cfgMap, null, 2));
+      false && console.info("Configuration: %s", JSON.stringify(cfgMap, null, 2));
       assert.deepEqual(cfgMap, {
         store: {
           "plugins": {

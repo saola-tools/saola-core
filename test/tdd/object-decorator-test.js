@@ -261,11 +261,11 @@ describe("tdd:lib:core:object-decorator", function() {
 
       let ExampleConstructor = function () {};
       ExampleConstructor.prototype.method1 = sinon.stub().callsFake(function(str) {
-        false && console.log(" - method1(%s)", JSON.stringify(arguments, null, 2));
+        false && console.info(" - method1(%s)", JSON.stringify(arguments, null, 2));
         return "My name is '" + str + "'";
       });
       ExampleConstructor.prototype.method2 = sinon.stub().callsFake(function(name, ids) {
-        false && console.log(" - method2(%s)", JSON.stringify(arguments, null, 2));
+        false && console.info(" - method2(%s)", JSON.stringify(arguments, null, 2));
         return ids;
       });
       ExampleConstructor.argumentSchema = { "$id": "ExampleConstructor" };
@@ -306,11 +306,11 @@ describe("tdd:lib:core:object-decorator", function() {
         this.string = "Hello world";
       };
       ExampleConstructor.prototype.method1 = sinon.stub().callsFake(function(str) {
-        false && console.log(" - method1(%s)", JSON.stringify(arguments, null, 2));
+        false && console.info(" - method1(%s)", JSON.stringify(arguments, null, 2));
         return "My name is '" + str + "'";
       });
       ExampleConstructor.prototype.method2 = sinon.stub().callsFake(function(name, ids) {
-        false && console.log(" - method2(%s)", JSON.stringify(arguments, null, 2));
+        false && console.info(" - method2(%s)", JSON.stringify(arguments, null, 2));
         return ids;
       });
       ExampleConstructor.argumentSchema = { "$id": "ExampleConstructor" };
@@ -771,7 +771,7 @@ describe("tdd:lib:core:object-decorator", function() {
       wrappedBean.method1("Hello world!", { requestId: "HJbTk3z4TFiBcNbG6SCycg" });
       wrappedBean.method2("How are you?", { requestId: "sad2rAQ0TX-C55idWsAMrw" });
       let tracerStore = loggingFactory.getTracerStore();
-      false && console.log(JSON.stringify(tracerStore, null, 2));
+      false && console.info(JSON.stringify(tracerStore, null, 2));
       assert.deepEqual(_extractLogInfo(tracerStore), {
         "add": [
           {
@@ -1501,7 +1501,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -1567,7 +1567,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -1634,7 +1634,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -1707,7 +1707,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -1781,7 +1781,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -1847,7 +1847,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -1914,7 +1914,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -1980,7 +1980,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -2047,7 +2047,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -2114,7 +2114,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -2182,7 +2182,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -2248,7 +2248,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         let step = r.flowStates[0];
 
         // verify result
@@ -2330,7 +2330,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }]
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         r.flowStates.forEach(function(step, i, total) {
           // verify result
           if (step.scenario.output.error == null) {
@@ -2447,7 +2447,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }]
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         r.flowStates.forEach(function(step, i, total) {
           // verify result
           if (step.scenario.output.error == null) {
@@ -2536,7 +2536,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }]
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         r.flowStates.forEach(function(step, i, total) {
           // verify result
           if (step.scenario.output.error == null) {
@@ -2673,7 +2673,7 @@ describe("tdd:lib:core:object-decorator", function() {
           }
         }
       }).then(function(r) {
-        false && console.log(JSON.stringify(r, null, 2));
+        false && console.info(JSON.stringify(r, null, 2));
         r.flowStates.forEach(function(step, i, total) {
           // verify result
           if (step.scenario.output.error == null) {
@@ -2773,7 +2773,7 @@ describe("tdd:lib:core:object-decorator", function() {
         tracer: loggingFactory.getTracer()
       });
 
-      let output = loggingProxy.capsule("Hello world", {requestId: "94f03511d4e2" }, func);
+      let output = loggingProxy.capsule("Hello world", { requestId: "94f03511d4e2" }, func);
       let lastArg = output[output.length - 1];
 
       assert.isFunction(lastArg);
@@ -2872,7 +2872,7 @@ describe("tdd:lib:core:object-decorator", function() {
 
       p = p.then(function(results) {
         let tracerStore = loggingFactory.getTracerStore();
-        false && console.log("toMessage: %s", JSON.stringify(tracerStore.toMessage, null, 2));
+        false && console.info("toMessage: %s", JSON.stringify(tracerStore.toMessage, null, 2));
         let toMessageState = lodash.filter(tracerStore.toMessage, function(logMsg) {
           return logMsg && logMsg.info && logMsg.info.requestId;
         });
@@ -2929,7 +2929,7 @@ describe("tdd:lib:core:object-decorator", function() {
       }).then(function(result) {
         assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e1" });
         let tracerStore = loggingFactory.getTracerStore();
-        false && console.log(JSON.stringify(tracerStore, null, 2));
+        false && console.info(JSON.stringify(tracerStore, null, 2));
         assert.deepEqual(_extractLogInfo(tracerStore), {
           add: [
             {
@@ -3017,7 +3017,7 @@ describe("tdd:lib:core:object-decorator", function() {
       }).then(function(result) {
         assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e1" });
         let tracerStore = loggingFactory.getTracerStore();
-        false && console.log(JSON.stringify(tracerStore, null, 2));
+        false && console.info(JSON.stringify(tracerStore, null, 2));
         assert.deepEqual(_extractLogInfo(tracerStore), {
           add: [
             {
@@ -3057,7 +3057,7 @@ describe("tdd:lib:core:object-decorator", function() {
         }, function callback (error, result) {
           assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e2" });
           let tracerStore = loggingFactory.getTracerStore();
-          false && console.log(JSON.stringify(tracerStore, null, 2));
+          false && console.info(JSON.stringify(tracerStore, null, 2));
           assert.deepEqual(_extractLogInfo(tracerStore), {
             add: [
               {
@@ -3099,7 +3099,7 @@ describe("tdd:lib:core:object-decorator", function() {
       });
       assert.deepEqual(result, { message: "Hello world", requestId: "94f03511d4e3" });
       let tracerStore = loggingFactory.getTracerStore();
-      false && console.log(JSON.stringify(tracerStore, null, 2));
+      false && console.info(JSON.stringify(tracerStore, null, 2));
       assert.deepEqual(_extractLogInfo(tracerStore), {
         add: [
           {
@@ -3150,10 +3150,10 @@ describe("tdd:lib:core:object-decorator", function() {
       method.withArgs("Will be success").returns("Thank you");
       method.withArgs("Will be failure").throws(new Error("Failed anyway"));
       let mockingProxy = new MockingInterceptor({texture, method});
-      let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
       assert.equal(output, "Thank you");
       assert.throw(function() {
-        return mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+        return mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
       }, "Failed anyway");
       assert.equal(method.callCount, 2);
       assert.isFalse(texture.mocking.mappings.default.selector.called);
@@ -3176,10 +3176,10 @@ describe("tdd:lib:core:object-decorator", function() {
       method.withArgs("Will be success").returns("Thank you");
       method.withArgs("Will be failure").throws(new Error("Failed anyway"));
       let mockingProxy = new MockingInterceptor({texture, method});
-      let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
       assert.equal(output, "Thank you");
       assert.throw(function() {
-        return mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+        return mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
       }, "Failed anyway");
       assert.equal(method.callCount, 2);
       assert.isFalse(texture.mocking.mappings.default.selector.called);
@@ -3239,7 +3239,7 @@ describe("tdd:lib:core:object-decorator", function() {
       let p = Promise.resolve();
 
       p = p.then(function() {
-        let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+        let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
         assert.isFunction(output.then);
         assert.isTrue(output.isFulfilled());
         return output.then(function(result) {
@@ -3248,7 +3248,7 @@ describe("tdd:lib:core:object-decorator", function() {
       });
 
       p = p.then(function() {
-        let output = mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+        let output = mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
         assert.isFunction(output.then);
         assert.isTrue(output.isRejected());
         return output.catch(function(error) {
@@ -3285,14 +3285,14 @@ describe("tdd:lib:core:object-decorator", function() {
 
       return Promise.all([
         new Promise(function(onResolved, onRejected) {
-          mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"}, function(err, result) {
+          mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" }, function(err, result) {
             assert.isUndefined(err);
             assert.equal(result, "Action completed");
             onResolved();
           });
         }),
         new Promise(function(onResolved, onRejected) {
-          mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"}, function(err, result) {
+          mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" }, function(err, result) {
             assert.equal(err.message, "Failed anyway");
             onResolved();
           });
@@ -3324,11 +3324,11 @@ describe("tdd:lib:core:object-decorator", function() {
       let method = sinon.stub();
       let mockingProxy = new MockingInterceptor({texture, method});
 
-      let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let output = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
       assert.equal(output, "Action completed");
 
       assert.throw(function() {
-        return mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+        return mockingProxy.capsule("Will be failure", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
       }, "Failed anyway");
 
       assert.equal(method.callCount, 0);
@@ -3361,13 +3361,13 @@ describe("tdd:lib:core:object-decorator", function() {
       let method = sinon.stub().returns("From original method");
       let mockingProxy = new MockingInterceptor({texture, method});
 
-      let out_1 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let out_1 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
       assert.equal(out_1, "Action completed");
 
-      let out_2 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh"});
+      let out_2 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh" });
       assert.equal(out_2, "Action completed");
 
-      let out_3 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh"});
+      let out_3 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh" });
       assert.equal(out_3, "From original method");
 
       assert.equal(method.callCount, 1);
@@ -3401,14 +3401,14 @@ describe("tdd:lib:core:object-decorator", function() {
       let method = sinon.stub();
       let mockingProxy = new MockingInterceptor({texture, method});
 
-      let out_1 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg"});
+      let out_1 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqg" });
       assert.equal(out_1, "Action completed");
 
-      let out_2 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh"});
+      let out_2 = mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqh" });
       assert.equal(out_2, "Action completed");
 
       assert.throw(function() {
-        return mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqi"});
+        return mockingProxy.capsule("Will be success", { requestId: "YkMjPoSoSyOTrLyf76Mzqi" });
       }, errors.assertConstructor("MockNotFoundError"), "All of selectors are unmatched");
 
       assert.equal(method.callCount, 0);

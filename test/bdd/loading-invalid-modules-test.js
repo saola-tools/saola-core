@@ -54,7 +54,7 @@ describe("bdd:app:loading-invalid-modules", function() {
       let unhook = lab.preventExit({ throwException: true });
 
       assert.throws(function() {
-        let app = lab.getApp("not-found-packages");
+        lab.getApp("not-found-packages");
       }, lab.ProcessExitError);
 
       if (true) {
@@ -66,7 +66,7 @@ describe("bdd:app:loading-invalid-modules", function() {
         let errs = lodash.map(errorSummary.errors, function(err) {
           return lodash.pick(err, ["stage", "type", "name"]);
         });
-        false && console.log(JSON.stringify(errs, null, 2));
+        false && console.info(JSON.stringify(errs, null, 2));
         assert.sameDeepMembers(errs, [
           {
             "stage": "bootstrap",
@@ -80,7 +80,7 @@ describe("bdd:app:loading-invalid-modules", function() {
           }
         ]);
       } else {
-        console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
+        console.info("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
       let totalOfExit = unhook();
@@ -115,7 +115,7 @@ describe("bdd:app:loading-invalid-modules", function() {
     it("loading invalid-bridge-booter will be failed", function() {
       let unhook = lab.preventExit();
       let app = lab.getApp("invalid-bridge-booter");
-      app.server;
+      assert.isNotNull(app.server);
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
@@ -129,7 +129,7 @@ describe("bdd:app:loading-invalid-modules", function() {
         }
         assert.equal(errorSummary.totalOfErrors, expectedTotalOfErrors);
       } else {
-        console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
+        console.info("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
       let totalOfExit = unhook();
@@ -143,7 +143,7 @@ describe("bdd:app:loading-invalid-modules", function() {
     it("loading invalid-bridge-dialect will be failed", function() {
       let unhook = lab.preventExit();
       let app = lab.getApp("invalid-bridge-dialect");
-      app.server;
+      assert.isNotNull(app.server);
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
@@ -152,7 +152,7 @@ describe("bdd:app:loading-invalid-modules", function() {
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
       } else {
-        console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
+        console.info("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
       let totalOfExit = unhook();
@@ -187,7 +187,7 @@ describe("bdd:app:loading-invalid-modules", function() {
     it("loading invalid-plugin-booter will be failed", function() {
       let unhook = lab.preventExit();
       let app = lab.getApp("invalid-plugin-booter");
-      app.server;
+      assert.isNotNull(app.server);
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
@@ -203,7 +203,7 @@ describe("bdd:app:loading-invalid-modules", function() {
         // plugin-invalid-booter/trigger
         assert.equal(errorSummary.totalOfErrors, 6);
       } else {
-        console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
+        console.info("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
       let totalOfExit = unhook();
@@ -213,7 +213,7 @@ describe("bdd:app:loading-invalid-modules", function() {
     it("loading invalid-plugin-service will be failed", function() {
       let unhook = lab.preventExit();
       let app = lab.getApp("invalid-plugin-service");
-      app.server;
+      assert.isNotNull(app.server);
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
@@ -222,7 +222,7 @@ describe("bdd:app:loading-invalid-modules", function() {
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
       } else {
-        console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
+        console.info("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
       let totalOfExit = unhook();
@@ -232,7 +232,7 @@ describe("bdd:app:loading-invalid-modules", function() {
     it("loading invalid-plugin-trigger will be failed", function() {
       let unhook = lab.preventExit();
       let app = lab.getApp("invalid-plugin-trigger");
-      app.server;
+      assert.isNotNull(app.server);
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
@@ -241,7 +241,7 @@ describe("bdd:app:loading-invalid-modules", function() {
         ]);
         assert.equal(errorSummary.totalOfErrors, 1);
       } else {
-        console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
+        console.info("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
       let totalOfExit = unhook();
@@ -251,7 +251,7 @@ describe("bdd:app:loading-invalid-modules", function() {
     it("loading invalid-plugin-trigger-methods will be failed", function() {
       let unhook = lab.preventExit();
       let app = lab.getApp("invalid-plugin-trigger-methods");
-      app.server;
+      assert.isNotNull(app.server);
 
       if (true) {
         assert.lengthOf(lodash.get(loggingStore, "errorSummary", []), 1);
@@ -265,7 +265,7 @@ describe("bdd:app:loading-invalid-modules", function() {
           chores.toFullname("plugin-invalid-trigger-methods", "trigger3")
         ]);
       } else {
-        console.log("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
+        console.info("errorSummary: %s", JSON.stringify(loggingStore.errorSummary, null, 2));
       }
 
       let totalOfExit = unhook();

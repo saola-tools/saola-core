@@ -148,7 +148,7 @@ describe("bdd:app:application", function() {
         })
         .delay(100)
         .then(function(info) {
-          false && console.log(JSON.stringify(moduleStats, null, 2));
+          false && console.info(JSON.stringify(moduleStats, null, 2));
           assert.isAbove(moduleStats.constructorBeginTotal, 0);
           assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
           let metadata = lodash.map(moduleStats.metadata, function(item) {
@@ -156,7 +156,7 @@ describe("bdd:app:application", function() {
           });
           // block 'bootstrap' appears 3 times
           metadata = lodash.uniq(metadata);
-          false && console.log(JSON.stringify(metadata, null, 2));
+          false && console.info(JSON.stringify(metadata, null, 2));
           assert.includeMembers(metadata, devebotScopes);
           assert.includeMembers(metadata, plugin1Scopes);
           assert.includeMembers(metadata, plugin2Scopes);
@@ -234,7 +234,7 @@ describe("bdd:app:application", function() {
       app = lab.getApp(lab.unloadApp("naming-convention"));
       app.server;
 
-      false && console.log(JSON.stringify(moduleStats, null, 2));
+      false && console.info(JSON.stringify(moduleStats, null, 2));
       assert.isAbove(moduleStats.constructorBeginTotal, 0);
       assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
@@ -310,7 +310,7 @@ describe("bdd:app:application", function() {
       let dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
         return lodash.pick(item, ["handlerName", "handlerType"]);
       });
-      false && console.log(JSON.stringify(dependencyInfo, null, 2));
+      false && console.info(JSON.stringify(dependencyInfo, null, 2));
       assert.sameDeepMembers(dependencyInfo, expectedDependencies);
     });
 
@@ -343,12 +343,12 @@ describe("bdd:app:application", function() {
       app = lab.getApp("naming-convention/index2");
       app.server;
 
-      false && console.log(JSON.stringify(moduleStats, null, 2));
+      false && console.info(JSON.stringify(moduleStats, null, 2));
       for (let k=1; k<=2; k++) {
         let config = lodash.map(moduleStats["bridgeConfigOfWrapper" + k], function(item) {
           return lodash.get(item, "config");
         });
-        false && console.log(JSON.stringify(config, null, 2));
+        false && console.info(JSON.stringify(config, null, 2));
         assert.sameDeepMembers(config, [
           {
             "default": false,
@@ -375,14 +375,14 @@ describe("bdd:app:application", function() {
       app = lab.getApp("reference-alias");
       app.server;
 
-      false && console.log(JSON.stringify(moduleStats, null, 2));
+      false && console.info(JSON.stringify(moduleStats, null, 2));
       assert.isAbove(moduleStats.constructorBeginTotal, 0);
       assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
       let dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
         return lodash.pick(item, ["handlerName", "handlerType"]);
       });
-      false && console.log(JSON.stringify(dependencyInfo, null, 2));
+      false && console.info(JSON.stringify(dependencyInfo, null, 2));
       assert.sameDeepMembers(dependencyInfo, [
         {
           "handlerName": chores.toFullname("application", "mainService"),
@@ -412,14 +412,14 @@ describe("bdd:app:application", function() {
       app = lab.getApp("rename-comp-dir");
       app.server;
 
-      false && console.log(JSON.stringify(moduleStats, null, 2));
+      false && console.info(JSON.stringify(moduleStats, null, 2));
       assert.isAbove(moduleStats.constructorBeginTotal, 0);
       assert.equal(moduleStats.constructorBeginTotal, moduleStats.constructorEndTotal);
 
       let dependencyInfo = lodash.map(moduleStats.dependencyInfo, function(item) {
         return lodash.pick(item, ["handlerName", "handlerType"]);
       });
-      false && console.log(JSON.stringify(dependencyInfo, null, 2));
+      false && console.info(JSON.stringify(dependencyInfo, null, 2));
       assert.sameDeepMembers(dependencyInfo, [
         {
           "handlerName": chores.toFullname("application", "mainService"),

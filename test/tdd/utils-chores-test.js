@@ -279,7 +279,7 @@ describe("tdd:lib:utils:chores", function() {
       };
       //
       const result = chores.renameJsonFields(data, mappings);
-      false && console.log(JSON.stringify(result, null, 2));
+      false && console.info(JSON.stringify(result, null, 2));
       //
       assert.deepEqual(result, expected);
     });

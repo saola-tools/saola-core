@@ -25,14 +25,14 @@ describe("bdd:api:command:system-info", function() {
   });
 
   it("definition should contain [system-info] command", function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       api.loadDefinition(function(err, obj) {
-        if (err) return rejected(err);
-        resolved(obj.payload);
+        if (err) return reject(err);
+        resolve(obj.payload);
       });
     }).then(function(defs) {
       let cmd = lodash.keyBy(defs.commands, "name")["system-info"];
-      false && console.log(cmd);
+      false && console.info(cmd);
       assert.isNotNull(cmd);
       assert.deepEqual(cmd, {
         package: FRAMEWORK_PACKAGE_NAME,
@@ -45,20 +45,20 @@ describe("bdd:api:command:system-info", function() {
   });
 
   it("invoked [system-info] command return correct result", function() {
-    return new Promise(function(resolved, rejected) {
+    return new Promise(function(resolve, reject) {
       api
         .on("failed", function(result) {
-          rejected(result);
+          reject(result);
         })
         .on("completed", function(result) {
-          resolved(result);
+          resolve(result);
         })
         .execCommand({
           name: "system-info",
           options: {}
         });
     }).then(function(result) {
-      false && console.log(JSON.stringify(result, null, 2));
+      false && console.info(JSON.stringify(result, null, 2));
       assert.equal(result.state, "completed");
       assert.deepEqual(result.command, {
         "name": "system-info",
