@@ -1,12 +1,9 @@
 /* global Devebot */
 "use strict";
 
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
+const Promise = Devebot.require("bluebird");
 
-var runhookSetting;
-
-var runhookDialect = {
+const runhookDialect = {
   info: {
     description: "sub-plugin2/Routine2",
     validate: function(data) {
@@ -24,6 +21,5 @@ var runhookDialect = {
 };
 
 module.exports = function(params) {
-  runhookSetting = params || {};
   return runhookDialect;
 };

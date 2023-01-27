@@ -1,12 +1,9 @@
 /* global Devebot */
 "use strict";
 
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
+const Promise = Devebot.require("bluebird");
 
-var runhookSetting;
-
-var runhookDialect = {
+const runhookDialect = {
   info: {
     description: "sub-plugin1/Routine1",
     options: []
@@ -21,6 +18,5 @@ var runhookDialect = {
 };
 
 module.exports = function(params) {
-  runhookSetting = params || {};
   return runhookDialect;
 };

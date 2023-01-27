@@ -1,12 +1,9 @@
 /* global Devebot */
 "use strict";
 
-var Promise = Devebot.require("bluebird");
-var lodash = Devebot.require("lodash");
+const Promise = Devebot.require("bluebird");
 
-var runhookSetting;
-
-var runhookDialect = {
+const runhookDialect = {
   info: {
     description: "sub-plugin1/Routine0",
     schema: {
@@ -22,8 +19,8 @@ var runhookDialect = {
     options: []
   },
   handler: function(opts, payload, ctx) {
-    var L = this.loggingFactory.getLogger();
-    var T = this.loggingFactory.getTracer();
+    const L = this.loggingFactory.getLogger();
+    const T = this.loggingFactory.getTracer();
 
     L.has("dunce") && L.log("dunce", T.add({
       checkpoint: "sub-plugin1-routine0-begin"
@@ -32,10 +29,10 @@ var runhookDialect = {
       text: " - runhook begin"
     }));
 
-    var number = payload.number;
-    var result = fibonacci(number, number, ctx.progressMeter);
+    const number = payload.number;
+    const result = fibonacci(number, number, ctx.progressMeter);
 
-    var output = Promise.resolve([{
+    const output = Promise.resolve([{
         type: "json",
         title: "sub-plugin1 - Routine0",
         data: { fibonacci: result }
@@ -53,7 +50,6 @@ var runhookDialect = {
 };
 
 module.exports = function(params) {
-  runhookSetting = params || {};
   return runhookDialect;
 };
 
