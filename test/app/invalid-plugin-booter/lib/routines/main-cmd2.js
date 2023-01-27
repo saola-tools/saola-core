@@ -1,29 +1,28 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-const MODULE_NAME = 'invalid-plugin-booter/mainService';
+/* eslint-disable no-unused-vars */
+const MODULE_NAME = "invalid-plugin-booter/mainService";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+const Promise = Devebot.require("bluebird");
 
-var commandConfig;
-
-var commandObject = {
+const commandObject = {
   info: {
-    description: 'Main Application Command2',
+    description: "Main Application Command2",
     options: []
   },
   handler: function(opts, payload, ctx) {
     return Promise.resolve([{
-        type: 'json',
-        title: 'Main Application Command2',
+        type: "json",
+        title: "Main Application Command2",
         data: {}
     }]);
   }
 };
 
 module.exports = function(params) {
-  commandConfig = params || {};
   return commandObject;
 };
 
-MODULE_NAME = 'unknown';
+/* eslint-disable no-const-assign */
+MODULE_NAME = "unknown";
