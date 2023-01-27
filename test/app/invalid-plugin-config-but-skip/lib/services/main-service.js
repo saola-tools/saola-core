@@ -1,21 +1,19 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
-var debugx = Devebot.require('pinbug')('devebot:test:lab:main:mainService');
+const lodash = Devebot.require("lodash");
+const devlog = Devebot.require("pinbug")("devebot:test:lab:main:mainService");
 
-var Service = function(params) {
-  debugx.enabled && debugx(' + constructor begin ...');
+const Service = function(params = {}) {
+  devlog.enabled && devlog(" + constructor begin ...");
 
-  params = params || {};
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
 
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
+  const mainCfg = lodash.get(params, ["sandboxConfig", "application"], {});
+  devlog.enabled && devlog("configuration: %s", JSON.stringify(mainCfg));
 
-  var mainCfg = lodash.get(params, ['sandboxConfig', 'application'], {});
-  debugx.enabled && debugx('configuration: %s', JSON.stringify(mainCfg));
-
-  debugx.enabled && debugx(' - constructor end!');
+  devlog.enabled && devlog(" - constructor end!");
 };
 
 module.exports = Service;
