@@ -5,4 +5,4 @@ module.exports = {
       port: 17751
     }
   }
-}
+};
