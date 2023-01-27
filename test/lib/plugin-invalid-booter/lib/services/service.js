@@ -1,38 +1,40 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
+const chores = Devebot.require("chores");
+const lodash = Devebot.require("lodash");
 
-const MODULE_NAME = 'plugin-invalid-booter/trigger';
+/* eslint-disable no-unused-vars */
+const MODULE_NAME = "plugin-invalid-booter/trigger";
 
-var Service = function(params) {
+const Service = function(params) {
   params = params || {};
 
-  var packageName = params.packageName || 'plugin-invalid-booter';
-  var blockRef = chores.getBlockRef(__filename, packageName);
-  var L = params.loggingFactory.getLogger();
-  var T = params.loggingFactory.getTracer();
+  const packageName = params.packageName || "plugin-invalid-booter";
+  const blockRef = chores.getBlockRef(__filename, packageName);
+  const L = params.loggingFactory.getLogger();
+  const T = params.loggingFactory.getTracer();
 
-  L.has('dunce') && L.log('dunce', T.toMessage({
-    tags: [ blockRef, 'constructor-begin' ],
-    text: ' + constructor begin'
+  L.has("dunce") && L.log("dunce", T.toMessage({
+    tags: [ blockRef, "constructor-begin" ],
+    text: " + constructor begin"
   }));
 
-  var pluginCfg = lodash.get(params, 'sandboxConfig', {});
-  L.has('dunce') && L.log('dunce', T.add({
+  const pluginCfg = lodash.get(params, "sandboxConfig", {});
+  L.has("dunce") && L.log("dunce", T.add({
     pluginCfg: pluginCfg
   }).toMessage({
     tags: [ blockRef ],
-    text: ' - configuration: {pluginCfg}'
+    text: " - configuration: {pluginCfg}"
   }));
 
-  L.has('dunce') && L.log('dunce', T.toMessage({
-    tags: [ blockRef, 'constructor-end' ],
-    text: ' - constructor end!'
+  L.has("dunce") && L.log("dunce", T.toMessage({
+    tags: [ blockRef, "constructor-end" ],
+    text: " - constructor end!"
   }));
 };
 
-MODULE_NAME = 'UNKNOWN';
+/* eslint-disable no-const-assign */
+MODULE_NAME = "UNKNOWN";
 
 module.exports = Service;
