@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-var lab = require('../../index');
-var devebot = lab.getDevebot();
+const lab = require("../../index");
+const Devebot = lab.getDevebot();
 
-module.exports = devebot.registerLayerware({
+module.exports = Devebot.registerLayerware({
   presets: {
     componentDir: {
-      ROUTINE: '/lib/comp1',
-      SERVICE: '/lib/comp2',
-      TRIGGER: '/lib/comp_triggers'
+      ROUTINE: "/lib/comp1",
+      SERVICE: "/lib/comp2",
+      TRIGGER: "/lib/comp_triggers"
     }
   }
 }, [], []);

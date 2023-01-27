@@ -1,19 +1,19 @@
-'use strict';
+/* global Devebot */
+"use strict";
 
-var Promise = Devebot.require('bluebird');
-var lodash = Devebot.require('lodash');
+const Promise = Devebot.require("bluebird");
 
-var runhookSetting;
+let runhookSetting;
 
-var runhookDialect = {
+let runhookDialect = {
   info: {
-    description: 'plugin-rename-comp-dir/Routine1',
+    description: "plugin-rename-comp-dir/Routine1",
     options: []
   },
   handler: function(opts, payload, ctx) {
     return Promise.resolve([{
-        type: 'json',
-        title: 'plugin-rename-comp-dir - Routine1',
+        type: "json",
+        title: "plugin-rename-comp-dir - Routine1",
         data: {}
     }]);
   }
