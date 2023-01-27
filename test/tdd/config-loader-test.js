@@ -236,7 +236,7 @@ describe("tdd:lib:core:config-loader", function() {
     let doAliasMap = ConfigLoader.__get__("doAliasMap");
     let transformConfig = ConfigLoader.__get__("transformConfig");
 
-    it("should transform relative names into default full names", function() {
+    it("[sandbox] should transform relative names into default full names", function() {
       if (!chores.isUpgradeSupported(["bridge-full-ref", "standardizing-config"])) this.skip();
 
       let originalCfg = {
@@ -344,7 +344,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepInclude(convertedCfg, expectedCfg);
     });
 
-    it("should transform absolute names into relative names", function() {
+    it("[sandbox] should transform absolute names into relative names", function() {
       if (!chores.isUpgradeSupported(["bridge-full-ref", "standardizing-config"])) this.skip();
 
       let originalCfg = {
@@ -647,7 +647,7 @@ describe("tdd:lib:core:config-loader", function() {
     });
   });
 
-  describe("applyManifestMigration()", function() {
+  describe("applyManifestMigration() - for sandbox only", function() {
     let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
     let applyManifestMigration = ConfigLoader.__get__("applyManifestMigration");
     let nameResolver = lab.getNameResolver(["sub-plugin1", "sub-plugin2", "sub-plugin3"], []);
@@ -769,7 +769,7 @@ describe("tdd:lib:core:config-loader", function() {
     });
   });
 
-  describe("modernizeConfig(): upgrade the old configuration to current version", function() {
+  describe("modernizeConfig(): upgrade the old configuration to current version - for sandbox only", function() {
     let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
     let modernizeConfig = ConfigLoader.__get__("modernizeConfig");
     let nameResolver = lab.getNameResolver(["simple-plugin"], ["simple-bridge"]);
@@ -784,21 +784,21 @@ describe("tdd:lib:core:config-loader", function() {
       loggingFactory.resetHistory();
     });
 
-    it("do nothing if manifests are omitted", function() {
+    it("[sandbox] do nothing if manifests are omitted", function() {
       let configType = "sandbox";
       let configStore = {};
       let result = modernizeConfig(CTX, configType, configStore, moduleInfo);
       assert.deepEqual(result, configStore);
     });
 
-    it("do nothing if manifests are empty", function() {
+    it("[sandbox] do nothing if manifests are empty", function() {
       let configType = "sandbox";
       let configStore = {};
       let result = modernizeConfig(CTX, configType, configStore, moduleInfo, {}, {});
       assert.deepEqual(result, configStore);
     });
 
-    it("keep configure unchange if manifests are disabled or not found", function() {
+    it("[sandbox] keep configure unchange if manifests are disabled or not found", function() {
       let configType = "sandbox";
       let configStore = {
         "plugins": {
@@ -955,7 +955,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.isFalse(bridgeTransform1.called);
     });
 
-    it("keep configure unchange if __manifest__ block not found", function() {
+    it("[sandbox] keep configure unchange if __manifest__ block not found", function() {
       let configType = "sandbox";
       let configStore = {
         "plugins": {
@@ -1125,7 +1125,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.isTrue(bridgeTransform2.calledOnce);
     });
 
-    it("keep configure unchange if configVersion is not less than moduleVersion", function() {
+    it("[sandbox] keep configure unchange if configVersion is not less than moduleVersion", function() {
       let configType = "sandbox";
       let configStore = {
         "plugins": {
@@ -1310,7 +1310,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.isFalse(bridgeTransform2.called);
     });
 
-    it("upgrade the configuration corresponding to manifests", function() {
+    it("[sandbox] upgrade the configuration corresponding to manifests", function() {
       let configType = "sandbox";
       let configStore = {
         "plugins": {

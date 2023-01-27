@@ -12,6 +12,8 @@ const nodash = require("../utils/nodash");
 const LoggingWrapper = require("./logging-wrapper");
 const blockRef = chores.getBlockRef(__filename);
 
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.NAMESPACE);
+
 const CONFIG_SUBDIR = "/config";
 const CONFIG_VAR_NAMES = [ "PROFILE",  "SANDBOX",  "TEXTURE", "CONFIG_DIR", "CONFIG_ENV" ];
 const CONFIG_PROFILE_NAME = "profile";
@@ -62,9 +64,9 @@ function readVariable (ctx = {}, appLabel, varName) {
   const { L, T } = ctx;
   const labels = [
     util.format("%s_%s", appLabel, varName),
-    util.format("%s_%s", "DEVEBOT", varName),
+    util.format("%s_%s", FRAMEWORK_NAMESPACE_UCASE, varName),
     util.format("NODE_%s_%s", appLabel, varName),
-    util.format("NODE_%s_%s", "DEVEBOT", varName)
+    util.format("NODE_%s_%s", FRAMEWORK_NAMESPACE_UCASE, varName)
   ];
   for (const label of labels) {
     const value = envbox.getEnv(label);
@@ -283,9 +285,9 @@ function fillConfigByEnvVars (ctx = {}, config = {}, appName) {
 function extractEnvironConfig (ctx = {}, appLabel) {
   const prefixes = [
     util.format("%s_CONFIG_VAL", appLabel),
-    util.format("%s_CONFIG_VAL", "DEVEBOT"),
+    util.format("%s_CONFIG_VAL", FRAMEWORK_NAMESPACE_UCASE),
     util.format("NODE_%s_CONFIG_VAL", appLabel),
-    util.format("NODE_%s_CONFIG_VAL", "DEVEBOT"),
+    util.format("NODE_%s_CONFIG_VAL", FRAMEWORK_NAMESPACE_UCASE),
   ];
 
   let result = {};
