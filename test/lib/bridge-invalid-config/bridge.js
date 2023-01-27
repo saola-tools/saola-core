@@ -1,23 +1,23 @@
 /* global Devebot */
-'use strict';
+"use strict";
 
-const lodash = Devebot.require('lodash');
-const dgx = Devebot.require('pinbug')('devebot:test:lab:bridge-invalid-config');
+const lodash = Devebot.require("lodash");
+const devlog = Devebot.require("pinbug")("devebot:test:lab:bridge-invalid-config");
 
 const Service = function(params) {
-  dgx.enabled && dgx(' + constructor start ...');
+  devlog.enabled && devlog(" + constructor start ...");
 
   params = params || {};
 
-  dgx.enabled && dgx(' - params: %s', JSON.stringify(params, null, 2));
+  devlog.enabled && devlog(" - params: %s", JSON.stringify(params, null, 2));
 
   this.getConfig = function() {
     return lodash.cloneDeep(params);
-  }
+  };
 
-  dgx.enabled && dgx(' - constructor end!');
+  devlog.enabled && devlog(" - constructor end!");
 };
 
 module.exports = Service;
 
-Service.metadata = require('./metadata');
+Service.metadata = require("./metadata");

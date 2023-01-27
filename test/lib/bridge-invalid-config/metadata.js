@@ -14,4 +14,4 @@ module.exports = {
     },
     "required": ["host", "port"]
   }
-}
+};
