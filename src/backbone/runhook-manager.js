@@ -19,7 +19,7 @@ function RunhookManager (params = {}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
 
-  L.has("silly") && L.log("silly", T.add({ sandboxName: params.sandboxName }).toMessage({
+  L && L.has("silly") && L.log("silly", T && T.add({ sandboxName: params.sandboxName }).toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start in sandbox <{sandboxName}>"
   }));
@@ -125,7 +125,7 @@ function RunhookManager (params = {}) {
     command = command || {};
     command.requestId = command.requestId || T.getLogID();
     const reqTr = T.branch({ key: "requestId", value: command.requestId });
-    L.has("trace") && L.log("trace", reqTr.add({ commandName: command.name, command }).toMessage({
+    L && L.has("trace") && L.log("trace", reqTr.add({ commandName: command.name, command }).toMessage({
       tags: [ blockRef, "execute", "begin" ],
       text: "${commandName}#${requestId} - validate: {command}"
     }));
@@ -159,7 +159,7 @@ function RunhookManager (params = {}) {
     const payload = command.payload || command.data;
     const schema = routine && routine.info && routine.info.schema;
     if (schema && lodash.isObject(schema)) {
-      L.has("silly") && L.log("silly", reqTr.add({ commandName: command.name, payload, schema }).toMessage({
+      L && L.has("silly") && L.log("silly", reqTr.add({ commandName: command.name, payload, schema }).toMessage({
         tags: [ blockRef, "execute", "validate-by-schema" ],
         text: "${commandName}#${requestId} - validate payload: {payload} by schema: {schema}"
       }));
@@ -173,7 +173,7 @@ function RunhookManager (params = {}) {
     }
     const validate = routine && routine.info && routine.info.validate;
     if (validate && lodash.isFunction(validate)) {
-      L.has("silly") && L.log("silly", reqTr.add({ commandName: command.name, payload }).toMessage({
+      L && L.has("silly") && L.log("silly", reqTr.add({ commandName: command.name, payload }).toMessage({
         tags: [ blockRef, "execute", "validate-by-method" ],
         text: "${commandName}#${requestId} - validate payload: {payload} using validate()"
       }));
@@ -185,7 +185,7 @@ function RunhookManager (params = {}) {
     }
 
     if (validationError) {
-      L.has("error") && L.log("error", reqTr.add({ commandName: command.name, validationError }).toMessage({
+      L && L.has("error") && L.log("error", reqTr.add({ commandName: command.name, validationError }).toMessage({
         tags: [ blockRef, "execute", "validation-error" ],
         text: "${commandName}#${requestId} - validation error: {validationError}"
       }));
@@ -193,7 +193,7 @@ function RunhookManager (params = {}) {
       return Promise.reject(validationError);
     }
 
-    L.has("trace") && L.log("trace", reqTr.add({ commandName: command.name }).toMessage({
+    L && L.has("trace") && L.log("trace", reqTr.add({ commandName: command.name }).toMessage({
       tags: [ blockRef, "execute", "enqueue" ],
       text: "${commandName}#${requestId} - processing"
     }));
@@ -253,7 +253,7 @@ function RunhookManager (params = {}) {
     command.requestId = command.requestId || T.getLogID();
     const reqTr = T.branch({ key: "requestId", value: command.requestId });
 
-    L.has("trace") && L.log("trace", reqTr.add({ commandName: command.name, command }).toMessage({
+    L && L.has("trace") && L.log("trace", reqTr.add({ commandName: command.name, command }).toMessage({
       tags: [ blockRef, "process", "begin" ],
       text: "${commandName}#${requestId} - process: {command}"
     }));
@@ -263,7 +263,7 @@ function RunhookManager (params = {}) {
     const options = command.options;
     const payload = command.payload || command.data;
     if (lodash.isFunction(handler)) {
-      L.has("trace") && L.log("trace", reqTr.add({
+      L && L.has("trace") && L.log("trace", reqTr.add({
         commandName: command.name,
         command: command,
         predefinedContext: predefinedContext
@@ -298,7 +298,7 @@ function RunhookManager (params = {}) {
     routineStore.registerObject(value.name, value.object, { scope: value.crateScope });
   });
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));

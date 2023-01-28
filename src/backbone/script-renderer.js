@@ -13,7 +13,7 @@ function ScriptRenderer (params = {}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -27,7 +27,7 @@ function ScriptRenderer (params = {}) {
     return new WebSocketOutlet(lodash.assign({}, defaultOpts, opts));
   };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));
@@ -115,7 +115,7 @@ function WebSocketOutlet (params) {
   assert(lodash.isObject(T));
   assert(lodash.isObject(ws));
 
-  L.has("dunce") && L.log("dunce", T.toMessage({
+  L && L.has("dunce") && L.log("dunce", T && T.toMessage({
     text: " - create a new WebSocketOutlet()"
   }));
 
@@ -123,7 +123,7 @@ function WebSocketOutlet (params) {
     ws.send(message);
   };
 
-  L.has("dunce") && L.log("dunce", T.toMessage({
+  L && L.has("dunce") && L.log("dunce", T && T.toMessage({
     text: " - the new WebSocketOutlet() has been created"
   }));
 }

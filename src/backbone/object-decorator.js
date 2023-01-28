@@ -143,7 +143,7 @@ function wrapObject (refs, object, opts) {
   return new BeanProxy(object, {
     get (target, property, receiver) {
       const node = Reflect.get(target, property, receiver);
-      false && L.has("dunce") && L.log("dunce", T.add({
+      false && L && L.has("dunce") && L.log("dunce", T && T.add({
         path: this.path, property, itemType: typeof(node)
       }).toMessage({
         text: "#{path} / #{property} -> #{itemType}"
@@ -164,7 +164,7 @@ function wrapObject (refs, object, opts) {
       const methodName = lodash.get(this.path, this.path.length - 1);
       const fieldChain = lodash.slice(this.path, 0, this.path.length - 1);
       const methodPath = this.path.join(".");
-      L.has("dunce") && L.log("dunce", T.add({
+      L && L.has("dunce") && L.log("dunce", T && T.add({
         objectName: opts.objectName, fieldChain, methodName, methodPath
       }).toMessage({
         text: "Method: #{objectName}.#{methodPath} is invoked",

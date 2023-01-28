@@ -10,7 +10,7 @@ function ProcessManager (params = {}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -20,7 +20,7 @@ function ProcessManager (params = {}) {
   const pmId = parseInt(getenv(clusterCfg.ENV_ID_NAMES || ["pm_id", "NODE_APP_INSTANCE"]));
   const pmTotal = parseInt(getenv(clusterCfg.ENV_TOTAL_NAMES || ["instances"]));
 
-  L.has("debug") && L.log("debug", T.add({ pmId, pmTotal }).toMessage({
+  L && L.has("debug") && L.log("debug", T && T.add({ pmId, pmTotal }).toMessage({
     tags: [ blockRef, "pm2-env-vars" ],
     text: "PM2 environment: id: ${pmId} / total: ${pmTotal}"
   }));
@@ -61,7 +61,7 @@ function ProcessManager (params = {}) {
     return idx === pmId;
   };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));

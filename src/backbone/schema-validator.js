@@ -9,7 +9,7 @@ function SchemaValidator (params = {}) {
   const T = loggingFactory.getTracer();
   const _ref_ = { validator: null };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -23,7 +23,7 @@ function SchemaValidator (params = {}) {
     return result;
   };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));

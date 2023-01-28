@@ -17,7 +17,7 @@ function RepeatedTimer (kwargs={}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -47,7 +47,7 @@ function RepeatedTimer (kwargs={}) {
   };
 
   this.start = function() {
-    L.has("trace") && L.log("trace", T.toMessage({
+    L && L.has("trace") && L.log("trace", T && T.toMessage({
       tags: [ blockRef, "starting" ],
       text: "RepeatedTimer daemon is starting"
     }));
@@ -70,7 +70,7 @@ function RepeatedTimer (kwargs={}) {
   };
 
   this.stop = function() {
-    L.has("trace") && L.log("trace", T.toMessage({
+    L && L.has("trace") && L.log("trace", T && T.toMessage({
       tags: [ blockRef, "stopping" ],
       text: "RepeatedTimer daemon will be stopped"
     }));
@@ -109,7 +109,7 @@ function RepeatedTimer (kwargs={}) {
     }
   });
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));

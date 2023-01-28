@@ -26,7 +26,7 @@ function appinfoLoader (appRootPath, libRootPaths, topRootPath) {
 
   appInfo.framework = chores.loadPackageInfo(topRootPath, constx.APPINFO.FIELDS, {});
 
-  L.has("dunce") && L.log("dunce", " - appInfo object: %s", JSON.stringify(appInfo, null, 2));
+  L && L.has("dunce") && L.log("dunce", " - appInfo object: %s", JSON.stringify(appInfo, null, 2));
 
   return appInfo;
 }

@@ -21,7 +21,7 @@ function SandboxManager (params = {}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -48,14 +48,14 @@ function SandboxManager (params = {}) {
   const sandboxNames = params.sandboxNames;
   const sandboxConfig = params.sandboxConfig;
 
-  L.has("dunce") && L.log("dunce", T.add({
+  L && L.has("dunce") && L.log("dunce", T && T.add({
     sandboxNames: sandboxNames,
     sandboxConfig: util.inspect(sandboxConfig),
   }).toMessage({
     text: " - load the sandbox${sandboxNames} with configuration: ${sandboxConfig}"
   }));
 
-  L.has("silly") && L.log("silly", T.add({ sandboxNames, sandboxConfig }).toMessage({
+  L && L.has("silly") && L.log("silly", T && T.add({ sandboxNames, sandboxConfig }).toMessage({
     tags: [ blockRef, "sandbox-info" ],
     text: " - create sandbox${sandboxNames}.injektor object"
   }));
@@ -109,7 +109,7 @@ function SandboxManager (params = {}) {
   });
 
   const REGISTRY_EXCLUDED_SERVICES = [ getComponentLabel("sandboxRegistry") ];
-  L.has("silly") && L.log("silly", T.add({
+  L && L.has("silly") && L.log("silly", T && T.add({
     excludedServices: REGISTRY_EXCLUDED_SERVICES
   }).toMessage({
     tags: [ blockRef, "excluded-internal-services" ],
@@ -143,7 +143,7 @@ function SandboxManager (params = {}) {
   const instantiateObject = function(_injektor, handlerRecord, handlerType, injectedHandlers, injectedServices) {
     const exceptions = [];
     const handlerName = [handlerRecord.crateScope, handlerRecord.name].join(_injektor.separator);
-    L.has("silly") && L.log("silly", T.add({ handlerName, handlerType }).toMessage({
+    L && L.has("silly") && L.log("silly", T && T.add({ handlerName, handlerType }).toMessage({
       tags: [ blockRef, "instantiateObject" ],
       text: " - instantiate object: ${handlerName}"
     }));
@@ -235,7 +235,7 @@ function SandboxManager (params = {}) {
   };
 
   this.startTriggers = function(triggerNames) {
-    L.has("silly") && L.log("silly", T.toMessage({
+    L && L.has("silly") && L.log("silly", T && T.toMessage({
       tags: [ blockRef, "trigger", "start" ],
       text: " - Start triggers"
     }));
@@ -245,7 +245,7 @@ function SandboxManager (params = {}) {
   };
 
   this.stopTriggers = function(triggerNames) {
-    L.has("silly") && L.log("silly", T.toMessage({
+    L && L.has("silly") && L.log("silly", T && T.toMessage({
       tags: [ blockRef, "trigger", "stop" ],
       text: " - Stop triggers"
     }));
@@ -258,7 +258,7 @@ function SandboxManager (params = {}) {
     if (!lodash.isFunction(iteratee)) return;
     if (lodash.isString(triggerNames)) triggerNames = [triggerNames];
     if (triggerNames && !lodash.isArray(triggerNames)) return;
-    L.has("silly") && L.log("silly", T.add({ triggerNames: triggerNames || "all" }).toMessage({
+    L && L.has("silly") && L.log("silly", T && T.add({ triggerNames: triggerNames || "all" }).toMessage({
       tags: [ blockRef, "trigger", "loop" ],
       text: " - Loop triggers: ${triggerNames}"
     }));
@@ -267,7 +267,7 @@ function SandboxManager (params = {}) {
     lodash.forOwn(triggerMap, function(triggerRecord, triggerId) {
       const triggerName = getCrateName(triggerRecord);
       if (!triggerNames || triggerNames.indexOf(triggerName) >= 0) {
-        L.has("silly") && L.log("silly", T.add({ actionName, triggerName }).toMessage({
+        L && L.has("silly") && L.log("silly", T && T.add({ actionName, triggerName }).toMessage({
           tags: [ blockRef, "trigger", "action" ],
           text: " - ${actionName} trigger[${triggerName}]"
         }));
@@ -312,7 +312,7 @@ function SandboxManager (params = {}) {
     return blocks;
   };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));

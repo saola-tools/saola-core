@@ -17,7 +17,7 @@ function NameResolver (params = {}) {
   const T = loggingWrapper.getTracer();
   const CTX = {L, T, issueInspector};
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -97,7 +97,7 @@ function NameResolver (params = {}) {
   extractAliasNames(CTX, "plugin", pluginList);
   extractAliasNames(CTX, "bridge", bridgeList);
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));
@@ -166,7 +166,7 @@ function hasSupportFields (moduleRef) {
 }
 
 function extractAliasNames (ctx, type, moduleRefs) {
-  const {issueInspector} = ctx;
+  const {issueInspector} = ctx || this || {};
   function buildSupportFields (moduleRef) {
     if (moduleRef.name == FRAMEWORK_PACKAGE_NAME) {
       moduleRef.code = FRAMEWORK_NAMESPACE;

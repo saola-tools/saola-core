@@ -17,7 +17,7 @@ function ManifestHandler (params = {}) {
   const T = loggingWrapper.getTracer();
   const C = { nameResolver, L, T };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -54,7 +54,7 @@ function ManifestHandler (params = {}) {
     validateBundleConfig(C, bundleConfig, combineBundleSchema(C, bundleList, bundleSchema), result);
 
     // summarize validating result
-    L.has("silly") && L.log("silly", T.add({ result }).toMessage({
+    L && L.has("silly") && L.log("silly", T && T.add({ result }).toMessage({
       tags: [ blockRef, "validating-config-by-schema-result" ],
       text: " - Validating sandbox configuration using schemas"
     }));
@@ -62,7 +62,7 @@ function ManifestHandler (params = {}) {
     return result;
   };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));
@@ -108,13 +108,13 @@ function combineBridgeSchema (ref, bridgeList, bridgeSchema = {}) {
 }
 
 function validateBridgeConfig (ref, bridgeConfig, bridgeSchema, result) {
-  const { L, T } = ref;
+  const { L, T } = ref || this || {};
   result = result || [];
 
   bridgeConfig = bridgeConfig || {};
   bridgeSchema = bridgeSchema || {};
 
-  L.has("silly") && L.log("silly", T.add({ bridgeConfig, bridgeSchema }).toMessage({
+  L && L.has("silly") && L.log("silly", T && T.add({ bridgeConfig, bridgeSchema }).toMessage({
     tags: [ blockRef, "validate-bridge-config-by-schema" ],
     text: " - bridge config/schema:\n${bridgeSchema}\n${bridgeConfig}"
   }));
@@ -206,8 +206,8 @@ function combineBundleSchema (ref, bundleList, bundleSchema = {}) {
 }
 
 function validateBundleConfig (ref, bundleConfig, bundleSchema, result) {
-  const { L, T } = ref;
-  L.has("silly") && L.log("silly", T.add({ bundleConfig, bundleSchema }).toMessage({
+  const { L, T } = ref || this || {};
+  L && L.has("silly") && L.log("silly", T && T.add({ bundleConfig, bundleSchema }).toMessage({
     tags: [ blockRef, "validate-bundle-config-by-schema" ],
     text: " - Synchronize the structure of configuration data and schemas"
   }));
@@ -232,12 +232,12 @@ function validateSandboxSchemaOfCrates (ref, result, config, schema) {
 }
 
 function validateSandboxSchemaOfCrate (ref, result, crateConfig, crateSchema, crateName) {
-  const { L, T } = ref;
+  const { L, T } = ref || this || {};
   if (crateSchema && crateSchema.enabled !== false && lodash.isObject(crateSchema.schema)) {
     const r = chores.validate(crateConfig, crateSchema.schema);
     result.push(customizeSandboxResult(r, crateSchema.crateScope, "schema"));
   } else {
-    L.has("silly") && L.log("silly", T.add({ crateName, crateConfig, crateSchema }).toMessage({
+    L && L.has("silly") && L.log("silly", T && T.add({ crateName, crateConfig, crateSchema }).toMessage({
       tags: [ blockRef, "validate-bundle-config-by-schema-skipped" ],
       text: " - Validating sandboxConfig[${crateName}] is skipped"
     }));

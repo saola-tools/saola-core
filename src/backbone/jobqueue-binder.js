@@ -9,7 +9,7 @@ function JobqueueBinder (params = {}) {
   const T = loggingFactory.getTracer();
   const sandboxName = params.sandboxName;
 
-  L.has("silly") && L.log("silly", T.add({ sandboxName }).toMessage({
+  L && L.has("silly") && L.log("silly", T && T.add({ sandboxName }).toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start in sandbox <{sandboxName}>"
   }));
@@ -31,7 +31,7 @@ function JobqueueBinder (params = {}) {
     enabled: {
       get: function() {
         const enabled = jqCfg.enabled !== false && getJobQueueMaster() != null;
-        L.has("dunce") && L.log("dunce", T.add({ enabled, sandboxName }).toMessage({
+        L && L.has("dunce") && L.log("dunce", T && T.add({ enabled, sandboxName }).toMessage({
           text: " - jobqueueMaster in sandbox <{sandboxName}> status (enabled): {enabled}"
         }));
         return enabled;
@@ -46,7 +46,7 @@ function JobqueueBinder (params = {}) {
     }
   });
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));

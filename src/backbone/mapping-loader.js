@@ -14,7 +14,7 @@ function MappingLoader (params = {}) {
 
   const { schemaValidator } = params;
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -30,7 +30,7 @@ function MappingLoader (params = {}) {
     }
     if (lodash.isObject(mappingStore)) {
       lodash.forOwn(mappingStore, function(descriptor, bundle) {
-        L.has("debug") && L.log("debug", T.add({
+        L && L.has("debug") && L.log("debug", T && T.add({
           bundle, enabled: descriptor && descriptor.enabled !== false
         }).toMessage({
           tags: [ blockRef, "load-mappings" ],
@@ -67,7 +67,7 @@ function MappingLoader (params = {}) {
     return mappings;
   };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));

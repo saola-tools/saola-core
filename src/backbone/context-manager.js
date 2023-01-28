@@ -14,7 +14,7 @@ function ContextManager (params = {}) {
   const defaultFeatures = [];
   const _ref_ = {};
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -64,7 +64,7 @@ function ContextManager (params = {}) {
     return (_ref_.featureEnabled.indexOf(label) >= 0);
   }
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));

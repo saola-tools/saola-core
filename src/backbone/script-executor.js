@@ -10,7 +10,7 @@ function ScriptExecutor (params = {}) {
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + constructor start ..."
   }));
@@ -33,7 +33,7 @@ function ScriptExecutor (params = {}) {
     try {
       command = resolveCommand(command);
     } catch (error) {
-      L.has("error") && L.log("error", T.toMessage({
+      L && L.has("error") && L.log("error", T && T.toMessage({
         tags: [ blockRef, "executeCommand", "invalid-command-object" ],
         text: " - Invalid command object"
       }));
@@ -43,7 +43,7 @@ function ScriptExecutor (params = {}) {
 
     const reqTr = T.branch({ key: "requestId", value: command.requestId });
 
-    L.has("info") && L.log("info", reqTr.add({ commandName: command.name, command }).toMessage({
+    L && L.has("info") && L.log("info", reqTr.add({ commandName: command.name, command }).toMessage({
       tags: [ blockRef, "executeCommand", "begin" ],
       text: "${commandName}#${requestId} start, details: {command}"
     }));
@@ -62,12 +62,12 @@ function ScriptExecutor (params = {}) {
     }
 
     promize.catch(function() {
-      L.has("silly") && L.log("silly", reqTr.add({ commandName: command.name }).toMessage({
+      L && L.has("silly") && L.log("silly", reqTr.add({ commandName: command.name }).toMessage({
         tags: [ blockRef, "executeCommand", "failed" ],
         text: "${commandName}#${requestId} is failed"
       }));
     }).finally(function() {
-      L.has("info") && L.log("info", reqTr.add({ commandName: command.name }).toMessage({
+      L && L.has("info") && L.log("info", reqTr.add({ commandName: command.name }).toMessage({
         tags: [ blockRef, "executeCommand", "done" ],
         text: "${commandName}#${requestId} has done"
       }));
@@ -75,7 +75,7 @@ function ScriptExecutor (params = {}) {
     });
   };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));
