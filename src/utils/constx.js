@@ -91,7 +91,8 @@ const DEPENDENCIES_SCHEMA = {
 
 const SEMVER_PATTERN = ".+";
 
-module.exports = {
+function buildConstants () {
+  return {
   FRAMEWORK: {
     NAMESPACE: getFrameworkName(PKG_INFO.name),
     PACKAGE_NAME: PKG_INFO.name,
@@ -607,5 +608,11 @@ module.exports = {
   ],
   LOADING: {
     DELETE_OLD_REFERENCE_ALIAS: false
+  },
+  FILE: {
+    JS_FILTER_PATTERN: ".*\.js"
   }
 };
+};
+
+module.exports = buildConstants();

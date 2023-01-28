@@ -235,7 +235,7 @@ chores.extractCodeByPattern = function(patterns, name) {
   if (info.i >= patterns.length) {
     return { i: -1, code: name };
   }
-  info.code = name.replace(patterns[info.i], "\$1");
+  info.code = name.replace(patterns[info.i], "$1");
   return info;
 };
 
@@ -292,7 +292,7 @@ chores.toFullname = function() {
 chores.transformBeanName = function(name, opts) {
   opts = opts || {};
   if (typeof name !== "string") return name;
-  const pattern = (opts.namePattern instanceof RegExp) ? opts.namePattern : /^(.+)\/([^:^\/]+)$/g;
+  const pattern = (opts.namePattern instanceof RegExp) ? opts.namePattern : /^(.+)\/([^:^/]+)$/g;
   return name.replace(pattern, "$1:$2");
 };
 

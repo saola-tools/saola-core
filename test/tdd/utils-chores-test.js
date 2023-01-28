@@ -6,11 +6,43 @@ const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
 const assert = require("chai").assert;
 const path = require("path");
+const util = require("util");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
+const FILE_JS_FILTER_PATTERN = constx.FILE.JS_FILTER_PATTERN;
 
 describe("tdd:lib:utils:chores", function() {
+  describe("filesFilterPattern", function() {
+    const filesFilter = FILE_JS_FILTER_PATTERN;
+    const filesFilterRegExp = new RegExp(filesFilter);
+    //
+    it(util.format("Filter a list of absolute file paths by the regexp pattern '%s'", filesFilter), function() {
+      const source = [
+        "config/profile.js",
+        "config/profile_production.js",
+        "config/.keepme",
+        "config/.metadata",
+        "config/sandbox.js",
+        "config/sandbox_mock.js",
+      ];
+      //
+      const expected = [
+        "config/profile.js",
+        "config/profile_production.js",
+        "config/sandbox.js",
+        "config/sandbox_mock.js"
+      ];
+      //
+      const filtered = lodash.filter(source, function(filename) {
+        return filesFilterRegExp.test(filename);
+      });
+      false && console.info("Filter by '%s': %s", filesFilter, JSON.stringify(filtered, null, 2));
+      //
+      assert.sameMembers(filtered, expected);
+    });
+  });
+
   describe("loadServiceByNames()", function() {
     let serviceFolder = lab.getLibHome("testcode/services");
     let serviceNames = ["service1", "service2"];

@@ -14,6 +14,7 @@ const LoggingWrapper = require("./logging-wrapper");
 const blockRef = chores.getBlockRef(__filename);
 
 const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.NAMESPACE);
+const FILE_JS_FILTER_PATTERN = constx.FILE.JS_FILTER_PATTERN;
 
 const CONFIG_SUBDIR = "/config";
 const CONFIG_VAR_NAMES = [ "PROFILE",  "SANDBOX",  "TEXTURE", "CONFIG_DIR", "CONFIG_ENV" ];
@@ -314,7 +315,7 @@ function loadAppboxConfig (ctx, config, aliasesOf, tileNames, appRef, bridgeMani
     L && L.has("dunce") && L.log("dunce", T && T.add({ configType, configDir }).toMessage({
       text: " + load the '${configType}' configuration in '${configDir}'"
     }));
-    const configFiles = chores.filterFiles(configDir, ".*\.js");
+    const configFiles = chores.filterFiles(configDir, FILE_JS_FILTER_PATTERN);
     const configInfos = lodash.map(configFiles, function(file) {
       if (constx.LOADING.SPLITTING_FILENAME_BY_REGEXP) {
         return file.replace(".js", "").split(/_(.+)/).filter(function(sub) {

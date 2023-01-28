@@ -234,11 +234,6 @@ lab.createKernel = function(appName) {
   }
   if (_config === null) return null;
 
-  if (false) {
-    console.log('==@ createKernel() with: %s', JSON.stringify(_config, null, 2));
-    console.log('==/ createKernel() ========');
-  }
-
   var nameResolver = new NameResolver({issueInspector, 
     pluginList: _config.bundleList, bridgeList: _config.bridgeList});
 

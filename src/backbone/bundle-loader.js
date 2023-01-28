@@ -8,6 +8,8 @@ const constx = require("../utils/constx");
 const loader = require("../utils/loader");
 const blockRef = chores.getBlockRef(__filename);
 
+const FILE_JS_FILTER_PATTERN = constx.FILE.JS_FILTER_PATTERN;
+
 function BundleLoader (params = {}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
   const L = loggingFactory.getLogger();
@@ -99,7 +101,7 @@ function hasSeparatedDir (scriptType) {
 }
 
 function getFilterPattern (scriptType) {
-  return hasSeparatedDir(scriptType) ? ".*\.js" : constx[scriptType].ROOT_KEY + "_.*\.js";
+  return hasSeparatedDir(scriptType) ? FILE_JS_FILTER_PATTERN : constx[scriptType].ROOT_KEY + "_" + FILE_JS_FILTER_PATTERN;
 }
 
 function loadAllScripts (CTX, scriptMap, scriptType, scriptContext, pluginRootDirs) {
