@@ -106,6 +106,15 @@ const DEPENDENCIES_SCHEMA = {
   }
 };
 
+const SCHEMA_SCHEMA = {
+  "type": "object",
+  "oneOf": [
+    {
+      "$ref": "http://json-schema.org/draft-04/schema#"
+    }
+  ]
+};
+
 const SEMVER_PATTERN = ".+";
 
 const CONSTANTS = {
@@ -352,14 +361,7 @@ const CONSTANTS = {
                 "enabled": {
                   "type": "boolean"
                 },
-                "schema": {
-                  "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "http://json-schema.org/draft-04/schema#"
-                    }
-                  ]
-                },
+                "schema": SCHEMA_SCHEMA,
                 "checkConstraints": {}
               }
             }
@@ -421,14 +423,7 @@ const CONSTANTS = {
         "subtype": {
           "type": "string"
         },
-        "schema": {
-          "type": "object",
-          "oneOf": [
-            {
-              "$ref": "http://json-schema.org/draft-04/schema#"
-            }
-          ]
-        }
+        "schema": SCHEMA_SCHEMA
       }
     }
   },
@@ -450,12 +445,7 @@ const CONSTANTS = {
             "options": {
               "type": "array"
             },
-            "schema": {
-              "type": "object",
-              "oneOf": [{
-                "$ref": "http://json-schema.org/draft-04/schema#"
-              }]
-            },
+            "schema": SCHEMA_SCHEMA,
             "validate": {}
           }
         },
