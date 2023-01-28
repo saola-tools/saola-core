@@ -1,5 +1,6 @@
 "use strict";
 
+const assert = require("assert");
 const lodash = require("lodash");
 const util = require("util");
 const path = require("path");
@@ -33,9 +34,7 @@ function ConfigLoader (params = {}) {
   const appName = appRef && appRef.name;
   const label = chores.stringLabelCase(appName);
 
-  L && L.has("silly") && L.log("silly", T && T.add({
-    appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs, label
-  }).toMessage({
+  L && L.has("silly") && L.log("silly", T && T.add({ appName, label }).toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + Config of application (${appName}) is loaded in name: ${label}"
   }));
@@ -62,8 +61,8 @@ module.exports = ConfigLoader;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ private members
 
-function readVariable (ctx = {}, appLabel, varName) {
-  const { L, T } = ctx;
+function readVariable (ctx, appLabel, varName) {
+  const { L, T } = ctx || this || {};
   const labels = [
     util.format("%s_%s", appLabel, varName),
     util.format("%s_%s", FRAMEWORK_NAMESPACE_UCASE, varName),
@@ -84,6 +83,10 @@ function readVariable (ctx = {}, appLabel, varName) {
 
 function loadConfig (ctx = {}, appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
   const { L, T, issueInspector, stateInspector, nameResolver } = ctx || this || {};
+
+  assert.ok(nameResolver);
+  assert.ok(issueInspector);
+  assert.ok(stateInspector);
 
   const aliasesOf = buildConfigTypeAliases();
   L && L.has("silly") && L.log("silly", T && T.add({ aliasesOf }).toMessage({
@@ -156,7 +159,7 @@ function buildConfigTileNames (ctx, options = {}, profileName, sandboxName, text
   return tileNames;
 }
 
-function loadConfigOfModules (ctx = {}, config, aliasesOf, tileNames, appName, appRef, frameworkRef, pluginRefs, bridgeRefs, customDir, customEnv) {
+function loadConfigOfModules (ctx, config, aliasesOf, tileNames, appName, appRef, frameworkRef, pluginRefs, bridgeRefs, customDir, customEnv) {
   const { L, T } = ctx || this || {};
 
   const libRefs = lodash.values(pluginRefs);
@@ -229,6 +232,9 @@ function loadConfigOfModules (ctx = {}, config, aliasesOf, tileNames, appName, a
 
 function extractConfigManifest (ctx, moduleRefs, configManifest) {
   const { nameResolver } = ctx || this || {};
+
+  assert.ok(nameResolver);
+
   configManifest = configManifest || {};
   lodash.forOwn(moduleRefs, function(moduleRef) {
     let moduleName = nameResolver.getOriginalNameOf(moduleRef.name, moduleRef.type);
@@ -240,7 +246,7 @@ function extractConfigManifest (ctx, moduleRefs, configManifest) {
   return configManifest;
 }
 
-function fillConfigByEnvVars (ctx = {}, config = {}, appName) {
+function fillConfigByEnvVars (ctx, config = {}, appName) {
   const appLabel = chores.stringLabelCase(appName);
   const { store, paths } = extractEnvironConfig(ctx, appLabel);
   const clone = {};
@@ -286,7 +292,7 @@ function fillConfigByEnvVars (ctx = {}, config = {}, appName) {
   });
 }
 
-function extractEnvironConfig (ctx = {}, appLabel) {
+function extractEnvironConfig (ctx, appLabel) {
   const prefixes = [
     util.format("%s_CONFIG_VAL", appLabel),
     util.format("%s_CONFIG_VAL", FRAMEWORK_NAMESPACE_UCASE),
@@ -375,7 +381,7 @@ function loadConfigFile (ctx, configFile) {
       opStatus.stack = err.stack;
     }
   }
-  issueInspector.collect(opStatus);
+  issueInspector && issueInspector.collect(opStatus);
   return RELOADING_FORCED ? lodash.cloneDeep(content) : content;
 }
 
