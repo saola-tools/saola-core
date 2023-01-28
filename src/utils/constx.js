@@ -3,8 +3,23 @@
 const fs = require("fs");
 const path = require("path");
 
-function isString (s) {
-  return typeof s === "string";
+function loadPackage () {
+  return JSON.parse(fs.readFileSync(path.join(__dirname, "/../../package.json"), "utf8"));
+}
+
+function buildConstants () {
+  const PKG_INFO = loadPackage();
+  //
+  Object.assign(CONSTANTS, {
+    FRAMEWORK: {
+      NAMESPACE: getFrameworkName(PKG_INFO.name),
+      PACKAGE_NAME: PKG_INFO.name,
+      NAME: PKG_INFO.name, // just for backward compatible
+      VERSION: PKG_INFO.version,
+    }
+  });
+  //
+  return CONSTANTS;
 }
 
 function getFrameworkName (packageName) {
@@ -20,7 +35,9 @@ function getFrameworkName (packageName) {
   return packageName;
 };
 
-const PKG_INFO = JSON.parse(fs.readFileSync(path.join(__dirname, "/../../package.json"), "utf8"));
+function isString (s) {
+  return typeof s === "string";
+}
 
 const PRESETS_SCHEMA = {
   "type": "object",
@@ -91,14 +108,7 @@ const DEPENDENCIES_SCHEMA = {
 
 const SEMVER_PATTERN = ".+";
 
-function buildConstants () {
-  return {
-  FRAMEWORK: {
-    NAMESPACE: getFrameworkName(PKG_INFO.name),
-    PACKAGE_NAME: PKG_INFO.name,
-    NAME: PKG_INFO.name, // just for backward compatible
-    VERSION: PKG_INFO.version,
-  },
+const CONSTANTS = {
   APPINFO: {
     FIELDS: ["version", "name", "description", "homepage", "author", "license", "main"]
   },
@@ -612,7 +622,6 @@ function buildConstants () {
   FILE: {
     JS_FILTER_PATTERN: ".*\.js"
   }
-};
 };
 
 module.exports = buildConstants();
