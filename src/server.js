@@ -15,6 +15,7 @@ const constx = require("./utils/constx");
 const chores = require("./utils/chores");
 const blockRef = chores.getBlockRef(__filename);
 
+const CLOSING_SERVER_TIMEOUT = 60000;
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 
 function Server (params = {}) {
@@ -136,8 +137,8 @@ function Server (params = {}) {
       return new Promise(function(resolve, reject) {
         const timeoutHandler = setTimeout(function() {
           L.has("dunce") && L.log("dunce", "Timeout closing Server");
-          reject();
-        }, 60000);
+          reject(new Error("CLOSING_SERVER_TIMEOUT"));
+        }, CLOSING_SERVER_TIMEOUT);
         const serverCloseEvent = function() {
           L.has("dunce") && L.log("dunce", "HTTP Server is invoked");
           if (server && lodash.isFunction(serverCloseEvent)) {

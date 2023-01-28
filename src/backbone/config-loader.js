@@ -82,7 +82,7 @@ function readVariable (ctx, appLabel, varName) {
   return undefined;
 }
 
-function loadConfig (ctx = {}, appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
+function loadConfig (ctx, appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
   const { L, T, issueInspector, stateInspector, nameResolver } = ctx || this || {};
 
   assert.ok(nameResolver);
