@@ -33,7 +33,9 @@ function ConfigLoader (params = {}) {
   const appName = appRef && appRef.name;
   const label = chores.stringLabelCase(appName);
 
-  L.has("silly") && L.log("silly", T.add({ appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs, label }).toMessage({
+  L && L.has("silly") && L.log("silly", T && T.add({
+    appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs, label
+  }).toMessage({
     tags: [ blockRef, "constructor-begin" ],
     text: " + Config of application (${appName}) is loaded in name: ${label}"
   }));
@@ -50,7 +52,7 @@ function ConfigLoader (params = {}) {
     return configObject;
   };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));
@@ -71,7 +73,7 @@ function readVariable (ctx = {}, appLabel, varName) {
   for (const label of labels) {
     const value = envbox.getEnv(label);
     if (value) {
-      L.has("dunce") && L.log("dunce", T.add({ label: labels[0], value }).toMessage({
+      L && L.has("dunce") && L.log("dunce", T && T.add({ label: labels[0], value }).toMessage({
         text: " - Final value of ${label}: ${value}"
       }));
       return value;
@@ -81,10 +83,10 @@ function readVariable (ctx = {}, appLabel, varName) {
 }
 
 function loadConfig (ctx = {}, appName, options, appRef, frameworkRef, pluginRefs, bridgeRefs, profileName, sandboxName, textureName, customDir, customEnv) {
-  const { L, T, issueInspector, stateInspector, nameResolver } = ctx;
+  const { L, T, issueInspector, stateInspector, nameResolver } = ctx || this || {};
 
   const aliasesOf = buildConfigTypeAliases();
-  L.has("silly") && L.log("silly", T.add({ aliasesOf }).toMessage({
+  L && L.has("silly") && L.log("silly", T && T.add({ aliasesOf }).toMessage({
     tags: [ blockRef, "config-dir", "aliases-of" ],
     text: " - configType aliases mapping: ${aliasesOf}"
   }));
@@ -92,7 +94,7 @@ function loadConfig (ctx = {}, appName, options, appRef, frameworkRef, pluginRef
   const config = {};
 
   const tileNames = buildConfigTileNames(ctx, options, profileName, sandboxName, textureName);
-  L.has("dunce") && L.log("dunce", T.add({ tileNames }).toMessage({
+  L && L.has("dunce") && L.log("dunce", T && T.add({ tileNames }).toMessage({
     text: " + included names: ${tileNames}"
   }));
 
@@ -155,7 +157,7 @@ function buildConfigTileNames (ctx, options = {}, profileName, sandboxName, text
 }
 
 function loadConfigOfModules (ctx = {}, config, aliasesOf, tileNames, appName, appRef, frameworkRef, pluginRefs, bridgeRefs, customDir, customEnv) {
-  const { L, T } = ctx;
+  const { L, T } = ctx || this || {};
 
   const libRefs = lodash.values(pluginRefs);
   if (frameworkRef) {
@@ -176,13 +178,13 @@ function loadConfigOfModules (ctx = {}, config, aliasesOf, tileNames, appName, a
   const appRootDir = appRef && lodash.isString(appRef.path) ? appRef.path : null;
 
   const defaultConfigDir = appRootDir ? path.join(appRootDir, CONFIG_SUBDIR) : null;
-  L.has("silly") && L.log("silly", T.add({ configDir: defaultConfigDir }).toMessage({
+  L && L.has("silly") && L.log("silly", T && T.add({ configDir: defaultConfigDir }).toMessage({
     tags: [ blockRef, "config-dir", "internal-config-dir" ],
     text: " - internal configDir: ${configDir}"
   }));
 
   const externalConfigDir = resolveConfigDir(ctx, appName, appRootDir, customDir, customEnv);
-  L.has("silly") && L.log("silly", T.add({ configDir: externalConfigDir }).toMessage({
+  L && L.has("silly") && L.log("silly", T && T.add({ configDir: externalConfigDir }).toMessage({
     tags: [ blockRef, "config-dir", "external-config-dir" ],
     text: " - external configDir: ${configDir}"
   }));
@@ -190,12 +192,12 @@ function loadConfigOfModules (ctx = {}, config, aliasesOf, tileNames, appName, a
   CONFIG_TYPES.forEach(function(configType) {
     config[configType] = config[configType] || {};
 
-    L.has("dunce") && L.log("dunce", T.toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.toMessage({
       text: " + load the default config from plugins & framework"
     }));
     lodash.forEach(libRefs, function(libRef) {
       if (libRef.presets && chores.isUpgradeSupported("presets")) {
-        L.has("dunce") && L.log("dunce", T.add(libRef).toMessage({
+        L && L.has("dunce") && L.log("dunce", T && T.add(libRef).toMessage({
           text: " - Presets of ${type}[${name}]: ${presets}"
         }));
       }
@@ -219,12 +221,14 @@ function loadConfigOfModules (ctx = {}, config, aliasesOf, tileNames, appName, a
       loadAppboxConfig(ctx, config, aliasesOf, tileNames, appRef, bridgeManifests, pluginManifests, configType, externalConfigDir);
     }
 
-    L.has("dunce") && L.log("dunce", " - Final config object: %s", util.inspect(config[configType], {depth: 8}));
+    L && L.has("dunce") && L.log("dunce", T && T.toMessage({
+      text: " - Final config object: " + util.inspect(config[configType], {depth: 8})
+    }));
   });
 }
 
 function extractConfigManifest (ctx, moduleRefs, configManifest) {
-  const { nameResolver } = ctx;
+  const { nameResolver } = ctx || this || {};
   configManifest = configManifest || {};
   lodash.forOwn(moduleRefs, function(moduleRef) {
     let moduleName = nameResolver.getOriginalNameOf(moduleRef.name, moduleRef.type);
@@ -299,9 +303,9 @@ function extractEnvironConfig (ctx = {}, appLabel) {
 }
 
 function loadAppboxConfig (ctx, config, aliasesOf, tileNames, appRef, bridgeManifests, pluginManifests, configType, configDir) {
-  const { L, T } = ctx;
+  const { L, T } = ctx || this || {};
   if (configDir) {
-    L.has("dunce") && L.log("dunce", T.add({ configType, configDir }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ configType, configDir }).toMessage({
       text: " + load the '${configType}' configuration in '${configDir}'"
     }));
     const configFiles = chores.filterFiles(configDir, ".*\.js");
@@ -313,11 +317,11 @@ function loadAppboxConfig (ctx, config, aliasesOf, tileNames, appRef, bridgeMani
       }
       return file.replace(".js", "").replace(/[_]/, "&").split("&");
     });
-    L.has("dunce") && L.log("dunce", T.add({ configInfos }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ configInfos }).toMessage({
       text: " - parsing configFiles result: ${configInfos}"
     }));
 
-    L.has("dunce") && L.log("dunce", T.add({ configType }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ configType }).toMessage({
       text: " - load the application default config of '${configType}'"
     }));
     for (const i in aliasesOf[configType]) {
@@ -329,11 +333,11 @@ function loadAppboxConfig (ctx, config, aliasesOf, tileNames, appRef, bridgeMani
     }
     config[configType]["default"] = lodash.defaultsDeep({}, config[configType]["expanse"], config[configType]["default"]);
 
-    L.has("dunce") && L.log("dunce", T.add({ configType }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ configType }).toMessage({
       text: " - load the application customized config of '${configType}'"
     }));
     const expanseNames = filterConfigBy(ctx, configInfos, tileNames, configType, aliasesOf);
-    L.has("dunce") && L.log("dunce", T.add({ expanseNames }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ expanseNames }).toMessage({
       text: " + expanded names: ${expanseNames}"
     }));
     config[configType]["expanse"] = config[configType]["expanse"] || {};
@@ -350,21 +354,21 @@ function loadAppboxConfig (ctx, config, aliasesOf, tileNames, appRef, bridgeMani
 }
 
 function loadConfigFile (ctx, configFile) {
-  const { L, T, issueInspector } = ctx || this;
+  const { L, T, issueInspector } = ctx || this || {};
   const opStatus = { type: "CONFIG", file: configFile };
   let content;
   try {
-    L.has("dunce") && L.log("dunce", T.add({ configFile }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ configFile }).toMessage({
       text: " - load config file: '${configFile}'"
     }));
     content = loader(configFile, { stopWhenError: true });
     opStatus.hasError = false;
-    L.has("dunce") && L.log("dunce", T.add({ configFile }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ configFile }).toMessage({
       text: " - loading config file: '${configFile}' has done."
     }));
   } catch (err) {
     if (err.code !== "MODULE_NOT_FOUND") {
-      L.has("dunce") && L.log("dunce", T.add({ configFile }).toMessage({
+      L && L.has("dunce") && L.log("dunce", T && T.add({ configFile }).toMessage({
         text: " - config file ${configFile} loading is failed."
       }));
       opStatus.hasError = true;
@@ -391,13 +395,13 @@ function filterConfigBy (ctx, configInfos, selectedNames, configType, aliasesOf)
 }
 
 function resolveConfigDir (ctx, appName, appRootDir, configDir, configEnv) {
-  const { L, T, issueInspector } = ctx || this;
+  const { L, T, issueInspector } = ctx || this || {};
   let dirPath = configDir;
   if (lodash.isEmpty(dirPath)) {
     if (["production"].indexOf(process.env.NODE_ENV) >= 0) {
       dirPath = chores.assertDir(appName);
       if (dirPath == null) {
-        L.has("dunce") && L.log("dunce", T.toMessage({
+        L && L.has("dunce") && L.log("dunce", T && T.toMessage({
           text: "Run in production mode, but config directory not found"
         }));
         issueInspector.exit(1);
@@ -434,7 +438,7 @@ function standardizeConfig (ctx, configType, configStore, crateInfo, bridgeManif
 function modernizeConfig (ctx, configType, configStore, crateInfo, bridgeManifests, pluginManifests) {
   if (configType !== CONFIG_SANDBOX_NAME) return configStore;
   if (lodash.isEmpty(configStore)) return configStore;
-  const { issueInspector } = ctx;
+  const { issueInspector } = ctx || this || {};
   const collector = new ModernizingResultCollector();
   if (!lodash.isEmpty(bridgeManifests)) {
     for (const bridgeName in configStore.bridges) {
@@ -461,7 +465,7 @@ function modernizeConfig (ctx, configType, configStore, crateInfo, bridgeManifes
       collector.push(r, crateInfo, "plugin", pluginName);
     }
   }
-  issueInspector.collect(collector.toList());
+  issueInspector && issueInspector.collect(collector.toList());
   return configStore;
 }
 
@@ -556,7 +560,7 @@ function ModernizingResultCollector () {
 }
 
 function transformConfig (ctx, configType, configStore, crateInfo) {
-  const { nameResolver } = ctx || this;
+  const { nameResolver } = ctx || this || {};
   if (configType === CONFIG_PROFILE_NAME) {
     if (chores.isUpgradeSupported("profile-config-field-framework")) {
       configStore = chores.renameJsonFields(configStore, {
