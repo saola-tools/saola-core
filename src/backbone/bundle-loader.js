@@ -16,12 +16,12 @@ function BundleLoader (params = {}) {
     "issueInspector", "nameResolver", "schemaValidator", "objectDecorator"
   ]));
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [blockRef, "constructor-begin"],
     text: " + constructor start ..."
   }));
 
-  L.has("dunce") && L.log("dunce", T.add(params).toMessage({
+  L && L.has("dunce") && L.log("dunce", T && T.add(params).toMessage({
     text: " - bundleLoader start with bundleList: ${bundleList}"
   }));
 
@@ -41,7 +41,7 @@ function BundleLoader (params = {}) {
     return loadAllGadgets(CTX, triggerMap, "TRIGGER", params.bundleList);
   };
 
-  L.has("silly") && L.log("silly", T.toMessage({
+  L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],
     text: " - constructor has finished"
   }));
@@ -115,11 +115,11 @@ function loadAllScripts (CTX, scriptMap, scriptType, scriptContext, pluginRootDi
 };
 
 function loadScriptEntries (CTX, scriptMap, scriptType, scriptContext, pluginRootDir) {
-  const { L, T } = CTX || this;
+  const { L, T } = CTX || this || {};
 
   const scriptSubDir = chores.getComponentDir(pluginRootDir, scriptType);
   const scriptFolder = path.join(pluginRootDir.path, scriptSubDir);
-  L.has("dunce") && L.log("dunce", T.add({
+  L && L.has("dunce") && L.log("dunce", T && T.add({
     scriptKey: constx[scriptType].ROOT_KEY,
     scriptFolder: scriptFolder
   }).toMessage({
@@ -133,32 +133,32 @@ function loadScriptEntries (CTX, scriptMap, scriptType, scriptContext, pluginRoo
 };
 
 function loadScriptEntry (CTX, scriptMap, scriptType, scriptSubDir, scriptFile, scriptContext, pluginRootDir) {
-  const { L, T, issueInspector, nameResolver } = CTX || this;
+  const { L, T, issueInspector, nameResolver } = CTX || this || {};
   const opStatus = lodash.assign({ type: scriptType, file: scriptFile, subDir: scriptSubDir }, pluginRootDir);
   const filepath = path.join(pluginRootDir.path, scriptSubDir, scriptFile);
   try {
     const scriptInit = loader(filepath, { stopWhenError: true });
     if (lodash.isFunction(scriptInit)) {
-      L.has("dunce") && L.log("dunce", T.add({ filepath }).toMessage({
+      L && L.has("dunce") && L.log("dunce", T && T.add({ filepath }).toMessage({
         text: " - script file ${filepath} is ok"
       }));
       const scriptObject = scriptInit(scriptContext);
       const output = validateScript(CTX, scriptObject, scriptType);
       if (!output.valid) {
-        L.has("dunce") && L.log("dunce", T.add({
+        L && L.has("dunce") && L.log("dunce", T && T.add({
           validationResult: output
         }).toMessage({
           text: " - validating script fail: ${validationResult}"
         }));
         opStatus.hasError = true;
       } else if (scriptObject.enabled === false) {
-        L.has("dunce") && L.log("dunce", T.toMessage({
+        L && L.has("dunce") && L.log("dunce", T && T.toMessage({
           text: " - script is disabled"
         }));
         opStatus.hasError = false;
         opStatus.isSkipped = true;
       } else {
-        L.has("dunce") && L.log("dunce", T.toMessage({
+        L && L.has("dunce") && L.log("dunce", T && T.toMessage({
           text: " - script validation pass"
         }));
         opStatus.hasError = false;
@@ -177,7 +177,7 @@ function loadScriptEntry (CTX, scriptMap, scriptType, scriptSubDir, scriptFile, 
         lodash.defaultsDeep(scriptMap, entry);
       }
     } else {
-      L.has("dunce") && L.log("dunce", T.add({ filepath }).toMessage({
+      L && L.has("dunce") && L.log("dunce", T && T.add({ filepath }).toMessage({
         text: " - script file ${filepath} doesnot contain a function."
       }));
       opStatus.stack = chores.formatTemplate("Service file ${filepath} does not contain a function", {
@@ -186,7 +186,7 @@ function loadScriptEntry (CTX, scriptMap, scriptType, scriptSubDir, scriptFile, 
       opStatus.hasError = true;
     }
   } catch (err) {
-    L.has("dunce") && L.log("dunce", T.add({ filepath }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ filepath }).toMessage({
       text: " - script file ${filepath} loading has failed."
     }));
     opStatus.hasError = true;
@@ -196,7 +196,7 @@ function loadScriptEntry (CTX, scriptMap, scriptType, scriptSubDir, scriptFile, 
 };
 
 function validateScript (CTX, scriptObject, scriptType) {
-  const { schemaValidator } = CTX || this;
+  const { schemaValidator } = CTX || this || {};
   const results = [];
 
   scriptObject = scriptObject || {};
@@ -220,7 +220,7 @@ function validateScript (CTX, scriptObject, scriptType) {
 };
 
 function loadAllMetainfs (CTX, metainfMap, pluginRootDirs) {
-  CTX = CTX || this;
+  CTX = CTX || this || {};
   metainfMap = metainfMap || {};
   pluginRootDirs.forEach(function(pluginRootDir) {
     loadMetainfEntries(CTX, metainfMap, pluginRootDir);
@@ -229,11 +229,13 @@ function loadAllMetainfs (CTX, metainfMap, pluginRootDirs) {
 }
 
 function loadMetainfEntries (CTX, metainfMap, pluginRootDir) {
-  const { L, T } = CTX = CTX || this;
+  const { L, T } = CTX = CTX || this || {};
   const metainfType = "METAINF";
   const metainfSubDir = chores.getComponentDir(pluginRootDir, metainfType);
   const metainfFolder = path.join(pluginRootDir.path, metainfSubDir);
-  L.has("dunce") && L.log("dunce", T.add({ metainfKey: constx[metainfType].ROOT_KEY, metainfFolder }).toMessage({
+  L && L.has("dunce") && L.log("dunce", T && T.add({
+    metainfKey: constx[metainfType].ROOT_KEY, metainfFolder
+  }).toMessage({
     text: " - load ${metainfKey}s from folder: ${metainfFolder}"
   }));
   const schemaFiles = chores.filterFiles(metainfFolder, getFilterPattern(metainfType));
@@ -243,7 +245,7 @@ function loadMetainfEntries (CTX, metainfMap, pluginRootDir) {
 }
 
 function loadMetainfEntry (CTX, metainfMap, metainfSubDir, schemaFile, pluginRootDir) {
-  const { L, T, issueInspector, nameResolver } = CTX || this;
+  const { L, T, issueInspector, nameResolver } = CTX || this || {};
   const metainfType = "METAINF";
   const opStatus = lodash.assign({ type: "METAINF", file: schemaFile, subDir: metainfSubDir }, pluginRootDir);
   const filepath = path.join(pluginRootDir.path, metainfSubDir, schemaFile);
@@ -251,20 +253,20 @@ function loadMetainfEntry (CTX, metainfMap, metainfSubDir, schemaFile, pluginRoo
     const metainfObject = loader(filepath, { stopWhenError: true });
     const output = validateMetainf(CTX, metainfObject, metainfType);
     if (!output.valid) {
-      L.has("dunce") && L.log("dunce", T.add({
+      L && L.has("dunce") && L.log("dunce", T && T.add({
         validationResult: output
       }).toMessage({
         text: " - validating schema fail: ${validationResult}"
       }));
       opStatus.hasError = true;
     } else if (metainfObject.enabled === false) {
-      L.has("dunce") && L.log("dunce", T.toMessage({
+      L && L.has("dunce") && L.log("dunce", T && T.toMessage({
         text: " - schema is disabled"
       }));
       opStatus.hasError = false;
       opStatus.isSkipped = true;
     } else {
-      L.has("dunce") && L.log("dunce", T.toMessage({
+      L && L.has("dunce") && L.log("dunce", T && T.toMessage({
         text: " - schema validation pass"
       }));
       opStatus.hasError = false;
@@ -289,10 +291,10 @@ function loadMetainfEntry (CTX, metainfMap, metainfSubDir, schemaFile, pluginRoo
       lodash.defaultsDeep(metainfMap, entry);
     }
   } catch (err) {
-    L.has("dunce") && L.log("dunce", T.add({ filepath }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ filepath }).toMessage({
       text: " - schema file ${filepath} loading has failed"
     }));
-    L.has("dunce") && chores.printError(err);
+    L && L.has("dunce") && chores.printError(err);
     opStatus.hasError = true;
     opStatus.stack = err.stack;
   }
@@ -300,7 +302,7 @@ function loadMetainfEntry (CTX, metainfMap, metainfSubDir, schemaFile, pluginRoo
 }
 
 function validateMetainf (CTX, metainfObject) {
-  const { schemaValidator } = CTX = CTX || this;
+  const { schemaValidator } = CTX = CTX || this || {};
   const metainfType = "METAINF";
   const results = [];
   metainfObject = metainfObject || {};
@@ -322,11 +324,11 @@ function loadAllGadgets (CTX, gadgetMap, gadgetType, pluginRootDirs) {
 };
 
 function loadGadgetEntries (CTX, gadgetMap, gadgetType, pluginRootDir) {
-  const { L, T } = CTX || this;
+  const { L, T } = CTX || this || {};
 
   const gadgetSubDir = chores.getComponentDir(pluginRootDir, gadgetType);
   const gadgetFolder = path.join(pluginRootDir.path, gadgetSubDir);
-  L.has("dunce") && L.log("dunce", T.add({
+  L && L.has("dunce") && L.log("dunce", T && T.add({
     gadgetKey: constx[gadgetType].ROOT_KEY,
     gadgetFolder: gadgetFolder
   }).toMessage({
@@ -340,12 +342,12 @@ function loadGadgetEntries (CTX, gadgetMap, gadgetType, pluginRootDir) {
 };
 
 function loadGadgetEntry (CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, pluginRootDir) {
-  const { L, T, issueInspector } = CTX = CTX || this;
+  const { L, T, issueInspector } = CTX || this || {};
   const opStatus = lodash.assign({ type: gadgetType, file: gadgetFile, subDir: gadgetSubDir }, pluginRootDir);
   const filepath = path.join(pluginRootDir.path, gadgetSubDir, gadgetFile);
   try {
     const gadgetConstructor = loader(filepath, { stopWhenError: true });
-    L.has("dunce") && L.log("dunce", T.add({ filepath }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ filepath }).toMessage({
       text: " - gadget file ${filepath} loading has done"
     }));
     if (lodash.isFunction(gadgetConstructor)) {
@@ -353,16 +355,16 @@ function loadGadgetEntry (CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, 
       lodash.defaults(gadgetMap, buildGadgetWrapper(CTX, gadgetConstructor, gadgetType, gadgetName, pluginRootDir));
       opStatus.hasError = false;
     } else {
-      L.has("dunce") && L.log("dunce", T.add({ filepath }).toMessage({
+      L && L.has("dunce") && L.log("dunce", T && T.add({ filepath }).toMessage({
         text: " - gadget file ${filepath} doesnot contain a function"
       }));
       opStatus.hasError = true;
     }
   } catch (err) {
-    L.has("dunce") && L.log("dunce", T.add({ filepath }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ filepath }).toMessage({
       text: " - gadget file ${filepath} loading has failed"
     }));
-    L.has("dunce") && chores.printError(err);
+    L && L.has("dunce") && chores.printError(err);
     opStatus.hasError = true;
     opStatus.stack = err.stack;
   }
@@ -370,11 +372,11 @@ function loadGadgetEntry (CTX, gadgetMap, gadgetType, gadgetSubDir, gadgetFile, 
 };
 
 function buildGadgetWrapper (CTX, gadgetConstructor, gadgetType, wrapperName, pluginRootDir) {
-  const { L, T, nameResolver, objectDecorator } = CTX;
+  const { L, T, nameResolver, objectDecorator } = CTX || this || {};
   const result = {};
 
   if (!lodash.isFunction(gadgetConstructor)) {
-    L.has("dunce") && L.log("dunce", T.toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.toMessage({
       text: " - gadgetConstructor is invalid"
     }));
     return result;
@@ -400,7 +402,7 @@ function buildGadgetWrapper (CTX, gadgetConstructor, gadgetType, wrapperName, pl
     kwargs.componentId = uniqueName;
     // resolve newFeatures
     const newFeatures = lodash.get(kwargs, ["profileConfig", "newFeatures", pluginCode], {});
-    L.has("dunce") && L.log("dunce", T.add({ pluginCode, newFeatures }).toMessage({
+    L && L.has("dunce") && L.log("dunce", T && T.add({ pluginCode, newFeatures }).toMessage({
       text: " - newFeatures[${pluginCode}]: ${newFeatures}"
     }));
     // resolve plugin configuration path
@@ -470,7 +472,9 @@ function buildGadgetWrapper (CTX, gadgetConstructor, gadgetType, wrapperName, pl
 
   util.inherits(wrapperConstructor, gadgetConstructor);
 
-  const wrappedArgumentFields = ["sandboxName", "sandboxOrigin", "sandboxConfig", "profileName", "profileConfig", "loggingFactory"];
+  const wrappedArgumentFields = [
+    "sandboxName", "sandboxOrigin", "sandboxConfig", "profileName", "profileConfig", "loggingFactory"
+  ];
 
   if (gadgetConstructor.argumentSchema) {
     const wrappedArgumentSchema = {
@@ -493,7 +497,7 @@ function buildGadgetWrapper (CTX, gadgetConstructor, gadgetType, wrapperName, pl
       });
       wrapperConstructor.argumentSchema = lodash.merge(wrappedArgumentSchema, { properties });
     }
-    L.has("dunce") && L.log("dunce", T.add({
+    L && L.has("dunce") && L.log("dunce", T && T.add({
       argumentSchema: wrapperConstructor.argumentSchema
     }).toMessage({
       text: " - wrapperConstructor.argumentSchema: ${argumentSchema}"
@@ -510,7 +514,7 @@ function buildGadgetWrapper (CTX, gadgetConstructor, gadgetType, wrapperName, pl
     }
     wrappedArgumentProps = wrappedArgumentFields.concat(wrappedArgumentProps);
     wrapperConstructor.argumentProperties = lodash.uniq(wrappedArgumentProps);
-    L.has("dunce") && L.log("dunce", T.add({
+    L && L.has("dunce") && L.log("dunce", T && T.add({
       argumentProperties: wrapperConstructor.argumentProperties
     }).toMessage({
       text: " - wrapperConstructor.argumentProperties: ${argumentProperties}"
@@ -533,7 +537,7 @@ function buildGadgetWrapper (CTX, gadgetConstructor, gadgetType, wrapperName, pl
     construktor: construktor
   };
 
-  L.has("dunce") && L.log("dunce", T.add({
+  L && L.has("dunce") && L.log("dunce", T && T.add({
     uniqueName: uniqueName,
     crateScope: pluginName,
     name: wrapperName
