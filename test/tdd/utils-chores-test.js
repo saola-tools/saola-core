@@ -1,12 +1,14 @@
 "use strict";
 
+const path = require("path");
+const util = require("util");
+
 const lab = require("../index");
 const Devebot = lab.getDevebot();
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
 const assert = require("chai").assert;
-const path = require("path");
-const util = require("util");
+const rewire = require("rewire");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
@@ -40,6 +42,56 @@ describe("tdd:lib:utils:chores", function() {
       false && console.info("Filter by '%s': %s", filesFilter, JSON.stringify(filtered, null, 2));
       //
       assert.sameMembers(filtered, expected);
+    });
+  });
+
+  describe("filterFiles()", function() {
+    const choresModule = rewire(lab.getDevebotModule("utils/chores"));
+    it("Files with .js extension must be filtered by the constx.FILE.JS_FILTER_PATTERN correctly", function() {
+      const source = [
+        "config",
+        "config/profile.js",
+        "config/profile_production.js",
+        "config/.keepme",
+        "config/.metadata",
+        "config/sandbox.js",
+        "config/sandbox_mock.js",
+        "data",
+        "data/examplejs",
+        "data/sample.json",
+        "README.adoc",
+      ];
+      //
+      const filterPatterns = [ /.*\.js$/, FILE_JS_FILTER_PATTERN ];
+      //
+      const expected = [
+        "config/profile.js",
+        "config/profile_production.js",
+        "config/sandbox.js",
+        "config/sandbox_mock.js"
+      ];
+      //
+      const mockspace = choresModule.__with__({
+        readDir: function(dir) {
+          return source;
+        },
+        isFile: function(filepath) {
+          if (["config", "data"].includes(filepath)) {
+            return false;
+          }
+          return true;
+        },
+      });
+      //
+      return mockspace(function() {
+        return Promise.resolve().then(function() {
+          for (let filter of filterPatterns) {
+            const selected = choresModule.filterFiles("/", filter);
+            false && console.info(JSON.stringify(selected, null, 2));
+            assert.sameMembers(selected, expected);
+          }
+        });
+      });
     });
   });
 

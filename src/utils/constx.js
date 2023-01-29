@@ -610,7 +610,7 @@ const CONSTANTS = {
     DELETE_OLD_REFERENCE_ALIAS: false
   },
   FILE: {
-    JS_FILTER_PATTERN: ".*\.js"
+    JS_FILTER_PATTERN: ".*\\.js$"
   }
 };
 

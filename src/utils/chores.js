@@ -120,13 +120,13 @@ chores.fileExists = function(filepath) {
 
 chores.filterFiles = function(dir, filter, filenames) {
   filenames = filenames || [];
-  const regex = (filter) ? new RegExp(filter) : null;
+  const regex = assertFilterRegExp(filter);
   try {
-    const files = fs.readdirSync(dir);
+    const files = readDir(dir);
     for (const i in files) {
       if ((regex) ? regex.test(files[i]) : true) {
-        const name = dir + "/" + files[i];
-        if (fs.statSync(name).isFile()) {
+        const name = path.join(dir, files[i]);
+        if (isFile(name)) {
           filenames.push(files[i]);
         }
       }
@@ -134,6 +134,25 @@ chores.filterFiles = function(dir, filter, filenames) {
   } catch (err) {}
   return filenames;
 };
+
+function assertFilterRegExp (filter) {
+  if (lodash.isRegExp(filter)) {
+    return filter;
+  }
+  if (lodash.isString(filter)) {
+    return new RegExp(filter);
+  }
+  return null;
+}
+
+function readDir (dir) {
+  return fs.readdirSync(dir);
+}
+
+function isFile (filepath) {
+  const fileStat = fs.statSync(filepath, {throwIfNoEntry: false});
+  return fileStat && fileStat.isFile() || false;
+}
 
 chores.loadServiceByNames = function(serviceMap, serviceFolder, serviceNames) {
   serviceNames = nodash.arrayify(serviceNames);
