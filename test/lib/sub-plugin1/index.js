@@ -1,7 +1,8 @@
-var lab = require("../../index");
-var devebot = lab.getDevebot();
+"use strict";
 
-module.exports = devebot.registerLayerware(__dirname, [
+const lab = require("../../index");
+
+module.exports = lab.getDevebot().registerLayerware(__dirname, [
   {
     name: "plugin1",
     path: lab.getLibHome("plugin1")

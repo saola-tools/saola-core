@@ -399,7 +399,7 @@ describe("tdd:lib:core:logging-factory", function() {
           "payload": {
             "instanceId": "dUr6BLK5Sjei7mk_yXlwlQ",
             "message": "Application Information",
-            "lib_name": "devebot",
+            "lib_name": constx.FRAMEWORK.NAMESPACE,
             "lib_version": "0.2.7",
             "os_name": "linux",
             "os_version": "4.4.0-119-generic",
@@ -416,9 +416,9 @@ describe("tdd:lib:core:logging-factory", function() {
             "blockId": "4gxTt5E2RKquSPeYXeoIjg",
             "parentKey": "instanceId",
             "parentValue": "dUr6BLK5Sjei7mk_yXlwlQ",
-            "blockName": "devebot",
+            "blockName": constx.FRAMEWORK.NAMESPACE,
             "_tags_": [
-              "devebot-metadata"
+              constx.FRAMEWORK.NAMESPACE + "-metadata"
             ]
           }
         }

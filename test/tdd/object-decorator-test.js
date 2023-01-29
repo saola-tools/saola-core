@@ -103,10 +103,17 @@ describe("tdd:lib:core:object-decorator", function() {
         objectName: "sampleObject",
         methodName: "sampleMethod"
       });
-      let output = wrappedMethod({ msg: "Welcome to devebot" }, { reqId: LogConfig.getLogID() });
+      let output = wrappedMethod({ msg: "Hello world" }, { reqId: LogConfig.getLogID() });
+      false && console.info(JSON.stringify(output, null, 2));
+      assert.deepEqual(output, {
+        "description": "Echo message",
+        "parameters": {
+          "msg": "Hello world"
+        }
+      });
       assert.equal(object.sampleMethod.callCount, 1);
       assert.equal(object.sampleMethod.firstCall.args.length, 2);
-      assert.deepEqual(object.sampleMethod.firstCall.args[0], { msg: "Welcome to devebot" });
+      assert.deepEqual(object.sampleMethod.firstCall.args[0], { msg: "Hello world" });
       assert.hasAllKeys(object.sampleMethod.firstCall.args[1], ["reqId"]);
     });
 
@@ -153,11 +160,12 @@ describe("tdd:lib:core:object-decorator", function() {
         objectName: "sampleObject",
         methodName: "sampleMethod"
       });
-      let p = wrappedMethod({ msg: "Welcome to devebot" }, { reqId: LogConfig.getLogID() });
-      p = p.then(function(result) {
+      let p = wrappedMethod({ msg: "Hello world" }, { reqId: LogConfig.getLogID() });
+      p = p.then(function(output) {
+        assert.deepEqual(output, { msg: "Hello world" });
         assert.equal(object.sampleMethod.callCount, 1);
         assert.equal(object.sampleMethod.firstCall.args.length, 2);
-        assert.deepEqual(object.sampleMethod.firstCall.args[0], { msg: "Welcome to devebot" });
+        assert.deepEqual(object.sampleMethod.firstCall.args[0], { msg: "Hello world" });
         assert.hasAllKeys(object.sampleMethod.firstCall.args[1], ["reqId"]);
         return null;
       });
@@ -208,7 +216,7 @@ describe("tdd:lib:core:object-decorator", function() {
         objectName: "sampleObject",
         methodName: "sampleMethod"
       });
-      wrappedMethod({ msg: "Welcome to devebot" }, { reqId: LogConfig.getLogID() }, function(err, value) {
+      wrappedMethod({ msg: "Hello world" }, { reqId: LogConfig.getLogID() }, function(err, value) {
         done(err, value);
       });
     });

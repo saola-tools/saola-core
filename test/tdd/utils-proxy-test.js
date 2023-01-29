@@ -391,13 +391,13 @@ describe("tdd:lib:utils:proxy", function() {
     });
 
     /*
-    devebot/node_modules/lodash/lodash.js:6400
+    /node_modules/lodash/lodash.js:6400
           proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
                                                     ^
     TypeError: 'get' on proxy: property 'prototype' is a read-only and non-configurable
     data property on the proxy target but the proxy did not return its actual value
     (expected '#<Object>' but got '[object Object]')
-    at isPrototype (/devebot/node_modules/lodash/lodash.js:6400:53)
+    at isPrototype (/node_modules/lodash/lodash.js:6400:53)
     */
     it("should not conflict with lodash collection methods (merge, assign, defaults) - object", function() {
       assert.throw(function() {

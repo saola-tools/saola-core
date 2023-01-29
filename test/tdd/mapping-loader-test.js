@@ -29,6 +29,9 @@ describe("tdd:lib:core:mapping-loader", function() {
       assert.isFunction(traverseDirRecursively);
     });
 
+    const MAPPING_DIR = ["", "home", "devebot", "example"].join(path.sep);
+    const RELATIVE_DIR = ["", "mappings"].join(path.sep);
+
     it("should standardize the directory path", function() {
       let args;
 
@@ -44,8 +47,6 @@ describe("tdd:lib:core:mapping-loader", function() {
       assert.equal(args[1], path.sep);
       traverseDirRecursively.resetHistory();
 
-      const MAPPING_DIR = ["", "home", "devebot", "example"].join(path.sep);
-
       traverseDir(MAPPING_DIR, [".js"]);
       args = traverseDirRecursively.getCall(0).args;
       assert.equal(args[0], MAPPING_DIR);
@@ -58,9 +59,6 @@ describe("tdd:lib:core:mapping-loader", function() {
       assert.equal(args[1], MAPPING_DIR);
       traverseDirRecursively.resetHistory();
     });
-
-    const MAPPING_DIR = ["", "home", "devebot", "example"].join(path.sep);
-    const RELATIVE_DIR = ["", "mappings"].join(path.sep);
 
     it("should match filenames with a RegExp", function() {
       let args;
