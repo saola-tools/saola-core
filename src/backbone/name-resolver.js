@@ -1,5 +1,7 @@
 "use strict";
 
+const util = require("util");
+
 const lodash = require("lodash");
 const LoggingWrapper = require("./logging-wrapper");
 const chores = require("../utils/chores");
@@ -147,15 +149,17 @@ module.exports = NameResolver;
 
 const LIB_NAME_PATTERNS = {
   bridge: [
-    new RegExp("^@" + FRAMEWORK_NAMESPACE + "/" + "(bridge-[a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^@" + FRAMEWORK_NAMESPACE + "/" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^" + FRAMEWORK_NAMESPACE + "-" + constx.BUILTIN.BRIDGE.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp(util.format("^%s-(%s-[a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.BRIDGE.LONG_PREFIX), "g"),
+    new RegExp(util.format("^@%s/(%s-[a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.BRIDGE.LONG_PREFIX), "g"),
+    new RegExp(util.format("^%s-%s-([a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.BRIDGE.PREFIX), "g"),
+    new RegExp(util.format("^@%s/%s-([a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.BRIDGE.PREFIX), "g"),
     /^([a-z][a-z0-9-]*[a-z0-9])$/g
   ],
   plugin: [
-    new RegExp("^@" + FRAMEWORK_NAMESPACE + "/" + "(plugin-[a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^@" + FRAMEWORK_NAMESPACE + "/" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
-    new RegExp("^" + FRAMEWORK_NAMESPACE + "-" + constx.BUILTIN.PLUGIN.PREFIX + "-([a-z][a-z0-9-]*[a-z0-9])$", "g"),
+    new RegExp(util.format("^%s-(%s-[a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.PLUGIN.LONG_PREFIX), "g"),
+    new RegExp(util.format("^@%s/(%s-[a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.PLUGIN.LONG_PREFIX), "g"),
+    new RegExp(util.format("^%s-%s-([a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.PLUGIN.PREFIX), "g"),
+    new RegExp(util.format("^@%s/%s-([a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.PLUGIN.PREFIX), "g"),
     /^([a-z][a-z0-9-]*[a-z0-9])$/g
   ]
 };

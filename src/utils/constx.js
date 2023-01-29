@@ -123,9 +123,11 @@ const CONSTANTS = {
   },
   BUILTIN: {
     BRIDGE: {
+      LONG_PREFIX: "bridge",
       PREFIX: "co"
     },
     PLUGIN: {
+      LONG_PREFIX: "plugin",
       PREFIX: "dp"
     }
   },
