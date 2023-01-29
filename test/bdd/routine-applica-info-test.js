@@ -9,6 +9,7 @@ const DevebotApi = require("devebot-api");
 
 const constx = require(lab.getDevebotModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
+const FRAMEWORK_PACKAGE_AUTHOR = "devebot";
 
 describe("bdd:api:routine:applica-info", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -75,7 +76,7 @@ describe("bdd:api:routine:applica-info", function() {
               "name": "demo-app",
               "description": "Devebot Demo Application",
               "main": "index.js",
-              "author": "devebot",
+              "author": FRAMEWORK_PACKAGE_AUTHOR,
               "license": "ISC",
               "layerware": [
                 {
@@ -83,7 +84,7 @@ describe("bdd:api:routine:applica-info", function() {
                   "name": "plugin1",
                   "description": "",
                   "main": "index.js",
-                  "author": "devebot",
+                  "author": FRAMEWORK_PACKAGE_AUTHOR,
                   "license": "ISC"
                 },
                 {
@@ -91,7 +92,7 @@ describe("bdd:api:routine:applica-info", function() {
                   "name": "plugin2",
                   "description": "",
                   "main": "index.js",
-                  "author": "devebot",
+                  "author": FRAMEWORK_PACKAGE_AUTHOR,
                   "license": "ISC"
                 }
               ],
@@ -163,7 +164,7 @@ describe("bdd:api:routine:applica-info", function() {
               "name": "demo-app",
               "description": "Devebot Demo Application",
               "main": "index.js",
-              "author": "devebot",
+              "author": FRAMEWORK_PACKAGE_AUTHOR,
               "license": "ISC",
               "layerware": [
                 {
@@ -171,7 +172,7 @@ describe("bdd:api:routine:applica-info", function() {
                   "name": "plugin1",
                   "description": "",
                   "main": "index.js",
-                  "author": "devebot",
+                  "author": FRAMEWORK_PACKAGE_AUTHOR,
                   "license": "ISC"
                 },
                 {
@@ -179,7 +180,7 @@ describe("bdd:api:routine:applica-info", function() {
                   "name": "plugin2",
                   "description": "",
                   "main": "index.js",
-                  "author": "devebot",
+                  "author": FRAMEWORK_PACKAGE_AUTHOR,
                   "license": "ISC"
                 }
               ],
