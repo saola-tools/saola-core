@@ -117,7 +117,7 @@ describe("tdd:lib:core:object-decorator", function() {
       assert.hasAllKeys(object.sampleMethod.firstCall.args[1], ["reqId"]);
     });
 
-    it("should wrap logging for a promise method correctly", function(done) {
+    it("should wrap logging for a promise method correctly", function() {
       let object = {
         sampleMethod: sinon.stub().callsFake(function() {
           return Promise.resolve(arguments[0]);
@@ -160,6 +160,7 @@ describe("tdd:lib:core:object-decorator", function() {
         objectName: "sampleObject",
         methodName: "sampleMethod"
       });
+      //
       let p = wrappedMethod({ msg: "Hello world" }, { reqId: LogConfig.getLogID() });
       p = p.then(function(output) {
         assert.deepEqual(output, { msg: "Hello world" });
@@ -169,10 +170,11 @@ describe("tdd:lib:core:object-decorator", function() {
         assert.hasAllKeys(object.sampleMethod.firstCall.args[1], ["reqId"]);
         return null;
       });
-      p.asCallback(done);
+      //
+      return p;
     });
 
-    it("should wrap logging for a callback method correctly", function(done) {
+    it("should wrap logging for a callback method correctly", function() {
       let texture = {
         methodType: "callback",
         logging: {
@@ -216,8 +218,13 @@ describe("tdd:lib:core:object-decorator", function() {
         objectName: "sampleObject",
         methodName: "sampleMethod"
       });
-      wrappedMethod({ msg: "Hello world" }, { reqId: LogConfig.getLogID() }, function(err, value) {
-        done(err, value);
+      return new Promise(function (resolve, reject) {
+        wrappedMethod({ msg: "Hello world" }, { reqId: LogConfig.getLogID() }, function(err, value) {
+          if (err) {
+            return reject(err);
+          }
+          resolve(value);
+        });
       });
     });
   });

@@ -94,9 +94,9 @@ describe("bdd:api:command:execution", function() {
     api = new DevebotApi(lab.getApiConfig());
   });
 
-  beforeEach(function(done) {
+  beforeEach(function() {
     LogTracer.reset().empty(logStats);
-    app.server.start().asCallback(done);
+    return app.server.start();
   });
 
   it("definition should contain runhook-call command", function() {
@@ -160,8 +160,8 @@ describe("bdd:api:command:execution", function() {
     });
   });
 
-  afterEach(function(done) {
-    app.server.stop().asCallback(done);
+  afterEach(function() {
+    return app.server.stop();
   });
 
   after(function() {

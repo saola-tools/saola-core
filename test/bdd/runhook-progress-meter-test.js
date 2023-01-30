@@ -28,9 +28,9 @@ describe("bdd:api:runhook:progress:meter", function() {
     chores.clearCache();
   });
 
-  beforeEach(function(done) {
+  beforeEach(function() {
     api = new DevebotApi(lab.getApiConfig());
-    app.server.start().asCallback(done);
+    return app.server.start();
   });
 
   it("direct runhook should return correct result", function() {
@@ -151,9 +151,9 @@ describe("bdd:api:runhook:progress:meter", function() {
     });
   });
 
-  afterEach(function(done) {
+  afterEach(function() {
     api = null;
-    app.server.stop().asCallback(done);
+    return app.server.stop();
   });
 });
 

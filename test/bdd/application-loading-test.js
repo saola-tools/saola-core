@@ -71,7 +71,7 @@ describe("bdd:app:application", function() {
       LogTracer.reset().empty(serverStats).empty(moduleStats);
     });
 
-    it("total of constructor startpoints must equal to constructor endpoints", function(done) {
+    it("total of constructor startpoints must equal to constructor endpoints", function() {
       app = lab.getApp("default");
       let devebotScopes = [
         FRAMEWORK_PACKAGE_NAME,
@@ -141,7 +141,7 @@ describe("bdd:app:application", function() {
         ];
       }
 
-      app.server.start()
+      return app.server.start()
         .then(function(info) {
           assert.equal(serverStats.startingCount, 3);
           return info;
@@ -174,9 +174,7 @@ describe("bdd:app:application", function() {
         })
         .then(function() {
           assert.equal(serverStats.stoppingCount, 3);
-          done();
-        })
-        .catch(done);
+        });
     });
 
     afterEach(function() {
@@ -314,13 +312,12 @@ describe("bdd:app:application", function() {
       assert.sameDeepMembers(dependencyInfo, expectedDependencies);
     });
 
-    it("[naming-convention] special plugins & bridges should be available", function(done) {
+    it("[naming-convention] special plugins & bridges should be available", function() {
       if (!chores.isUpgradeSupported("standardizing-config")) {
-        this.skip();
-        return done();
+        return this.skip();
       }
       app = lab.getApp("naming-convention/index1");
-      app.runner.invoke(function(injektor) {
+      return app.runner.invoke(function(injektor) {
         let sandboxManager = injektor.lookup("sandboxManager");
         let service1 = sandboxManager.getSandboxService("sublibService", {
           scope: "devebot-dp-wrapper1"
@@ -328,7 +325,6 @@ describe("bdd:app:application", function() {
         assert(service1.getConfig(), { port: 17741, host: "localhost" });
         let service2 = sandboxManager.getSandboxService(chores.toFullname("devebot-dp-wrapper2", "sublibService"));
         assert(service2.getConfig(), { port: 17742, host: "localhost" });
-        return done();
       });
     });
 

@@ -112,8 +112,8 @@ describe("bdd:api:routine:applica-info", function() {
       api = new DevebotApi(lab.getApiConfig());
     });
 
-    beforeEach(function(done) {
-      app.server.start().asCallback(done);
+    beforeEach(function() {
+      return app.server.start();
     });
 
     it("definition should contain [applica-info] command", function() {
@@ -191,8 +191,8 @@ describe("bdd:api:routine:applica-info", function() {
       });
     });
 
-    afterEach(function(done) {
-      app.server.stop().asCallback(done);
+    afterEach(function() {
+      return app.server.stop();
     });
   });
 });

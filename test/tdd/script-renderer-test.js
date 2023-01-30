@@ -77,8 +77,8 @@ describe("tdd:lib:core:script-renderer", function() {
       LogTracer.reset().empty(loggingStore);
     });
 
-    it("WebSocketOutlet render states exactly", function(done) {
-      Promise.mapSeries([
+    it("WebSocketOutlet render states exactly", function() {
+      return Promise.mapSeries([
         {
           state: "definition",
           supposed: {
@@ -211,7 +211,7 @@ describe("tdd:lib:core:script-renderer", function() {
         }
       ], function(item) {
         return testSend(item.state, item.supposed, item.expected);
-      }).asCallback(done);
+      });
     });
 
     after(function() {

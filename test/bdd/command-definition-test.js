@@ -18,8 +18,8 @@ describe("bdd:api:command:definition", function() {
     api = new DevebotApi(lab.getApiConfig());
   });
 
-  beforeEach(function(done) {
-    app.server.start().asCallback(done);
+  beforeEach(function() {
+    return app.server.start();
   });
 
   it("definition should contain default commands", function() {
@@ -61,7 +61,7 @@ describe("bdd:api:command:definition", function() {
     });
   });
 
-  afterEach(function(done) {
-    app.server.stop().asCallback(done);
+  afterEach(function() {
+    return app.server.stop();
   });
 });
