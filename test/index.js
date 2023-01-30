@@ -19,15 +19,15 @@ const Injektor = Devebot.require('injektor');
 const lodash = Devebot.require('lodash');
 
 // EventEmitter memory leak detecting
-var max = 12;
-var EventEmitter = require('events').EventEmitter;
+const max = 12;
+const EventEmitter = require('events').EventEmitter;
 EventEmitter.defaultMaxListeners = max;
 process.on('warning', function(e) {
   console.warn('Exception thrown with MaxListeners: %s. StackTrace:', max);
   console.warn(e.stack);
 });
 
-var lab = module.exports = {
+const lab = module.exports = {
   getApiConfig: function(ext) {
     ext = ext || {};
     return lodash.merge({
@@ -123,18 +123,18 @@ var lab = module.exports = {
 }
 
 function deleteModule(moduleName) {
-  var solvedName = require.resolve(moduleName),
+  let solvedName = require.resolve(moduleName),
     nodeModule = require.cache[solvedName];
   if (nodeModule) {
-    for (var i = 0; i < nodeModule.children.length; i++) {
-      var child = nodeModule.children[i];
+    for (let i = 0; i < nodeModule.children.length; i++) {
+      let child = nodeModule.children[i];
       deleteModule(child.filename);
     }
     delete require.cache[solvedName];
   }
 }
 
-var _initInjectedObjects = function(appName, injectedObjects) {
+const _initInjectedObjects = function(appName, injectedObjects) {
   injectedObjects = injectedObjects || {
     appName: appName || 'unknown',
     appInfo: {},
@@ -151,7 +151,7 @@ var _initInjectedObjects = function(appName, injectedObjects) {
     injectedHandlers: {},
   };
   if (appName) {
-    var app = lab.getApp(appName);
+    let app = lab.getApp(appName);
     injectedObjects.appName = app.config.appName || injectedObjects.appName;
     injectedObjects.appInfo = app.config.appInfo || injectedObjects.appInfo;
     lodash.forEach(['profile', 'sandbox', 'texture'], function(name) {
@@ -180,14 +180,14 @@ var _initInjectedObjects = function(appName, injectedObjects) {
   return injectedObjects;
 }
 
-var _attachInjectedObjects = function(injektor, injectedObjects) {
+const _attachInjectedObjects = function(injektor, injectedObjects) {
   lodash.forOwn(injectedObjects, function(injectedObject, name) {
     injektor.registerObject(name, injectedObject, chores.injektorContext);
   });
 }
 
-var _loadBackboneServices = function(injektor, names) {
-  var bbPath = path.join(lab.getDevebotHome(), 'lib/backbone');
+const _loadBackboneServices = function(injektor, names) {
+  let bbPath = path.join(lab.getDevebotHome(), 'lib/backbone');
   lodash.forOwn(chores.loadServiceByNames({}, bbPath, names), function(constructor, name) {
     injektor.defineService(name, constructor, chores.injektorContext);
   });
@@ -206,8 +206,8 @@ lab.acquire = function(moduleName) {
 }
 
 lab.initBackboneService = function(serviceName, injectedObjects) {
-  var bbPath = path.join(lab.getDevebotHome(), 'lib/backbone');
-  var injektor = new Injektor({ separator: chores.getSeparator() });
+  let bbPath = path.join(lab.getDevebotHome(), 'lib/backbone');
+  const injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   lodash.forOwn(chores.loadServiceByNames({}, bbPath, serviceName), function(constructor, name) {
     injektor.defineService(name, constructor, chores.injektorContext);
@@ -222,25 +222,25 @@ lab.extractPluginList = function(bundleList) {
 }
 
 lab.getContextManager = function(appName) {
-  var app = lab.getApp(appName);
+  let app = lab.getApp(appName);
   return app.runner.getSandboxService('contextManager', chores.injektorContext);
 }
 
 lab.createKernel = function(appName) {
-  var _config = null;
+  let _config = null;
   if (appName) {
-    var app = lab.getApp(appName);
+    let app = lab.getApp(appName);
     _config = app.config;
   }
   if (_config === null) return null;
 
-  var nameResolver = new NameResolver({issueInspector, 
+  const nameResolver = new NameResolver({issueInspector, 
     pluginList: _config.bundleList, bridgeList: _config.bridgeList});
 
-  var manifestHandler = new ManifestHandler({nameResolver, 
+    const manifestHandler = new ManifestHandler({nameResolver, 
     bundleList: _config.bundleList, bridgeList: _config.bridgeList});
 
-  var Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
+    const Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
   return new Kernel({
     configObject: _config,
     bridgeList: _config.bridgeList,
@@ -253,7 +253,7 @@ lab.createKernel = function(appName) {
 }
 
 lab.createBasicServices = function(appName, injectedObjects) {
-  var injektor = new Injektor({ separator: chores.getSeparator() });
+  const injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [ 'schema-validator', 'logging-factory' ]);
   return {
@@ -263,7 +263,7 @@ lab.createBasicServices = function(appName, injectedObjects) {
 }
 
 lab.createObjectDecorator = function(appName, injectedObjects) {
-  var injektor = new Injektor({ separator: chores.getSeparator() });
+  const injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
     'object-decorator', 'schema-validator', 'logging-factory'
@@ -272,7 +272,7 @@ lab.createObjectDecorator = function(appName, injectedObjects) {
 }
 
 lab.createBridgeLoader = function(appName, injectedObjects) {
-  var injektor = new Injektor({ separator: chores.getSeparator() });
+  const injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
     'bridge-loader', 'schema-validator', 'logging-factory', 'name-resolver', 'object-decorator'
@@ -281,7 +281,7 @@ lab.createBridgeLoader = function(appName, injectedObjects) {
 }
 
 lab.createBundleLoader = function(appName, injectedObjects) {
-  var injektor = new Injektor({ separator: chores.getSeparator() });
+  const injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
     'bundle-loader', 'name-resolver', 'schema-validator', 'logging-factory', 'object-decorator'
@@ -294,11 +294,11 @@ lab.createProcessManager = function(appName, injectedObjects) {
     profileConfig: {}
   }, injectedObjects);
   if (appName) {
-    var app = lab.getApp(appName);
+    let app = lab.getApp(appName);
     injectedObjects.profileConfig = app.config.profile.mixture;
   }
   injectedObjects.issueInspector = issueInspector;
-  var injektor = new Injektor({ separator: chores.getSeparator() });
+  const injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   _loadBackboneServices(injektor, [
     'logging-factory', 'process-manager'
@@ -307,7 +307,7 @@ lab.createProcessManager = function(appName, injectedObjects) {
 }
 
 lab.createRunhookManager = function(appName, injectedObjects) {
-  var injektor = new Injektor({ separator: chores.getSeparator() });
+  const injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
   _loadBackboneServices(injektor, [
     'runhook-manager', 'bundle-loader', 'jobqueue-binder',
@@ -317,9 +317,9 @@ lab.createRunhookManager = function(appName, injectedObjects) {
 }
 
 lab.createSandboxManager = function(appName, injectedObjects) {
-  var injektor = new Injektor({ separator: chores.getSeparator() });
+  const injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, _initInjectedObjects(appName, injectedObjects));
-  var serviceNames = [
+  let serviceNames = [
     'context-manager', 'sandbox-manager', 'bridge-loader', 'bundle-loader',
     'schema-validator', 'logging-factory', 'object-decorator', 'name-resolver',
     'process-manager'
@@ -345,12 +345,12 @@ function LoggingFactoryMock(params) {
     tracerStore.add.splice(0);
     tracerStore.toMessage.splice(0);
   }
-  var logger = {
+  let logger = {
     has: sinon.stub().returns(true),
     log: sinon.stub()
   }
-  var tracerStore = { add: [], toMessage: [] }
-  var tracer = {
+  let tracerStore = { add: [], toMessage: [] }
+  let tracer = {
     add: sinon.stub().callsFake(function(params) {
       if (params.captureMethodCall !== false) {
         tracerStore.add.push(lodash.cloneDeep(params));
@@ -378,13 +378,13 @@ lab.createLoggingFactoryMock = function(params) {
 }
 
 lab.spyModuleFunction = function(rewiredModule, functionName) {
-  var proxyFunction = sinon.spy(rewiredModule.__get__(functionName));
+  let proxyFunction = sinon.spy(rewiredModule.__get__(functionName));
   rewiredModule.__set__(functionName, proxyFunction);
   return proxyFunction;
 }
 
 lab.stubModuleFunction = function(rewiredModule, functionName) {
-  var proxyFunction = sinon.stub();
+  let proxyFunction = sinon.stub();
   rewiredModule.__set__(functionName, proxyFunction);
   return proxyFunction;
 }
@@ -394,7 +394,7 @@ lab.isUpgradeSupported = function(features) {
 }
 
 lab.simplifyCommands = function(commands) {
-  var transformCommand = function(command) {
+  function transformCommand (command) {
     command = lodash.cloneDeep(command);
     if (lodash.isFunction(lodash.get(command, 'validate', null))) {
       lodash.set(command, 'validate', '[Function]');
@@ -416,7 +416,7 @@ lab.simplifyCommands = function(commands) {
 }
 
 lab.simplifyRoutines = function(routines) {
-  var transformRoutine = function(routine) {
+  function transformRoutine (routine) {
     routine = lodash.cloneDeep(routine);
     if (lodash.isFunction(lodash.get(routine, 'object.handler', null))) {
       routine.object.handler = '[Function]';
@@ -445,8 +445,8 @@ lab.ProcessExitError = errors.createConstructor('ProcessExitError');
 lab.preventExit = function(options, block) {
   options = options || {};
 
-  var counter = 0;
-  var refExit = process.exit;
+  let counter = 0;
+  let refExit = process.exit;
 
   process.exit = function(code) {
     counter += 1;
@@ -458,7 +458,7 @@ lab.preventExit = function(options, block) {
     }
   }
 
-  var unhook = function() {
+  const unhook = function() {
     if (typeof refExit === 'function') {
       process.exit = refExit;
       refExit = null;

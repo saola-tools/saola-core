@@ -1,18 +1,18 @@
 /* global Devebot */
 "use strict";
 
-var lodash = Devebot.require("lodash");
-var dgx = Devebot.require("pinbug")("devebot:test:lab:bridge-invalid-class");
+const lodash = Devebot.require("lodash");
+const devlog = Devebot.require("pinbug")("devebot:test:lab:bridge-invalid-class");
 
-var Service = function(params) {
-  dgx.enabled && dgx(" + constructor start ...");
+const Service = function(params) {
+  devlog.enabled && devlog(" + constructor start ...");
 
   params = params || {};
 
   /* eslint-disable no-unused-vars */
   const MY_CONST = "BEGIN";
 
-  dgx.enabled && dgx(" - params: %s", JSON.stringify(params, null, 2));
+  devlog.enabled && devlog(" - params: %s", JSON.stringify(params, null, 2));
 
   this.getConfig = function() {
     return lodash.cloneDeep(params);
@@ -21,7 +21,7 @@ var Service = function(params) {
   /* eslint-disable no-const-assign */
   MY_CONST = "END";
 
-  dgx.enabled && dgx(" - constructor end!");
+  devlog.enabled && devlog(" - constructor end!");
 };
 
 module.exports = Service;
