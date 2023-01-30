@@ -1,11 +1,11 @@
 /* global Devebot */
 "use strict";
 
-var Promise = Devebot.require("bluebird");
+const Promise = Devebot.require("bluebird");
 
-var commandConfig;
+let commandConfig;
 
-var commandObject = {
+const commandObject = {
   info: {
     description: "Main Application Command2",
     options: []

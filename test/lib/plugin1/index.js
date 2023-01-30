@@ -1,5 +1,5 @@
 /* global Devebot */
-var lab = require("../../index");
+const lab = require("../../index");
 
 module.exports = Devebot.registerLayerware({
   layerRootPath: __dirname,

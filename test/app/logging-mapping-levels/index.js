@@ -1,9 +1,9 @@
 "use strict";
 
-var lab = require("../../index");
-var Devebot = lab.getDevebot();
+const lab = require("../../index");
+const Devebot = lab.getDevebot();
 
-var app = Devebot.launchApplication({
+const app = Devebot.launchApplication({
   appRootPath: __dirname
 }, [
   {

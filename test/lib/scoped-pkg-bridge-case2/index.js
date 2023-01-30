@@ -3,7 +3,7 @@
 
 const lodash = Devebot.require("lodash");
 
-var Service = function(params = {}) {
+function Service (params = {}) {
   const { logger: L, tracer: T } = this || {};
 
   L && L.has("debug") && L.log("debug", T && T.add({ data: params }).toMessage({

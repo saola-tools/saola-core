@@ -1,6 +1,6 @@
 "use strict";
 
-var lab = require("../../../index");
+const lab = require("../../../index");
 
 module.exports = {
   application: {
