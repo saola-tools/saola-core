@@ -475,7 +475,7 @@ bootstrap.initialize = function(action, options = {}) {
 
 const popularPackages = ["bluebird", "lodash", "semver"];
 const builtinPackages = ["injektor", "logolite", "schemato", "envcloak", "codetags"];
-const internalModules = ["chores", "loader", "pinbug", "errors"];
+const internalModules = ["chores", "loader", "portlet", "pinbug", "errors"];
 
 bootstrap.require = function(packageName) {
   if (popularPackages.indexOf(packageName) >= 0) return require(packageName);
