@@ -57,9 +57,9 @@ function IssueInspector (params = {}) {
   };
 
   this.barrier = function(options = {}) {
-    const silent = chores.isSilentForced("issue-inspector", options);
     const summary = this.examine(options);
     if (summary.numberOfErrors > 0) {
+      const silent = chores.isSilentForced("issue-inspector", options);
       if (!silent) {
         console.error(chalk.errorHeader("[x] There are %s error(s) occurred during load:"), summary.numberOfErrors);
         lodash.forEach(summary.failedServices, function(fsv) {
