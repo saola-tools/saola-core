@@ -368,4 +368,38 @@ describe("tdd:lib:utils:chores", function() {
       assert.deepEqual(result, expected);
     });
   });
+
+  describe("isSilentForced()", function() {
+    it("FORCING_SILENT=framework,webserver", function() {
+      chores.setEnvironments({
+        DEVEBOT_FORCING_SILENT: "framework,webserver"
+      });
+      assert.isTrue(chores.isSilentForced("framework"));
+      assert.isTrue(chores.isSilentForced(["devebot", "framework"]));
+      assert.isTrue(chores.isSilentForced(["framework", "webserver"]));
+      assert.isTrue(chores.isSilentForced("webserver"));
+      //
+      assert.isFalse(chores.isSilentForced("devebot"));
+      assert.isFalse(chores.isSilentForced("restfront"));
+    });
+  });
+
+  describe("isVerboseForced()", function() {
+    it("FORCING_SILENT=framework,webserver", function() {
+      chores.setEnvironments({
+        DEVEBOT_FORCING_SILENT: "framework,webserver"
+      });
+      assert.isFalse(chores.isVerboseForced("framework"));
+      assert.isFalse(chores.isVerboseForced(["devebot", "framework"]));
+      assert.isFalse(chores.isVerboseForced(["framework", "webserver"]));
+      assert.isFalse(chores.isVerboseForced("webserver"));
+      //
+      assert.isTrue(chores.isVerboseForced("devebot"));
+      assert.isTrue(chores.isVerboseForced("restfront"));
+    });
+    //
+    afterEach(function() {
+      chores.clearCache();
+    });
+  });
 });

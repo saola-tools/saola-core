@@ -153,6 +153,8 @@ const LIB_NAME_PATTERNS = {
     new RegExp(util.format("^@%s/(%s-[a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.BRIDGE.LONG_PREFIX), "g"),
     new RegExp(util.format("^%s-%s-([a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.BRIDGE.PREFIX), "g"),
     new RegExp(util.format("^@%s/%s-([a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.BRIDGE.PREFIX), "g"),
+    new RegExp(util.format("^%s-%s-([a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.BRIDGE.ALIAS), "g"),
+    new RegExp(util.format("^@%s/%s-([a-z][a-z0-9-]*[a-z0-9])$", FRAMEWORK_NAMESPACE, constx.BUILTIN.BRIDGE.ALIAS), "g"),
     /^([a-z][a-z0-9-]*[a-z0-9])$/g
   ],
   plugin: [

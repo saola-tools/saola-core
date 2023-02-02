@@ -98,7 +98,7 @@ function Server (params = {}) {
           const proto = sslEnabled ? "wss" : "ws";
           const host = serverInstance.address().address;
           const port = serverInstance.address().port;
-          chores.isVerboseForced(FRAMEWORK_NAMESPACE, frameworkCfg) &&
+          chores.isVerboseForced(["framework", FRAMEWORK_NAMESPACE], frameworkCfg) &&
               console.info("%s is listening on %s://%s:%s%s", appName, proto, host, port, appRootUrl);
           resolve(serverInstance);
         });
@@ -157,7 +157,7 @@ function Server (params = {}) {
         tags: [ blockRef, "close()", "webserver-stopped" ],
         text: "webserver has stopped"
       }));
-      chores.isVerboseForced(FRAMEWORK_NAMESPACE, frameworkCfg) &&
+      chores.isVerboseForced(["framework", FRAMEWORK_NAMESPACE], frameworkCfg) &&
           console.info("%s has been closed", appName);
       return Promise.resolve();
     });

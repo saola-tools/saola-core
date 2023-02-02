@@ -123,6 +123,7 @@ const CONSTANTS = {
   },
   BUILTIN: {
     BRIDGE: {
+      ALIAS: "linker",
       LONG_PREFIX: "bridge",
       PREFIX: "co"
     },

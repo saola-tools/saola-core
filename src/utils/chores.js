@@ -392,14 +392,30 @@ chores.skipProcessExit = function() {
   return envbox.getEnv("SKIP_PROCESS_EXIT") === "true";
 };
 
-chores.isSilentForced = function(moduleId, cfg) {
+chores.isSilentForced = function(moduleIds, cfg) {
   const fsm = envbox.getEnv("FORCING_SILENT");
-  return (fsm.indexOf(moduleId) >= 0) || (cfg && cfg.verbose === false);
+  //
+  moduleIds = nodash.stringToArray(moduleIds);
+  for (let moduleId of moduleIds) {
+    if (fsm.indexOf(moduleId) >= 0) {
+      return true;
+    }
+  }
+  //
+  return (cfg && cfg.verbose === false || false);
 };
 
-chores.isVerboseForced = function(moduleId, cfg) {
+chores.isVerboseForced = function(moduleIds, cfg) {
   const fvm = envbox.getEnv("FORCING_VERBOSE");
-  return (fvm.indexOf(moduleId) >= 0) || !this.isSilentForced(moduleId, cfg);
+  //
+  moduleIds = nodash.stringToArray(moduleIds);
+  for (let moduleId of moduleIds) {
+    if (fvm.indexOf(moduleId) >= 0) {
+      return true;
+    }
+  }
+  //
+  return !this.isSilentForced(moduleIds, cfg);
 };
 
 chores.setEnvironments = function(envMap) {
