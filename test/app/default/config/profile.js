@@ -1,5 +1,9 @@
 module.exports = {
   devebot: {
+    hashtags: {
+      application: 9,
+      framework: 9
+    },
     verbose: false,
     jobqueue: {
       enabled: true

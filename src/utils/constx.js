@@ -608,6 +608,10 @@ const CONSTANTS = {
       tag: "optimization-mode",
       enabled: true,
     },
+    {
+      tag: "profile-config-field-framework",
+      enabled: true,
+    },
   ],
   LOADING: {
     DELETE_OLD_REFERENCE_ALIAS: false

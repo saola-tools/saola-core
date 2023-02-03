@@ -9,12 +9,13 @@ const expect = require("chai").expect;
 describe("bdd:app:configuration", function() {
   this.timeout(lab.getDefaultTimeout());
   let app;
+  //
   describe("default configuration (without profile & sandbox)", function() {
     before(function() {
       app = lab.getApp("default");
     });
 
-    it("configuration has been loaded correctly", function() {
+    it("appInfo has been loaded correctly", function() {
       return app.runner.invoke(function(injektor) {
         let appInfo = injektor.lookup("appInfo");
         debugx.enabled && debugx("appInfo: %s", JSON.stringify(appInfo, null, 2));
@@ -49,18 +50,34 @@ describe("bdd:app:configuration", function() {
             }
           ]
         });
+      });
+    });
 
+    it("profileConfig has been loaded correctly", function() {
+      return app.runner.invoke(function(injektor) {
         let profileConfig = injektor.lookup("profileConfig");
         debugx.enabled && debugx("profileConfig: %s", JSON.stringify(profileConfig, null, 2));
-        expect(profileConfig)
-          .to.be.an("object")
-          .to.include.all.keys("devebot", "logger", "newFeatures");
+        //
+        if (chores.isUpgradeSupported("profile-config-field-framework")) {
+          expect(profileConfig)
+            .to.be.an("object")
+            .to.include.all.keys("framework", "logger", "newFeatures")
+            .to.not.contain.all.keys("devebot");
+        } else {
+          expect(profileConfig)
+            .to.be.an("object")
+            .to.include.all.keys("devebot", "logger", "newFeatures")
+            .to.not.contain.all.keys("framework");
+        }
+        //
         expect(chores.getFrameworkProfileConfig(profileConfig))
           .to.be.an("object")
           .to.include.all.keys("host", "port", "authen", "tunnel");
+        //
         expect(chores.getFrameworkProfileConfig(profileConfig, ["authen"]))
           .to.be.an("object")
           .to.include.all.keys("disabled", "tokenStoreFile");
+        //
         expect(chores.getFrameworkProfileConfig(profileConfig, ["tunnel"]))
           .to.be.an("object")
           .to.include.all.keys("enabled", "key_file", "crt_file");
