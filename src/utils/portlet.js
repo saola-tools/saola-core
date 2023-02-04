@@ -23,7 +23,7 @@ function createPortletifier () {
     //
     this.getPortletBaseConfig = function() {
       return sandboxBaseConfig;
-    }
+    };
   }
   //
   return Service;
@@ -34,10 +34,19 @@ function getPortletDescriptors (sandboxConfig, selectedPortlets) {
 }
 
 function _filterPortletDescriptors (pluginConfig, selectedPortlets) {
-  const portletDescriptors = lodash.get(pluginConfig, PORTLETS_COLLECTION_NAME);
+  let portletDescriptors = lodash.get(pluginConfig, PORTLETS_COLLECTION_NAME);
   if (lodash.isArray(selectedPortlets)) {
-    return lodash.pick(portletDescriptors, selectedPortlets);
+    portletDescriptors = lodash.pick(portletDescriptors, selectedPortlets);
   }
+  //
+  const ok = strictPortletConfig(portletDescriptors);
+  if (!ok) {
+    throw newError("DuplicatedPortsInDescriptors", {
+      message: "pluginConfig.portlets has duplicated ports",
+      payload: {}
+    });
+  }
+  //
   return portletDescriptors;
 }
 
@@ -71,6 +80,29 @@ function portletifyConfig (sandboxConfig, globalFieldNames) {
   }
   //
   return sandboxConfig;
+}
+
+function strictPortletConfig (portlets) {
+  const counter = {};
+  for (let portletId in portlets) {
+    const portletDescriptor = portlets[portletId];
+    if (lodash.get(portletDescriptor, "enabled") == false) {
+      continue;
+    }
+    if (lodash.get(portletDescriptor, ["__metadata__", "enabled"]) == false) {
+      continue;
+    }
+    if (lodash.has(portletDescriptor, "port")) {
+      const counterId = "" + portletDescriptor.port;
+      counter[counterId] = counter[counterId] ? counter[counterId] + 1 : 0;
+    }
+  }
+  //
+  const dup = lodash.filter(lodash.values(counter), function(count) {
+    return count > 1;
+  });
+  //
+  return lodash.size(dup) == 0;
 }
 
 /**
@@ -243,5 +275,6 @@ module.exports = {
   createPortletifier,
   getPortletDescriptors,
   portletifyConfig,
+  strictPortletConfig,
   PortletMixiner,
 };

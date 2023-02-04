@@ -9,7 +9,7 @@ const { assert, mockit, sinon } = require("liberica");
 
 const portlet = require("../../src/utils/portlet");
 const { PortletMixiner } = portlet;
-const { portletifyConfig, getPortletDescriptors, createPortletifier } = portlet;
+const { portletifyConfig, strictPortletConfig, getPortletDescriptors, createPortletifier } = portlet;
 
 describe("supports/portlet", function() {
   const loggingFactory = mockit.createLoggingFactoryMock({ captureMethodCall: false });
@@ -116,6 +116,89 @@ describe("supports/portlet", function() {
       };
       //
       assert.deepEqual(portletifyConfig(sandboxConfig), expected);
+    });
+  });
+
+  describe("strictPortletConfig", function() {
+    it("pass #1", function() {
+      const portletConfig = {};
+      assert.isTrue(strictPortletConfig(portletConfig));
+    });
+    //
+    it("pass #2", function() {
+      const portletConfig = {
+        "default": {
+          "contextPath": "/",
+        },
+        "manager": {
+          "contextPath": "/manager",
+        }
+      };
+      assert.isTrue(strictPortletConfig(portletConfig));
+    });
+    //
+    it("pass #3", function() {
+      const portletConfig = {
+        "default": {
+          "contextPath": "/",
+        },
+        "manager": {
+          "host": "0.0.0.0",
+          "port": 9696
+        }
+      };
+      assert.isTrue(strictPortletConfig(portletConfig));
+    });
+    //
+    it("pass #4", function() {
+      const portletConfig = {
+        "default": {
+          "contextPath": "/",
+        },
+        "manager": {
+          "host": "0.0.0.0",
+          "port": 9696
+        },
+        "monitor": {
+          "host": "0.0.0.0",
+          "port": 9797
+        }
+      };
+      assert.isTrue(strictPortletConfig(portletConfig));
+    });
+    //
+    it("fail #1", function() {
+      const portletConfig = {
+        "default": {
+          "contextPath": "/",
+        },
+        "manager": {
+          "host": "0.0.0.0",
+          "port": 9696
+        },
+        "monitor": {
+          "host": "0.0.0.0",
+          "port": 9696
+        }
+      };
+      assert.isTrue(strictPortletConfig(portletConfig));
+    });
+    //
+    it("fail #2", function() {
+      const portletConfig = {
+        "default": {
+          "contextPath": "/",
+        },
+        "manager": {
+          "host": "0.0.0.0",
+          "port": "9696"
+        },
+        "monitor": {
+          "host": "0.0.0.0",
+          "port": 9696
+        }
+      };
+      assert.isTrue(strictPortletConfig(portletConfig));
     });
   });
 
