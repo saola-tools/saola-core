@@ -7,6 +7,7 @@ const minimist = require("minimist");
 const appinfoLoader = require("./backbone/appinfo-loader");
 const IssueInspector = require("./backbone/issue-inspector");
 const StateInspector = require("./backbone/state-inspector");
+const PackageStocker = require("./backbone/package-stocker");
 const ManifestHandler = require("./backbone/manifest-handler");
 const ConfigLoader = require("./backbone/config-loader");
 const ContextManager = require("./backbone/context-manager");
@@ -19,9 +20,11 @@ const errors = require("./utils/errors");
 const nodash = require("./utils/nodash");
 const Runner = require("./runner");
 const Server = require("./server");
+
 const blockRef = chores.getBlockRef(__filename);
 const issueInspector = IssueInspector.instance;
 const stateInspector = StateInspector.instance;
+const packageStocker = PackageStocker.instance;
 
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
@@ -473,17 +476,7 @@ bootstrap.initialize = function(action, options = {}) {
   return this;
 };
 
-const popularPackages = ["bluebird", "lodash", "semver"];
-const builtinPackages = ["injektor", "logolite", "schemato", "envcloak", "codetags"];
-const internalModules = ["chores", "loader", "portlet", "pinbug", "errors"];
-
-bootstrap.require = function(packageName) {
-  if (popularPackages.indexOf(packageName) >= 0) return require(packageName);
-  if (builtinPackages.indexOf(packageName) >= 0) return require(packageName);
-  if (internalModules.indexOf(packageName) >= 0) return require("./utils/" + packageName);
-  if (packageName == "debug") return require("./utils/pinbug");
-  return null;
-};
+bootstrap.require = packageStocker.require.bind(packageStocker);
 
 function locatePackage ({issueInspector} = {}, pkgInfo, pkgType) {
   chores.assertOk(issueInspector, pkgInfo, pkgInfo.name, pkgInfo.type || pkgType, pkgInfo.path);
