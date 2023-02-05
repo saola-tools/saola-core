@@ -476,7 +476,12 @@ bootstrap.initialize = function(action, options = {}) {
   return this;
 };
 
+bootstrap.declare = packageStocker.declare.bind(packageStocker);
+
+// @Deprecated
 bootstrap.require = packageStocker.require.bind(packageStocker);
+
+bootstrap.modules = packageStocker.modules;
 
 function locatePackage ({issueInspector} = {}, pkgInfo, pkgType) {
   chores.assertOk(issueInspector, pkgInfo, pkgInfo.name, pkgInfo.type || pkgType, pkgInfo.path);

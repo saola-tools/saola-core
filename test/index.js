@@ -12,6 +12,7 @@ const NameResolver = require('../lib/backbone/name-resolver');
 const ManifestHandler = require('../lib/backbone/manifest-handler');
 const issueInspector = require('../lib/backbone/issue-inspector').instance;
 const stateInspector = require('../lib/backbone/state-inspector').instance;
+const packageStocker = require('../lib/backbone/package-stocker').instance;
 const Devebot = require(path.join(__dirname, '../'));
 const LogConfig = Devebot.require('logolite').LogConfig;
 const LogTracer = Devebot.require('logolite').LogTracer;
@@ -94,6 +95,9 @@ const lab = module.exports = {
   },
   getStateInspector: function() {
     return stateInspector;
+  },
+  getPackageStocker: function() {
+    return packageStocker;
   },
   getNameResolver: function(pluginDescriptors, bridgeDescriptors) {
     return new NameResolver({
