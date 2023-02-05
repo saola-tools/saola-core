@@ -4,7 +4,7 @@
 const Promise = Devebot.require("bluebird");
 const lodash = Devebot.require("lodash");
 const chores = Devebot.require("chores");
-const devlog = Devebot.require("pinbug")("devebot:test:lab:main:mainTrigger");
+const devlog = Devebot.require("pinbug")("test:app:invalid-plugin-config:mainTrigger");
 const http = require("http");
 const util = require("util");
 

@@ -2,7 +2,7 @@
 "use strict";
 
 const lodash = Devebot.require("lodash");
-const devlog = Devebot.require("pinbug")("devebot:test:lab:main:mainService");
+const devlog = Devebot.require("pinbug")("test:app:invalid-plugin-trigger-methods:mainService");
 
 const Service = function(params) {
   devlog.enabled && devlog(" + constructor begin ...");
