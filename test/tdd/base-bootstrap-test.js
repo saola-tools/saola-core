@@ -854,7 +854,7 @@ describe("tdd:lib:base:bootstrap", function() {
         {
           "type": "bridge",
           "name": "devebot-co-connector1",
-          "path": "/test/lib/devebot-co-connector1",
+          "path": "/test/lib/framework-co-connector1",
           "code": "connector1",
           "codeInCamel": "connector1",
           "nameInCamel": "devebotCoConnector1",
@@ -864,7 +864,7 @@ describe("tdd:lib:base:bootstrap", function() {
         {
           "type": "bridge",
           "name": "devebot-co-connector2",
-          "path": "/test/lib/devebot-co-connector2",
+          "path": "/test/lib/framework-co-connector2",
           "code": "connector2",
           "codeInCamel": "connector2",
           "nameInCamel": "devebotCoConnector2",

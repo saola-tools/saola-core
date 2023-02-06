@@ -151,17 +151,17 @@ describe("tdd:lib:utils:chores", function() {
   describe("extractCodeByPattern()", function() {
     it("should extract code by pattern from name correctly", function() {
       const BRIDGE_NAME_PATTERNS = [
-        /^devebot-co-([a-z][a-z0-9\-]*[a-z0-9])$/g,
+        /^example-co-([a-z][a-z0-9\-]*[a-z0-9])$/g,
         /^([a-z][a-z0-9\-]*[a-z0-9])$/g
       ];
       assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "hello-world"), { i: 1, code: "hello-world" });
       assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "hello_world"), { i: -1, code: "hello_world" });
-      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "devebot-co"), { i: 1, code: "devebot-co" });
-      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "devebot-co-"), { i: -1, code: "devebot-co-" });
-      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "devebot-co-hello-world"), { i: 0, code: "hello-world" });
-      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "devebot-co-hello_world"), { i: -1, code: "devebot-co-hello_world" });
-      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "devebot-co-top-s3cr3t"), { i: 0, code: "top-s3cr3t" });
-      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "devebot-co-your-5ecret"), { i: 0, code: "your-5ecret" });
+      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "example-co"), { i: 1, code: "example-co" });
+      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "example-co-"), { i: -1, code: "example-co-" });
+      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "example-co-hello-world"), { i: 0, code: "hello-world" });
+      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "example-co-hello_world"), { i: -1, code: "example-co-hello_world" });
+      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "example-co-top-s3cr3t"), { i: 0, code: "top-s3cr3t" });
+      assert.deepEqual(chores.extractCodeByPattern(BRIDGE_NAME_PATTERNS, "example-co-your-5ecret"), { i: 0, code: "your-5ecret" });
     });
   });
 

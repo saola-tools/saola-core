@@ -21,7 +21,7 @@ const app = Devebot.initialize("tasks").launchApplication({
 ], [
   {
     name: "devebot-co-adapter",
-    path: lab.getLibHome("devebot-co-adapter")
+    path: lab.getLibHome("framework-co-adapter")
   },
   {
     name: "bridge4",

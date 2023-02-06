@@ -240,7 +240,7 @@ describe("tdd:lib:core:manifest-handler", function() {
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper1",
-          "path": lab.getLibHome("devebot-dp-wrapper1"),
+          "path": lab.getLibHome("framework-dp-wrapper1"),
           "presets": {},
           "bridgeDepends": [],
           "pluginDepends": [],
@@ -268,7 +268,7 @@ describe("tdd:lib:core:manifest-handler", function() {
         {
           "type": "plugin",
           "name": "devebot-dp-wrapper2",
-          "path": lab.getLibHome("devebot-dp-wrapper2"),
+          "path": lab.getLibHome("framework-dp-wrapper2"),
           "presets": {},
           "bridgeDepends": [],
           "pluginDepends": [],

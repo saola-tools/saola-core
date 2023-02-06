@@ -73,7 +73,7 @@ describe("bdd:app:application", function() {
 
     it("total of constructor startpoints must equal to constructor endpoints", function() {
       app = lab.getApp("default");
-      let devebotScopes = [
+      let frameworkScopes = [
         FRAMEWORK_PACKAGE_NAME,
         chores.toFullname(FRAMEWORK_PACKAGE_NAME, "bootstrap"),
         chores.toFullname(FRAMEWORK_PACKAGE_NAME, "appinfoLoader"),
@@ -97,7 +97,7 @@ describe("bdd:app:application", function() {
         chores.toFullname(FRAMEWORK_PACKAGE_NAME, "repeatedTimer")
       ];
       if (chores.isUpgradeSupported("builtin-mapping-loader")) {
-        devebotScopes.push(chores.toFullname(FRAMEWORK_PACKAGE_NAME, "mappingLoader"));
+        frameworkScopes.push(chores.toFullname(FRAMEWORK_PACKAGE_NAME, "mappingLoader"));
       }
       let plugin1Scopes = [
         chores.toFullname("plugin1", "plugin1Service"),
@@ -157,13 +157,13 @@ describe("bdd:app:application", function() {
           // block 'bootstrap' appears 3 times
           metadata = lodash.uniq(metadata);
           false && console.info(JSON.stringify(metadata, null, 2));
-          assert.includeMembers(metadata, devebotScopes);
+          assert.includeMembers(metadata, frameworkScopes);
           assert.includeMembers(metadata, plugin1Scopes);
           assert.includeMembers(metadata, plugin2Scopes);
           assert.includeMembers(metadata, bridge1Scopes);
           assert.includeMembers(metadata, bridge2Scopes);
           false && assert.includeMembers(metadata, mainScopes);
-          assert.equal(metadata.length, devebotScopes.length +
+          assert.equal(metadata.length, frameworkScopes.length +
               plugin1Scopes.length + plugin2Scopes.length +
               bridge1Scopes.length + bridge2Scopes.length);
           return info;

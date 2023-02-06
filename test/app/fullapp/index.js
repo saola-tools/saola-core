@@ -25,11 +25,11 @@ const app = Devebot.launchApplication({
   },
   {
     name: "devebot-co-connector1",
-    path: lab.getLibHome("devebot-co-connector1")
+    path: lab.getLibHome("framework-co-connector1")
   },
   {
     name: "devebot-co-connector2",
-    path: lab.getLibHome("devebot-co-connector2")
+    path: lab.getLibHome("framework-co-connector2")
   }
 ]);
 
