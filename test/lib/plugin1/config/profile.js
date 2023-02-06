@@ -1,5 +1,5 @@
 module.exports = {
-  devebot: {
+  framework: {
     hashtags: {
       plugin1: 1,
       framework: 1

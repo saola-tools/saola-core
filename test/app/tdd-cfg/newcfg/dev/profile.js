@@ -1,5 +1,5 @@
 module.exports = {
-  devebot: {
+  framework: {
     verbose: false,
     mode: "silent",
     jobqueue: {

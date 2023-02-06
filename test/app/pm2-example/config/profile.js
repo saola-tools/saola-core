@@ -1,5 +1,5 @@
 module.exports = {
-  devebot: {
+  framework: {
     verbose: true,
     mode: "tictac",
     jobqueue: {

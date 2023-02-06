@@ -5,7 +5,7 @@ const http = require("http");
 const Promise = Devebot.require("bluebird");
 const lodash = Devebot.require("lodash");
 const chores = Devebot.require("chores");
-const debugx = Devebot.require("pinbug")("devebot:test:lab:main:mainTrigger");
+const debugx = Devebot.require("pinbug")("test:app:setting-with-metadata:mainTrigger");
 
 const Service = function(params={}) {
   const packageName = params.packageName || "setting-with-metadata";

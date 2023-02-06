@@ -1,5 +1,5 @@
 module.exports = {
-  devebot: {
+  framework: {
     hashtags: {
       application: 9,
       framework: 9
