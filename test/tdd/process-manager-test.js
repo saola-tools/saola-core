@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const assert = require("chai").assert;
 const path = require("path");
 const util = require("util");

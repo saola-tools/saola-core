@@ -1,11 +1,11 @@
 "use strict";
 
 const lab = require("..");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const lodash = Devebot.require("lodash");
 const chores = Devebot.require("chores");
 const assert = require("chai").assert;
-const BeanProxy = require(lab.getDevebotModule("utils/proxy"));
+const BeanProxy = require(lab.getFrameworkModule("utils/proxy"));
 
 describe("tdd:lib:utils:proxy", function() {
   describe("BeanProxy ~ normal proxy", function() {

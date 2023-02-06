@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const chores = Devebot.require("chores");
 const assert = require("chai").assert;
 
@@ -24,7 +24,11 @@ describe("tdd:lib:core:package-stocker", function() {
     it("declares a public package (minimist) successfully", function() {
       packageStocker.declare("minimist");
       //
+      const { minimist } = packageStocker.modules;
+      //
       const parseArgs = packageStocker.require("minimist");
+      assert.isOk(minimist === parseArgs);
+      //
       const args = parseArgs('one two three -- four five --six'.split(' '), { '--': true });
       false && console.info(JSON.stringify(args, null, 2));
       assert.deepEqual(args, {

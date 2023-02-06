@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const chores = Devebot.require("chores");
 const debugx = Devebot.require("pinbug")("bdd:devebot:core:configuration");
 const expect = require("chai").expect;

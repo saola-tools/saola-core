@@ -16,18 +16,18 @@ Replace by:
 chores.isUpgradeSupported($1)
 ```
 
-### Replace `acquireDevebotModule`
+### Replace `acquireFrameworkModule`
 
 Search pattern:
 
 ```regexp
-rewire\(lab\.getDevebotModule\('(.*)'\)\)
+rewire\(lab\.getFrameworkModule\('(.*)'\)\)
 ```
 
 Replace by:
 
 ```plain
-lab.acquireDevebotModule('$1')
+lab.acquireFrameworkModule('$1')
 ```
 
 ## Examples
@@ -44,4 +44,12 @@ node test/app/setting-with-metadata/ --tasks=print-config
 ```shell
 export DEBUG=devebot*,app*
 export LOGOLITE_DEBUGLOG_ENABLED=true
+```
+
+### Turns on/off the features
+
+```shell
+DEVEBOT_UPGRADE_ENABLED=metadata-refiner \
+DEVEBOT_UPGRADE_DISABLED=manifest-refiner \
+npm run test
 ```

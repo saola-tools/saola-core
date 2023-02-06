@@ -1,15 +1,15 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
 const loader = Devebot.require("loader");
 const assert = require("chai").assert;
 const path = require("path");
-const ConfigLoader = require(lab.getDevebotModule("backbone/config-loader"));
-const NameResolver = require(lab.getDevebotModule("backbone/name-resolver"));
-const ManifestHandler = require(lab.getDevebotModule("backbone/manifest-handler"));
+const ConfigLoader = require(lab.getFrameworkModule("backbone/config-loader"));
+const NameResolver = require(lab.getFrameworkModule("backbone/name-resolver"));
+const ManifestHandler = require(lab.getFrameworkModule("backbone/manifest-handler"));
 const Envcloak = require("envcloak");
 const envcloak = Envcloak.instance;
 const sinon = require("sinon");
@@ -34,7 +34,7 @@ describe("tdd:lib:core:config-loader", function() {
   let frameworkRef = {
     name: "devebot",
     type: "framework",
-    path: lab.getDevebotHome()
+    path: lab.getFrameworkHome()
   };
 
   let pluginRefs = {
@@ -68,7 +68,7 @@ describe("tdd:lib:core:config-loader", function() {
   let stepEnv = new Envcloak();
 
   describe("readVariable(): read environment variables", function() {
-    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let readVariable = ConfigLoader.__get__("readVariable");
     assert.isFunction(readVariable);
 
@@ -122,7 +122,7 @@ describe("tdd:lib:core:config-loader", function() {
   });
 
   describe("extractEnvironConfig(): extract the configuration from the environment variables", function() {
-    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let extractEnvironConfig = ConfigLoader.__get__("extractEnvironConfig");
 
     it("support both default and customized prefixes", function() {
@@ -154,7 +154,7 @@ describe("tdd:lib:core:config-loader", function() {
   });
 
   describe("fillConfigByEnvVars(): load the configuration from the environment variables", function() {
-    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let fillConfigByEnvVars = ConfigLoader.__get__("fillConfigByEnvVars");
 
     it("support both default and customized prefixes", function() {
@@ -227,11 +227,11 @@ describe("tdd:lib:core:config-loader", function() {
   });
 
   describe("transformConfig(): standardizing loaded configuration data", function() {
-    let NameResolver = lab.acquireDevebotModule("backbone/name-resolver");
+    let NameResolver = lab.acquireFrameworkModule("backbone/name-resolver");
     let extractAliasNames = NameResolver.__get__("extractAliasNames");
     let buildAbsoluteAliasMap = NameResolver.__get__("buildAbsoluteAliasMap");
     let buildRelativeAliasMap = NameResolver.__get__("buildRelativeAliasMap");
-    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let applyAliasMap = ConfigLoader.__get__("applyAliasMap");
     let doAliasMap = ConfigLoader.__get__("doAliasMap");
     let transformConfig = ConfigLoader.__get__("transformConfig");
@@ -500,7 +500,7 @@ describe("tdd:lib:core:config-loader", function() {
   });
 
   describe("extractConfigManifest()", function() {
-    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let extractConfigManifest = ConfigLoader.__get__("extractConfigManifest");
     let nameResolver = lab.getNameResolver(["sub-plugin1", "sub-plugin2"], ["sub-bridge1", "sub-bridge2", "devebot-co-vps"]);
     let ctx = { nameResolver: nameResolver };
@@ -677,7 +677,7 @@ describe("tdd:lib:core:config-loader", function() {
   });
 
   describe("applyManifestMigration() - for sandbox only", function() {
-    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let applyManifestMigration = ConfigLoader.__get__("applyManifestMigration");
     let nameResolver = lab.getNameResolver(["sub-plugin1", "sub-plugin2", "sub-plugin3"], []);
     let loggingFactory = lab.createLoggingFactoryMock();
@@ -799,7 +799,7 @@ describe("tdd:lib:core:config-loader", function() {
   });
 
   describe("modernizeConfig(): upgrade the old configuration to current version - for sandbox only", function() {
-    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let modernizeConfig = ConfigLoader.__get__("modernizeConfig");
     let nameResolver = lab.getNameResolver(["simple-plugin"], ["simple-bridge"]);
     let loggingFactory = lab.createLoggingFactoryMock();
@@ -1558,7 +1558,7 @@ describe("tdd:lib:core:config-loader", function() {
       });
     });
 
-    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let convertPreciseConfig = ConfigLoader.__get__("convertPreciseConfig");
     let RELOADING_FORCED = ConfigLoader.__get__("RELOADING_FORCED");
 
@@ -1736,7 +1736,7 @@ describe("tdd:lib:core:config-loader", function() {
   });
 
   describe("ConfigLoader.load(): propagates a method call to local functions", function() {
-    let ConfigLoader = lab.acquireDevebotModule("backbone/config-loader");
+    let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let loadConfig = lab.stubModuleFunction(ConfigLoader, "loadConfig");
     let validateConfig = sinon.spy(manifestHandler, "validateConfig");
 
@@ -1804,7 +1804,7 @@ describe("tdd:lib:core:config-loader", function() {
       let profileConfigExpected = lodash.defaultsDeep(
         sanitize(loader(path.join(lab.getLibCfgDir("plugin1"), "profile.js"))),
         sanitize(loader(path.join(lab.getLibCfgDir("plugin2"), "profile.js"))),
-        sanitize(loader(path.join(lab.getDevebotCfgDir(), "profile.js"))),
+        sanitize(loader(path.join(lab.getFrameworkCfgDir(), "profile.js"))),
         {});
       assert.deepEqual(lodash.get(config, "profile.default"), profileConfigExpected);
 
@@ -1814,7 +1814,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.defaultsDeep(
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           {}));
       assert.deepEqual(lodash.get(config, "sandbox.mixture"), {});
     });
@@ -1830,7 +1830,7 @@ describe("tdd:lib:core:config-loader", function() {
           sanitize(loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin1"), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin2"), "profile.js"))),
-          sanitize(loader(path.join(lab.getDevebotCfgDir(), "profile.js"))),
+          sanitize(loader(path.join(lab.getFrameworkCfgDir(), "profile.js"))),
           {}));
       assert.deepEqual(lodash.get(config, "profile.mixture"),
           lodash.get(config, "profile.default"));
@@ -1841,7 +1841,7 @@ describe("tdd:lib:core:config-loader", function() {
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           {}));
       assert.deepEqual(lodash.get(config, "sandbox.mixture"),
           lodash.get(config, "sandbox.default"));
@@ -1867,7 +1867,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepInclude(
         lodash.get(config, "profile.default"),
         lodash.merge({},
-          sanitize(loader(path.join(lab.getDevebotCfgDir(), "profile.js"))),
+          sanitize(loader(path.join(lab.getFrameworkCfgDir(), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin2"), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin1"), "profile.js"))),
           sanitize(loader(path.join(lab.getAppCfgDir("tdd-cfg", "newcfg/dev"), "profile.js"))),
@@ -1884,7 +1884,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "sandbox.default"),
         lodash.merge({},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -1924,7 +1924,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "profile.default"),
         lodash.merge({},
-          sanitize(loader(path.join(lab.getDevebotCfgDir(), "profile.js"))),
+          sanitize(loader(path.join(lab.getFrameworkCfgDir(), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin2"), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin1"), "profile.js"))),
           sanitize(loader(path.join(lab.getAppCfgDir("tdd-cfg", "newcfg/dev"), "profile.js"))),
@@ -1941,7 +1941,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "sandbox.default"),
         lodash.merge({},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -1954,7 +1954,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -1972,7 +1972,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "newcfg/dev"), "sandbox.js")),
@@ -1990,7 +1990,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox_private1.js")),
@@ -2008,7 +2008,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -2026,7 +2026,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -2044,7 +2044,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -2069,7 +2069,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "profile.default"),
         lodash.merge({},
-          sanitize(loader(path.join(lab.getDevebotCfgDir(), "profile.js"))),
+          sanitize(loader(path.join(lab.getFrameworkCfgDir(), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin2"), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin1"), "profile.js"))),
           sanitize(loader(path.join(lab.getAppCfgDir("tdd-cfg", "newcfg/dev"), "profile.js"))),
@@ -2087,7 +2087,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -2113,7 +2113,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "profile.default"),
         lodash.merge({},
-          sanitize(loader(path.join(lab.getDevebotCfgDir(), "profile.js"))),
+          sanitize(loader(path.join(lab.getFrameworkCfgDir(), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin2"), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin1"), "profile.js"))),
           sanitize(loader(path.join(lab.getAppCfgDir("tdd-cfg", "newcfg/dev"), "profile.js"))),
@@ -2131,7 +2131,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -2158,7 +2158,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "profile.default"),
         lodash.merge({},
-          sanitize(loader(path.join(lab.getDevebotCfgDir(), "profile.js"))),
+          sanitize(loader(path.join(lab.getFrameworkCfgDir(), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin2"), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin1"), "profile.js"))),
           sanitize(loader(path.join(lab.getAppCfgDir("tdd-cfg", "newcfg/dev"), "profile.js"))),
@@ -2176,7 +2176,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -2202,7 +2202,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "profile.default"),
         lodash.merge({},
-          sanitize(loader(path.join(lab.getDevebotCfgDir(), "profile.js"))),
+          sanitize(loader(path.join(lab.getFrameworkCfgDir(), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin2"), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin1"), "profile.js"))),
           sanitize(loader(path.join(lab.getAppCfgDir("tdd-cfg", "newcfg/dev"), "profile.js"))),
@@ -2220,7 +2220,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -2239,7 +2239,7 @@ describe("tdd:lib:core:config-loader", function() {
         lodash.get(config, "sandbox.mixture"),
         lodash.merge(
           {},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg", "config"), "sandbox.js")),
@@ -2292,7 +2292,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "profile.default"),
         lodash.merge({},
-          sanitize(loader(path.join(lab.getDevebotCfgDir(), "profile.js"))),
+          sanitize(loader(path.join(lab.getFrameworkCfgDir(), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin2"), "profile.js"))),
           sanitize(loader(path.join(lab.getLibCfgDir("plugin1"), "profile.js"))),
           sanitize(loader(path.join(lab.getAppCfgDir("tdd-cfg-customized-names", "config"), "context.js"))),
@@ -2315,7 +2315,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "sandbox.default"),
         lodash.merge({},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg-customized-names", "config"), "setting.js")),
@@ -2327,7 +2327,7 @@ describe("tdd:lib:core:config-loader", function() {
       assert.deepEqual(
         lodash.get(config, "sandbox.mixture"),
         lodash.merge({},
-          loader(path.join(lab.getDevebotCfgDir(), "sandbox.js")),
+          loader(path.join(lab.getFrameworkCfgDir(), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin1"), "sandbox.js")),
           loader(path.join(lab.getLibCfgDir("plugin2"), "sandbox.js")),
           loader(path.join(lab.getAppCfgDir("tdd-cfg-customized-names", "config"), "setting.js")),

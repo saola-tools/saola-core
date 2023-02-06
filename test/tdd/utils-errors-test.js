@@ -1,11 +1,11 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const Promise = Devebot.require("bluebird");
 const assert = require("chai").assert;
 const util = require("util");
-const errors = require(lab.getDevebotModule("utils/errors"));
+const errors = require(lab.getFrameworkModule("utils/errors"));
 
 describe("tdd:lib:utils:errors", function() {
   describe("stackTraceLimit", function() {

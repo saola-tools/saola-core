@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
 const assert = require("chai").assert;
@@ -10,7 +10,7 @@ const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 const util = require("util");
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 const FRAMEWORK_METADATA = FRAMEWORK_NAMESPACE + "-metadata";

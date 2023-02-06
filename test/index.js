@@ -72,23 +72,23 @@ const lab = module.exports = {
   getLibCfgDir: function(libName) {
     return path.join(this.getLibHome(libName), 'config');
   },
-  getDevebotHome: function() {
+  getFrameworkHome: function() {
     return path.join(__dirname, '../');
   },
-  getDevebot: function() {
-    return require(this.getDevebotHome());
+  getFramework: function() {
+    return require(this.getFrameworkHome());
   },
-  getDevebotCfgDir: function() {
-    return path.join(this.getDevebotHome(), 'config');
+  getFrameworkCfgDir: function() {
+    return path.join(this.getFrameworkHome(), 'config');
   },
-  getDevebotModule: function(moduleFile) {
-    return path.join(this.getDevebotHome(), 'lib/', moduleFile);
+  getFrameworkModule: function(moduleFile) {
+    return path.join(this.getFrameworkHome(), 'lib/', moduleFile);
   },
   getDefaultTimeout: function() {
     return 60000;
   },
   getFrameworkInfo: function() {
-    return chores.loadPackageInfo(this.getDevebotHome(), constx.APPINFO.FIELDS, {});
+    return chores.loadPackageInfo(this.getFrameworkHome(), constx.APPINFO.FIELDS, {});
   },
   getIssueInspector: function() {
     return issueInspector;
@@ -191,18 +191,18 @@ const _attachInjectedObjects = function(injektor, injectedObjects) {
 }
 
 const _loadBackboneServices = function(injektor, names) {
-  let bbPath = path.join(lab.getDevebotHome(), 'lib/backbone');
+  let bbPath = path.join(lab.getFrameworkHome(), 'lib/backbone');
   lodash.forOwn(chores.loadServiceByNames({}, bbPath, names), function(constructor, name) {
     injektor.defineService(name, constructor, chores.injektorContext);
   });
 }
 
-lab.requireDevebotModule = function(moduleLocation) {
-  return require(this.getDevebotModule(moduleLocation));
+lab.requireFrameworkModule = function(moduleLocation) {
+  return require(this.getFrameworkModule(moduleLocation));
 }
 
-lab.acquireDevebotModule = function(moduleLocation) {
-  return rewire(this.getDevebotModule(moduleLocation));
+lab.acquireFrameworkModule = function(moduleLocation) {
+  return rewire(this.getFrameworkModule(moduleLocation));
 }
 
 lab.acquire = function(moduleName) {
@@ -210,7 +210,7 @@ lab.acquire = function(moduleName) {
 }
 
 lab.initBackboneService = function(serviceName, injectedObjects) {
-  let bbPath = path.join(lab.getDevebotHome(), 'lib/backbone');
+  let bbPath = path.join(lab.getFrameworkHome(), 'lib/backbone');
   const injektor = new Injektor({ separator: chores.getSeparator() });
   _attachInjectedObjects(injektor, injectedObjects);
   lodash.forOwn(chores.loadServiceByNames({}, bbPath, serviceName), function(constructor, name) {
@@ -244,7 +244,7 @@ lab.createKernel = function(appName) {
     const manifestHandler = new ManifestHandler({nameResolver, 
     bundleList: _config.bundleList, bridgeList: _config.bridgeList});
 
-    const Kernel = require(path.join(lab.getDevebotHome(), 'lib/kernel.js'));
+    const Kernel = require(path.join(lab.getFrameworkHome(), 'lib/kernel.js'));
   return new Kernel({
     configObject: _config,
     bridgeList: _config.bridgeList,

@@ -2,7 +2,7 @@
 
 const lab = require("../../index");
 
-module.exports = lab.getDevebot().registerLayerware(__dirname, [
+module.exports = lab.getFramework().registerLayerware(__dirname, [
   {
     name: "plugin2",
     path: lab.getLibHome("plugin2")

@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const Injektor = Devebot.require("injektor");
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
@@ -12,7 +12,7 @@ const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 const sinon = require("sinon");
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:sandbox-manager", function() {
@@ -164,7 +164,7 @@ describe("tdd:lib:core:sandbox-manager", function() {
   });
 
   describe("SandboxRegistry", function() {
-    let SandboxManager = lab.acquireDevebotModule("backbone/sandbox-manager");
+    let SandboxManager = lab.acquireFrameworkModule("backbone/sandbox-manager");
     let SandboxRegistry = SandboxManager.__get__("SandboxRegistry");
 
     function SampleService () {}

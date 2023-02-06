@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const Promise = Devebot.require("bluebird");
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
@@ -13,7 +13,7 @@ const util = require("util");
 const LogConfig = Devebot.require("logolite").LogConfig;
 const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
-const Runner = lab.acquireDevebotModule("runner");
+const Runner = lab.acquireFrameworkModule("runner");
 const WsServerMock = Runner.__get__("WsServerMock");
 const WsClientMock = Runner.__get__("WsClientMock");
 

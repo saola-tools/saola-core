@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
 const assert = require("chai").assert;
@@ -31,7 +31,7 @@ describe("tdd:lib:core:manifest-handler", function() {
   });
 
   describe(".validateConfig()", function() {
-    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let ManifestHandler = lab.acquireFrameworkModule("backbone/manifest-handler");
     let combineBridgeSchema = lab.stubModuleFunction(ManifestHandler, "combineBridgeSchema");
     let validateBridgeConfig = lab.stubModuleFunction(ManifestHandler, "validateBridgeConfig");
     let combineBundleSchema = lab.stubModuleFunction(ManifestHandler, "combineBundleSchema");
@@ -218,7 +218,7 @@ describe("tdd:lib:core:manifest-handler", function() {
   });
 
   describe("extractBundleSchema()", function() {
-    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let ManifestHandler = lab.acquireFrameworkModule("backbone/manifest-handler");
     let combineBundleSchema = ManifestHandler.__get__("combineBundleSchema");
     let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     let L = loggingFactory.getLogger();
@@ -528,7 +528,7 @@ describe("tdd:lib:core:manifest-handler", function() {
   });
 
   describe("validateBundleConfig()", function() {
-    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let ManifestHandler = lab.acquireFrameworkModule("backbone/manifest-handler");
     let checkSandboxConstraintsOfCrates = ManifestHandler.__get__("checkSandboxConstraintsOfCrates");
     let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     let L = loggingFactory.getLogger();
@@ -783,7 +783,7 @@ describe("tdd:lib:core:manifest-handler", function() {
   });
 
   describe("extractBridgeSchema()", function() {
-    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let ManifestHandler = lab.acquireFrameworkModule("backbone/manifest-handler");
     let combineBridgeSchema = ManifestHandler.__get__("combineBridgeSchema");
     let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     let nameResolver = lab.getNameResolver([], [
@@ -928,7 +928,7 @@ describe("tdd:lib:core:manifest-handler", function() {
   });
 
   describe("validateBridgeConfig()", function() {
-    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let ManifestHandler = lab.acquireFrameworkModule("backbone/manifest-handler");
     let validateBridgeConfig = ManifestHandler.__get__("validateBridgeConfig");
     let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     let L = loggingFactory.getLogger();
@@ -1097,7 +1097,7 @@ describe("tdd:lib:core:manifest-handler", function() {
   });
 
   describe("loadManifest()", function() {
-    let ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+    let ManifestHandler = lab.acquireFrameworkModule("backbone/manifest-handler");
     let loadManifest = ManifestHandler.__get__("loadManifest");
     assert.isFunction(loadManifest);
 

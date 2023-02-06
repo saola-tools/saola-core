@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const Promise = Devebot.require("bluebird");
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");

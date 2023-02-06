@@ -4,13 +4,13 @@ const path = require("path");
 const util = require("util");
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
 const assert = require("chai").assert;
 const rewire = require("rewire");
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 const FILE_JS_FILTER_PATTERN = constx.FILE.JS_FILTER_PATTERN;
 
@@ -46,7 +46,7 @@ describe("tdd:lib:utils:chores", function() {
   });
 
   describe("filterFiles()", function() {
-    const choresModule = rewire(lab.getDevebotModule("utils/chores"));
+    const choresModule = rewire(lab.getFrameworkModule("utils/chores"));
     it("Files with .js extension must be filtered by the constx.FILE.JS_FILTER_PATTERN correctly", function() {
       const source = [
         "config",

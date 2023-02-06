@@ -1,21 +1,21 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const lodash = Devebot.require("lodash");
 const assert = require("chai").assert;
 const debugx = Devebot.require("pinbug")("tdd:devebot:core:logging-factory");
-const LoggingFactory = require(lab.getDevebotModule("backbone/logging-factory"));
+const LoggingFactory = require(lab.getFrameworkModule("backbone/logging-factory"));
 const LogAdapter = Devebot.require("logolite").LogAdapter;
 const MockLogger = Devebot.require("logolite").MockLogger;
 const envcloak = require("envcloak").instance;
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:logging-factory", function() {
   describe("logging backward compatible", function() {
-    let LoggingFactory = lab.acquireDevebotModule("backbone/logging-factory");
+    let LoggingFactory = lab.acquireFrameworkModule("backbone/logging-factory");
     let transformLoggingLabels = LoggingFactory.__get__("transformLoggingLabels");
     assert.isNotNull(transformLoggingLabels);
 

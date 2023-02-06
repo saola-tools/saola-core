@@ -3,7 +3,7 @@
 const lab = require("../index");
 const assert = require("chai").assert;
 const envcloak = require("envcloak").instance;
-const envcfg = require(lab.getDevebotModule("utils/envcfg"));
+const envcfg = require(lab.getFrameworkModule("utils/envcfg"));
 
 describe("tdd:lib:utils:envcfg", function() {
   describe("extractEnv()", function() {

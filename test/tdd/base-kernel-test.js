@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
 const assert = require("chai").assert;
@@ -10,10 +10,10 @@ const LogTracer = Devebot.require("logolite").LogTracer;
 const Envcloak = require("envcloak");
 const envcloak = Envcloak.instance;
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
-const ManifestHandler = lab.acquireDevebotModule("backbone/manifest-handler");
+const ManifestHandler = lab.acquireFrameworkModule("backbone/manifest-handler");
 const SELECTED_FIELDS = ManifestHandler.__get__("SELECTED_FIELDS");
 
 describe("tdd:lib:base:kernel", function() {
@@ -36,7 +36,7 @@ describe("tdd:lib:base:kernel", function() {
   });
 
   describe("extractBundleSchema()", function() {
-    let Kernel = lab.acquireDevebotModule("kernel");
+    let Kernel = lab.acquireFrameworkModule("kernel");
     let extractBundleSchema = Kernel.__get__("extractBundleSchema");
 
     beforeEach(function() {
@@ -281,7 +281,7 @@ describe("tdd:lib:base:kernel", function() {
   });
 
   describe("extractBridgeSchema()", function() {
-    let Kernel = lab.acquireDevebotModule("kernel");
+    let Kernel = lab.acquireFrameworkModule("kernel");
     let extractBridgeSchema = Kernel.__get__("extractBridgeSchema");
 
     let expectedSchema = {

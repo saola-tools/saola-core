@@ -1,17 +1,17 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
 const assert = require("chai").assert;
 const path = require("path");
-const bootstrap = require(lab.getDevebotModule("bootstrap"));
+const bootstrap = require(lab.getFrameworkModule("bootstrap"));
 const LogConfig = Devebot.require("logolite").LogConfig;
 const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 const FRAMEWORK_PACKAGE_AUTHOR = "devebot";
@@ -109,10 +109,10 @@ describe("tdd:lib:base:bootstrap", function() {
 
   describe("require()", function() {
     let pkgs = {
-      chores: path.join(lab.getDevebotHome(), "lib/utils/chores.js"),
-      errors: path.join(lab.getDevebotHome(), "lib/utils/errors.js"),
-      loader: path.join(lab.getDevebotHome(), "lib/utils/loader.js"),
-      pinbug: path.join(lab.getDevebotHome(), "lib/utils/pinbug.js"),
+      chores: path.join(lab.getFrameworkHome(), "lib/utils/chores.js"),
+      errors: path.join(lab.getFrameworkHome(), "lib/utils/errors.js"),
+      loader: path.join(lab.getFrameworkHome(), "lib/utils/loader.js"),
+      pinbug: path.join(lab.getFrameworkHome(), "lib/utils/pinbug.js"),
     };
     lodash.forEach([ "injektor", "logolite", "schemato" ], function(pkgName) {
       pkgs[pkgName] = pkgName;
@@ -126,7 +126,7 @@ describe("tdd:lib:base:bootstrap", function() {
 
   describe("locatePackage()", function() {
     let issueInspector = lab.getIssueInspector();
-    let bootstrap = lab.acquireDevebotModule("bootstrap");
+    let bootstrap = lab.acquireFrameworkModule("bootstrap");
     let locatePackage = bootstrap.__get__("locatePackage");
     assert.isFunction(locatePackage);
 
@@ -202,7 +202,7 @@ describe("tdd:lib:base:bootstrap", function() {
   });
 
   describe("expandExtensions()", function() {
-    let bootstrap = lab.acquireDevebotModule("bootstrap");
+    let bootstrap = lab.acquireFrameworkModule("bootstrap");
     let expandExtensions = bootstrap.__get__("expandExtensions");
     assert.isFunction(expandExtensions);
 

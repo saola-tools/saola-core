@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const Promise = Devebot.require("bluebird");
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
@@ -12,7 +12,7 @@ const envcloak = require("envcloak").instance;
 const assert = require("chai").assert;
 const sinon = require("sinon");
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:script-renderer", function() {
@@ -33,7 +33,7 @@ describe("tdd:lib:core:script-renderer", function() {
   });
 
   describe("WebSocketOutlet", function() {
-    let ScriptRenderer = lab.acquireDevebotModule("backbone/script-renderer");
+    let ScriptRenderer = lab.acquireFrameworkModule("backbone/script-renderer");
     let WebSocketOutlet = ScriptRenderer.__get__("WebSocketOutlet");
     let ws = { send: function() {} };
     let outlet = new WebSocketOutlet({
@@ -220,7 +220,7 @@ describe("tdd:lib:core:script-renderer", function() {
   });
 
   describe("standardizeOutput()", function() {
-    let ScriptRenderer = lab.acquireDevebotModule("backbone/script-renderer");
+    let ScriptRenderer = lab.acquireFrameworkModule("backbone/script-renderer");
     let standardizeOutput = ScriptRenderer.__get__("standardizeOutput");
 
     let jsonOutput = {

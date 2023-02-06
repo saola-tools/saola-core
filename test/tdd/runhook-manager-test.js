@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const Promise = Devebot.require("bluebird");
 const chores = Devebot.require("chores");
 const lodash = Devebot.require("lodash");
@@ -11,7 +11,7 @@ const LogConfig = Devebot.require("logolite").LogConfig;
 const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:runhook-manager", function() {

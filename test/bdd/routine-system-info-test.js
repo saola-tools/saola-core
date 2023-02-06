@@ -1,13 +1,13 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const Promise = Devebot.require("bluebird");
 const lodash = Devebot.require("lodash");
 const assert = require("chai").assert;
 const DevebotApi = require("devebot-api");
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("bdd:api:command:system-info", function() {

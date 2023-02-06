@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const lodash = Devebot.require("lodash");
 const chores = Devebot.require("chores");
 const assert = require("chai").assert;
@@ -10,7 +10,7 @@ const LogConfig = Devebot.require("logolite").LogConfig;
 const LogTracer = Devebot.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
-const constx = require(lab.getDevebotModule("utils/constx"));
+const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:bundle-loader", function() {

@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 Devebot.require("logolite"); // load the Devebot's logolite first
 const assert = require("liberica").assert;
 const mockit = require("liberica").mockit;
@@ -256,7 +256,7 @@ describe("tdd:lib:core:mapping-loader", function() {
     let MappingLoader, loadMappingStore, evaluateMappingFile, fs;
 
     beforeEach(function() {
-      MappingLoader = lab.acquireDevebotModule("backbone/mapping-loader");
+      MappingLoader = lab.acquireFrameworkModule("backbone/mapping-loader");
       loadMappingStore = MappingLoader.__get__("loadMappingStore");
       fs = {
         statSync: sinon.stub()

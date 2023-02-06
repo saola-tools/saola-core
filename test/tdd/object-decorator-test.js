@@ -1,11 +1,11 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const Promise = Devebot.require("bluebird");
 const lodash = Devebot.require("lodash");
 const chores = Devebot.require("chores");
-const errors = require(lab.getDevebotModule("utils/errors"));
+const errors = require(lab.getFrameworkModule("utils/errors"));
 const assert = require("chai").assert;
 const LogConfig = Devebot.require("logolite").LogConfig;
 const LogTracer = Devebot.require("logolite").LogTracer;
@@ -26,7 +26,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapMethod()", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let wrapMethod = ObjectDecorator.__get__("wrapMethod");
     let loggingFactory = lab.createLoggingFactoryMock({ captureMethodCall: false });
     let refs = { L: loggingFactory.getLogger(), T: loggingFactory.getTracer() };
@@ -230,7 +230,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapConstructor()", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
     let wrapConstructor = ObjectDecorator.__get__("wrapConstructor");
     let wrapObject = sinon.stub().callsFake(function(refs, object, opts) {
@@ -372,7 +372,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("wrapObject()", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
     let wrapObject = ObjectDecorator.__get__("wrapObject");
     let wrapMethod = sinon.spy(ObjectDecorator.__get__("wrapMethod"));
@@ -830,7 +830,7 @@ describe("tdd:lib:core:object-decorator", function() {
     let issueInspector = {};
     let schemaValidator = {};
 
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let getTextureOfBridge = lab.spyModuleFunction(ObjectDecorator, "getTextureOfBridge");
     let getBridgeFullname = lab.spyModuleFunction(ObjectDecorator, "getBridgeFullname");
     let wrapConstructor = lab.stubModuleFunction(ObjectDecorator, "wrapConstructor");
@@ -1070,7 +1070,7 @@ describe("tdd:lib:core:object-decorator", function() {
     let issueInspector = {};
     let schemaValidator = {};
 
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
     let extractStreamId = lab.spyModuleFunction(ObjectDecorator, "extractStreamId");
     let getTextureOfPlugin = lab.spyModuleFunction(ObjectDecorator, "getTextureOfPlugin");
@@ -1343,7 +1343,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("LoggingInterceptor", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let LoggingInterceptor = ObjectDecorator.__get__("LoggingInterceptor");
     let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
 
@@ -2963,7 +2963,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("LoggingInterceptor", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let LoggingInterceptor = ObjectDecorator.__get__("LoggingInterceptor");
     let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
 
@@ -3146,7 +3146,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("MockingInterceptor", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let MockingInterceptor = ObjectDecorator.__get__("MockingInterceptor");
 
     it("mocking will be skipped if texture.enabled is false", function() {
@@ -3432,7 +3432,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("getTextureByPath()", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
     let getTextureByPath = ObjectDecorator.__get__("getTextureByPath");
     let textureOfBean = {
@@ -3503,7 +3503,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("getTextureOfBridge()", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
     let getTextureOfBridge = ObjectDecorator.__get__("getTextureOfBridge");
     let textureStore = {
@@ -3541,7 +3541,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("getTextureOfPlugin()", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let DEFAULT_TEXTURE = ObjectDecorator.__get__("DEFAULT_TEXTURE");
     let getTextureOfPlugin = ObjectDecorator.__get__("getTextureOfPlugin");
     let textureStore = {
@@ -3639,7 +3639,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("detectRequestId()", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let detectRequestId = ObjectDecorator.__get__("detectRequestId");
     it("should keep safety with any kind of arguments", function() {
       assert.doesNotThrow(function() {
@@ -3661,7 +3661,7 @@ describe("tdd:lib:core:object-decorator", function() {
   });
 
   describe("extractStreamId()", function() {
-    let ObjectDecorator = lab.acquireDevebotModule("backbone/object-decorator");
+    let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let extractStreamId = ObjectDecorator.__get__("extractStreamId");
     let appInfo = {
       name: "example",

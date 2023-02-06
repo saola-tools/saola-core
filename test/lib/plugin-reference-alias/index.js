@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../../index");
-const devebot = lab.getDevebot();
+const devebot = lab.getFramework();
 
 module.exports = devebot.registerLayerware({
   presets: {

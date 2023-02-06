@@ -1,7 +1,7 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getDevebot();
+const Devebot = lab.getFramework();
 const chores = Devebot.require("chores");
 const assert = require("chai").assert;
 
@@ -13,7 +13,7 @@ describe("tdd:lib:core:name-resolver", function() {
   };
 
   describe("standardizing loaded configuration data", function() {
-    let NameResolver = lab.acquireDevebotModule("backbone/name-resolver");
+    let NameResolver = lab.acquireFrameworkModule("backbone/name-resolver");
     let extractAliasNames = NameResolver.__get__("extractAliasNames");
     let buildAbsoluteAliasMap = NameResolver.__get__("buildAbsoluteAliasMap");
     let buildRelativeAliasMap = NameResolver.__get__("buildRelativeAliasMap");
