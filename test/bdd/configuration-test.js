@@ -23,7 +23,7 @@ describe("bdd:app:configuration", function() {
         expect(appInfo).to.deep.include({
           "version": "0.1.0",
           "name": "demo-app",
-          "description": "Devebot Demo Application",
+          "description": "Demo Application",
           "main": "index.js",
           "author": "devebot",
           "license": "ISC",

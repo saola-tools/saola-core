@@ -11,7 +11,7 @@ describe("tdd:lib:utils:envcfg", function() {
       envcloak.setup({
         A_PREFIX_OF_ENVCFG_plugins_example_settings_supportContacts_phoneNumber: "+84987654321",
         A_PREFIX_OF_ENVCFG_plugins_example_settings_supportContacts_email: "contact@example.com",
-        NODE_ENV: "test"
+        DEVEBOT_NODE_ENV: "test",
       });
     });
 

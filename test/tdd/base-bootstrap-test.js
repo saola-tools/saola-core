@@ -781,7 +781,7 @@ describe("tdd:lib:base:bootstrap", function() {
       assert.deepEqual(cfg.appInfo, {
         "version": "0.1.0",
         "name": "fullapp",
-        "description": "Devebot Demo Application",
+        "description": "Demo Application",
         "main": "index.js",
         "author": FRAMEWORK_PACKAGE_AUTHOR,
         "license": "ISC",

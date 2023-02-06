@@ -1,7 +1,7 @@
 {
   "name": "state-verification",
   "version": "0.1.0",
-  "description": "Devebot state-verification Example",
+  "description": "Application state-verification Example",
   "main": "index.js",
   "scripts": {
     "test": "echo 'Error: no test specified' && exit 1"

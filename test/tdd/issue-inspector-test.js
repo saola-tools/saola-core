@@ -18,11 +18,11 @@ describe("tdd:lib:core:issue-inspector", function() {
 
   before(function() {
     envcloak.setup({
-      NODE_ENV: "test",
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all",
-      DEVEBOT_FORCING_SILENT: "issue-inspector"
+      DEVEBOT_FORCING_SILENT: "issue-inspector",
+      DEVEBOT_NODE_ENV: "test",
     });
     LogConfig.reset();
     issueInspector.reset();

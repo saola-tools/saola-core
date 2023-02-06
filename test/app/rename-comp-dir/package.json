@@ -1,7 +1,7 @@
 {
   "name": "rename-comp-dir",
   "version": "0.1.0",
-  "description": "Devebot rename-comp-dir Example",
+  "description": "Application rename-comp-dir Example",
   "main": "index.js",
   "scripts": {
     "test": "echo 'Error: no test specified' && exit 1"

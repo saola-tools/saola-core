@@ -20,7 +20,7 @@ describe("tdd:lib:core:object-decorator", function() {
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all",
-      NODE_ENV: "test"
+      DEVEBOT_NODE_ENV: "test",
     });
     LogConfig.reset();
   });

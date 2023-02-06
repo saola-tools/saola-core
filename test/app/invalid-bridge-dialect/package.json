@@ -1,7 +1,7 @@
 {
   "name": "invalid-bridge-dialect",
   "version": "0.1.0",
-  "description": "Devebot invalid-bridge-dialect Example",
+  "description": "Application invalid-bridge-dialect Example",
   "main": "index.js",
   "scripts": {
     "test": "echo 'Error: no test specified' && exit 1"

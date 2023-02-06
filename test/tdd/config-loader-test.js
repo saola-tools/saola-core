@@ -159,14 +159,14 @@ describe("tdd:lib:core:config-loader", function() {
 
     it("support both default and customized prefixes", function() {
       envcloak.setup({
-        NODE_ENV: "test",
         LOGOLITE_FULL_LOG_MODE: "false",
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_enabled: "true",
         DEVEBOT_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_phoneNumber: "+84987654321",
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_email: "contact@example.com",
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_timeout: 102400,
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_rate: 3.14190,
-        DEVEBOT_CONFIG_ENV: "dev"
+        DEVEBOT_CONFIG_ENV: "dev",
+        DEVEBOT_NODE_ENV: "test",
       });
 
       let environCfg = {

@@ -74,7 +74,7 @@ describe("bdd:api:routine:applica-info", function() {
             "data": {
               "version": "0.1.0",
               "name": "demo-app",
-              "description": "Devebot Demo Application",
+              "description": "Demo Application",
               "main": "index.js",
               "author": FRAMEWORK_PACKAGE_AUTHOR,
               "license": "ISC",
@@ -162,7 +162,7 @@ describe("bdd:api:routine:applica-info", function() {
             "data": {
               "version": "0.1.0",
               "name": "demo-app",
-              "description": "Devebot Demo Application",
+              "description": "Demo Application",
               "main": "index.js",
               "author": FRAMEWORK_PACKAGE_AUTHOR,
               "license": "ISC",
