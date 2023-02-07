@@ -29,6 +29,12 @@ describe("bdd:app:loading-invalid-modules", function() {
     issueInspector.reset();
   });
 
+  after(function() {
+    envcloak.reset();
+    issueInspector.reset();
+    chores.clearCache();
+  });
+
   describe("not-found-packages", function() {
     let loggingStore = {};
 
@@ -275,11 +281,5 @@ describe("bdd:app:loading-invalid-modules", function() {
     after(function() {
       LogTracer.clearInterceptors();
     });
-  });
-
-  after(function() {
-    envcloak.reset();
-    issueInspector.reset();
-    chores.clearCache();
   });
 });

@@ -116,6 +116,10 @@ describe("bdd:api:routine:applica-info", function() {
       return app.server.start();
     });
 
+    afterEach(function() {
+      return app.server.stop();
+    });
+
     it("definition should contain [applica-info] command", function() {
       return new Promise(function(resolve, reject) {
         api.loadDefinition(function(err, obj) {
@@ -189,10 +193,6 @@ describe("bdd:api:routine:applica-info", function() {
           }
         ]);
       });
-    });
-
-    afterEach(function() {
-      return app.server.stop();
     });
   });
 });

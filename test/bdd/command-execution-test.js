@@ -99,6 +99,15 @@ describe("bdd:api:command:execution", function() {
     return app.server.start();
   });
 
+  afterEach(function() {
+    return app.server.stop();
+  });
+
+  after(function() {
+    LogTracer.clearInterceptors();
+    envcloak.reset();
+  });
+
   it("definition should contain runhook-call command", function() {
     return new Promise(function(resolve, reject) {
       api.loadDefinition(function(err, obj) {
@@ -158,14 +167,5 @@ describe("bdd:api:command:execution", function() {
       debugx.enabled && debugx(JSON.stringify(error, null, 2));
       throw error;
     });
-  });
-
-  afterEach(function() {
-    return app.server.stop();
-  });
-
-  after(function() {
-    LogTracer.clearInterceptors();
-    envcloak.reset();
   });
 });

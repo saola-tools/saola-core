@@ -33,6 +33,11 @@ describe("bdd:api:runhook:progress:meter", function() {
     return app.server.start();
   });
 
+  afterEach(function() {
+    api = null;
+    return app.server.stop();
+  });
+
   it("direct runhook should return correct result", function() {
     let number = 15;
     let expectedValue = fibonacci(number);
@@ -149,11 +154,6 @@ describe("bdd:api:runhook:progress:meter", function() {
       debugx.enabled && debugx(JSON.stringify(error, null, 2));
       assert.isString(error.payload[0].data.message);
     });
-  });
-
-  afterEach(function() {
-    api = null;
-    return app.server.stop();
   });
 });
 

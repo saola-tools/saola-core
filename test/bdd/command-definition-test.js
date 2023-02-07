@@ -22,6 +22,10 @@ describe("bdd:api:command:definition", function() {
     return app.server.start();
   });
 
+  afterEach(function() {
+    return app.server.stop();
+  });
+
   it("definition should contain default commands", function() {
     return new Promise(function(resolve, reject) {
       api.loadDefinition(function(err, obj) {
@@ -59,9 +63,5 @@ describe("bdd:api:command:definition", function() {
       });
       false && console.info("Definition: %s", JSON.stringify(defs, null, 2));
     });
-  });
-
-  afterEach(function() {
-    return app.server.stop();
   });
 });

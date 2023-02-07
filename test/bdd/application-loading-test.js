@@ -27,6 +27,10 @@ describe("bdd:app:application", function() {
     LogConfig.reset();
   });
 
+  after(function() {
+    envcloak.reset();
+  });
+
   describe("application[default]", function() {
     let app;
     let serverStats = {};
@@ -439,9 +443,5 @@ describe("bdd:app:application", function() {
     after(function() {
       LogTracer.clearInterceptors();
     });
-  });
-
-  after(function() {
-    envcloak.reset();
   });
 });

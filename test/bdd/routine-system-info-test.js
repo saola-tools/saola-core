@@ -24,6 +24,10 @@ describe("bdd:api:command:system-info", function() {
     return app.server.start();
   });
 
+  afterEach(function() {
+    return app.server.stop();
+  });
+
   it("definition should contain [system-info] command", function() {
     return new Promise(function(resolve, reject) {
       api.loadDefinition(function(err, obj) {
@@ -92,9 +96,5 @@ describe("bdd:api:command:system-info", function() {
       assert.isArray(info.data.os_loadavg);
       assert.lengthOf(info.data.os_loadavg, 3);
     });
-  });
-
-  afterEach(function() {
-    return app.server.stop();
   });
 });
