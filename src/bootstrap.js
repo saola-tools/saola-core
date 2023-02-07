@@ -29,6 +29,8 @@ const packageStocker = PackageStocker.instance;
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 const FRAMEWORK_CAPNAME = lodash.capitalize(FRAMEWORK_NAMESPACE);
+const FRAMEWORK_BRIDGE_LABEL = "bridge";
+const FRAMEWORK_PLUGIN_LABEL = "plugin";
 
 function appLoader (params = {}) {
   const {logger: L, tracer: T} = params;
@@ -346,16 +348,16 @@ function expandExtensions (accumulator, pluginNames, bridgeNames) {
 
   const bridgeInfos = lodash.map(bridgeNames, function(bridgeName) {
     const item = lodash.isString(bridgeName) ? { name: bridgeName, path: bridgeName } : bridgeName;
-    item.type = "bridge";
+    item.type = FRAMEWORK_BRIDGE_LABEL;
     if (!chores.isUpgradeSupported("presets")) { return item; }
-    item.path = locatePackage(CTX, item, "bridge");
+    item.path = locatePackage(CTX, item, FRAMEWORK_BRIDGE_LABEL);
     return item;
   });
   const pluginInfos = lodash.map(pluginNames, function(pluginName) {
     const item = lodash.isString(pluginName) ? { name: pluginName, path: pluginName } : pluginName;
-    item.type = "plugin";
+    item.type = FRAMEWORK_PLUGIN_LABEL;
     if (!chores.isUpgradeSupported("presets")) { return item; }
-    item.path = locatePackage(CTX, item, "plugin");
+    item.path = locatePackage(CTX, item, FRAMEWORK_PLUGIN_LABEL);
     return item;
   });
 
@@ -402,7 +404,7 @@ function expandExtensions (accumulator, pluginNames, bridgeNames) {
       context.bridgeRefs[bridgeInfo.name] = {
         name: bridgeInfo.name,
         type: bridgeInfo.type,
-        path: locatePackage(CTX, bridgeInfo, "bridge")
+        path: locatePackage(CTX, bridgeInfo, FRAMEWORK_BRIDGE_LABEL)
       };
       return;
     }
@@ -415,7 +417,7 @@ function expandExtensions (accumulator, pluginNames, bridgeNames) {
       context.pluginRefs[pluginInfo.name] = {
         name: pluginInfo.name,
         type: pluginInfo.type,
-        path: locatePackage(CTX, pluginInfo, "plugin")
+        path: locatePackage(CTX, pluginInfo, FRAMEWORK_PLUGIN_LABEL)
       };
       return;
     }
