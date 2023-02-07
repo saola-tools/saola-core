@@ -1,4 +1,3 @@
-/* global Devebot */
 "use strict";
 
 const assert = require("assert");

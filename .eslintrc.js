@@ -4,6 +4,9 @@ module.exports = {
     "commonjs": true,
     "mocha": true
   },
+  "globals": {
+    "Devebot": true
+  },
   "extends": "standard",
   "rules": {
     "no-undef": "error",

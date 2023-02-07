@@ -1,4 +1,3 @@
-/* global Devebot */
 const lab = require("../../index");
 
 module.exports = Devebot.registerLayerware({

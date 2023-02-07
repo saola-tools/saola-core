@@ -1,4 +1,3 @@
-/* global Devebot */
 "use strict";
 
 const chores = Devebot.require("chores");

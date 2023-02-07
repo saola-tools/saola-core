@@ -1,4 +1,3 @@
-/* global Devebot */
 "use strict";
 
 const lodash = Devebot.require("lodash");

@@ -1,4 +1,3 @@
-/* global Devebot */
 "use strict";
 
 /* eslint-disable no-unused-vars */

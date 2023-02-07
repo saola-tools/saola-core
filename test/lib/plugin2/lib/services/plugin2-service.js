@@ -1,4 +1,3 @@
-//* global Devebot */
 "use strict";
 
 const Service = function(params = {}) {
