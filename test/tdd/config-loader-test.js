@@ -358,16 +358,21 @@ describe("tdd:lib:core:config-loader", function() {
           }
         })),
       };
-      let convertedCfg = transformConfig(lodash.assign({
-        nameResolver: {
-          getAbsoluteAliasMap: function() {
-            return absoluteAliasMap;
-          },
-          getOriginalNameOf: function (name, type) {
-            return absoluteAliasMap[type][name] || name;
+      let convertedCfg = transformConfig(
+        lodash.assign({
+          nameResolver: {
+            getAbsoluteAliasMap: function() {
+              return absoluteAliasMap;
+            },
+            getOriginalNameOf: function (name, type) {
+              return absoluteAliasMap[type][name] || name;
+            }
           }
-        }
-      }, CTX), "sandbox", originalCfg, "plugin", "cfg-example", {});
+        }, CTX),
+        "sandbox",
+        originalCfg,
+        { type: "plugin", name: "cfg-example", presets: {} }
+      );
 
       false && console.info(JSON.stringify(convertedCfg, null, 2));
       assert.deepInclude(convertedCfg, expectedCfg);
@@ -470,16 +475,21 @@ describe("tdd:lib:core:config-loader", function() {
         plugin: buildAbsoluteAliasMap(pluginRefs),
         bridge: buildAbsoluteAliasMap(bridgeRefs),
       };
-      let absoluteCfg = transformConfig(lodash.assign({
-        nameResolver: {
-          getAbsoluteAliasMap: function() {
-            return absoluteAliasMap;
-          },
-          getOriginalNameOf: function (name, type) {
-            return absoluteAliasMap[type][name] || name;
+      let absoluteCfg = transformConfig(
+        lodash.assign({
+          nameResolver: {
+            getAbsoluteAliasMap: function() {
+              return absoluteAliasMap;
+            },
+            getOriginalNameOf: function (name, type) {
+              return absoluteAliasMap[type][name] || name;
+            }
           }
-        }
-      }, CTX), "sandbox", originalCfg, "plugin", "cfg-example", {});
+        }, CTX),
+        "sandbox",
+        originalCfg,
+        { type: "plugin", name: "cfg-example", presets: {} }
+      );
 
       let relativeAliasMap = {
         plugin: buildRelativeAliasMap(pluginRefs),
