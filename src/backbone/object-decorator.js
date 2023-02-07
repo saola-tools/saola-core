@@ -12,6 +12,8 @@ const BeanProxy = require("../utils/proxy");
 const blockRef = chores.getBlockRef(__filename);
 
 const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.NAMESPACE);
+const FRAMEWORK_BRIDGE_LABEL = "bridge";
+const FRAMEWORK_PLUGIN_LABEL = "plugin";
 
 const NOOP = function() {};
 const MODE = getenv([FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV", "NODE_ENV"]) === "test" ? null : "direct";
@@ -33,13 +35,13 @@ function ObjectDecorator (params = {}) {
     }
     const textureOfBean = getTextureOfBridge({
       textureStore: textureStore,
-      pluginCode: opts.pluginCode || nameResolver.getDefaultAliasOf(opts.pluginName, "plugin"),
-      bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, "bridge"),
+      pluginCode: opts.pluginCode || nameResolver.getDefaultAliasOf(opts.pluginName, FRAMEWORK_PLUGIN_LABEL),
+      bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, FRAMEWORK_BRIDGE_LABEL),
       dialectName: opts.dialectName
     });
     const fullObjectName = getBridgeFullname({
-      pluginName: opts.pluginName || nameResolver.getOriginalNameOf(opts.pluginCode, "plugin"),
-      bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, "bridge"),
+      pluginName: opts.pluginName || nameResolver.getOriginalNameOf(opts.pluginCode, FRAMEWORK_PLUGIN_LABEL),
+      bridgeCode: opts.bridgeCode || nameResolver.getDefaultAliasOf(opts.bridgeName, FRAMEWORK_BRIDGE_LABEL),
       dialectName: opts.dialectName
     });
     return wrapConstructor(C, beanConstructor, lodash.assign({
@@ -53,12 +55,12 @@ function ObjectDecorator (params = {}) {
     }
     const textureOfBean = getTextureOfPlugin({
       textureStore: textureStore,
-      pluginCode: opts.pluginCode || nameResolver.getDefaultAliasOf(opts.pluginName, "plugin"),
+      pluginCode: opts.pluginCode || nameResolver.getDefaultAliasOf(opts.pluginName, FRAMEWORK_PLUGIN_LABEL),
       gadgetType: opts.gadgetType,
       gadgetName: opts.gadgetName
     });
     const fullObjectName = getPluginFullname({
-      pluginName: opts.pluginName || nameResolver.getOriginalNameOf(opts.pluginCode, "plugin"),
+      pluginName: opts.pluginName || nameResolver.getOriginalNameOf(opts.pluginCode, FRAMEWORK_PLUGIN_LABEL),
       gadgetName: opts.gadgetName
     });
     const supportAllMethods = determineOptionValue("supportAllMethods", ["services"], opts);

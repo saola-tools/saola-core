@@ -11,6 +11,8 @@ const blockRef = chores.getBlockRef(__filename);
 
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
+const FRAMEWORK_BRIDGE_LABEL = "bridge";
+const FRAMEWORK_PLUGIN_LABEL = "plugin";
 
 function NameResolver (params = {}) {
   const {issueInspector, bridgeList, pluginList} = params;
@@ -44,8 +46,8 @@ function NameResolver (params = {}) {
         crateName = crateType;
         break;
       }
-      case "plugin":
-      case "bridge": {
+      case FRAMEWORK_PLUGIN_LABEL:
+      case FRAMEWORK_BRIDGE_LABEL: {
         const absoluteAlias = _getAbsoluteAliasMap();
         crateName = absoluteAlias[crateType][crateName] || crateName;
         break;
@@ -60,8 +62,8 @@ function NameResolver (params = {}) {
         crateName = crateType;
         break;
       }
-      case "plugin":
-      case "bridge": {
+      case FRAMEWORK_PLUGIN_LABEL:
+      case FRAMEWORK_BRIDGE_LABEL: {
         crateName = _getOriginalNameOf(crateName, crateType);
         const relativeAlias = _getRelativeAliasMap();
         crateName = relativeAlias[crateType][crateName] || crateName;
@@ -96,8 +98,8 @@ function NameResolver (params = {}) {
     this.getDefaultAlias = this.getAliasBy.bind(this, "codeInCamel");
   }
 
-  extractAliasNames(CTX, "plugin", pluginList);
-  extractAliasNames(CTX, "bridge", bridgeList);
+  extractAliasNames(CTX, FRAMEWORK_PLUGIN_LABEL, pluginList);
+  extractAliasNames(CTX, FRAMEWORK_BRIDGE_LABEL, bridgeList);
 
   L && L.has("silly") && L.log("silly", T && T.toMessage({
     tags: [ blockRef, "constructor-end" ],

@@ -10,6 +10,8 @@ const toolset = require("../utils/toolset");
 const LoggingWrapper = require("./logging-wrapper");
 const blockRef = chores.getBlockRef(__filename);
 
+const FRAMEWORK_PLUGIN_LABEL = "plugin";
+
 function StateInspector (params = {}) {
   const loggingWrapper = new LoggingWrapper(blockRef);
   const L = loggingWrapper.getLogger();
@@ -71,7 +73,7 @@ function StateInspector (params = {}) {
 
     // extract plugin names
     const pluginList = lodash.filter(services.pluginList, function(pluginRef) {
-      return pluginRef.type === "plugin";
+      return pluginRef.type === FRAMEWORK_PLUGIN_LABEL;
     });
     const pluginNames = lodash.map(pluginList, "name");
     L && L.has("debug") && L.log("debug", T && T.add({pluginNames}).toMessage({
@@ -85,7 +87,7 @@ function StateInspector (params = {}) {
     const pluginMixture = lodash.get(stateMap, "config.sandbox.mixture.plugins", {});
     const pluginExpanse = lodash.get(stateMap, "config.sandbox.expanse.plugins", {});
     lodash.forEach(pluginNames, function(name) {
-      const codeInCamel = services.nameResolver.getDefaultAliasOf(name, "plugin");
+      const codeInCamel = services.nameResolver.getDefaultAliasOf(name, FRAMEWORK_PLUGIN_LABEL);
       if (codeInCamel in pluginExpanse) {
         if (lodash.isEmpty(pluginExpanse[codeInCamel])) {
           lodash.set(summary, ["config", "sandbox", "plugins", name], {

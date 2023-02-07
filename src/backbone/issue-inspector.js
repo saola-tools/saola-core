@@ -9,6 +9,8 @@ const LoggingWrapper = require("./logging-wrapper");
 const blockRef = chores.getBlockRef(__filename);
 
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
+const FRAMEWORK_BRIDGE_LABEL = "bridge";
+const FRAMEWORK_PLUGIN_LABEL = "plugin";
 
 function IssueInspector (params = {}) {
   const loggingWrapper = new LoggingWrapper(blockRef);
@@ -72,12 +74,12 @@ function IssueInspector (params = {}) {
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
               }
-              case "plugin": {
+              case FRAMEWORK_PLUGIN_LABEL: {
                 console.error(chalk.errorMessage("--> [%s:%s] loading plugin is failed, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
               }
-              case "bridge": {
+              case FRAMEWORK_BRIDGE_LABEL: {
                 console.error(chalk.errorMessage("--> [%s:%s] loading bridge is failed, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
@@ -97,12 +99,12 @@ function IssueInspector (params = {}) {
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
               }
-              case "plugin": {
+              case FRAMEWORK_PLUGIN_LABEL: {
                 console.error(chalk.errorMessage("--> [%s:%s] loading plugin's manifest has failed, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
               }
-              case "bridge": {
+              case FRAMEWORK_BRIDGE_LABEL: {
                 console.error(chalk.errorMessage("--> [%s:%s] loading bridge's manifest has failed, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
@@ -111,12 +113,12 @@ function IssueInspector (params = {}) {
           }
           if (fsv.stage === "naming") {
             switch (fsv.type) {
-              case "plugin": {
+              case FRAMEWORK_PLUGIN_LABEL: {
                 console.error(chalk.errorMessage("--> [%s:%s] resolving plugin-code is failed, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
               }
-              case "bridge": {
+              case FRAMEWORK_BRIDGE_LABEL: {
                 console.error(chalk.errorMessage("--> [%s:%s] resolving bridge-code is failed, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
@@ -136,12 +138,12 @@ function IssueInspector (params = {}) {
             switch (fsv.type) {
               case "application":
               case FRAMEWORK_PACKAGE_NAME:
-              case "plugin": {
+              case FRAMEWORK_PLUGIN_LABEL: {
                 console.error(chalk.errorMessage("--> [%s:%s] plugin's configure is invalid, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;
               }
-              case "bridge": {
+              case FRAMEWORK_BRIDGE_LABEL: {
                 console.error(chalk.errorMessage("--> [%s:%s] bridge's configure is invalid, reasons:"), fsv.type, fsv.name);
                 console.error(chalk.errorStack("  " + fsv.stack));
                 return;

@@ -14,6 +14,8 @@ const LoggingWrapper = require("./logging-wrapper");
 const blockRef = chores.getBlockRef(__filename);
 
 const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.NAMESPACE);
+const FRAMEWORK_BRIDGE_LABEL = "bridge";
+const FRAMEWORK_PLUGIN_LABEL = "plugin";
 const FILE_JS_FILTER_PATTERN = constx.FILE.JS_FILTER_PATTERN;
 
 const CONFIG_SUBDIR = "/config";
@@ -456,8 +458,8 @@ function modernizeConfig (ctx, configType, configStore, crateInfo, bridgeManifes
         const pluginNode = bridgeNode[pluginName] || {};
         for (const dialectName in pluginNode) {
           const dialectPath = pluginPath.concat(dialectName);
-          const r = modernizeConfigBlock(ctx, configStore, dialectPath, bridgeManifests[bridgeName], "bridge");
-          collector.push(r, crateInfo, "bridge", pluginName, bridgeName, dialectName);
+          const r = modernizeConfigBlock(ctx, configStore, dialectPath, bridgeManifests[bridgeName], FRAMEWORK_BRIDGE_LABEL);
+          collector.push(r, crateInfo, FRAMEWORK_BRIDGE_LABEL, pluginName, bridgeName, dialectName);
         }
       }
     }
@@ -468,8 +470,8 @@ function modernizeConfig (ctx, configType, configStore, crateInfo, bridgeManifes
       collector.push(r, crateInfo, "application");
     }
     for (const pluginName in configStore.plugins) {
-      const r = modernizeConfigBlock(ctx, configStore, ["plugins", pluginName], pluginManifests[pluginName], "plugin");
-      collector.push(r, crateInfo, "plugin", pluginName);
+      const r = modernizeConfigBlock(ctx, configStore, ["plugins", pluginName], pluginManifests[pluginName], FRAMEWORK_PLUGIN_LABEL);
+      collector.push(r, crateInfo, FRAMEWORK_PLUGIN_LABEL, pluginName);
     }
   }
   issueInspector && issueInspector.collect(collector.toList());
@@ -542,12 +544,12 @@ function ModernizingResultCollector () {
     if (opStatus.hasError) {
       const stackText = [];
       switch (moduleType) {
-        case "bridge": {
+        case FRAMEWORK_BRIDGE_LABEL: {
           stackText.push(util.format("Converting config block for bridge[%s/%s#%s] from [%s] to [%s] has failed",
               pluginName, bridgeName, dialectName, result.configVersion, result.moduleVersion));
           break;
         }
-        case "plugin": {
+        case FRAMEWORK_PLUGIN_LABEL: {
           stackText.push(util.format("Converting config block for plugin[%s] from [%s] to [%s] has failed",
               pluginName, result.configVersion, result.moduleVersion));
           break;
@@ -598,7 +600,7 @@ function convertPreciseConfig (ctx, preciseConfig, moduleType, moduleName, modul
           newBridges[cfgName] = newBridges[cfgName] || {};
           lodash.merge(newBridges[cfgName], bridgeCfg);
         } else
-        if (moduleType === "plugin") {
+        if (moduleType === FRAMEWORK_PLUGIN_LABEL) {
           moduleName = moduleName || "*";
           const bridgeNames = lodash.keys(bridgeCfg);
           if (bridgeNames.length === 1) {
@@ -634,7 +636,7 @@ let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
       const oldPlugins = preciseConfig.plugins;
       const newPlugins = {};
       lodash.forOwn(oldPlugins, function(oldPlugin, oldPluginName) {
-        const newPluginName = nameTransformer(oldPluginName, "plugin");
+        const newPluginName = nameTransformer(oldPluginName, FRAMEWORK_PLUGIN_LABEL);
         newPlugins[newPluginName] = oldPlugin;
       });
       preciseConfig.plugins = newPlugins;
@@ -645,12 +647,12 @@ let applyAliasMap = function(ctx, preciseConfig, nameTransformer) {
       const oldBridges = preciseConfig.bridges;
       const newBridges = {};
       lodash.forOwn(oldBridges, function(oldBridge, oldBridgeName) {
-        const newBridgeName = nameTransformer(oldBridgeName, "bridge");
+        const newBridgeName = nameTransformer(oldBridgeName, FRAMEWORK_BRIDGE_LABEL);
         if (newBridgeName) {
           if (lodash.isObject(oldBridge)) {
             newBridges[newBridgeName] = {};
             lodash.forOwn(oldBridge, function(oldPlugin, oldPluginName) {
-              const newPluginName = nameTransformer(oldPluginName, "plugin");
+              const newPluginName = nameTransformer(oldPluginName, FRAMEWORK_PLUGIN_LABEL);
               newBridges[newBridgeName][newPluginName] = oldPlugin;
             });
           } else {
@@ -673,9 +675,9 @@ if (!chores.isUpgradeSupported("simplify-name-resolver")) {
   doAliasMap = function(ctx, preciseConfig, pluginAliasMap, bridgeAliasMap) {
     function nameTransformer (name, type) {
       switch (type) {
-        case "plugin":
+        case FRAMEWORK_PLUGIN_LABEL:
           return pluginAliasMap[name] || name;
-        case "bridge":
+        case FRAMEWORK_BRIDGE_LABEL:
           return bridgeAliasMap[name] || name;
       }
       return name;

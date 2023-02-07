@@ -8,6 +8,9 @@ const chores = require("../utils/chores");
 const constx = require("../utils/constx");
 const blockRef = chores.getBlockRef(__filename);
 
+const FRAMEWORK_BRIDGE_LABEL = "bridge";
+const FRAMEWORK_PLUGIN_LABEL = "plugin";
+
 const SELECTED_FIELDS = [ "crateScope", "extension", "schema", "checkConstraints" ];
 
 function ManifestHandler (params = {}) {
@@ -154,7 +157,7 @@ function customizeBridgeResult (result, bridgeCode, pluginName, dialectName) {
   const output = {};
   output.stage = "config/schema";
   output.name = [pluginName, chores.getSeparator(), bridgeCode, "#", dialectName].join("");
-  output.type = "bridge";
+  output.type = FRAMEWORK_BRIDGE_LABEL;
   output.hasError = result.ok !== true;
   if (!result.ok && result.errors) {
     output.stack = JSON.stringify(result.errors, null, 2);
@@ -313,7 +316,7 @@ function customizeSandboxResult (result, crateScope, validationType) {
   const output = {};
   output.stage = "config/" + validationType;
   output.name = crateScope;
-  output.type = chores.isSpecialBundle(crateScope) ? crateScope : "plugin";
+  output.type = chores.isSpecialBundle(crateScope) ? crateScope : FRAMEWORK_PLUGIN_LABEL;
   output.hasError = result.ok !== true;
   if (!result.ok) {
     if (result.errors) {

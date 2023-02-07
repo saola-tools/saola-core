@@ -6,6 +6,8 @@ const loader = require("../utils/loader");
 const chores = require("../utils/chores");
 const blockRef = chores.getBlockRef(__filename);
 
+const FRAMEWORK_PLUGIN_LABEL = "plugin";
+
 function BridgeLoader (params = {}) {
   const loggingFactory = params.loggingFactory.branch(blockRef);
   const L = loggingFactory.getLogger();
@@ -220,7 +222,7 @@ function buildBridgeDialect (ctx, dialectOpts) {
   } else {
     let pluginAlias = pluginName;
     if (chores.isUpgradeSupported("standardizing-config")) {
-      pluginAlias = nameResolver.getDefaultAliasOf(pluginName, "plugin");
+      pluginAlias = nameResolver.getDefaultAliasOf(pluginName, FRAMEWORK_PLUGIN_LABEL);
     }
     configPath = ["sandboxConfig", "bridges", bridgeCode, pluginAlias, dialectName];
   }
@@ -382,7 +384,7 @@ function buildBridgeDialects (ctx, bridgeList, dialectOptions, optType) {
     lodash.forOwn(dialectOptions, function(bridgeMap, bridgeCode) {
       if (!bridgeCode || !bridgeConstructors[bridgeCode]) return;
       lodash.forOwn(bridgeMap, function(pluginMap, pluginName) {
-        pluginName = nameResolver.getOriginalNameOf(pluginName, "plugin");
+        pluginName = nameResolver.getOriginalNameOf(pluginName, FRAMEWORK_PLUGIN_LABEL);
         lodash.forOwn(pluginMap, function(dialectConfig, dialectName) {
           lodash.assign(bridgeDialects, buildBridgeDialect(ctx, {
             pluginName,
