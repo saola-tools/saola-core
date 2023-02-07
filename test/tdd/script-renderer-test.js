@@ -32,6 +32,11 @@ describe("tdd:lib:core:script-renderer", function() {
     issueInspector.reset();
   });
 
+  after(function() {
+    envcloak.reset();
+    issueInspector.reset();
+  });
+
   describe("WebSocketOutlet", function() {
     let ScriptRenderer = lab.acquireFrameworkModule("backbone/script-renderer");
     let WebSocketOutlet = ScriptRenderer.__get__("WebSocketOutlet");
@@ -306,10 +311,5 @@ describe("tdd:lib:core:script-renderer", function() {
       }];
       assert.deepEqual(standardizeOutput(schemaValidator,  invalidObjectFormat, true), expected);
     });
-  });
-
-  after(function() {
-    envcloak.reset();
-    issueInspector.reset();
   });
 });

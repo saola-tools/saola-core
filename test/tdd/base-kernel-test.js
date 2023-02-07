@@ -35,6 +35,10 @@ describe("tdd:lib:base:kernel", function() {
     chores.clearCache();
   });
 
+  after(function() {
+    envcloak.reset();
+  });
+
   describe("extractBundleSchema()", function() {
     let Kernel = lab.acquireFrameworkModule("kernel");
     let extractBundleSchema = Kernel.__get__("extractBundleSchema");
@@ -820,9 +824,5 @@ describe("tdd:lib:base:kernel", function() {
       LogTracer.clearInterceptors();
       issueInspector.reset();
     });
-  });
-
-  after(function() {
-    envcloak.reset();
   });
 });

@@ -15,6 +15,10 @@ describe("tdd:lib:utils:envcfg", function() {
       });
     });
 
+    after(function() {
+      envcloak.reset();
+    });
+
     it("filters and extracts configuration values properly", function() {
       const cfgMap = envcfg.extractEnv("A_PREFIX_OF_ENVCFG_");
       false && console.info("Configuration: %s", JSON.stringify(cfgMap, null, 2));
@@ -55,10 +59,6 @@ describe("tdd:lib:utils:envcfg", function() {
         store: {},
         paths: [],
       });
-    });
-
-    after(function() {
-      envcloak.reset();
     });
   });
 });

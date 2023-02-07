@@ -30,6 +30,10 @@ describe("tdd:lib:core:manifest-handler", function() {
     chores.clearCache();
   });
 
+  after(function() {
+    envcloak.reset();
+  });
+
   describe(".validateConfig()", function() {
     let ManifestHandler = lab.acquireFrameworkModule("backbone/manifest-handler");
     let combineBridgeSchema = lab.stubModuleFunction(ManifestHandler, "combineBridgeSchema");
@@ -1176,9 +1180,5 @@ describe("tdd:lib:core:manifest-handler", function() {
         ]
       });
     });
-  });
-
-  after(function() {
-    envcloak.reset();
   });
 });

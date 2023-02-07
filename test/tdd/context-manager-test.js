@@ -32,6 +32,12 @@ describe("tdd:lib:core:context-manager", function() {
     chores.clearCache();
   });
 
+  after(function() {
+    envcloak.reset();
+    issueInspector.reset();
+    chores.clearCache();
+  });
+
   it("isFeatureSupported() return true with provided features", function() {
     let localEnv = new Envcloak({
       presets: {
@@ -58,11 +64,5 @@ describe("tdd:lib:core:context-manager", function() {
     assert.isFalse(contextManager.isFeatureSupported("abc"));
     assert.isFalse(contextManager.isFeatureSupported(["123", "def"]));
     localEnv.reset();
-  });
-
-  after(function() {
-    envcloak.reset();
-    issueInspector.reset();
-    chores.clearCache();
   });
 });

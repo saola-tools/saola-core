@@ -26,6 +26,11 @@ describe("tdd:lib:core:process-manager", function() {
     LogConfig.reset();
   });
 
+  after(function() {
+    envcloak.reset();
+    issueInspector.reset();
+  });
+
   it("process with 'pm_id'~6, 'instances'~3 will run in cluster mode, as a master", function() {
     let localEnv = new Envcloak({
       presets: {
@@ -82,10 +87,5 @@ describe("tdd:lib:core:process-manager", function() {
     assert.equal(processManager.total, 1);
     assert.equal(processManager.isMaster, false);
     localEnv.reset();
-  });
-
-  after(function() {
-    envcloak.reset();
-    issueInspector.reset();
   });
 });

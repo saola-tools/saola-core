@@ -30,6 +30,10 @@ describe("tdd:lib:core:logging-factory", function() {
       LoggingFactory.reset();
     });
 
+    after(function() {
+      envcloak.reset();
+    });
+
     it("transformLoggingLabels() accept null parameter", function() {
       let output = transformLoggingLabels(null);
       false && console.info("transformLoggingLabels(): ", output);
@@ -304,10 +308,6 @@ describe("tdd:lib:core:logging-factory", function() {
         }
       ]);
     });
-
-    after(function() {
-      envcloak.reset();
-    });
   });
 
   describe("extend Tracer using branch() method", function() {
@@ -321,6 +321,10 @@ describe("tdd:lib:core:logging-factory", function() {
 
     beforeEach(function() {
       LoggingFactory.reset();
+    });
+
+    after(function() {
+      envcloak.reset();
     });
 
     it("default Tracer must contain framework information", function() {
@@ -569,10 +573,6 @@ describe("tdd:lib:core:logging-factory", function() {
         lodash.pick(JSON.parse(logObject_2), ["instanceId", "blockId"]),
         lodash.pick(lodash.get(queue, [3, "payload"]), ["instanceId", "blockId"])
       );
-    });
-
-    after(function() {
-      envcloak.reset();
     });
   });
 });

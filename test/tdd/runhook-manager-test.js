@@ -30,6 +30,11 @@ describe("tdd:lib:core:runhook-manager", function() {
     issueInspector.reset();
   });
 
+  after(function() {
+    envcloak.reset();
+    issueInspector.reset();
+  });
+
   describe("definition", function() {
     let loggingStore = {};
 
@@ -294,10 +299,5 @@ describe("tdd:lib:core:runhook-manager", function() {
     after(function() {
       LogTracer.clearInterceptors();
     });
-  });
-
-  after(function() {
-    envcloak.reset();
-    issueInspector.reset();
   });
 });

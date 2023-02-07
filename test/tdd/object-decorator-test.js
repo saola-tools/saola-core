@@ -25,6 +25,11 @@ describe("tdd:lib:core:object-decorator", function() {
     LogConfig.reset();
   });
 
+  after(function() {
+    LogTracer.clearInterceptors();
+    envcloak.reset();
+  });
+
   describe("wrapMethod()", function() {
     let ObjectDecorator = lab.acquireFrameworkModule("backbone/object-decorator");
     let wrapMethod = ObjectDecorator.__get__("wrapMethod");
@@ -3730,10 +3735,5 @@ describe("tdd:lib:core:object-decorator", function() {
         }
       }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt"), "YkMjPoSoSyOTrLyf76Mzqt@0.1.1");
     });
-  });
-
-  after(function() {
-    LogTracer.clearInterceptors();
-    envcloak.reset();
   });
 });

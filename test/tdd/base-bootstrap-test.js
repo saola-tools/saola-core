@@ -36,6 +36,11 @@ describe("tdd:lib:base:bootstrap", function() {
     LogConfig.reset();
   });
 
+  after(function() {
+    LogTracer.clearInterceptors();
+    envcloak.reset();
+  });
+
   describe("Prerequisite", function() {
     it("launchApplication() load configure only (not server/runner)", function() {
       let loggingStore = {};
@@ -1121,11 +1126,6 @@ describe("tdd:lib:base:bootstrap", function() {
         });
       }
     });
-  });
-
-  after(function() {
-    LogTracer.clearInterceptors();
-    envcloak.reset();
   });
 });
 

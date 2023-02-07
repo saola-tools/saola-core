@@ -35,6 +35,10 @@ describe.skip("tdd:lib:base:runner", function() {
     chores.clearCache();
   });
 
+  after(function() {
+    envcloak.reset();
+  });
+
   describe("MockWsServer", function() {
     let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     let L = loggingFactory.getLogger();
@@ -44,9 +48,5 @@ describe.skip("tdd:lib:base:runner", function() {
       LogTracer.clearInterceptors();
       issueInspector.reset();
     });
-  });
-
-  after(function() {
-    envcloak.reset();
   });
 });

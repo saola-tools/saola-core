@@ -31,6 +31,11 @@ describe("tdd:lib:core:sandbox-manager", function() {
     issueInspector.reset();
   });
 
+  after(function() {
+    envcloak.reset();
+    issueInspector.reset();
+  });
+
   it("getBridgeDialectNames() - retrieve bridge dialect names correctly", function() {
     let sandboxManager = lab.createSandboxManager("fullapp");
     if (!chores.isUpgradeSupported("bridge-full-ref")) {
@@ -315,10 +320,5 @@ describe("tdd:lib:core:sandbox-manager", function() {
       assert.equal(_defineService.firstCall.args[1], SampleService);
       assert.deepEqual(_defineService.firstCall.args[2], undefined);
     });
-  });
-
-  after(function() {
-    envcloak.reset();
-    issueInspector.reset();
   });
 });

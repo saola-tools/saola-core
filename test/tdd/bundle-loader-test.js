@@ -28,6 +28,11 @@ describe("tdd:lib:core:bundle-loader", function() {
     issueInspector.reset();
   });
 
+  after(function() {
+    LogTracer.clearInterceptors();
+    envcloak.reset();
+  });
+
   describe("loadRoutines()", function() {
     it("load routines from empty application", function() {
       let bundleLoader = lab.createBundleLoader();
@@ -825,10 +830,5 @@ describe("tdd:lib:core:bundle-loader", function() {
       };
       assert.deepInclude(triggerMap, expectedMap);
     });
-  });
-
-  after(function() {
-    LogTracer.clearInterceptors();
-    envcloak.reset();
   });
 });

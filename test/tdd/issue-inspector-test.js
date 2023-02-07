@@ -28,6 +28,10 @@ describe("tdd:lib:core:issue-inspector", function() {
     issueInspector.reset();
   });
 
+  after(function() {
+    envcloak.reset();
+  });
+
   describe("barrier()", function() {
     let loggingStore = {};
 
@@ -117,9 +121,5 @@ describe("tdd:lib:core:issue-inspector", function() {
     after(function() {
       LogTracer.clearInterceptors();
     });
-  });
-
-  after(function() {
-    envcloak.reset();
   });
 });

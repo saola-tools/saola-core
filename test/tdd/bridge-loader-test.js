@@ -25,6 +25,11 @@ describe("tdd:lib:core:bridge-loader", function() {
     issueInspector.reset();
   });
 
+  after(function() {
+    LogTracer.clearInterceptors();
+    envcloak.reset();
+  });
+
   describe("loadMetadata()", function() {
     before(function() {
       if (!chores.isUpgradeSupported("metadata-refiner")) this.skip();
@@ -572,10 +577,5 @@ describe("tdd:lib:core:bridge-loader", function() {
       assert.sameMembers(lodash.keys(dialectMap), lodash.keys(expectedMap));
       assert.deepInclude(dialectMap, expectedMap);
     });
-  });
-
-  after(function() {
-    LogTracer.clearInterceptors();
-    envcloak.reset();
   });
 });
