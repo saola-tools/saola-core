@@ -4,12 +4,12 @@ const lab = require("../index");
 const FRWK = lab.getFramework();
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
-const assert = require("chai").assert;
 const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const Envcloak = require("envcloak");
 const envcloak = Envcloak.instance;
-const sinon = require("sinon");
+
+const { assert, sinon } = require("liberica");
 
 describe("tdd:lib:core:manifest-handler", function() {
   this.timeout(lab.getDefaultTimeout());

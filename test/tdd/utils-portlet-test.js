@@ -11,7 +11,7 @@ const portlet = require("../../src/utils/portlet");
 const { PortletMixiner } = portlet;
 const { portletifyConfig, strictPortletConfig, getPortletDescriptors, createPortletifier } = portlet;
 
-describe("supports/portlet", function() {
+describe("tdd:lib:utils:portlet", function() {
   const loggingFactory = mockit.createLoggingFactoryMock({ captureMethodCall: false });
   const ctx = {
     L: loggingFactory.getLogger(),

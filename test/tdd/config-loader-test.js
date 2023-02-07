@@ -14,6 +14,9 @@ const Envcloak = require("envcloak");
 const envcloak = Envcloak.instance;
 const sinon = require("sinon");
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
+
 describe("tdd:lib:core:config-loader", function() {
   let issueInspector = lab.getIssueInspector();
   let stateInspector = lab.getStateInspector();
@@ -32,7 +35,7 @@ describe("tdd:lib:core:config-loader", function() {
   };
 
   let frameworkRef = {
-    name: "devebot",
+    name: FRAMEWORK_PACKAGE_NAME,
     type: "framework",
     path: lab.getFrameworkHome()
   };

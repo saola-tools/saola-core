@@ -1,12 +1,11 @@
 "use strict";
 
+const path = require("path");
+
 const lab = require("../index");
 const FRWK = lab.getFramework();
 FRWK.require("logolite"); // load the framework's logolite first
-const assert = require("liberica").assert;
-const mockit = require("liberica").mockit;
-const sinon = require("liberica").sinon;
-const path = require("path");
+const { assert, mockit, sinon } = require("liberica");
 
 describe("tdd:lib:core:mapping-loader", function() {
   let loggingFactory = lab.createLoggingFactoryMock();
