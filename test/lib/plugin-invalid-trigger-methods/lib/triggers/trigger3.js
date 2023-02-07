@@ -1,6 +1,6 @@
 "use strict";
 
-const chores = Devebot.require("chores");
+const chores = FRWK.require("chores");
 const http = require("http");
 
 const Service = function(params) {

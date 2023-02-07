@@ -1,8 +1,8 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-Devebot.require("logolite"); // load the Devebot's logolite first
+const FRWK = lab.getFramework();
+FRWK.require("logolite"); // load the framework's logolite first
 const assert = require("liberica").assert;
 const mockit = require("liberica").mockit;
 const sinon = require("liberica").sinon;

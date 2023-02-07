@@ -1,9 +1,9 @@
 "use strict";
 
 const http = require("http");
-const Promise = Devebot.require("bluebird");
-const chores = Devebot.require("chores");
-const lodash = Devebot.require("lodash");
+const Promise = FRWK.require("bluebird");
+const chores = FRWK.require("chores");
+const lodash = FRWK.require("lodash");
 
 function Service (params = {}) {
   const { packageName, loggingFactory, sandboxConfig, mainService } = params;

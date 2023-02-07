@@ -4,9 +4,9 @@ const path = require("path");
 const util = require("util");
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-const chores = Devebot.require("chores");
-const lodash = Devebot.require("lodash");
+const FRWK = lab.getFramework();
+const chores = FRWK.require("chores");
+const lodash = FRWK.require("lodash");
 const assert = require("chai").assert;
 const rewire = require("rewire");
 

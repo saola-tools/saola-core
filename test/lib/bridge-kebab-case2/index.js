@@ -1,7 +1,7 @@
 "use strict";
 
-const lodash = Devebot.require("lodash");
-const devlog = Devebot.require("pinbug")("devebot:test:lab:bridge-kebab-case2");
+const lodash = FRWK.require("lodash");
+const devlog = FRWK.require("pinbug")("devebot:test:lab:bridge-kebab-case2");
 
 const Service = function(params) {
   devlog.enabled && devlog(" + constructor start ...");

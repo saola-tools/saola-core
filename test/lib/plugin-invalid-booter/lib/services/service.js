@@ -1,7 +1,7 @@
 "use strict";
 
-const chores = Devebot.require("chores");
-const lodash = Devebot.require("lodash");
+const chores = FRWK.require("chores");
+const lodash = FRWK.require("lodash");
 
 /* eslint-disable no-unused-vars */
 const MODULE_NAME = "plugin-invalid-booter/trigger";

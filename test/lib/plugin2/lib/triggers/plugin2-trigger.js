@@ -1,8 +1,8 @@
 "use strict";
 
-const Promise = Devebot.require("bluebird");
-const lodash = Devebot.require("lodash");
-const chores = Devebot.require("chores");
+const Promise = FRWK.require("bluebird");
+const lodash = FRWK.require("lodash");
+const chores = FRWK.require("chores");
 const http = require("http");
 const util = require("util");
 

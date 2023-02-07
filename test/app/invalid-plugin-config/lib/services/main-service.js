@@ -1,8 +1,8 @@
 "use strict";
 
-const chores = Devebot.require("chores");
-const lodash = Devebot.require("lodash");
-const devlog = Devebot.require("pinbug")("test:app:invalid-plugin-config:mainService");
+const chores = FRWK.require("chores");
+const lodash = FRWK.require("lodash");
+const devlog = FRWK.require("pinbug")("test:app:invalid-plugin-config:mainService");
 
 const Service = function(params = {}) {
   devlog.enabled && devlog(" + constructor begin ...");

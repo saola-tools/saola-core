@@ -1,9 +1,9 @@
 "use strict";
 
 const lab = require("..");
-const Devebot = lab.getFramework();
-const lodash = Devebot.require("lodash");
-const chores = Devebot.require("chores");
+const FRWK = lab.getFramework();
+const lodash = FRWK.require("lodash");
+const chores = FRWK.require("chores");
 const assert = require("chai").assert;
 const BeanProxy = require(lab.getFrameworkModule("utils/proxy"));
 

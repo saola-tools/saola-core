@@ -1,13 +1,13 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-const lodash = Devebot.require("lodash");
+const FRWK = lab.getFramework();
+const lodash = FRWK.require("lodash");
 const assert = require("chai").assert;
-const debugx = Devebot.require("pinbug")("tdd:devebot:core:logging-factory");
+const debugx = FRWK.require("pinbug")("tdd:devebot:core:logging-factory");
 const LoggingFactory = require(lab.getFrameworkModule("backbone/logging-factory"));
-const LogAdapter = Devebot.require("logolite").LogAdapter;
-const MockLogger = Devebot.require("logolite").MockLogger;
+const LogAdapter = FRWK.require("logolite").LogAdapter;
+const MockLogger = FRWK.require("logolite").MockLogger;
 const envcloak = require("envcloak").instance;
 
 const constx = require(lab.getFrameworkModule("utils/constx"));

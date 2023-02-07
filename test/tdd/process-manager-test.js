@@ -1,12 +1,12 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
+const FRWK = lab.getFramework();
 const assert = require("chai").assert;
 const path = require("path");
 const util = require("util");
-const LogConfig = Devebot.require("logolite").LogConfig;
-const LogTracer = Devebot.require("logolite").LogTracer;
+const LogConfig = FRWK.require("logolite").LogConfig;
+const LogTracer = FRWK.require("logolite").LogTracer;
 const Envcloak = require("envcloak");
 const envcloak = Envcloak.instance;
 

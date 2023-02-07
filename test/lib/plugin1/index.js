@@ -1,6 +1,6 @@
 const lab = require("../../index");
 
-module.exports = Devebot.registerLayerware({
+module.exports = FRWK.registerLayerware({
   layerRootPath: __dirname,
   presets: {
     configTags: "bridge[dialect-bridge]"

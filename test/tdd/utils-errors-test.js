@@ -1,8 +1,8 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-const Promise = Devebot.require("bluebird");
+const FRWK = lab.getFramework();
+const Promise = FRWK.require("bluebird");
 const assert = require("chai").assert;
 const util = require("util");
 const errors = require(lab.getFrameworkModule("utils/errors"));

@@ -1,14 +1,14 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-const Promise = Devebot.require("bluebird");
-const lodash = Devebot.require("lodash");
-const chores = Devebot.require("chores");
+const FRWK = lab.getFramework();
+const Promise = FRWK.require("bluebird");
+const lodash = FRWK.require("lodash");
+const chores = FRWK.require("chores");
 const errors = require(lab.getFrameworkModule("utils/errors"));
 const assert = require("chai").assert;
-const LogConfig = Devebot.require("logolite").LogConfig;
-const LogTracer = Devebot.require("logolite").LogTracer;
+const LogConfig = FRWK.require("logolite").LogConfig;
+const LogTracer = FRWK.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 const sinon = require("sinon");
 

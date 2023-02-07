@@ -1,6 +1,6 @@
 "use strict";
 
-const chores = Devebot.require("chores");
+const chores = FRWK.require("chores");
 
 const profileConfig = {
   newFeatures: {

@@ -1,1 +1,1 @@
-module.exports = Devebot.registerLayerware(__dirname, []);
+module.exports = FRWK.registerLayerware(__dirname, []);

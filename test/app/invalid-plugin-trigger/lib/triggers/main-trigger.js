@@ -1,10 +1,10 @@
 "use strict";
 
 const http = require("http");
-const Promise = Devebot.require("bluebird");
-const lodash = Devebot.require("lodash");
-const chores = Devebot.require("chores");
-const devlog = Devebot.require("pinbug")("test:app:invalid-plugin-trigger:mainTrigger");
+const Promise = FRWK.require("bluebird");
+const lodash = FRWK.require("lodash");
+const chores = FRWK.require("chores");
+const devlog = FRWK.require("pinbug")("test:app:invalid-plugin-trigger:mainTrigger");
 
 const Service = function(params) {
   devlog.enabled && devlog(" + constructor begin ...");

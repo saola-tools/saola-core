@@ -1,9 +1,9 @@
 "use strict";
 
 const lab = require("../../index");
-const devebot = lab.getFramework();
+const FRWK = lab.getFramework();
 
-module.exports = devebot.registerLayerware(__dirname, [], [
+module.exports = FRWK.registerLayerware(__dirname, [], [
   {
     name: "bridge-kebab-case1",
     path: lab.getLibHome("bridge-kebab-case1")

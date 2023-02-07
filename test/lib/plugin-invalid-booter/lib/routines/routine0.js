@@ -1,6 +1,6 @@
 "use strict";
 
-const Promise = Devebot.require("bluebird");
+const Promise = FRWK.require("bluebird");
 
 const runhookDialect = {
   info: {

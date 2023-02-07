@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 const MODULE_NAME = "plugin-invalid-booter/routine1";
 
-const Promise = Devebot.require("bluebird");
+const Promise = FRWK.require("bluebird");
 
 const runhookDialect = {
   info: {

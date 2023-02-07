@@ -32,6 +32,8 @@ const FRAMEWORK_CAPNAME = lodash.capitalize(FRAMEWORK_NAMESPACE);
 const FRAMEWORK_BRIDGE_LABEL = "bridge";
 const FRAMEWORK_PLUGIN_LABEL = "plugin";
 
+const REGISTER_LAYERWARE_OPTION_NAMES = ["name", "type", "path", "presets"];
+
 function appLoader (params = {}) {
   const {logger: L, tracer: T} = params;
 
@@ -408,7 +410,7 @@ function expandExtensions (accumulator, pluginNames, bridgeNames) {
       };
       return;
     }
-    const inc = lodash.pick(bridgeInfo, ["name", "type", "path", "presets"]);
+    const inc = lodash.pick(bridgeInfo, REGISTER_LAYERWARE_OPTION_NAMES);
     context.bridgeRefs[bridgeInfo.path] = lodash.assign(context.bridgeRefs[bridgeInfo.path], inc);
   });
 
@@ -421,7 +423,7 @@ function expandExtensions (accumulator, pluginNames, bridgeNames) {
       };
       return;
     }
-    const inc = lodash.pick(pluginInfo, ["name", "type", "path", "presets"]);
+    const inc = lodash.pick(pluginInfo, REGISTER_LAYERWARE_OPTION_NAMES);
     context.pluginRefs[pluginInfo.path] = lodash.assign(context.pluginRefs[pluginInfo.path], inc);
   });
 

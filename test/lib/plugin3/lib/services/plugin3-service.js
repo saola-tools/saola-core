@@ -1,6 +1,6 @@
 "use strict";
 
-const lodash = Devebot.require("lodash");
+const lodash = FRWK.require("lodash");
 
 const Service = function(params) {
   params = params || {};

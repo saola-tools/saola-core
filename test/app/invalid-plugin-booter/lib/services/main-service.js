@@ -1,7 +1,7 @@
 "use strict";
 
-const lodash = Devebot.require("lodash");
-const devlog = Devebot.require("pinbug")("test:app:invalid-plugin-booter:mainService");
+const lodash = FRWK.require("lodash");
+const devlog = FRWK.require("pinbug")("test:app:invalid-plugin-booter:mainService");
 
 /* eslint-disable no-unused-vars */
 const MODULE_NAME = "invalid-plugin-booter/mainService";

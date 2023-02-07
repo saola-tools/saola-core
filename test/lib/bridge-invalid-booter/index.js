@@ -1,7 +1,7 @@
 "use strict";
 
-const lodash = Devebot.require("lodash");
-const devlog = Devebot.require("pinbug")("devebot:test:lab:bridge-invalid-booter");
+const lodash = FRWK.require("lodash");
+const devlog = FRWK.require("pinbug")("devebot:test:lab:bridge-invalid-booter");
 
 /* eslint-disable no-unused-vars */
 const MY_CONST = "BEGIN";

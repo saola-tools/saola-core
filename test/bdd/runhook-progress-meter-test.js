@@ -1,11 +1,11 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-const Promise = Devebot.require("bluebird");
-const chores = Devebot.require("chores");
-const lodash = Devebot.require("lodash");
-const debugx = Devebot.require("pinbug")("bdd:api:runhook:progress:meter");
+const FRWK = lab.getFramework();
+const Promise = FRWK.require("bluebird");
+const chores = FRWK.require("chores");
+const lodash = FRWK.require("lodash");
+const debugx = FRWK.require("pinbug")("bdd:api:runhook:progress:meter");
 const assert = require("chai").assert;
 const DevebotApi = require("devebot-api");
 

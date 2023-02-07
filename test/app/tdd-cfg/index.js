@@ -1,8 +1,9 @@
 "use strict";
 
-const Devebot = require("../../index").getFramework();
+const lab = require("../../index");
+const FRWK = lab.getFramework();
 
-const app = Devebot.launchApplication({
+const app = FRWK.launchApplication({
   appRootPath: __dirname
 }, [], []);
 

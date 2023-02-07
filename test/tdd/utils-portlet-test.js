@@ -1,10 +1,10 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-const Promise = Devebot.require("bluebird");
-const lodash = Devebot.require("lodash");
-const chores = Devebot.require("chores");
+const FRWK = lab.getFramework();
+const Promise = FRWK.require("bluebird");
+const lodash = FRWK.require("lodash");
+const chores = FRWK.require("chores");
 const { assert, mockit, sinon } = require("liberica");
 
 const portlet = require("../../src/utils/portlet");

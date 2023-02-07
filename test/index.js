@@ -13,11 +13,14 @@ const ManifestHandler = require("../lib/backbone/manifest-handler");
 const issueInspector = require("../lib/backbone/issue-inspector").instance;
 const stateInspector = require("../lib/backbone/state-inspector").instance;
 const packageStocker = require("../lib/backbone/package-stocker").instance;
-const Devebot = require(path.join(__dirname, "../"));
-const LogConfig = Devebot.require("logolite").LogConfig;
-const LogTracer = Devebot.require("logolite").LogTracer;
-const Injektor = Devebot.require("injektor");
-const lodash = Devebot.require("lodash");
+
+const FRWK = require(path.join(__dirname, "../"));
+const LogConfig = FRWK.require("logolite").LogConfig;
+const LogTracer = FRWK.require("logolite").LogTracer;
+const Injektor = FRWK.require("injektor");
+const lodash = FRWK.require("lodash");
+
+global.FRWK = FRWK;
 
 // EventEmitter memory leak detecting
 const max = 12;

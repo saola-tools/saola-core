@@ -1,8 +1,8 @@
 "use strict";
 
 const assert = require("assert");
-const chores = Devebot.require("chores");
-const lodash = Devebot.require("lodash");
+const chores = FRWK.require("chores");
+const lodash = FRWK.require("lodash");
 
 function Service (params={}) {
   const sandboxConfig = lodash.get(params, ["sandboxConfig", "application"], {});

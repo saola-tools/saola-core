@@ -1,6 +1,6 @@
 "use strict";
 
-const chores = Devebot.require("chores");
+const chores = FRWK.require("chores");
 
 function Service (params = {}) {
   const { componentId, packageName, loggingFactory, sandboxConfig, bridgeCase0Instance0 } = params;

@@ -1,8 +1,8 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-const chores = Devebot.require("chores");
+const FRWK = lab.getFramework();
+const chores = FRWK.require("chores");
 const assert = require("chai").assert;
 
 describe("tdd:lib:core:name-resolver", function() {

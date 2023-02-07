@@ -1,10 +1,10 @@
 "use strict";
 
 const http = require("http");
-const Promise = Devebot.require("bluebird");
-const lodash = Devebot.require("lodash");
-const chores = Devebot.require("chores");
-const debugx = Devebot.require("pinbug")("test:app:setting-with-metadata:mainTrigger");
+const Promise = FRWK.require("bluebird");
+const lodash = FRWK.require("lodash");
+const chores = FRWK.require("chores");
+const debugx = FRWK.require("pinbug")("test:app:setting-with-metadata:mainTrigger");
 
 const Service = function(params={}) {
   const packageName = params.packageName || "setting-with-metadata";

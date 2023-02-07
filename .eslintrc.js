@@ -5,7 +5,7 @@ module.exports = {
     "mocha": true
   },
   "globals": {
-    "Devebot": true
+    "FRWK": true
   },
   "extends": "standard",
   "rules": {

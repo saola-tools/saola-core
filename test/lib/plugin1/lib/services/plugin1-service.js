@@ -1,7 +1,7 @@
 "use strict";
 
-const lodash = Devebot.require("lodash");
-const debugx = Devebot.require("pinbug")("devebot:test:lab:plugin1:plugin1Service");
+const lodash = FRWK.require("lodash");
+const debugx = FRWK.require("pinbug")("devebot:test:lab:plugin1:plugin1Service");
 
 const Service = function(params = {}) {
   debugx.enabled && debugx(" + constructor begin ...");

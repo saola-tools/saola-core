@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 const MODULE_NAME = "invalid-plugin-booter/mainService";
 
-const Promise = Devebot.require("bluebird");
+const Promise = FRWK.require("bluebird");
 
 const commandObject = {
   info: {

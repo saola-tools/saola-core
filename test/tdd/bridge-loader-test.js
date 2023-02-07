@@ -1,13 +1,13 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-const lodash = Devebot.require("lodash");
-const chores = Devebot.require("chores");
+const FRWK = lab.getFramework();
+const lodash = FRWK.require("lodash");
+const chores = FRWK.require("chores");
 const assert = require("chai").assert;
 const util = require("util");
-const LogConfig = Devebot.require("logolite").LogConfig;
-const LogTracer = Devebot.require("logolite").LogTracer;
+const LogConfig = FRWK.require("logolite").LogConfig;
+const LogTracer = FRWK.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
 describe("tdd:lib:core:bridge-loader", function() {

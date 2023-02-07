@@ -1,10 +1,10 @@
 "use strict";
 
 const lab = require("../index");
-const Devebot = lab.getFramework();
-const chores = Devebot.require("chores");
-const lodash = Devebot.require("lodash");
-const loader = Devebot.require("loader");
+const FRWK = lab.getFramework();
+const chores = FRWK.require("chores");
+const lodash = FRWK.require("lodash");
+const loader = FRWK.require("loader");
 const assert = require("chai").assert;
 const path = require("path");
 const ConfigLoader = require(lab.getFrameworkModule("backbone/config-loader"));
@@ -490,6 +490,8 @@ describe("tdd:lib:core:config-loader", function() {
         originalCfg,
         { type: "plugin", name: "cfg-example", presets: {} }
       );
+
+      false && console.log(JSON.stringify(absoluteCfg, null, 2));
 
       let relativeAliasMap = {
         plugin: buildRelativeAliasMap(pluginRefs),
