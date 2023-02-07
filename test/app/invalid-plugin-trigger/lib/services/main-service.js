@@ -1,7 +1,7 @@
 "use strict";
 
 const lodash = FRWK.require("lodash");
-const devlog = FRWK.require("pinbug")("test:app:invalid-plugin-trigger:mainService");
+const devlog = FRWK.require("pinbug")("devteam:test:app:invalid-plugin-trigger:mainService");
 
 const Service = function(params) {
   devlog.enabled && devlog(" + constructor begin ...");

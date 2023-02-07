@@ -4,7 +4,7 @@ const http = require("http");
 const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
 const chores = FRWK.require("chores");
-const devlog = FRWK.require("pinbug")("test:app:invalid-plugin-trigger-methods:mainTrigger");
+const devlog = FRWK.require("pinbug")("devteam:test:app:invalid-plugin-trigger-methods:mainTrigger");
 
 const Service = function(params) {
   devlog.enabled && devlog(" + constructor begin ...");

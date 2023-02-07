@@ -10,6 +10,7 @@ const ApiClient = require("devebot-api");
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 const FRAMEWORK_PACKAGE_AUTHOR = "devebot";
+const TEST_PACKAGE_AUTHOR = "devteam";
 
 describe("bdd:api:routine:applica-info", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -76,7 +77,7 @@ describe("bdd:api:routine:applica-info", function() {
               "name": "demo-app",
               "description": "Demo Application",
               "main": "index.js",
-              "author": FRAMEWORK_PACKAGE_AUTHOR,
+              "author": TEST_PACKAGE_AUTHOR,
               "license": "ISC",
               "layerware": [
                 {
@@ -84,7 +85,7 @@ describe("bdd:api:routine:applica-info", function() {
                   "name": "plugin1",
                   "description": "",
                   "main": "index.js",
-                  "author": FRAMEWORK_PACKAGE_AUTHOR,
+                  "author": TEST_PACKAGE_AUTHOR,
                   "license": "ISC"
                 },
                 {
@@ -92,7 +93,7 @@ describe("bdd:api:routine:applica-info", function() {
                   "name": "plugin2",
                   "description": "",
                   "main": "index.js",
-                  "author": FRAMEWORK_PACKAGE_AUTHOR,
+                  "author": TEST_PACKAGE_AUTHOR,
                   "license": "ISC"
                 }
               ],
@@ -168,7 +169,7 @@ describe("bdd:api:routine:applica-info", function() {
               "name": "demo-app",
               "description": "Demo Application",
               "main": "index.js",
-              "author": FRAMEWORK_PACKAGE_AUTHOR,
+              "author": TEST_PACKAGE_AUTHOR,
               "license": "ISC",
               "layerware": [
                 {
@@ -176,7 +177,7 @@ describe("bdd:api:routine:applica-info", function() {
                   "name": "plugin1",
                   "description": "",
                   "main": "index.js",
-                  "author": FRAMEWORK_PACKAGE_AUTHOR,
+                  "author": TEST_PACKAGE_AUTHOR,
                   "license": "ISC"
                 },
                 {
@@ -184,7 +185,7 @@ describe("bdd:api:routine:applica-info", function() {
                   "name": "plugin2",
                   "description": "",
                   "main": "index.js",
-                  "author": FRAMEWORK_PACKAGE_AUTHOR,
+                  "author": TEST_PACKAGE_AUTHOR,
                   "license": "ISC"
                 }
               ],

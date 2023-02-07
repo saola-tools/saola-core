@@ -3,8 +3,10 @@
 const lab = require("../index");
 const FRWK = lab.getFramework();
 const chores = FRWK.require("chores");
-const debugx = FRWK.require("pinbug")("bdd:devebot:core:configuration");
+const debugx = FRWK.require("pinbug")("devteam:bdd:core:configuration");
 const expect = require("chai").expect;
+
+const TEST_PACKAGE_AUTHOR = "devteam";
 
 describe("bdd:app:configuration", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -25,7 +27,7 @@ describe("bdd:app:configuration", function() {
           "name": "demo-app",
           "description": "Demo Application",
           "main": "index.js",
-          "author": "devebot",
+          "author": TEST_PACKAGE_AUTHOR,
           "license": "ISC",
           "framework": lab.getFrameworkInfo()
         });
@@ -37,7 +39,7 @@ describe("bdd:app:configuration", function() {
               "name": "plugin1",
               "description": "",
               "main": "index.js",
-              "author": "devebot",
+              "author": TEST_PACKAGE_AUTHOR,
               "license": "ISC"
             },
             {
@@ -45,7 +47,7 @@ describe("bdd:app:configuration", function() {
               "name": "plugin2",
               "description": "",
               "main": "index.js",
-              "author": "devebot",
+              "author": TEST_PACKAGE_AUTHOR,
               "license": "ISC"
             }
           ]

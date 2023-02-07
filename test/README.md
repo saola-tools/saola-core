@@ -42,7 +42,7 @@ node test/app/setting-with-metadata/ --tasks=print-config
 ```
 
 ```shell
-export DEBUG=devebot*,app*
+export DEBUG=devteam*,app*
 export LOGOLITE_DEBUGLOG_ENABLED=true
 ```
 

@@ -1,7 +1,7 @@
 "use strict";
 
 const lodash = FRWK.require("lodash");
-const devlog = FRWK.require("pinbug")("devebot:test:lab:bridge-invalid-booter");
+const devlog = FRWK.require("pinbug")("devteam:test:lib:bridge-invalid-booter");
 
 /* eslint-disable no-unused-vars */
 const MY_CONST = "BEGIN";

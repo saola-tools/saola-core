@@ -15,6 +15,7 @@ const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 const FRAMEWORK_PACKAGE_AUTHOR = "devebot";
+const TEST_PACKAGE_AUTHOR = "devteam";
 
 const CONFIG_EXTENDED_FIELDS = [
   "profile", "sandbox", "texture",
@@ -788,7 +789,7 @@ describe("tdd:lib:base:bootstrap", function() {
         "name": "fullapp",
         "description": "Demo Application",
         "main": "index.js",
-        "author": FRAMEWORK_PACKAGE_AUTHOR,
+        "author": TEST_PACKAGE_AUTHOR,
         "license": "ISC",
         "layerware": [
           {
@@ -796,7 +797,7 @@ describe("tdd:lib:base:bootstrap", function() {
             "name": "sub-plugin1",
             "description": "",
             "main": "index.js",
-            "author": FRAMEWORK_PACKAGE_AUTHOR,
+            "author": TEST_PACKAGE_AUTHOR,
             "license": "ISC"
           },
           {
@@ -804,7 +805,7 @@ describe("tdd:lib:base:bootstrap", function() {
             "name": "sub-plugin2",
             "description": "",
             "main": "index.js",
-            "author": FRAMEWORK_PACKAGE_AUTHOR,
+            "author": TEST_PACKAGE_AUTHOR,
             "license": "ISC"
           },
           {
@@ -812,7 +813,7 @@ describe("tdd:lib:base:bootstrap", function() {
             "name": "plugin1",
             "description": "",
             "main": "index.js",
-            "author": FRAMEWORK_PACKAGE_AUTHOR,
+            "author": TEST_PACKAGE_AUTHOR,
             "license": "ISC"
           },
           {
@@ -820,7 +821,7 @@ describe("tdd:lib:base:bootstrap", function() {
             "name": "plugin2",
             "description": "",
             "main": "index.js",
-            "author": FRAMEWORK_PACKAGE_AUTHOR,
+            "author": TEST_PACKAGE_AUTHOR,
             "license": "ISC"
           },
           {
@@ -828,7 +829,7 @@ describe("tdd:lib:base:bootstrap", function() {
             "name": "plugin3",
             "description": "",
             "main": "index.js",
-            "author": FRAMEWORK_PACKAGE_AUTHOR,
+            "author": TEST_PACKAGE_AUTHOR,
             "license": "ISC"
           }
         ],

@@ -3,7 +3,7 @@
 const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
 const chores = FRWK.require("chores");
-const devlog = FRWK.require("pinbug")("test:app:invalid-plugin-booter:mainTrigger");
+const devlog = FRWK.require("pinbug")("devteam:test:app:invalid-plugin-booter:mainTrigger");
 const http = require("http");
 
 /* eslint-disable no-unused-vars */

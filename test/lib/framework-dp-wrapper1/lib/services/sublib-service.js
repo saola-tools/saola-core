@@ -4,7 +4,7 @@ const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 
 const Service = function(params = {}) {
-  const packageName = params.packageName || "devebot-dp-wrapper1";
+  const packageName = params.packageName;
   const blockRef = chores.getBlockRef(__filename, packageName);
   const L = params.loggingFactory.getLogger();
   const T = params.loggingFactory.getTracer();

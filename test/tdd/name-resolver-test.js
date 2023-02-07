@@ -22,22 +22,22 @@ describe("tdd:lib:core:name-resolver", function() {
       if (!chores.isUpgradeSupported("standardizing-config")) this.skip();
 
       let pluginDefs = {
-        "path/to/devebot-dp-wrapper1": {
+        "path/to/namespace-dp-wrapper1": {
           name: "devebot-dp-wrapper1"
         },
-        "path/to/devebot-dp-wrapper2": {
+        "path/to/namespace-dp-wrapper2": {
           name: "devebot-dp-wrapper2"
         },
         "path/to/sub-wrapper1": {
           name: "sub-wrapper1"
         },
-        "path/to/devebot-dp-sub-wrapper0": {
+        "path/to/namespace-dp-sub-wrapper0": {
           name: "devebot-dp-sub-wrapper0"
         },
-        "path/to/devebot-dp-sub-wrapper1": {
+        "path/to/namespace-dp-sub-wrapper1": {
           name: "devebot-dp-sub-wrapper1"
         },
-        "path/to/devebot-dp-sub-wrapper2": {
+        "path/to/namespace-dp-sub-wrapper2": {
           name: "devebot-dp-sub-wrapper2"
         },
         "path/to/sub-wrapper2": {
@@ -46,13 +46,13 @@ describe("tdd:lib:core:name-resolver", function() {
       };
 
       let pluginRefs = {
-        "path/to/devebot-dp-wrapper1": {
+        "path/to/namespace-dp-wrapper1": {
           name: "devebot-dp-wrapper1",
           nameInCamel: "devebotDpWrapper1",
           code: "wrapper1",
           codeInCamel: "wrapper1"
         },
-        "path/to/devebot-dp-wrapper2": {
+        "path/to/namespace-dp-wrapper2": {
           name: "devebot-dp-wrapper2",
           nameInCamel: "devebotDpWrapper2",
           code: "wrapper2",
@@ -64,19 +64,19 @@ describe("tdd:lib:core:name-resolver", function() {
           code: "sub-wrapper1",
           codeInCamel: "subWrapper1"
         },
-        "path/to/devebot-dp-sub-wrapper0": {
+        "path/to/namespace-dp-sub-wrapper0": {
           name: "devebot-dp-sub-wrapper0",
           nameInCamel: "devebotDpSubWrapper0",
           code: "sub-wrapper0",
           codeInCamel: "subWrapper0"
         },
-        "path/to/devebot-dp-sub-wrapper1": {
+        "path/to/namespace-dp-sub-wrapper1": {
           name: "devebot-dp-sub-wrapper1",
           nameInCamel: "devebotDpSubWrapper1",
           code: "sub-wrapper1",
           codeInCamel: "subWrapper1"
         },
-        "path/to/devebot-dp-sub-wrapper2": {
+        "path/to/namespace-dp-sub-wrapper2": {
           name: "devebot-dp-sub-wrapper2",
           nameInCamel: "devebotDpSubWrapper2",
           code: "sub-wrapper2",

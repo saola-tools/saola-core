@@ -873,10 +873,10 @@ describe("tdd:lib:core:manifest-handler", function() {
             "schemaValidation": false
           },
         },
-        "/test/lib/devebot-co-connector1": {
+        "/test/lib/namespace-co-connector1": {
           "name": "devebot-co-connector1",
           "type": "bridge",
-          "path": "/test/lib/devebot-co-connector1",
+          "path": "/test/lib/namespace-co-connector1",
           "manifest": {
             "config": {
               "migration": {},
@@ -900,10 +900,10 @@ describe("tdd:lib:core:manifest-handler", function() {
             },
           },
         },
-        "/test/lib/devebot-co-connector2": {
+        "/test/lib/namespace-co-connector2": {
           "name": "devebot-co-connector2",
           "type": "bridge",
-          "path": "/test/lib/devebot-co-connector2",
+          "path": "/test/lib/namespace-co-connector2",
           "manifest": {
             "config": {
               "migration": {},

@@ -6,7 +6,6 @@ const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 const loader = FRWK.require("loader");
-const debugx = FRWK.require("pinbug")("tdd:devebot:base:runner");
 const assert = require("chai").assert;
 const path = require("path");
 const util = require("util");

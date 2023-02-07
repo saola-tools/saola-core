@@ -336,10 +336,10 @@ describe("tdd:lib:core:config-loader", function() {
 
       let absoluteAliasMap = {
         plugin: buildAbsoluteAliasMap(extractAliasNames(CTX, "plugin", {
-          "path/to/devebot-dp-wrapper1": {
+          "path/to/namespace-dp-wrapper1": {
             name: "devebot-dp-wrapper1"
           },
-          "path/to/devebot-dp-wrapper2": {
+          "path/to/namespace-dp-wrapper2": {
             name: "devebot-dp-wrapper2"
           }
         })),
@@ -448,10 +448,10 @@ describe("tdd:lib:core:config-loader", function() {
       };
 
       let pluginRefs = extractAliasNames(CTX, "plugin", {
-        "path/to/devebot-dp-wrapper1": {
+        "path/to/namespace-dp-wrapper1": {
           name: "devebot-dp-wrapper1"
         },
-        "path/to/devebot-dp-wrapper2": {
+        "path/to/namespace-dp-wrapper2": {
           name: "devebot-dp-wrapper2"
         }
       });
@@ -546,10 +546,10 @@ describe("tdd:lib:core:config-loader", function() {
             }
           },
         },
-        "/test/lib/devebot-co-vps": {
+        "/test/lib/namespace-co-vps": {
           "name": "devebot-co-vps",
           "type": "bridge",
-          "path": "/test/lib/devebot-co-vps",
+          "path": "/test/lib/namespace-co-vps",
           "version": "0.1.3",
           "manifest": {
             "config": {

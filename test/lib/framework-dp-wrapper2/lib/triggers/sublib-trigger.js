@@ -9,7 +9,7 @@ const util = require("util");
 const Service = function(params) {
   params = params || {};
 
-  const packageName = params.packageName || "devebot-dp-wrapper2";
+  const packageName = params.packageName;
   const blockRef = chores.getBlockRef(__filename, packageName);
   const L = params.loggingFactory.getLogger();
   const T = params.loggingFactory.getTracer();

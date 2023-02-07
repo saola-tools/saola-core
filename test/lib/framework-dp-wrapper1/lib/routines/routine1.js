@@ -4,13 +4,13 @@ const Promise = FRWK.require("bluebird");
 
 const runhookDialect = {
   info: {
-    description: "devebot-dp-wrapper1/Routine1",
+    description: "namespace-dp-wrapper1/Routine1",
     options: []
   },
   handler: function(opts, payload, ctx) {
     return Promise.resolve([{
         type: "json",
-        title: "devebot-dp-wrapper1 - Routine1",
+        title: "namespace-dp-wrapper1 - Routine1",
         data: {}
     }]);
   }

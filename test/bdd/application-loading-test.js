@@ -234,7 +234,7 @@ describe("bdd:app:application", function() {
       }
 
       app = lab.getApp(lab.unloadApp("naming-convention"));
-      app.server;
+      assert.isNotNull(app.server);
 
       false && console.info(JSON.stringify(moduleStats, null, 2));
       assert.isAbove(moduleStats.constructorBeginTotal, 0);
@@ -341,7 +341,7 @@ describe("bdd:app:application", function() {
       }
 
       app = lab.getApp("naming-convention/index2");
-      app.server;
+      assert.isNotNull(app.server);
 
       false && console.info(JSON.stringify(moduleStats, null, 2));
       for (let k=1; k<=2; k++) {
@@ -373,7 +373,7 @@ describe("bdd:app:application", function() {
       }
 
       app = lab.getApp("reference-alias");
-      app.server;
+      assert.isNotNull(app.server);
 
       false && console.info(JSON.stringify(moduleStats, null, 2));
       assert.isAbove(moduleStats.constructorBeginTotal, 0);
@@ -410,7 +410,7 @@ describe("bdd:app:application", function() {
       }
 
       app = lab.getApp("rename-comp-dir");
-      app.server;
+      assert.isNotNull(app.server);
 
       false && console.info(JSON.stringify(moduleStats, null, 2));
       assert.isAbove(moduleStats.constructorBeginTotal, 0);

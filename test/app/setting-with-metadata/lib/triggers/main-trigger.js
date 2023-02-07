@@ -4,7 +4,7 @@ const http = require("http");
 const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
 const chores = FRWK.require("chores");
-const debugx = FRWK.require("pinbug")("test:app:setting-with-metadata:mainTrigger");
+const debugx = FRWK.require("pinbug")("devteam:test:app:setting-with-metadata:mainTrigger");
 
 const Service = function(params={}) {
   const packageName = params.packageName || "setting-with-metadata";

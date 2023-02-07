@@ -8,7 +8,7 @@ const helper = require("../index");
 const appboxDefault = require("../gen/appbox-default");
 const bridgeDefault = require("../gen/bridge-default");
 
-describe.skip("tdd:devebot:core:config-constraints", function() {
+describe.skip("tdd:core:config-constraints", function() {
   this.timeout(60000);
 
   let bridgePkgs = _.map(_.range(1, 3), function(idx) {

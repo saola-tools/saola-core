@@ -3,7 +3,7 @@
 const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
 const chores = FRWK.require("chores");
-const devlog = FRWK.require("pinbug")("devebot:test:lab:plugin1:plugin1Trigger");
+const devlog = FRWK.require("pinbug")("devteam:test:lib:plugin1:plugin1Trigger");
 const http = require("http");
 const util = require("util");
 

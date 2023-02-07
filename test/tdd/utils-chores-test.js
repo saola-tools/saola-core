@@ -375,11 +375,11 @@ describe("tdd:lib:utils:chores", function() {
         DEVEBOT_FORCING_SILENT: "framework,webserver"
       });
       assert.isTrue(chores.isSilentForced("framework"));
-      assert.isTrue(chores.isSilentForced(["devebot", "framework"]));
+      assert.isTrue(chores.isSilentForced(["something", "framework"]));
       assert.isTrue(chores.isSilentForced(["framework", "webserver"]));
       assert.isTrue(chores.isSilentForced("webserver"));
       //
-      assert.isFalse(chores.isSilentForced("devebot"));
+      assert.isFalse(chores.isSilentForced("something"));
       assert.isFalse(chores.isSilentForced("restfront"));
     });
   });
@@ -390,11 +390,11 @@ describe("tdd:lib:utils:chores", function() {
         DEVEBOT_FORCING_SILENT: "framework,webserver"
       });
       assert.isFalse(chores.isVerboseForced("framework"));
-      assert.isFalse(chores.isVerboseForced(["devebot", "framework"]));
+      assert.isFalse(chores.isVerboseForced(["something", "framework"]));
       assert.isFalse(chores.isVerboseForced(["framework", "webserver"]));
       assert.isFalse(chores.isVerboseForced("webserver"));
       //
-      assert.isTrue(chores.isVerboseForced("devebot"));
+      assert.isTrue(chores.isVerboseForced("something"));
       assert.isTrue(chores.isVerboseForced("restfront"));
     });
     //
