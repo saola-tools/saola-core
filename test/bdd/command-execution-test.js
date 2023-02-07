@@ -7,7 +7,7 @@ const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 const debugx = FRWK.require("pinbug")("bdd:devebot:command:execution");
 const assert = require("chai").assert;
-const DevebotApi = require("devebot-api");
+const ApiClient = require("devebot-api");
 const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
@@ -91,7 +91,7 @@ describe("bdd:api:command:execution", function() {
         chores.toFullname("bridge2", "anyname2c")
       ]);
     }
-    api = new DevebotApi(lab.getApiConfig());
+    api = new ApiClient(lab.getApiConfig());
   });
 
   beforeEach(function() {

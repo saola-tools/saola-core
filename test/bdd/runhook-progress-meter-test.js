@@ -7,7 +7,7 @@ const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 const debugx = FRWK.require("pinbug")("bdd:api:runhook:progress:meter");
 const assert = require("chai").assert;
-const DevebotApi = require("devebot-api");
+const ApiClient = require("devebot-api");
 
 describe("bdd:api:runhook:progress:meter", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -29,7 +29,7 @@ describe("bdd:api:runhook:progress:meter", function() {
   });
 
   beforeEach(function() {
-    api = new DevebotApi(lab.getApiConfig());
+    api = new ApiClient(lab.getApiConfig());
     return app.server.start();
   });
 

@@ -5,7 +5,7 @@ const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
 const assert = require("chai").assert;
-const DevebotApi = require("devebot-api");
+const ApiClient = require("devebot-api");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
@@ -22,7 +22,7 @@ describe("bdd:api:routine:applica-info", function() {
     });
 
     beforeEach(function() {
-      api = new DevebotApi(lab.getApiConfig({
+      api = new ApiClient(lab.getApiConfig({
         ws: app.runner.listen()
       }));
     });
@@ -109,7 +109,7 @@ describe("bdd:api:routine:applica-info", function() {
 
     before(function() {
       app = lab.getApp("default");
-      api = new DevebotApi(lab.getApiConfig());
+      api = new ApiClient(lab.getApiConfig());
     });
 
     beforeEach(function() {

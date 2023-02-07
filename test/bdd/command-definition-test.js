@@ -6,7 +6,7 @@ const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
 const assert = require("chai").assert;
 const util = require("util");
-const DevebotApi = require("devebot-api");
+const ApiClient = require("devebot-api");
 
 describe("bdd:api:command:definition", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -15,7 +15,7 @@ describe("bdd:api:command:definition", function() {
 
   before(function() {
     app = lab.getApp("default");
-    api = new DevebotApi(lab.getApiConfig());
+    api = new ApiClient(lab.getApiConfig());
   });
 
   beforeEach(function() {
