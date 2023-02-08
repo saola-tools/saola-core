@@ -14,7 +14,6 @@ const envcloak = require("envcloak").instance;
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
-const FRAMEWORK_PACKAGE_AUTHOR = "devebot";
 const TEST_PACKAGE_AUTHOR = "devteam";
 
 const CONFIG_EXTENDED_FIELDS = [

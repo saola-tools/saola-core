@@ -1,7 +1,7 @@
 "use strict";
 
 const lodash = FRWK.require("lodash");
-const devlog = FRWK.require("pinbug")("devteam:test:lib:devebot-co-connector1");
+const devlog = FRWK.require("pinbug")("devteam:test:lib:namespace-co-connector1");
 
 const Service = function(params) {
   devlog.enabled && devlog(" + constructor start ...");

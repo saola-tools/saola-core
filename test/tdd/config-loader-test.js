@@ -2303,7 +2303,7 @@ describe("tdd:lib:core:config-loader", function() {
       false && console.info(JSON.stringify(config, null, 2));
 
       // Profile configuration
-      // Profile overriden order: [devebot]/profile <- [app:default]/profile <- [app:external]/profile
+      // Profile overriden order: [framework]/profile <- [app:default]/profile <- [app:external]/profile
       assert.deepEqual(
         lodash.get(config, "profile.default"),
         lodash.merge({},

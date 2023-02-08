@@ -15,7 +15,7 @@ module.exports = {
         "pointer": {
           "refPath": "sandbox -> bridge-kebab-case1 -> wrapper1 -> pointer",
           "refType": "wrapper1",
-          "refName": "devebot-dp-wrapper1",
+          "refName": "namespace-dp-wrapper1",
           "default": true
         }
       }
@@ -25,7 +25,7 @@ module.exports = {
         "pointer": {
           "refPath": "sandbox -> bridge-kebab-case2 -> wrapper1 -> pointer",
           "refType": "wrapper1",
-          "refName": "devebot-dp-wrapper1",
+          "refName": "namespace-dp-wrapper1",
           "default": true
         }
       }
@@ -35,7 +35,7 @@ module.exports = {
         "bean": {
           "refPath": "sandbox -> connector1 -> wrapper1 -> bean",
           "refType": "wrapper1",
-          "refName": "devebot-dp-wrapper1",
+          "refName": "namespace-dp-wrapper1",
           "default": true
         }
       }
@@ -45,7 +45,7 @@ module.exports = {
         "bean": {
           "refPath": "sandbox -> connector2 -> wrapper1 -> bean",
           "refType": "wrapper1",
-          "refName": "devebot-dp-wrapper1",
+          "refName": "namespace-dp-wrapper1",
           "default": true
         }
       }

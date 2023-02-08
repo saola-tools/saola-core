@@ -9,7 +9,6 @@ const ApiClient = require("devebot-api");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
-const FRAMEWORK_PACKAGE_AUTHOR = "devebot";
 const TEST_PACKAGE_AUTHOR = "devteam";
 
 describe("bdd:api:routine:applica-info", function() {

@@ -354,13 +354,13 @@ describe("bdd:app:application", function() {
             "default": false,
             "refPath": util.format("sandbox -> connector1 -> wrapper%s -> bean", k),
             "refType": util.format("wrapper%s", k),
-            "refName": util.format("devebot-dp-wrapper%s", k)
+            "refName": util.format("namespace-dp-wrapper%s", k)
           },
           {
             "default": false,
             "refPath": util.format("sandbox -> connector2 -> wrapper%s -> bean", k),
             "refType": util.format("wrapper%s", k),
-            "refName": util.format("devebot-dp-wrapper%s", k)
+            "refName": util.format("namespace-dp-wrapper%s", k)
           }
         ]);
       }
