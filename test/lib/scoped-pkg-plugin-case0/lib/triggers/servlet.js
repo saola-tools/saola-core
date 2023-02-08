@@ -47,7 +47,7 @@ function Service (params = {}) {
       const serverInstance = server.listen(configPort, configHost, function () {
         const host = serverInstance.address().address;
         const port = serverInstance.address().port;
-        (sandboxConfig && sandboxConfig.verbose !== false) &&
+        chores.isVerboseForced(packageName, sandboxConfig) &&
         chores.logConsole("%s webserver is listening at http://%s:%s", packageName, host, port);
         resolve(serverInstance);
       });
@@ -57,7 +57,7 @@ function Service (params = {}) {
   this.stop = function() {
     return new Promise(function(resolve, reject) {
       server.close(function () {
-        (sandboxConfig && sandboxConfig.verbose !== false) &&
+        chores.isVerboseForced(packageName, sandboxConfig) &&
         chores.logConsole("%s webserver has been closed", packageName);
         resolve();
       });

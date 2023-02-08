@@ -7,11 +7,13 @@ const http = require("http");
 
 function Service (params = {}) {
   const { packageName, loggingFactory, sandboxConfig } = params;
+  const { appHandler } = params;
 
   const L = loggingFactory.getLogger();
   const T = loggingFactory.getTracer();
   const blockRef = chores.getBlockRef(__filename, packageName);
 
+  const self = this;
   const server = http.createServer();
 
   server.on("error", function(err) {
@@ -22,12 +24,22 @@ function Service (params = {}) {
   });
 
   server.on("request", function(req, res) {
-    res.writeHead(200);
-    res.end(packageName + " webserver");
+    res.writeHead(200, {
+      "Content-Type": "application/json"
+    });
+    res.end(JSON.stringify({
+      packageName: packageName,
+      config: self.getConfig(),
+    }, null, 2));
   });
 
-  this.getServer = function() {
-    return server;
+  this.getConfig = function() {
+    return Object.assign({},
+      {
+        [blockRef]: sandboxConfig
+      },
+      appHandler && appHandler.getConfig() || {},
+    );
   };
 
   const configHost = lodash.get(sandboxConfig, "host", "0.0.0.0");
@@ -54,6 +66,10 @@ function Service (params = {}) {
       });
     });
   };
+};
+
+Service.referenceHash = {
+  appHandler: "application/handler"
 };
 
 module.exports = Service;

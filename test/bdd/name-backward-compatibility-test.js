@@ -1,7 +1,5 @@
 "use strict";
 
-const path = require("path");
-const freshy = require("freshy");
 const axios = require("axios");
 const { assert } = require("liberica");
 
@@ -11,12 +9,6 @@ const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
-
-function requireFresh (moduleName, basePath) {
-  const modulePath = path.join(basePath, moduleName);
-  freshy.unload(modulePath);
-  return require(modulePath);
-}
 
 describe("bdd:app:name-backward-compatibility", function() {
   before(function() {
@@ -107,8 +99,6 @@ describe("bdd:app:name-backward-compatibility", function() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "X-Request-Id": "2219b258-ed3c-4a4b-8242-d9b62e9a576d",
-              "X-Schema-Version": "1.2.0"
             },
             data: undefined,
             responseType: "json",
