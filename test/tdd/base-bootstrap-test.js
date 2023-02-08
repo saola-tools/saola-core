@@ -1127,6 +1127,185 @@ describe("tdd:lib:base:bootstrap", function() {
         });
       }
     });
+
+    it("register a new plugin with nested and overlap sub-plugins (with presets)", function() {
+      let pluginLauncher = bootstrap.registerLayerware(null, [
+        {
+          name: "devebot-dp-backward1",
+          path: lab.getLibHome("namespace-dp-backward1"),
+          formers: [ "sub-plugin1" ],
+          presets: {
+            moduleName: "sub-plugin1"
+          }
+        },
+        {
+          name: "devebot-dp-backward2",
+          path: lab.getLibHome("namespace-dp-backward2"),
+          formers: [ "sub-plugin2" ],
+          presets: {
+            moduleName: "sub-plugin2"
+          }
+        }
+      ], []);
+      let output = replaceObjectFields(removeLoggingUtils(pluginLauncher()), DEFAULT_CONTEXT);
+      false && console.info("pluginLauncher(): ", JSON.stringify(output, null, 2));
+      if (chores.isUpgradeSupported("presets")) {
+        assert.deepEqual(output, {
+          "libRootPaths": [
+            "/test/lib/namespace-dp-backward1",
+            "/test/lib/plugin1",
+            "/test/lib/plugin2",
+            "/test/lib/namespace-dp-backward2",
+            "/test/lib/plugin3"
+          ],
+          "pluginRefs": {
+            "/test/lib/namespace-dp-backward1": {
+              "name": "devebot-dp-backward1",
+              "type": "plugin",
+              "path": "/test/lib/namespace-dp-backward1",
+              "formers": [
+                "sub-plugin1"
+              ],
+              "presets": {
+                "moduleName": "sub-plugin1"
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": [
+                "plugin1",
+                "plugin2"
+              ]
+            },
+            "/test/lib/namespace-dp-backward2": {
+              "name": "devebot-dp-backward2",
+              "type": "plugin",
+              "path": "/test/lib/namespace-dp-backward2",
+              "formers": [
+                "sub-plugin2"
+              ],
+              "presets": {
+                "moduleName": "sub-plugin2"
+              },
+              "bridgeDepends": [
+                "bridge2",
+                "bridge3"
+              ],
+              "pluginDepends": [
+                "plugin2",
+                "plugin3"
+              ]
+            },
+            "/test/lib/plugin1": {
+              "name": "plugin1",
+              "type": "plugin",
+              "path": "/test/lib/plugin1",
+              "presets": {
+                "configTags": "bridge[dialect-bridge]"
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
+            },
+            "/test/lib/plugin2": {
+              "name": "plugin2",
+              "type": "plugin",
+              "path": "/test/lib/plugin2",
+              "presets": {
+                "configTags": "bridge[dialect-bridge]"
+              },
+              "bridgeDepends": [
+                "bridge1",
+                "bridge2"
+              ],
+              "pluginDepends": []
+            },
+            "/test/lib/plugin3": {
+              "name": "plugin3",
+              "type": "plugin",
+              "path": "/test/lib/plugin3",
+              "presets": {},
+              "bridgeDepends": [],
+              "pluginDepends": []
+            }
+          },
+          "bridgeRefs": {
+            "/test/lib/bridge1": {
+              "name": "bridge1",
+              "type": "bridge",
+              "path": "/test/lib/bridge1"
+            },
+            "/test/lib/bridge2": {
+              "name": "bridge2",
+              "type": "bridge",
+              "path": "/test/lib/bridge2"
+            },
+            "/test/lib/bridge3": {
+              "name": "bridge3",
+              "type": "bridge",
+              "path": "/test/lib/bridge3"
+            }
+          }
+        });
+      } else {
+        assert.deepEqual(output, {
+          "libRootPaths": [
+            "/test/lib/namespace-dp-backward1",
+            "/test/lib/plugin1",
+            "/test/lib/plugin2",
+            "/test/lib/namespace-dp-backward2",
+            "/test/lib/plugin3"
+          ],
+          "pluginRefs": {
+            "devebot-dp-backward1": {
+              "name": "devebot-dp-backward1",
+              "type": "plugin",
+              "path": "/test/lib/namespace-dp-backward1"
+            },
+            "devebot-dp-backward2": {
+              "name": "devebot-dp-backward2",
+              "type": "plugin",
+              "path": "/test/lib/namespace-dp-backward2"
+            },
+            "plugin1": {
+              "name": "plugin1",
+              "type": "plugin",
+              "path": "/test/lib/plugin1"
+            },
+            "plugin2": {
+              "name": "plugin2",
+              "type": "plugin",
+              "path": "/test/lib/plugin2"
+            },
+            "plugin3": {
+              "name": "plugin3",
+              "type": "plugin",
+              "path": "/test/lib/plugin3"
+            }
+          },
+          "bridgeRefs": {
+            "bridge1": {
+              "name": "bridge1",
+              "type": "bridge",
+              "path": "/test/lib/bridge1"
+            },
+            "bridge2": {
+              "name": "bridge2",
+              "type": "bridge",
+              "path": "/test/lib/bridge2"
+            },
+            "bridge3": {
+              "name": "bridge3",
+              "type": "bridge",
+              "path": "/test/lib/bridge3"
+            }
+          }
+        });
+      }
+    });
   });
 });
 
