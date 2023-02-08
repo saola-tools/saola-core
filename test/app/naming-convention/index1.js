@@ -8,20 +8,20 @@ const app = FRWK.launchApplication({
 }, [
   {
     name: "devebot-dp-wrapper1",
-    path: lab.getLibHome("framework-dp-wrapper1")
+    path: lab.getLibHome("namespace-dp-wrapper1")
   },
   {
     name: "devebot-dp-wrapper2",
-    path: lab.getLibHome("framework-dp-wrapper2")
+    path: lab.getLibHome("namespace-dp-wrapper2")
   }
 ], [
   {
     name: "devebot-co-connector1",
-    path: lab.getLibHome("framework-co-connector1")
+    path: lab.getLibHome("namespace-co-connector1")
   },
   {
     name: "devebot-co-connector2",
-    path: lab.getLibHome("framework-co-connector2")
+    path: lab.getLibHome("namespace-co-connector2")
   }
 ]);
 

@@ -21,7 +21,7 @@ const app = FRWK.initialize("tasks").launchApplication({
 ], [
   {
     name: "devebot-co-adapter",
-    path: lab.getLibHome("framework-co-adapter")
+    path: lab.getLibHome("namespace-co-adapter")
   },
   {
     name: "bridge4",

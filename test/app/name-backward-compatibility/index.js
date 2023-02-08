@@ -19,11 +19,11 @@ const app = FRWK.launchApplication({
 ], [
   {
     name: "devebot-co-connector1",
-    path: lab.getLibHome("framework-co-connector1")
+    path: lab.getLibHome("namespace-co-connector1")
   },
   {
     name: "devebot-co-connector2",
-    path: lab.getLibHome("framework-co-connector2")
+    path: lab.getLibHome("namespace-co-connector2")
   }
 ]);
 
