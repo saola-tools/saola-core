@@ -95,6 +95,12 @@ const DEPENDENCIES_SCHEMA = {
           "path": {
             "type": "string"
           },
+          "formers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "presets": PRESETS_SCHEMA
         },
         "required": [

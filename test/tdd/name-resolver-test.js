@@ -120,6 +120,122 @@ describe("tdd:lib:core:name-resolver", function() {
     });
   });
 
+  describe("supports the former names", function() {
+    let NameResolver = lab.acquireFrameworkModule("backbone/name-resolver");
+    let extractAliasNames = NameResolver.__get__("extractAliasNames");
+    let buildAbsoluteAliasMap = NameResolver.__get__("buildAbsoluteAliasMap");
+    let buildRelativeAliasMap = NameResolver.__get__("buildRelativeAliasMap");
+
+    it("should build the map of plugin-names transformation correctly", function() {
+      if (!chores.isUpgradeSupported("standardizing-config")) this.skip();
+
+      let pluginDefs = {
+        "path/to/namespace-dp-wrapper1": {
+          name: "devebot-dp-wrapper1",
+          formers: [ "app-wrapper1" ]
+        },
+        "path/to/namespace-dp-wrapper2": {
+          name: "devebot-dp-wrapper2",
+          formers: [ "app-wrapper2" ]
+        },
+        "path/to/sub-wrapper1": {
+          name: "sub-wrapper1"
+        },
+        "path/to/namespace-dp-sub-wrapper0": {
+          name: "devebot-dp-sub-wrapper0"
+        },
+        "path/to/namespace-dp-sub-wrapper1": {
+          name: "devebot-dp-sub-wrapper1"
+        },
+        "path/to/namespace-dp-sub-wrapper2": {
+          name: "devebot-dp-sub-wrapper2"
+        },
+        "path/to/sub-wrapper2": {
+          name: "sub-wrapper2"
+        }
+      };
+
+      let pluginRefs = {
+        "path/to/namespace-dp-wrapper1": {
+          name: "devebot-dp-wrapper1",
+          nameInCamel: "devebotDpWrapper1",
+          code: "wrapper1",
+          codeInCamel: "wrapper1",
+          formers: [ "app-wrapper1" ],
+          formerInCamels: [ "appWrapper1" ]
+        },
+        "path/to/namespace-dp-wrapper2": {
+          name: "devebot-dp-wrapper2",
+          nameInCamel: "devebotDpWrapper2",
+          code: "wrapper2",
+          codeInCamel: "wrapper2",
+          formers: [ "app-wrapper2" ],
+          formerInCamels: [ "appWrapper2" ]
+        },
+        "path/to/sub-wrapper1": {
+          name: "sub-wrapper1",
+          nameInCamel: "subWrapper1",
+          code: "sub-wrapper1",
+          codeInCamel: "subWrapper1"
+        },
+        "path/to/namespace-dp-sub-wrapper0": {
+          name: "devebot-dp-sub-wrapper0",
+          nameInCamel: "devebotDpSubWrapper0",
+          code: "sub-wrapper0",
+          codeInCamel: "subWrapper0"
+        },
+        "path/to/namespace-dp-sub-wrapper1": {
+          name: "devebot-dp-sub-wrapper1",
+          nameInCamel: "devebotDpSubWrapper1",
+          code: "sub-wrapper1",
+          codeInCamel: "subWrapper1"
+        },
+        "path/to/namespace-dp-sub-wrapper2": {
+          name: "devebot-dp-sub-wrapper2",
+          nameInCamel: "devebotDpSubWrapper2",
+          code: "sub-wrapper2",
+          codeInCamel: "subWrapper2"
+        },
+        "path/to/sub-wrapper2": {
+          name: "sub-wrapper2",
+          nameInCamel: "subWrapper2",
+          code: "sub-wrapper2",
+          codeInCamel: "subWrapper2"
+        }
+      };
+
+      assert.deepEqual(extractAliasNames(CTX, "plugin", pluginDefs), pluginRefs);
+
+      let expectedMap = {
+        "appWrapper1": "devebot-dp-wrapper1",
+        "appWrapper2": "devebot-dp-wrapper2",
+        "devebot-dp-wrapper1": "devebot-dp-wrapper1",
+        "devebotDpWrapper1": "devebot-dp-wrapper1",
+        "wrapper1": "devebot-dp-wrapper1",
+        "devebot-dp-wrapper2": "devebot-dp-wrapper2",
+        "devebotDpWrapper2": "devebot-dp-wrapper2",
+        "wrapper2": "devebot-dp-wrapper2",
+        "sub-wrapper1": "sub-wrapper1",
+        "subWrapper1": "sub-wrapper1",
+        "devebot-dp-sub-wrapper0": "devebot-dp-sub-wrapper0",
+        "devebotDpSubWrapper0": "devebot-dp-sub-wrapper0",
+        "sub-wrapper0": "devebot-dp-sub-wrapper0",
+        "subWrapper0": "devebot-dp-sub-wrapper0",
+        "devebot-dp-sub-wrapper1": "devebot-dp-sub-wrapper1",
+        "devebotDpSubWrapper1": "devebot-dp-sub-wrapper1",
+        "devebot-dp-sub-wrapper2": "devebot-dp-sub-wrapper2",
+        "devebotDpSubWrapper2": "devebot-dp-sub-wrapper2",
+        "sub-wrapper2": "sub-wrapper2",
+        "subWrapper2": "sub-wrapper2"
+      };
+
+      let pluginAliasMap = buildAbsoluteAliasMap(pluginRefs);
+
+      false && console.info(JSON.stringify(pluginAliasMap, null, 2));
+      assert.deepEqual(pluginAliasMap, expectedMap);
+    });
+  });
+
   describe("converting and reverting the plugin & bridge names", function() {
     let nameResolver = lab.getNameResolver([
       "sub-plugin1", "devebot-dp-wrapper1", "sub-plugin2", "devebot-dp-wrapper2"

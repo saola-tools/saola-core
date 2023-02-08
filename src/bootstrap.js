@@ -32,7 +32,7 @@ const FRAMEWORK_CAPNAME = lodash.capitalize(FRAMEWORK_NAMESPACE);
 const FRAMEWORK_BRIDGE_LABEL = "bridge";
 const FRAMEWORK_PLUGIN_LABEL = "plugin";
 
-const REGISTER_LAYERWARE_OPTION_NAMES = ["name", "type", "path", "presets"];
+const REGISTER_LAYERWARE_OPTION_NAMES = ["name", "type", "path", "formers", "presets"];
 
 function appLoader (params = {}) {
   const {logger: L, tracer: T} = params;
