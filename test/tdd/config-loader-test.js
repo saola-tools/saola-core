@@ -353,10 +353,10 @@ describe("tdd:lib:core:config-loader", function() {
           "path/to/bridge-kebab-case2": {
             name: "bridge-kebab-case2"
           },
-          "path/to/devebot-co-connector1": {
+          "path/to/namespace-co-connector1": {
             name: "devebot-co-connector1"
           },
-          "path/to/devebot-co-connector2": {
+          "path/to/namespace-co-connector2": {
             name: "devebot-co-connector2"
           }
         })),
@@ -466,10 +466,10 @@ describe("tdd:lib:core:config-loader", function() {
         "path/to/bridge-kebab-case2": {
           name: "bridge-kebab-case2"
         },
-        "path/to/devebot-co-connector1": {
+        "path/to/namespace-co-connector1": {
           name: "devebot-co-connector1"
         },
-        "path/to/devebot-co-connector2": {
+        "path/to/namespace-co-connector2": {
           name: "devebot-co-connector2"
         }
       });
