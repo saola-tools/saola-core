@@ -9,6 +9,8 @@ const Service = function(params={}) {
   const sandboxConfig = lodash.get(params, ["sandboxConfig", "application"], {});
 
   const { packageName, loggingFactory, mainService } = params;
+  const { dpBackward1Service, dpBackward2Service, coBackward1, coBackward2 } = params;
+  const { coConnector1, coConnector2 } = params;
 
   const L = loggingFactory && loggingFactory.getLogger();
   const T = loggingFactory && loggingFactory.getTracer();
@@ -39,9 +41,26 @@ const Service = function(params={}) {
   };
 
   this.getConfig = function() {
-    return lodash.assign(mainService && mainService.getConfig() || {}, {
-      [blockRef]: sandboxConfig
-    });
+    return Object.assign({},
+      {
+        [blockRef]: sandboxConfig
+      },
+      mainService && mainService.getConfig() || {},
+      dpBackward1Service && dpBackward1Service.getConfig() || {},
+      dpBackward2Service && dpBackward2Service.getConfig() || {},
+      {
+        coBackward1: coBackward1 && coBackward1.getConfig() || {},
+      },
+      {
+        coBackward2: coBackward2 && coBackward2.getConfig() || {},
+      },
+      {
+        coConnector1: coConnector1 && coConnector1.getConfig() || {},
+      },
+      {
+        coConnector2: coConnector2 && coConnector2.getConfig() || {},
+      },
+    );
   };
 
   const configHost = lodash.get(sandboxConfig, "host", "0.0.0.0");
@@ -68,6 +87,16 @@ const Service = function(params={}) {
       });
     });
   };
+};
+
+Service.referenceHash = {
+  mainService: "application/mainService",
+  dpBackward1Service: "devebot-dp-backward1/sublibService",
+  dpBackward2Service: "devebot-dp-backward2/sublibService",
+  coBackward1: "application/backward1#wrapper",
+  coBackward2: "application/backward2#wrapper",
+  coConnector1: "application/connector1#wrapper",
+  coConnector2: "application/connector2#wrapper",
 };
 
 module.exports = Service;

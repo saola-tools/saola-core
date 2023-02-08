@@ -1,5 +1,5 @@
 {
-  "name": "fullapp",
+  "name": "name-backward-compatibility",
   "version": "0.1.0",
   "description": "Demo Application",
   "main": "index.js",

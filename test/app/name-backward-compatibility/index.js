@@ -18,6 +18,16 @@ const app = FRWK.launchApplication({
   }
 ], [
   {
+    name: "devebot-co-backward1",
+    formers: [ "bridge-kebab-case1" ],
+    path: lab.getLibHome("namespace-co-backward1")
+  },
+  {
+    name: "devebot-co-backward2",
+    formers: [ "bridge-kebab-case2" ],
+    path: lab.getLibHome("namespace-co-backward2")
+  },
+  {
     name: "devebot-co-connector1",
     path: lab.getLibHome("namespace-co-connector1")
   },
