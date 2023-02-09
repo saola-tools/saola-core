@@ -624,6 +624,9 @@ const CONSTANTS = {
   },
   FILE: {
     JS_FILTER_PATTERN: ".*\\.js$"
+  },
+  LEGACY: {
+    PROFILE_CONFIG_FRAMEWORK_FIELD: "devebot"
   }
 };
 

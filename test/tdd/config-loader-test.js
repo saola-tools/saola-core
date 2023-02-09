@@ -247,7 +247,7 @@ describe("tdd:lib:core:config-loader", function() {
       const appRef = new Object();
       //
       const originalCfg = {
-        "devebot": {
+        [constx.LEGACY.PROFILE_CONFIG_FRAMEWORK_FIELD]: {
           "verbose": true,
           "jobqueue": {
             "enabled": true
@@ -2370,7 +2370,7 @@ describe("tdd:lib:core:config-loader", function() {
 function sanitize (configStore) {
   if (chores.isUpgradeSupported("profile-config-field-framework")) {
     return chores.renameJsonFields(configStore, {
-      "devebot": "framework"
+      [constx.LEGACY.PROFILE_CONFIG_FRAMEWORK_FIELD]: "framework"
     });
   }
   return configStore;

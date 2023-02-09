@@ -8,7 +8,6 @@ const debugx = FRWK.require("pinbug")("devteam:bdd:core:configuration");
 const expect = require("chai").expect;
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
-const PROFILE_CONFIG_FRAMEWORK_FIELD = constx.FRAMEWORK.NAMESPACE;
 const TEST_PACKAGE_AUTHOR = "devteam";
 
 describe("bdd:app:configuration", function() {
@@ -67,11 +66,11 @@ describe("bdd:app:configuration", function() {
           expect(profileConfig)
             .to.be.an("object")
             .to.include.all.keys("framework", "logger", "newFeatures")
-            .to.not.contain.all.keys(PROFILE_CONFIG_FRAMEWORK_FIELD);
+            .to.not.contain.all.keys(constx.LEGACY.PROFILE_CONFIG_FRAMEWORK_FIELD);
         } else {
           expect(profileConfig)
             .to.be.an("object")
-            .to.include.all.keys(PROFILE_CONFIG_FRAMEWORK_FIELD, "logger", "newFeatures")
+            .to.include.all.keys(constx.LEGACY.PROFILE_CONFIG_FRAMEWORK_FIELD, "logger", "newFeatures")
             .to.not.contain.all.keys("framework");
         }
         //

@@ -1,6 +1,8 @@
 "use strict";
 
-const chores = FRWK.require("chores");
+const lab = require("../../index");
+const chores = lab.getFramework().require("chores");
+const constx = require(lab.getFrameworkModule("utils/constx"));
 
 const profileConfig = {
   newFeatures: {
@@ -20,7 +22,7 @@ const profileConfigFramework = {
 if (chores.isUpgradeSupported("profile-config-field-framework")) {
   profileConfig.framework = profileConfigFramework;
 } else {
-  profileConfig.devebot = profileConfigFramework;
+  profileConfig[constx.LEGACY.PROFILE_CONFIG_FRAMEWORK_FIELD] = profileConfigFramework;
 }
 
 module.exports = profileConfig;

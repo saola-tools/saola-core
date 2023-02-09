@@ -21,7 +21,6 @@ const getenv = require("./getenv");
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
-const PROFILE_CONFIG_FRAMEWORK_FIELD = constx.FRAMEWORK.NAMESPACE;
 
 const codetags = require("codetags")
   .getInstance(FRAMEWORK_PACKAGE_NAME, {
@@ -294,7 +293,7 @@ chores.getFrameworkProfileConfig = function (profileConfig, subpath) {
   }
   //
   if (!this.isUpgradeSupported("profile-config-field-framework")) {
-    const o2 = _getFrameworkProfileConfig(profileConfig, PROFILE_CONFIG_FRAMEWORK_FIELD, subpath);
+    const o2 = _getFrameworkProfileConfig(profileConfig, constx.LEGACY.PROFILE_CONFIG_FRAMEWORK_FIELD, subpath);
     if (o2 != null) {
       return o2;
     }
