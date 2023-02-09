@@ -3,7 +3,7 @@
 const path = require("path");
 
 module.exports = {
-  devebot: {
+  framework: {
     mode: "server", // 'server', 'silent', 'tictac'
     host: "0.0.0.0",
     port: "17779",

@@ -17,6 +17,7 @@ const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(constx.FRAMEWORK.NAMESPACE);
 const FRAMEWORK_BRIDGE_LABEL = "bridge";
 const FRAMEWORK_PLUGIN_LABEL = "plugin";
 const FILE_JS_FILTER_PATTERN = constx.FILE.JS_FILTER_PATTERN;
+const PROFILE_CONFIG_FRAMEWORK_FIELD = constx.FRAMEWORK.NAMESPACE;
 
 const CONFIG_SUBDIR = "/config";
 const CONFIG_VAR_NAMES = [ "PROFILE",  "SANDBOX",  "TEXTURE", "CONFIG_DIR", "CONFIG_ENV" ];
@@ -573,7 +574,7 @@ function transformConfig (ctx, configType, configStore, crateInfo) {
   if (configType === CONFIG_PROFILE_NAME) {
     if (chores.isUpgradeSupported("profile-config-field-framework")) {
       configStore = chores.renameJsonFields(configStore, {
-        "devebot": "framework"
+        [PROFILE_CONFIG_FRAMEWORK_FIELD]: "framework"
       });
     }
   }
