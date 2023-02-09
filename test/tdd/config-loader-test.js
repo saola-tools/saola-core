@@ -648,7 +648,7 @@ describe("tdd:lib:core:config-loader", function() {
           "version": "0.2.9",
           "manifest": {
             "config": {
-              "something": "devebot"
+              "something": "namespace"
             },
           },
         }
@@ -682,7 +682,7 @@ describe("tdd:lib:core:config-loader", function() {
           "version": "0.2.9",
           "manifest": {
             "config": {
-              "something": "devebot"
+              "something": "namespace"
             },
           },
         },
