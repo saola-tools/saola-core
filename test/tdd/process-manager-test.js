@@ -2,13 +2,14 @@
 
 const lab = require("../index");
 const FRWK = lab.getFramework();
-const assert = require("chai").assert;
 const path = require("path");
 const util = require("util");
 const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const Envcloak = require("envcloak");
 const envcloak = Envcloak.instance;
+
+const { assert } = require("liberica");
 
 describe("tdd:lib:core:process-manager", function() {
   this.timeout(lab.getDefaultTimeout());

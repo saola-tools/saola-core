@@ -6,11 +6,11 @@ const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
 const chores = FRWK.require("chores");
 const errors = require(lab.getFrameworkModule("utils/errors"));
-const assert = require("chai").assert;
 const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
-const sinon = require("sinon");
+
+const { assert, sinon } = require("liberica");
 
 describe("tdd:lib:core:object-decorator", function() {
   this.timeout(lab.getDefaultTimeout());

@@ -6,7 +6,6 @@ const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 const loader = FRWK.require("loader");
-const assert = require("chai").assert;
 const path = require("path");
 const util = require("util");
 const LogConfig = FRWK.require("logolite").LogConfig;
@@ -15,6 +14,8 @@ const envcloak = require("envcloak").instance;
 const Runner = lab.acquireFrameworkModule("runner");
 const WsServerMock = Runner.__get__("WsServerMock");
 const WsClientMock = Runner.__get__("WsClientMock");
+
+const { assert } = require("liberica");
 
 describe.skip("tdd:lib:base:runner", function() {
   this.timeout(lab.getDefaultTimeout());

@@ -4,7 +4,9 @@ const lab = require("..");
 const FRWK = lab.getFramework();
 const lodash = FRWK.require("lodash");
 const chores = FRWK.require("chores");
-const assert = require("chai").assert;
+
+const { assert } = require("liberica");
+
 const BeanProxy = require(lab.getFrameworkModule("utils/proxy"));
 
 describe("tdd:lib:utils:proxy", function() {

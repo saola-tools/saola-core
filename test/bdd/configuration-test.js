@@ -4,6 +4,7 @@ const lab = require("../index");
 const FRWK = lab.getFramework();
 const chores = FRWK.require("chores");
 const debugx = FRWK.require("pinbug")("devteam:bdd:core:configuration");
+
 const expect = require("chai").expect;
 
 const LEGACY_PROFILE_CONFIG_FRAMEWORK_FIELD = "devebot";

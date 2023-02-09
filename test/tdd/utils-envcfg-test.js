@@ -1,9 +1,10 @@
 "use strict";
 
 const lab = require("../index");
-const assert = require("chai").assert;
 const envcloak = require("envcloak").instance;
 const envcfg = require(lab.getFrameworkModule("utils/envcfg"));
+
+const { assert } = require("liberica");
 
 describe("tdd:lib:utils:envcfg", function() {
   describe("extractEnv()", function() {

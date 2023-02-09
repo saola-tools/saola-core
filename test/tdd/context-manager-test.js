@@ -5,11 +5,12 @@ const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
-const assert = require("chai").assert;
 const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const Envcloak = require("envcloak");
 const envcloak = Envcloak.instance;
+
+const { assert } = require("liberica");
 
 describe("tdd:lib:core:context-manager", function() {
   this.timeout(lab.getDefaultTimeout());

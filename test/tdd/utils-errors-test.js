@@ -3,9 +3,10 @@
 const lab = require("../index");
 const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
-const assert = require("chai").assert;
 const util = require("util");
 const errors = require(lab.getFrameworkModule("utils/errors"));
+
+const { assert } = require("liberica");
 
 describe("tdd:lib:utils:errors", function() {
   describe("stackTraceLimit", function() {

@@ -6,8 +6,9 @@ const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 const debugx = FRWK.require("pinbug")("bdd:api:runhook:progress:meter");
-const assert = require("chai").assert;
 const ApiClient = require("devebot-api");
+
+const { assert } = require("liberica");
 
 describe("bdd:api:runhook:progress:meter", function() {
   this.timeout(lab.getDefaultTimeout());

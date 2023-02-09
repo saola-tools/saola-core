@@ -18,6 +18,8 @@ describe("bdd:app:name-backward-compatibility", function() {
         "name-backward-compatibility",
         "devebot-dp-backward1",
         "devebot-dp-backward2",
+        "plugin1",
+        "plugin2",
         "plugin3"
       ].join(","),
       LOGOLITE_FULL_LOG_MODE: "false",

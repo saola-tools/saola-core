@@ -3,7 +3,8 @@
 const lab = require("../index");
 const FRWK = lab.getFramework();
 const chores = FRWK.require("chores");
-const assert = require("chai").assert;
+
+const { assert } = require("liberica");
 
 describe("tdd:lib:core:name-resolver", function() {
   let loggingFactory = lab.createLoggingFactoryMock();

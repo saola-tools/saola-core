@@ -9,8 +9,7 @@ const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 
-const assert = require("chai").assert;
-const sinon = require("sinon");
+const { assert, sinon } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;

@@ -3,8 +3,7 @@
 const appRootPath = require("app-root-path");
 const path = require("path");
 const freshy = require("freshy");
-const rewire = require("rewire");
-const sinon = require("sinon");
+const { sinon, rewire } = require("liberica");
 
 const chores = require("../lib/utils/chores");
 const constx = require("../lib/utils/constx");

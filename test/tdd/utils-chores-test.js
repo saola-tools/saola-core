@@ -7,8 +7,8 @@ const lab = require("../index");
 const FRWK = lab.getFramework();
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
-const assert = require("chai").assert;
-const rewire = require("rewire");
+
+const { assert, rewire } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;

@@ -6,10 +6,11 @@ const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 const loader = FRWK.require("loader");
-const assert = require("chai").assert;
 const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
+
+const { assert } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;

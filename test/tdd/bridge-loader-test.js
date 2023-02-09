@@ -4,11 +4,12 @@ const lab = require("../index");
 const FRWK = lab.getFramework();
 const lodash = FRWK.require("lodash");
 const chores = FRWK.require("chores");
-const assert = require("chai").assert;
 const util = require("util");
 const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
+
+const { assert } = require("liberica");
 
 describe("tdd:lib:core:bridge-loader", function() {
   this.timeout(lab.getDefaultTimeout());

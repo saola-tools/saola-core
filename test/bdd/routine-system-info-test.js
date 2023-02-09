@@ -4,8 +4,9 @@ const lab = require("../index");
 const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
-const assert = require("chai").assert;
 const ApiClient = require("devebot-api");
+
+const { assert } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;

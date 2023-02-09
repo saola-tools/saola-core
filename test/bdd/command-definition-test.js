@@ -4,8 +4,10 @@ const lab = require("../index");
 const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
-const assert = require("chai").assert;
 const util = require("util");
+
+const { assert } = require("liberica");
+
 const ApiClient = require("devebot-api");
 
 describe("bdd:api:command:definition", function() {

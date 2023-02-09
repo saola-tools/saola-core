@@ -4,11 +4,13 @@ const lab = require("../index");
 const FRWK = lab.getFramework();
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
-const assert = require("chai").assert;
+
 const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
 const util = require("util");
+
+const { assert } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;

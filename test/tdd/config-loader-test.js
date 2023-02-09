@@ -5,14 +5,14 @@ const FRWK = lab.getFramework();
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 const loader = FRWK.require("loader");
-const assert = require("chai").assert;
 const path = require("path");
 const ConfigLoader = require(lab.getFrameworkModule("backbone/config-loader"));
 const NameResolver = require(lab.getFrameworkModule("backbone/name-resolver"));
 const ManifestHandler = require(lab.getFrameworkModule("backbone/manifest-handler"));
 const Envcloak = require("envcloak");
 const envcloak = Envcloak.instance;
-const sinon = require("sinon");
+
+const { assert, sinon } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
