@@ -13,6 +13,7 @@ const envcloak = require("envcloak").instance;
 const sinon = require("sinon");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:sandbox-manager", function() {
@@ -205,15 +206,15 @@ describe("tdd:lib:core:sandbox-manager", function() {
       let context = { scope: FRAMEWORK_PACKAGE_NAME };
       let bean1 = {}; let bean2 = {}; let bean3 = {};
       let injektor = new Injektor({ separator: chores.getSeparator() });
-      injektor.registerObject("devebot-co-sample", bean1);
-      injektor.registerObject("example", bean2, context);
+      injektor.registerObject("example", bean1, context);
+      injektor.registerObject(FRAMEWORK_NAMESPACE + "-co-sample", bean2);
       injektor.registerObject("testing/example", bean3);
       let isExcluded = function(beanFullName) {
-        return (typeof beanFullName !== "string") || (beanFullName.match(/devebot/));
+        return (typeof beanFullName !== "string") || (beanFullName.match(new RegExp(FRAMEWORK_NAMESPACE)));
       };
       let sandboxRegistry = new SandboxRegistry({ injektor, isExcluded });
-      assert.isNull(sandboxRegistry.lookup("devebot-co-sample"));
       assert.isNull(sandboxRegistry.lookup("example"));
+      assert.isNull(sandboxRegistry.lookup(FRAMEWORK_NAMESPACE + "-co-sample"));
       assert.isNull(sandboxRegistry.lookup(chores.toFullname(FRAMEWORK_PACKAGE_NAME, "example")));
       assert.deepEqual(sandboxRegistry.lookup("testing/example"), bean3);
     });
@@ -222,12 +223,12 @@ describe("tdd:lib:core:sandbox-manager", function() {
       let context = { scope: FRAMEWORK_PACKAGE_NAME };
       let bean1 = {}; let bean2 = {}; let bean3 = {};
       let injektor = new Injektor({ separator: chores.getSeparator() });
-      injektor.registerObject("devebot-co-sample", bean1);
-      injektor.registerObject("example", bean2, context);
+      injektor.registerObject("example", bean1, context);
+      injektor.registerObject(FRAMEWORK_NAMESPACE + "-co-sample", bean2);
       injektor.registerObject("testing/example", bean3);
       let excludedServices = [ chores.toFullname(FRAMEWORK_PACKAGE_NAME, "example") ];
       let sandboxRegistry = new SandboxRegistry({ injektor, excludedServices });
-      assert.deepEqual(sandboxRegistry.lookup("devebot-co-sample"), bean1);
+      assert.deepEqual(sandboxRegistry.lookup(FRAMEWORK_NAMESPACE + "-co-sample"), bean2);
       assert.isNull(sandboxRegistry.lookup("example"));
       assert.isNull(sandboxRegistry.lookup(chores.toFullname(FRAMEWORK_PACKAGE_NAME, "example")));
       assert.deepEqual(sandboxRegistry.lookup("testing/example"), bean3);

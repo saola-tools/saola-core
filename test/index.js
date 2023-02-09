@@ -1,5 +1,6 @@
 "use strict";
 
+const appRootPath = require("app-root-path");
 const path = require("path");
 const freshy = require("freshy");
 const rewire = require("rewire");
@@ -31,6 +32,9 @@ process.on("warning", function(e) {
   console.warn(e.stack);
 });
 
+// const TEST_HOME_DIR = String(__dirname).replace(new RegExp(path.join(path.sep, "test") + "$"), "");
+const TEST_HOME_DIR = appRootPath.resolve("..");
+
 const lab = module.exports = {
   getApiConfig: function(ext) {
     ext = ext || {};
@@ -54,6 +58,9 @@ const lab = module.exports = {
         "noop": "noop"
       }
     }, ext);
+  },
+  getRelativePathOf: function(dir) {
+    return dir.replace(TEST_HOME_DIR, "");
   },
   getAppHome: function(appName) {
     return path.join(__dirname, "app", appName);

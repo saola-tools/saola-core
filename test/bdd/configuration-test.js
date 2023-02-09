@@ -6,6 +6,7 @@ const chores = FRWK.require("chores");
 const debugx = FRWK.require("pinbug")("devteam:bdd:core:configuration");
 const expect = require("chai").expect;
 
+const LEGACY_PROFILE_CONFIG_FRAMEWORK_FIELD = "devebot";
 const TEST_PACKAGE_AUTHOR = "devteam";
 
 describe("bdd:app:configuration", function() {
@@ -64,11 +65,11 @@ describe("bdd:app:configuration", function() {
           expect(profileConfig)
             .to.be.an("object")
             .to.include.all.keys("framework", "logger", "newFeatures")
-            .to.not.contain.all.keys("devebot");
+            .to.not.contain.all.keys(LEGACY_PROFILE_CONFIG_FRAMEWORK_FIELD);
         } else {
           expect(profileConfig)
             .to.be.an("object")
-            .to.include.all.keys("devebot", "logger", "newFeatures")
+            .to.include.all.keys(LEGACY_PROFILE_CONFIG_FRAMEWORK_FIELD, "logger", "newFeatures")
             .to.not.contain.all.keys("framework");
         }
         //

@@ -756,7 +756,7 @@ describe("tdd:lib:base:bootstrap", function() {
         {
           "name": FRAMEWORK_PACKAGE_NAME,
           "type": "framework",
-          "path": "/devebot",
+          "path": "",
         }
       ]);
     });
@@ -984,7 +984,7 @@ describe("tdd:lib:base:bootstrap", function() {
         {
           "type": "framework",
           "name": FRAMEWORK_PACKAGE_NAME,
-          "path": "/devebot",
+          "path": "",
         }
       ];
       if (!chores.isUpgradeSupported("presets")) {
@@ -1311,7 +1311,7 @@ describe("tdd:lib:base:bootstrap", function() {
 const DEFAULT_CONTEXT = {
   replacers: [
     {
-      pattern: /^(?!https).*\/(devebot|test\/lib|test\/app)\/([^\/].*)(\/?.*)/g,
+      pattern: /^(?!https).*\/(test\/lib|test\/app)\/([^\/].*)(\/?.*)/g,
       replacement: "/$1/$2$3"
     }
   ]
@@ -1319,6 +1319,7 @@ const DEFAULT_CONTEXT = {
 
 let replaceLibPath = function(p, context) {
   if (typeof p !== "string") return p;
+  p = lab.getRelativePathOf(p);
   let output = p;
   context = context || DEFAULT_CONTEXT;
   context.replacers = context.replacers || [];
@@ -1329,9 +1330,6 @@ let replaceLibPath = function(p, context) {
       break;
     }
   }
-  output = output.replace(/^\/devebot\/devebot/g, "/devebot");
-  output = output.replace(/^\/devebot\/projects\/devebot/g, "/devebot");
-  output = output.replace(/^\/devebot-[0-9].*/g, "/devebot"); // folder /devebot-0.2.1
   return output;
 };
 
