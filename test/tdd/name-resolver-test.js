@@ -162,7 +162,9 @@ describe("tdd:lib:core:name-resolver", function() {
           code: "wrapper1",
           codeInCamel: "wrapper1",
           formers: [ "app-wrapper1" ],
-          formerInCamels: [ "appWrapper1" ]
+          formerInCamels: {
+            "app-wrapper1": "appWrapper1"
+          }
         },
         "path/to/namespace-dp-wrapper2": {
           name: "devebot-dp-wrapper2",
@@ -170,7 +172,9 @@ describe("tdd:lib:core:name-resolver", function() {
           code: "wrapper2",
           codeInCamel: "wrapper2",
           formers: [ "app-wrapper2" ],
-          formerInCamels: [ "appWrapper2" ]
+          formerInCamels: {
+            "app-wrapper2": "appWrapper2"
+          }
         },
         "path/to/sub-wrapper1": {
           name: "sub-wrapper1",
@@ -207,7 +211,9 @@ describe("tdd:lib:core:name-resolver", function() {
       assert.deepEqual(extractAliasNames(CTX, "plugin", pluginDefs), pluginRefs);
 
       let expectedMap = {
+        "app-wrapper1": "devebot-dp-wrapper1",
         "appWrapper1": "devebot-dp-wrapper1",
+        "app-wrapper2": "devebot-dp-wrapper2",
         "appWrapper2": "devebot-dp-wrapper2",
         "devebot-dp-wrapper1": "devebot-dp-wrapper1",
         "devebotDpWrapper1": "devebot-dp-wrapper1",

@@ -204,9 +204,10 @@ function extractAliasNames (ctx, type, moduleRefs) {
         moduleRef.nameInCamel = chores.stringCamelCase(moduleRef.name);
       }
       if (moduleRef && lodash.isArray(moduleRef.formers)) {
-        moduleRef.formerInCamels = lodash.map(moduleRef.formers, function(formerName) {
-          return chores.stringCamelCase(formerName);
-        });
+        moduleRef.formerInCamels = moduleRef.formerInCamels || {};
+        for (let formerName of moduleRef.formers) {
+          moduleRef.formerInCamels[formerName] = chores.stringCamelCase(formerName);
+        };
       }
     } else {
       issueInspector.collect(lodash.assign({
@@ -235,9 +236,13 @@ function buildAbsoluteAliasMap (moduleRefs, aliasMap) {
   });
   //
   lodash.forEach(moduleRefs, function(moduleRef) {
-    if (moduleRef && lodash.isArray(moduleRef.formerInCamels)) {
-      for (let formerInCamel of moduleRef.formerInCamels) {
-        if (!(formerInCamel in aliasMap)) {
+    if (moduleRef && lodash.isPlainObject(moduleRef.formerInCamels)) {
+      for (let formerName in moduleRef.formerInCamels) {
+        const formerInCamel = moduleRef.formerInCamels[formerName];
+        if (!(formerName in aliasMap)) {
+          aliasMap[formerName] = moduleRef.name;
+        }
+        if (formerInCamel != formerName && !(formerInCamel in aliasMap)) {
           aliasMap[formerInCamel] = moduleRef.name;
         }
       }
