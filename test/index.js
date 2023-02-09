@@ -22,7 +22,8 @@ const lodash = FRWK.require("lodash");
 
 global.FRWK = FRWK;
 
-const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const SCOPED_PACKAGE_API_AVAILABLE = false;
+const SCOPED_PACKAGE_CLI_AVAILABLE = false;
 
 // EventEmitter memory leak detecting
 const max = 12;
@@ -99,10 +100,15 @@ const lab = module.exports = {
     return chores.loadPackageInfo(this.getFrameworkHome(), constx.APPINFO.FIELDS, {});
   },
   getFrameworkApi: function() {
-    return require("devebot-api");
+    const NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+    const PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
+    if (NAMESPACE != PACKAGE_NAME && SCOPED_PACKAGE_API_AVAILABLE) {
+      return require("@" + NAMESPACE + "/api");
+    }
+    return require(NAMESPACE + "-api");
   },
   getPrefixScopedName: function() {
-    return "@" + FRAMEWORK_NAMESPACE + "/";
+    return "@" + constx.FRAMEWORK.NAMESPACE + "/";
   },
   getDefaultTimeout: function() {
     return 60000;

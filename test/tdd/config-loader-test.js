@@ -644,7 +644,7 @@ describe("tdd:lib:core:config-loader", function() {
           },
         },
         "/": {
-          "name": "devebot",
+          "name": FRAMEWORK_PACKAGE_NAME,
           "type": "framework",
           "path": "/",
           "version": "0.2.9",
@@ -680,7 +680,7 @@ describe("tdd:lib:core:config-loader", function() {
             }
           },
         },
-        "devebot": {
+        [FRAMEWORK_PACKAGE_NAME]: {
           "version": "0.2.9",
           "manifest": {
             "config": {
@@ -2328,7 +2328,8 @@ describe("tdd:lib:core:config-loader", function() {
       //   [framework]/sandbox
       //    <- [lib:plugin1]/sandbox
       //    <- [lib:plugin2]/sandbox
-      //    <- [app:default]/sandbox <- [app:external]/sandbox
+      //    <- [app:default]/sandbox
+      //    <- [app:external]/sandbox
       assert.deepEqual(
         lodash.get(config, "sandbox.default"),
         lodash.merge({},
