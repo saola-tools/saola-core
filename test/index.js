@@ -22,6 +22,8 @@ const lodash = FRWK.require("lodash");
 
 global.FRWK = FRWK;
 
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+
 // EventEmitter memory leak detecting
 const max = 12;
 const EventEmitter = require("events").EventEmitter;
@@ -95,6 +97,12 @@ const lab = module.exports = {
   },
   getFrameworkInfo: function() {
     return chores.loadPackageInfo(this.getFrameworkHome(), constx.APPINFO.FIELDS, {});
+  },
+  getFrameworkApi: function() {
+    return require("devebot-api");
+  },
+  getPrefixScopedName: function() {
+    return "@" + FRAMEWORK_NAMESPACE + "/";
   },
   getDefaultTimeout: function() {
     return 60000;

@@ -859,21 +859,21 @@ describe("tdd:lib:base:bootstrap", function() {
         },
         {
           "type": "bridge",
-          "name": "devebot-co-connector1",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector1",
           "path": "/test/lib/namespace-co-connector1",
           "code": "connector1",
           "codeInCamel": "connector1",
-          "nameInCamel": "devebotCoConnector1",
+          "nameInCamel": FRAMEWORK_NAMESPACE + "CoConnector1",
           "manifest": null,
           "version": "0.1.1",
         },
         {
           "type": "bridge",
-          "name": "devebot-co-connector2",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector2",
           "path": "/test/lib/namespace-co-connector2",
           "code": "connector2",
           "codeInCamel": "connector2",
-          "nameInCamel": "devebotCoConnector2",
+          "nameInCamel": FRAMEWORK_NAMESPACE + "CoConnector2",
           "manifest": null,
           "version": "0.1.2",
         },
@@ -1131,7 +1131,7 @@ describe("tdd:lib:base:bootstrap", function() {
     it("register a new plugin with nested and overlap sub-plugins (with presets)", function() {
       let pluginLauncher = bootstrap.registerLayerware(null, [
         {
-          name: "devebot-dp-backward1",
+          name: FRAMEWORK_NAMESPACE + "-dp-backward1",
           path: lab.getLibHome("namespace-dp-backward1"),
           formers: [ "sub-plugin1" ],
           presets: {
@@ -1139,7 +1139,7 @@ describe("tdd:lib:base:bootstrap", function() {
           }
         },
         {
-          name: "devebot-dp-backward2",
+          name: FRAMEWORK_NAMESPACE + "-dp-backward2",
           path: lab.getLibHome("namespace-dp-backward2"),
           formers: [ "sub-plugin2" ],
           presets: {
@@ -1160,7 +1160,7 @@ describe("tdd:lib:base:bootstrap", function() {
           ],
           "pluginRefs": {
             "/test/lib/namespace-dp-backward1": {
-              "name": "devebot-dp-backward1",
+              "name": FRAMEWORK_NAMESPACE + "-dp-backward1",
               "type": "plugin",
               "path": "/test/lib/namespace-dp-backward1",
               "formers": [
@@ -1179,7 +1179,7 @@ describe("tdd:lib:base:bootstrap", function() {
               ]
             },
             "/test/lib/namespace-dp-backward2": {
-              "name": "devebot-dp-backward2",
+              "name": FRAMEWORK_NAMESPACE + "-dp-backward2",
               "type": "plugin",
               "path": "/test/lib/namespace-dp-backward2",
               "formers": [
@@ -1260,13 +1260,13 @@ describe("tdd:lib:base:bootstrap", function() {
             "/test/lib/plugin3"
           ],
           "pluginRefs": {
-            "devebot-dp-backward1": {
-              "name": "devebot-dp-backward1",
+            [FRAMEWORK_NAMESPACE + "-dp-backward1"]: {
+              "name": FRAMEWORK_NAMESPACE + "-dp-backward1",
               "type": "plugin",
               "path": "/test/lib/namespace-dp-backward1"
             },
-            "devebot-dp-backward2": {
-              "name": "devebot-dp-backward2",
+            [FRAMEWORK_NAMESPACE + "-dp-backward2"]: {
+              "name": FRAMEWORK_NAMESPACE + "-dp-backward2",
               "type": "plugin",
               "path": "/test/lib/namespace-dp-backward2"
             },

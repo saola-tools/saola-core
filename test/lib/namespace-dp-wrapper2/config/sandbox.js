@@ -2,6 +2,9 @@
 
 const lab = require("../../../index");
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+
 module.exports = {
   plugins: {
     wrapper2: {
@@ -11,7 +14,7 @@ module.exports = {
   },
   bridges: {
     "bridgeKebabCase1": {
-      "devebot-dp-wrapper2": {
+      [FRAMEWORK_NAMESPACE + "-dp-wrapper2"]: {
         "pointer": {
           "refPath": "sandbox -> bridge-kebab-case1 -> wrapper2 -> pointer",
           "refType": "wrapper2",
@@ -21,7 +24,7 @@ module.exports = {
       }
     },
     "bridgeKebabCase2": {
-      "devebot-dp-wrapper2": {
+      [FRAMEWORK_NAMESPACE + "-dp-wrapper2"]: {
         "pointer": {
           "refPath": "sandbox -> bridge-kebab-case2 -> wrapper2 -> pointer",
           "refType": "wrapper2",
@@ -31,7 +34,7 @@ module.exports = {
       }
     },
     "connector1": {
-      "devebot-dp-wrapper2": {
+      [FRAMEWORK_NAMESPACE + "-dp-wrapper2"]: {
         "bean": {
           "refPath": "sandbox -> connector1 -> wrapper2 -> bean",
           "refType": "wrapper2",
@@ -41,7 +44,7 @@ module.exports = {
       }
     },
     "connector2": {
-      "devebotDpWrapper2": {
+      [FRAMEWORK_NAMESPACE + "DpWrapper2"]: {
         "bean": {
           "refPath": "sandbox -> connector2 -> wrapper2 -> bean",
           "refType": "wrapper2",

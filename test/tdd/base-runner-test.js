@@ -17,6 +17,10 @@ const WsClientMock = Runner.__get__("WsClientMock");
 
 const { assert } = require("liberica");
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
+
 describe.skip("tdd:lib:base:runner", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -27,8 +31,8 @@ describe.skip("tdd:lib:base:runner", function() {
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all",
-      DEVEBOT_FORCING_SILENT: "issue-inspector",
-      DEVEBOT_NODE_ENV: "test",
+      [FRAMEWORK_NAMESPACE_UCASE + "_FORCING_SILENT"]: "issue-inspector",
+      [FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV"]: "test",
     });
     LogConfig.reset();
     issueInspector.reset();

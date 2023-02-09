@@ -1,10 +1,16 @@
 "use strict";
 
 const lab = require("../index");
+const FRWK = lab.getFramework();
+const lodash = FRWK.require("lodash");
 const envcloak = require("envcloak").instance;
 const envcfg = require(lab.getFrameworkModule("utils/envcfg"));
 
 const { assert } = require("liberica");
+
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 
 describe("tdd:lib:utils:envcfg", function() {
   describe("extractEnv()", function() {
@@ -12,7 +18,7 @@ describe("tdd:lib:utils:envcfg", function() {
       envcloak.setup({
         A_PREFIX_OF_ENVCFG_plugins_example_settings_supportContacts_phoneNumber: "+84987654321",
         A_PREFIX_OF_ENVCFG_plugins_example_settings_supportContacts_email: "contact@example.com",
-        DEVEBOT_NODE_ENV: "test",
+        [FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV"]: "test",
       });
     });
 

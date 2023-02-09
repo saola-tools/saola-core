@@ -1,9 +1,15 @@
 "use strict";
 
 const http = require("http");
+
+const lab = require("../../../../index");
+const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
+
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 
 const Service = function(params={}) {
   const sandboxConfig = lodash.get(params, ["sandboxConfig", "application"], {});
@@ -91,8 +97,8 @@ const Service = function(params={}) {
 
 Service.referenceHash = {
   mainService: "application/mainService",
-  dpBackward1Service: "devebot-dp-backward1/sublibService",
-  dpBackward2Service: "devebot-dp-backward2/sublibService",
+  dpBackward1Service: FRAMEWORK_NAMESPACE + "-dp-backward1/sublibService",
+  dpBackward2Service: FRAMEWORK_NAMESPACE + "-dp-backward2/sublibService",
   coBackward1: "application/backward1#wrapper",
   coBackward2: "application/backward2#wrapper",
   coConnector1: "application/connector1#wrapper",

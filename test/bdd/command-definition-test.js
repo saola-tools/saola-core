@@ -1,14 +1,14 @@
 "use strict";
 
+const util = require("util");
+
 const lab = require("../index");
 const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
-const util = require("util");
+const ApiClient = lab.getFrameworkApi();
 
 const { assert } = require("liberica");
-
-const ApiClient = require("devebot-api");
 
 describe("bdd:api:command:definition", function() {
   this.timeout(lab.getDefaultTimeout());

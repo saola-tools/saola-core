@@ -12,6 +12,8 @@ const envcloak = require("envcloak").instance;
 const { assert, sinon } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:script-renderer", function() {
@@ -25,7 +27,7 @@ describe("tdd:lib:core:script-renderer", function() {
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all",
-      DEVEBOT_NODE_ENV: "test",
+      [FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV"]: "test",
     });
     LogConfig.reset();
     issueInspector.reset();

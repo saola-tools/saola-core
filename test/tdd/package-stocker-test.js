@@ -3,8 +3,13 @@
 const lab = require("../index");
 const FRWK = lab.getFramework();
 const chores = FRWK.require("chores");
+const lodash = FRWK.require("lodash");
 
 const { assert } = require("liberica");
+
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 
 describe("tdd:lib:core:package-stocker", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -16,8 +21,8 @@ describe("tdd:lib:core:package-stocker", function() {
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all",
-      DEVEBOT_FORCING_SILENT: "package-stocker",
-      DEVEBOT_NODE_ENV: "test",
+      [FRAMEWORK_NAMESPACE_UCASE + "_FORCING_SILENT"]: "package-stocker",
+      [FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV"]: "test",
     });
   });
 

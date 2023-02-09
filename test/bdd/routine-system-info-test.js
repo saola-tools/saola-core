@@ -4,7 +4,7 @@ const lab = require("../index");
 const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const lodash = FRWK.require("lodash");
-const ApiClient = require("devebot-api");
+const ApiClient = lab.getFrameworkApi();
 
 const { assert } = require("liberica");
 

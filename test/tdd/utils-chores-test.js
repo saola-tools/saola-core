@@ -11,6 +11,8 @@ const lodash = FRWK.require("lodash");
 const { assert, rewire } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 const FILE_JS_FILTER_PATTERN = constx.FILE.JS_FILTER_PATTERN;
 
@@ -372,7 +374,7 @@ describe("tdd:lib:utils:chores", function() {
   describe("isSilentForced()", function() {
     it("FORCING_SILENT=framework,webserver", function() {
       chores.setEnvironments({
-        DEVEBOT_FORCING_SILENT: "framework,webserver"
+        [FRAMEWORK_NAMESPACE_UCASE + "_FORCING_SILENT"]: "framework,webserver"
       });
       assert.isTrue(chores.isSilentForced("framework"));
       assert.isTrue(chores.isSilentForced(["something", "framework"]));
@@ -387,7 +389,7 @@ describe("tdd:lib:utils:chores", function() {
   describe("isVerboseForced()", function() {
     it("FORCING_SILENT=framework,webserver", function() {
       chores.setEnvironments({
-        DEVEBOT_FORCING_SILENT: "framework,webserver"
+        [FRAMEWORK_NAMESPACE_UCASE + "_FORCING_SILENT"]: "framework,webserver"
       });
       assert.isFalse(chores.isVerboseForced("framework"));
       assert.isFalse(chores.isVerboseForced(["something", "framework"]));

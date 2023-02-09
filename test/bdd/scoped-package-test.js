@@ -10,10 +10,18 @@ const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
+
 describe("bdd:app:scoped-package-examples", function() {
   before(function() {
     chores.setEnvironments({
-      DEVEBOT_FORCING_SILENT: "framework,@devebot/demo-app,@devebot/plugin-case0",
+      [FRAMEWORK_NAMESPACE_UCASE + "_FORCING_SILENT"]: [
+        "framework",
+        lab.getPrefixScopedName() + "demo-app",
+        lab.getPrefixScopedName() + "plugin-case0"
+      ].join(","),
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all"
@@ -23,15 +31,19 @@ describe("bdd:app:scoped-package-examples", function() {
   after(function() {
     chores.clearCache();
   });
-  //    
+  //
   it("Request and response smoothly", function() {
+    if (!chores.isUpgradeSupported("presets")) this.skip();
+    if (!chores.isUpgradeSupported("bridge-full-ref")) this.skip();
+    if (!chores.isUpgradeSupported("standardizing-config")) this.skip();
+    //
     const example = require("../app/scoped-pkg-example");
     const expected = [
       {
         "status": 200,
         "data": {
-          "@devebot/plugin-case0/handler": {
-            "blockRef": "@devebot/plugin-case0/handler",
+          [lab.getPrefixScopedName() + "plugin-case0/handler"]: {
+            "blockRef": lab.getPrefixScopedName() + "plugin-case0/handler",
             "bridges": {
               "bridgeCase0Instance0": {
                 "config": {
@@ -41,8 +53,8 @@ describe("bdd:app:scoped-package-examples", function() {
               }
             }
           },
-          "@devebot/plugin-case0/servlet": {
-            "blockRef": "@devebot/plugin-case0/servlet",
+          [lab.getPrefixScopedName() + "plugin-case0/servlet"]: {
+            "blockRef": lab.getPrefixScopedName() + "plugin-case0/servlet",
             "bridges": {
               "bridgeCase0Instance0": {
                 "config": {
@@ -57,14 +69,14 @@ describe("bdd:app:scoped-package-examples", function() {
       {
         "status": 200,
         "data": {
-          "packageName": "@devebot/demo-app",
+          "packageName": lab.getPrefixScopedName() + "demo-app",
           "config": {
-            "@devebot/demo-app/servlet": {
+            [lab.getPrefixScopedName() + "demo-app/servlet"]: {
               "host": "0.0.0.0",
               "port": 17770,
               "verbose": true
             },
-            "@devebot/demo-app/handler": {
+            [lab.getPrefixScopedName() + "demo-app/handler"]: {
               "host": "0.0.0.0",
               "port": 17770,
               "verbose": true

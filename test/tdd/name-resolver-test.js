@@ -6,6 +6,9 @@ const chores = FRWK.require("chores");
 
 const { assert } = require("liberica");
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+
 describe("tdd:lib:core:name-resolver", function() {
   let loggingFactory = lab.createLoggingFactoryMock();
   let CTX = {
@@ -24,22 +27,22 @@ describe("tdd:lib:core:name-resolver", function() {
 
       let pluginDefs = {
         "path/to/namespace-dp-wrapper1": {
-          name: "devebot-dp-wrapper1"
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper1"
         },
         "path/to/namespace-dp-wrapper2": {
-          name: "devebot-dp-wrapper2"
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper2"
         },
         "path/to/sub-wrapper1": {
           name: "sub-wrapper1"
         },
         "path/to/namespace-dp-sub-wrapper0": {
-          name: "devebot-dp-sub-wrapper0"
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0"
         },
         "path/to/namespace-dp-sub-wrapper1": {
-          name: "devebot-dp-sub-wrapper1"
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1"
         },
         "path/to/namespace-dp-sub-wrapper2": {
-          name: "devebot-dp-sub-wrapper2"
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2"
         },
         "path/to/sub-wrapper2": {
           name: "sub-wrapper2"
@@ -48,14 +51,14 @@ describe("tdd:lib:core:name-resolver", function() {
 
       let pluginRefs = {
         "path/to/namespace-dp-wrapper1": {
-          name: "devebot-dp-wrapper1",
-          nameInCamel: "devebotDpWrapper1",
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpWrapper1",
           code: "wrapper1",
           codeInCamel: "wrapper1"
         },
         "path/to/namespace-dp-wrapper2": {
-          name: "devebot-dp-wrapper2",
-          nameInCamel: "devebotDpWrapper2",
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpWrapper2",
           code: "wrapper2",
           codeInCamel: "wrapper2"
         },
@@ -66,20 +69,20 @@ describe("tdd:lib:core:name-resolver", function() {
           codeInCamel: "subWrapper1"
         },
         "path/to/namespace-dp-sub-wrapper0": {
-          name: "devebot-dp-sub-wrapper0",
-          nameInCamel: "devebotDpSubWrapper0",
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpSubWrapper0",
           code: "sub-wrapper0",
           codeInCamel: "subWrapper0"
         },
         "path/to/namespace-dp-sub-wrapper1": {
-          name: "devebot-dp-sub-wrapper1",
-          nameInCamel: "devebotDpSubWrapper1",
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpSubWrapper1",
           code: "sub-wrapper1",
           codeInCamel: "subWrapper1"
         },
         "path/to/namespace-dp-sub-wrapper2": {
-          name: "devebot-dp-sub-wrapper2",
-          nameInCamel: "devebotDpSubWrapper2",
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpSubWrapper2",
           code: "sub-wrapper2",
           codeInCamel: "subWrapper2"
         },
@@ -94,22 +97,22 @@ describe("tdd:lib:core:name-resolver", function() {
       assert.deepEqual(extractAliasNames(CTX, "plugin", pluginDefs), pluginRefs);
 
       let expectedMap = {
-        "devebot-dp-wrapper1": "devebot-dp-wrapper1",
-        "devebotDpWrapper1": "devebot-dp-wrapper1",
-        "wrapper1": "devebot-dp-wrapper1",
-        "devebot-dp-wrapper2": "devebot-dp-wrapper2",
-        "devebotDpWrapper2": "devebot-dp-wrapper2",
-        "wrapper2": "devebot-dp-wrapper2",
+        [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+        [FRAMEWORK_NAMESPACE + "DpWrapper1"]: FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+        "wrapper1": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+        [FRAMEWORK_NAMESPACE + "-dp-wrapper2"]: FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+        [FRAMEWORK_NAMESPACE + "DpWrapper2"]: FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+        "wrapper2": FRAMEWORK_NAMESPACE + "-dp-wrapper2",
         "sub-wrapper1": "sub-wrapper1",
         "subWrapper1": "sub-wrapper1",
-        "devebot-dp-sub-wrapper0": "devebot-dp-sub-wrapper0",
-        "devebotDpSubWrapper0": "devebot-dp-sub-wrapper0",
-        "sub-wrapper0": "devebot-dp-sub-wrapper0",
-        "subWrapper0": "devebot-dp-sub-wrapper0",
-        "devebot-dp-sub-wrapper1": "devebot-dp-sub-wrapper1",
-        "devebotDpSubWrapper1": "devebot-dp-sub-wrapper1",
-        "devebot-dp-sub-wrapper2": "devebot-dp-sub-wrapper2",
-        "devebotDpSubWrapper2": "devebot-dp-sub-wrapper2",
+        [FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+        [FRAMEWORK_NAMESPACE + "DpSubWrapper0"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+        "sub-wrapper0": FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+        "subWrapper0": FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+        [FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1",
+        [FRAMEWORK_NAMESPACE + "DpSubWrapper1"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1",
+        [FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2",
+        [FRAMEWORK_NAMESPACE + "DpSubWrapper2"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2",
         "sub-wrapper2": "sub-wrapper2",
         "subWrapper2": "sub-wrapper2"
       };
@@ -132,24 +135,24 @@ describe("tdd:lib:core:name-resolver", function() {
 
       let pluginDefs = {
         "path/to/namespace-dp-wrapper1": {
-          name: "devebot-dp-wrapper1",
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper1",
           formers: [ "app-wrapper1" ]
         },
         "path/to/namespace-dp-wrapper2": {
-          name: "devebot-dp-wrapper2",
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper2",
           formers: [ "app-wrapper2" ]
         },
         "path/to/sub-wrapper1": {
           name: "sub-wrapper1"
         },
         "path/to/namespace-dp-sub-wrapper0": {
-          name: "devebot-dp-sub-wrapper0"
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0"
         },
         "path/to/namespace-dp-sub-wrapper1": {
-          name: "devebot-dp-sub-wrapper1"
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1"
         },
         "path/to/namespace-dp-sub-wrapper2": {
-          name: "devebot-dp-sub-wrapper2"
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2"
         },
         "path/to/sub-wrapper2": {
           name: "sub-wrapper2"
@@ -158,8 +161,8 @@ describe("tdd:lib:core:name-resolver", function() {
 
       let pluginRefs = {
         "path/to/namespace-dp-wrapper1": {
-          name: "devebot-dp-wrapper1",
-          nameInCamel: "devebotDpWrapper1",
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpWrapper1",
           code: "wrapper1",
           codeInCamel: "wrapper1",
           formers: [ "app-wrapper1" ],
@@ -168,8 +171,8 @@ describe("tdd:lib:core:name-resolver", function() {
           }
         },
         "path/to/namespace-dp-wrapper2": {
-          name: "devebot-dp-wrapper2",
-          nameInCamel: "devebotDpWrapper2",
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpWrapper2",
           code: "wrapper2",
           codeInCamel: "wrapper2",
           formers: [ "app-wrapper2" ],
@@ -184,20 +187,20 @@ describe("tdd:lib:core:name-resolver", function() {
           codeInCamel: "subWrapper1"
         },
         "path/to/namespace-dp-sub-wrapper0": {
-          name: "devebot-dp-sub-wrapper0",
-          nameInCamel: "devebotDpSubWrapper0",
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpSubWrapper0",
           code: "sub-wrapper0",
           codeInCamel: "subWrapper0"
         },
         "path/to/namespace-dp-sub-wrapper1": {
-          name: "devebot-dp-sub-wrapper1",
-          nameInCamel: "devebotDpSubWrapper1",
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpSubWrapper1",
           code: "sub-wrapper1",
           codeInCamel: "subWrapper1"
         },
         "path/to/namespace-dp-sub-wrapper2": {
-          name: "devebot-dp-sub-wrapper2",
-          nameInCamel: "devebotDpSubWrapper2",
+          name: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2",
+          nameInCamel: FRAMEWORK_NAMESPACE + "DpSubWrapper2",
           code: "sub-wrapper2",
           codeInCamel: "subWrapper2"
         },
@@ -212,26 +215,26 @@ describe("tdd:lib:core:name-resolver", function() {
       assert.deepEqual(extractAliasNames(CTX, "plugin", pluginDefs), pluginRefs);
 
       let expectedMap = {
-        "app-wrapper1": "devebot-dp-wrapper1",
-        "appWrapper1": "devebot-dp-wrapper1",
-        "app-wrapper2": "devebot-dp-wrapper2",
-        "appWrapper2": "devebot-dp-wrapper2",
-        "devebot-dp-wrapper1": "devebot-dp-wrapper1",
-        "devebotDpWrapper1": "devebot-dp-wrapper1",
-        "wrapper1": "devebot-dp-wrapper1",
-        "devebot-dp-wrapper2": "devebot-dp-wrapper2",
-        "devebotDpWrapper2": "devebot-dp-wrapper2",
-        "wrapper2": "devebot-dp-wrapper2",
+        "app-wrapper1": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+        "appWrapper1": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+        "app-wrapper2": FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+        "appWrapper2": FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+        [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+        [FRAMEWORK_NAMESPACE + "DpWrapper1"]: FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+        "wrapper1": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+        [FRAMEWORK_NAMESPACE + "-dp-wrapper2"]: FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+        [FRAMEWORK_NAMESPACE + "DpWrapper2"]: FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+        "wrapper2": FRAMEWORK_NAMESPACE + "-dp-wrapper2",
         "sub-wrapper1": "sub-wrapper1",
         "subWrapper1": "sub-wrapper1",
-        "devebot-dp-sub-wrapper0": "devebot-dp-sub-wrapper0",
-        "devebotDpSubWrapper0": "devebot-dp-sub-wrapper0",
-        "sub-wrapper0": "devebot-dp-sub-wrapper0",
-        "subWrapper0": "devebot-dp-sub-wrapper0",
-        "devebot-dp-sub-wrapper1": "devebot-dp-sub-wrapper1",
-        "devebotDpSubWrapper1": "devebot-dp-sub-wrapper1",
-        "devebot-dp-sub-wrapper2": "devebot-dp-sub-wrapper2",
-        "devebotDpSubWrapper2": "devebot-dp-sub-wrapper2",
+        [FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+        [FRAMEWORK_NAMESPACE + "DpSubWrapper0"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+        "sub-wrapper0": FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+        "subWrapper0": FRAMEWORK_NAMESPACE + "-dp-sub-wrapper0",
+        [FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1",
+        [FRAMEWORK_NAMESPACE + "DpSubWrapper1"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper1",
+        [FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2",
+        [FRAMEWORK_NAMESPACE + "DpSubWrapper2"]: FRAMEWORK_NAMESPACE + "-dp-sub-wrapper2",
         "sub-wrapper2": "sub-wrapper2",
         "subWrapper2": "sub-wrapper2"
       };
@@ -245,9 +248,9 @@ describe("tdd:lib:core:name-resolver", function() {
 
   describe("converting and reverting the plugin & bridge names", function() {
     let nameResolver = lab.getNameResolver([
-      "sub-plugin1", "devebot-dp-wrapper1", "sub-plugin2", "devebot-dp-wrapper2"
+      "sub-plugin1", FRAMEWORK_NAMESPACE + "-dp-wrapper1", "sub-plugin2", FRAMEWORK_NAMESPACE + "-dp-wrapper2"
     ], [
-      "bridge1", "bridge-kebab-case1", "devebot-co-connector1", "bridge2", "bridge-kebab-case2", "devebot-co-connector2"
+      "bridge1", "bridge-kebab-case1", FRAMEWORK_NAMESPACE + "-co-connector1", "bridge2", "bridge-kebab-case2", FRAMEWORK_NAMESPACE + "-co-connector2"
     ]);
     it("should build absoluteAliasMap correctly", function() {
       if (chores.isUpgradeSupported("simplify-name-resolver")) this.skip();
@@ -258,28 +261,28 @@ describe("tdd:lib:core:name-resolver", function() {
         "plugin": {
           "sub-plugin1": "sub-plugin1",
           "subPlugin1": "sub-plugin1",
-          "devebot-dp-wrapper1": "devebot-dp-wrapper1",
-          "devebotDpWrapper1": "devebot-dp-wrapper1",
-          "wrapper1": "devebot-dp-wrapper1",
+          [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+          [FRAMEWORK_NAMESPACE + "DpWrapper1"]: FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+          "wrapper1": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
           "sub-plugin2": "sub-plugin2",
           "subPlugin2": "sub-plugin2",
-          "devebot-dp-wrapper2": "devebot-dp-wrapper2",
-          "devebotDpWrapper2": "devebot-dp-wrapper2",
-          "wrapper2": "devebot-dp-wrapper2"
+          [FRAMEWORK_NAMESPACE + "-dp-wrapper2"]: FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+          [FRAMEWORK_NAMESPACE + "DpWrapper2"]: FRAMEWORK_NAMESPACE + "-dp-wrapper2",
+          "wrapper2": FRAMEWORK_NAMESPACE + "-dp-wrapper2"
         },
         "bridge": {
           "bridge1": "bridge1",
           "bridge-kebab-case1": "bridge-kebab-case1",
           "bridgeKebabCase1": "bridge-kebab-case1",
-          "devebot-co-connector1": "devebot-co-connector1",
-          "devebotCoConnector1": "devebot-co-connector1",
-          "connector1": "devebot-co-connector1",
+          [FRAMEWORK_NAMESPACE + "-co-connector1"]: FRAMEWORK_NAMESPACE + "-co-connector1",
+          [FRAMEWORK_NAMESPACE + "CoConnector1"]: FRAMEWORK_NAMESPACE + "-co-connector1",
+          "connector1": FRAMEWORK_NAMESPACE + "-co-connector1",
           "bridge2": "bridge2",
           "bridge-kebab-case2": "bridge-kebab-case2",
           "bridgeKebabCase2": "bridge-kebab-case2",
-          "devebot-co-connector2": "devebot-co-connector2",
-          "devebotCoConnector2": "devebot-co-connector2",
-          "connector2": "devebot-co-connector2"
+          [FRAMEWORK_NAMESPACE + "-co-connector2"]: FRAMEWORK_NAMESPACE + "-co-connector2",
+          [FRAMEWORK_NAMESPACE + "CoConnector2"]: FRAMEWORK_NAMESPACE + "-co-connector2",
+          "connector2": FRAMEWORK_NAMESPACE + "-co-connector2"
         }
       });
     });
@@ -292,17 +295,17 @@ describe("tdd:lib:core:name-resolver", function() {
       assert.deepEqual(relativeAliasMap, {
         "plugin": {
           "sub-plugin1": "subPlugin1",
-          "devebot-dp-wrapper1": "wrapper1",
+          [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: "wrapper1",
           "sub-plugin2": "subPlugin2",
-          "devebot-dp-wrapper2": "wrapper2"
+          [FRAMEWORK_NAMESPACE + "-dp-wrapper2"]: "wrapper2"
         },
         "bridge": {
           "bridge1": "bridge1",
           "bridge-kebab-case1": "bridgeKebabCase1",
-          "devebot-co-connector1": "connector1",
+          [FRAMEWORK_NAMESPACE + "-co-connector1"]: "connector1",
           "bridge2": "bridge2",
           "bridge-kebab-case2": "bridgeKebabCase2",
-          "devebot-co-connector2": "connector2"
+          [FRAMEWORK_NAMESPACE + "-co-connector2"]: "connector2"
         }
       });
     });
@@ -312,8 +315,8 @@ describe("tdd:lib:core:name-resolver", function() {
         "bridge1",
         "bridge-kebab-case1",
         "bridgeKebabCase1",
-        "devebot-co-connector1",
-        "devebotCoConnector1",
+        FRAMEWORK_NAMESPACE + "-co-connector1",
+        FRAMEWORK_NAMESPACE + "CoConnector1",
         "connector1",
         "unknown",
         null
@@ -338,16 +341,16 @@ describe("tdd:lib:core:name-resolver", function() {
           "target": "bridge-kebab-case1"
         },
         {
-          "source": "devebot-co-connector1",
-          "target": "devebot-co-connector1"
+          "source": FRAMEWORK_NAMESPACE + "-co-connector1",
+          "target": FRAMEWORK_NAMESPACE + "-co-connector1"
         },
         {
-          "source": "devebotCoConnector1",
-          "target": "devebot-co-connector1"
+          "source": FRAMEWORK_NAMESPACE + "CoConnector1",
+          "target": FRAMEWORK_NAMESPACE + "-co-connector1"
         },
         {
           "source": "connector1",
-          "target": "devebot-co-connector1"
+          "target": FRAMEWORK_NAMESPACE + "-co-connector1"
         },
         {
           "source": "unknown",
@@ -364,8 +367,8 @@ describe("tdd:lib:core:name-resolver", function() {
       let result = [
         "sub-plugin1",
         "subPlugin1",
-        "devebot-dp-wrapper1",
-        "devebotDpWrapper1",
+        FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+        FRAMEWORK_NAMESPACE + "DpWrapper1",
         "wrapper1",
         "unknown",
         null
@@ -386,16 +389,16 @@ describe("tdd:lib:core:name-resolver", function() {
           "target": "sub-plugin1"
         },
         {
-          "source": "devebot-dp-wrapper1",
-          "target": "devebot-dp-wrapper1"
+          "source": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
+          "target": FRAMEWORK_NAMESPACE + "-dp-wrapper1"
         },
         {
-          "source": "devebotDpWrapper1",
-          "target": "devebot-dp-wrapper1"
+          "source": FRAMEWORK_NAMESPACE + "DpWrapper1",
+          "target": FRAMEWORK_NAMESPACE + "-dp-wrapper1"
         },
         {
           "source": "wrapper1",
-          "target": "devebot-dp-wrapper1"
+          "target": FRAMEWORK_NAMESPACE + "-dp-wrapper1"
         },
         {
           "source": "unknown",
@@ -410,7 +413,7 @@ describe("tdd:lib:core:name-resolver", function() {
 
     it("getDefaultAliasOf(_, 'bridge')", function() {
       let result = [
-        "bridge1", "bridge-kebab-case1", "devebot-co-connector1", "unknown", null
+        "bridge1", "bridge-kebab-case1", FRAMEWORK_NAMESPACE + "-co-connector1", "unknown", null
       ].map(function(name) {
         return {
           source: name,
@@ -428,7 +431,7 @@ describe("tdd:lib:core:name-resolver", function() {
           "target": "bridgeKebabCase1"
         },
         {
-          "source": "devebot-co-connector1",
+          "source": FRAMEWORK_NAMESPACE + "-co-connector1",
           "target": "connector1"
         },
         {
@@ -444,7 +447,7 @@ describe("tdd:lib:core:name-resolver", function() {
 
     it("getDefaultAliasOf(_, 'plugin')", function() {
       let result = [
-        "sub-plugin1", "sub-plugin2", "devebot-dp-wrapper1", "devebot-dp-wrapper2", "unknown", null
+        "sub-plugin1", "sub-plugin2", FRAMEWORK_NAMESPACE + "-dp-wrapper1", FRAMEWORK_NAMESPACE + "-dp-wrapper2", "unknown", null
       ].map(function(name) {
         return {
           source: name,
@@ -462,11 +465,11 @@ describe("tdd:lib:core:name-resolver", function() {
           "target": "subPlugin2"
         },
         {
-          "source": "devebot-dp-wrapper1",
+          "source": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
           "target": "wrapper1"
         },
         {
-          "source": "devebot-dp-wrapper2",
+          "source": FRAMEWORK_NAMESPACE + "-dp-wrapper2",
           "target": "wrapper2"
         },
         {

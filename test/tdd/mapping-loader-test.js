@@ -28,7 +28,7 @@ describe("tdd:lib:core:mapping-loader", function() {
       assert.isFunction(traverseDirRecursively);
     });
 
-    const MAPPING_DIR = ["", "home", "devebot", "example"].join(path.sep);
+    const MAPPING_DIR = ["", "home", "framework", "example"].join(path.sep);
     const RELATIVE_DIR = ["", "mappings"].join(path.sep);
 
     it("should standardize the directory path", function() {
@@ -133,7 +133,7 @@ describe("tdd:lib:core:mapping-loader", function() {
       blockRef: "app-restfetch",
     };
 
-    const MAPPING_HOME_DIR = ["", "home", "devebot", "example", "mappings"].join(path.sep);
+    const MAPPING_HOME_DIR = ["", "home", "framework", "example", "mappings"].join(path.sep);
     const statOfDirectory = {
       isDirectory: function() { return true; },
       isFile: function() { return false; },

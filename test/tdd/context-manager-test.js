@@ -12,6 +12,10 @@ const envcloak = Envcloak.instance;
 
 const { assert } = require("liberica");
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
+
 describe("tdd:lib:core:context-manager", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -23,7 +27,7 @@ describe("tdd:lib:core:context-manager", function() {
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all",
-      DEVEBOT_NODE_ENV: "test",
+      [FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV"]: "test",
     });
     issueInspector.reset();
     LogConfig.reset();

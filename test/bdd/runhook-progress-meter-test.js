@@ -6,7 +6,7 @@ const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
 const debugx = FRWK.require("pinbug")("bdd:api:runhook:progress:meter");
-const ApiClient = require("devebot-api");
+const ApiClient = lab.getFrameworkApi();
 
 const { assert } = require("liberica");
 

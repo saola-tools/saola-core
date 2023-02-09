@@ -3,6 +3,9 @@
 const lab = require("../../index");
 const FRWK = lab.getFramework();
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+
 const app = FRWK.launchApplication({
   appRootPath: __dirname
 }, [
@@ -24,11 +27,11 @@ const app = FRWK.launchApplication({
     path: lab.getLibHome("bridge4")
   },
   {
-    name: "devebot-co-connector1",
+    name: FRAMEWORK_NAMESPACE + "-co-connector1",
     path: lab.getLibHome("namespace-co-connector1")
   },
   {
-    name: "devebot-co-connector2",
+    name: FRAMEWORK_NAMESPACE + "-co-connector2",
     path: lab.getLibHome("namespace-co-connector2")
   }
 ]);

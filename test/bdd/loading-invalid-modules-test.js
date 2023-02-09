@@ -11,6 +11,8 @@ const envcloak = require("envcloak").instance;
 const { assert } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("bdd:app:loading-invalid-modules", function() {
@@ -23,8 +25,8 @@ describe("bdd:app:loading-invalid-modules", function() {
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all",
-      DEVEBOT_FORCING_SILENT: "issue-inspector",
-      DEVEBOT_NODE_ENV: "test",
+      [FRAMEWORK_NAMESPACE_UCASE + "_FORCING_SILENT"]: "issue-inspector",
+      [FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV"]: "test",
     });
     LogConfig.reset();
     issueInspector.reset();

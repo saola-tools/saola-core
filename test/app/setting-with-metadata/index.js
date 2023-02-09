@@ -3,6 +3,9 @@
 const lab = require("../../index");
 const FRWK = lab.getFramework();
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+
 const app = FRWK.initialize("tasks").launchApplication({
   appRootPath: __dirname
 }, [
@@ -20,7 +23,7 @@ const app = FRWK.initialize("tasks").launchApplication({
   },
 ], [
   {
-    name: "devebot-co-adapter",
+    name: FRAMEWORK_NAMESPACE + "-co-adapter",
     path: lab.getLibHome("namespace-co-adapter")
   },
   {

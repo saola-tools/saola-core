@@ -15,6 +15,8 @@ const envcloak = Envcloak.instance;
 const { assert, sinon } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 describe("tdd:lib:core:config-loader", function() {
@@ -87,18 +89,18 @@ describe("tdd:lib:core:config-loader", function() {
     it("should extract value from the first environment variable", function() {
       stepEnv.setup({
         "EXAMPLE_APP_CONFIG_DIR": "val#1",
-        "DEVEBOT_CONFIG_DIR": "val#2",
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: "val#2",
         "NODE_EXAMPLE_APP_CONFIG_DIR": "val#3",
-        "NODE_DEVEBOT_CONFIG_DIR": "val#4",
+        ["NODE_" + FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: "val#4",
       });
       assert.equal(readVariable(CTX, "EXAMPLE_APP", "CONFIG_DIR"), "val#1");
     });
 
     it("should extract value from the second environment variable", function() {
       stepEnv.setup({
-        "DEVEBOT_CONFIG_DIR": "val#2",
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: "val#2",
         "NODE_EXAMPLE_APP_CONFIG_DIR": "val#3",
-        "NODE_DEVEBOT_CONFIG_DIR": "val#4",
+        ["NODE_" + FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: "val#4",
       });
       assert.equal(readVariable(CTX, "EXAMPLE_APP", "CONFIG_DIR"), "val#2");
     });
@@ -106,14 +108,14 @@ describe("tdd:lib:core:config-loader", function() {
     it("should extract value from the third environment variable", function() {
       stepEnv.setup({
         "NODE_EXAMPLE_APP_CONFIG_DIR": "val#3",
-        "NODE_DEVEBOT_CONFIG_DIR": "val#4",
+        ["NODE_" + FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: "val#4",
       });
       assert.equal(readVariable(CTX, "EXAMPLE_APP", "CONFIG_DIR"), "val#3");
     });
 
     it("should extract value from the fourth environment variable", function() {
       stepEnv.setup({
-        "NODE_DEVEBOT_CONFIG_DIR": "val#4",
+        ["NODE_" + FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: "val#4",
       });
       assert.equal(readVariable(CTX, "EXAMPLE_APP", "CONFIG_DIR"), "val#4");
     });
@@ -132,9 +134,9 @@ describe("tdd:lib:core:config-loader", function() {
       envcloak.setup({
         NODE_ENV: "test",
         LOGOLITE_FULL_LOG_MODE: "false",
-        DEVEBOT_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_phoneNumber: "+84987654321",
         EXAMPLE_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_email: "contact@example.com",
-        DEVEBOT_CONFIG_ENV: "dev"
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_phoneNumber"]: "+84987654321",
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_ENV"]: "dev"
       });
 
       let { store, paths } = extractEnvironConfig(CTX, "EXAMPLE");
@@ -164,12 +166,12 @@ describe("tdd:lib:core:config-loader", function() {
       envcloak.setup({
         LOGOLITE_FULL_LOG_MODE: "false",
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_enabled: "true",
-        DEVEBOT_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_phoneNumber: "+84987654321",
-        MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_email: "contact@example.com",
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_timeout: 102400,
         MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_rate: 3.14190,
-        DEVEBOT_CONFIG_ENV: "dev",
-        DEVEBOT_NODE_ENV: "test",
+        MY_DEMO_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_email: "contact@example.com",
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_VAL_sandbox_plugins_appDemoPlugin_settings_phoneNumber"]: "+84987654321",
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_ENV"]: "dev",
+        [FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV"]: "test",
       });
 
       let environCfg = {
@@ -239,7 +241,7 @@ describe("tdd:lib:core:config-loader", function() {
     let doAliasMap = ConfigLoader.__get__("doAliasMap");
     let transformConfig = ConfigLoader.__get__("transformConfig");
 
-    it("[profile] should rename the field 'devebot' to 'framework'", function() {
+    it("[profile] should rename the core config field name to 'framework'", function() {
       if (!chores.isUpgradeSupported(["profile-config-field-framework"])) this.skip();
       //
       const appRef = new Object();
@@ -281,7 +283,7 @@ describe("tdd:lib:core:config-loader", function() {
             }
           },
           "bridgeKebabCase2": {
-            "devebot-dp-wrapper1": {
+            [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: {
               "pointer": {
                 "refPath": "sandbox -> bridge-kebab-case2 -> wrapper1 -> pointer"
               }
@@ -295,7 +297,7 @@ describe("tdd:lib:core:config-loader", function() {
             }
           },
           "connector2": {
-            "devebot-dp-wrapper1": {
+            [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: {
               "bean": {
                 "refPath": "sandbox -> connector2 -> wrapper1 -> bean"
               }
@@ -307,28 +309,28 @@ describe("tdd:lib:core:config-loader", function() {
       let expectedCfg = {
         "bridges": {
           "bridge-kebab-case1": {
-            "devebot-dp-wrapper1": {
+            [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: {
               "pointer": {
                 "refPath": "sandbox -> bridge-kebab-case1 -> wrapper1 -> pointer"
               }
             }
           },
           "bridge-kebab-case2": {
-            "devebot-dp-wrapper1": {
+            [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: {
               "pointer": {
                 "refPath": "sandbox -> bridge-kebab-case2 -> wrapper1 -> pointer"
               }
             }
           },
-          "devebot-co-connector1": {
-            "devebot-dp-wrapper1": {
+          [FRAMEWORK_NAMESPACE + "-co-connector1"]: {
+            [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: {
               "bean": {
                 "refPath": "sandbox -> connector1 -> wrapper1 -> bean"
               }
             }
           },
-          "devebot-co-connector2": {
-            "devebot-dp-wrapper1": {
+          [FRAMEWORK_NAMESPACE + "-co-connector2"]: {
+            [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: {
               "bean": {
                 "refPath": "sandbox -> connector2 -> wrapper1 -> bean"
               }
@@ -340,10 +342,10 @@ describe("tdd:lib:core:config-loader", function() {
       let absoluteAliasMap = {
         plugin: buildAbsoluteAliasMap(extractAliasNames(CTX, "plugin", {
           "path/to/namespace-dp-wrapper1": {
-            name: "devebot-dp-wrapper1"
+            name: FRAMEWORK_NAMESPACE + "-dp-wrapper1"
           },
           "path/to/namespace-dp-wrapper2": {
-            name: "devebot-dp-wrapper2"
+            name: FRAMEWORK_NAMESPACE + "-dp-wrapper2"
           }
         })),
         bridge: buildAbsoluteAliasMap(extractAliasNames(CTX, "bridge", {
@@ -354,10 +356,10 @@ describe("tdd:lib:core:config-loader", function() {
             name: "bridge-kebab-case2"
           },
           "path/to/namespace-co-connector1": {
-            name: "devebot-co-connector1"
+            name: FRAMEWORK_NAMESPACE + "-co-connector1"
           },
           "path/to/namespace-co-connector2": {
-            name: "devebot-co-connector2"
+            name: FRAMEWORK_NAMESPACE + "-co-connector2"
           }
         })),
       };
@@ -394,7 +396,7 @@ describe("tdd:lib:core:config-loader", function() {
             }
           },
           "bridge-kebab-case2": {
-            "devebot-dp-wrapper1": {
+            [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: {
               "pointer": {
                 "refPath": "sandbox -> bridge-kebab-case2 -> wrapper1 -> pointer"
               }
@@ -408,7 +410,7 @@ describe("tdd:lib:core:config-loader", function() {
             }
           },
           "connector2": {
-            "devebot-dp-wrapper1": {
+            [FRAMEWORK_NAMESPACE + "-dp-wrapper1"]: {
               "bean": {
                 "refPath": "sandbox -> connector2 -> wrapper1 -> bean"
               }
@@ -452,10 +454,10 @@ describe("tdd:lib:core:config-loader", function() {
 
       let pluginRefs = extractAliasNames(CTX, "plugin", {
         "path/to/namespace-dp-wrapper1": {
-          name: "devebot-dp-wrapper1"
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper1"
         },
         "path/to/namespace-dp-wrapper2": {
-          name: "devebot-dp-wrapper2"
+          name: FRAMEWORK_NAMESPACE + "-dp-wrapper2"
         }
       });
 
@@ -467,10 +469,10 @@ describe("tdd:lib:core:config-loader", function() {
           name: "bridge-kebab-case2"
         },
         "path/to/namespace-co-connector1": {
-          name: "devebot-co-connector1"
+          name: FRAMEWORK_NAMESPACE + "-co-connector1"
         },
         "path/to/namespace-co-connector2": {
-          name: "devebot-co-connector2"
+          name: FRAMEWORK_NAMESPACE + "-co-connector2"
         }
       });
 
@@ -517,7 +519,7 @@ describe("tdd:lib:core:config-loader", function() {
   describe("extractConfigManifest()", function() {
     let ConfigLoader = lab.acquireFrameworkModule("backbone/config-loader");
     let extractConfigManifest = ConfigLoader.__get__("extractConfigManifest");
-    let nameResolver = lab.getNameResolver(["sub-plugin1", "sub-plugin2"], ["sub-bridge1", "sub-bridge2", "devebot-co-vps"]);
+    let nameResolver = lab.getNameResolver(["sub-plugin1", "sub-plugin2"], ["sub-bridge1", "sub-bridge2", FRAMEWORK_NAMESPACE + "-co-vps"]);
     let ctx = { nameResolver: nameResolver };
 
     it("return empty configManifest map if the moduleRef is empty or null", function() {
@@ -550,13 +552,13 @@ describe("tdd:lib:core:config-loader", function() {
           },
         },
         "/test/lib/namespace-co-vps": {
-          "name": "devebot-co-vps",
+          "name": FRAMEWORK_NAMESPACE + "-co-vps",
           "type": "bridge",
           "path": "/test/lib/namespace-co-vps",
           "version": "0.1.3",
           "manifest": {
             "config": {
-              "something": "devebot-co-vps"
+              "something": FRAMEWORK_NAMESPACE + "-co-vps"
             }
           },
         }
@@ -578,11 +580,11 @@ describe("tdd:lib:core:config-loader", function() {
             }
           },
         },
-        "devebot-co-vps": {
+        [FRAMEWORK_NAMESPACE + "-co-vps"]: {
           "version": "0.1.3",
           "manifest": {
             "config": {
-              "something": "devebot-co-vps"
+              "something": FRAMEWORK_NAMESPACE + "-co-vps"
             }
           },
         },
@@ -1568,8 +1570,8 @@ describe("tdd:lib:core:config-loader", function() {
       envcloak.setup({
         NODE_ENV: "test",
         LOGOLITE_FULL_LOG_MODE: "false",
-        DEVEBOT_CONFIG_DIR: lab.getAppCfgDir("tdd-cfg", "newcfg"),
-        DEVEBOT_CONFIG_ENV: "dev"
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: lab.getAppCfgDir("tdd-cfg", "newcfg"),
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_ENV"]: "dev"
       });
     });
 
@@ -1868,8 +1870,8 @@ describe("tdd:lib:core:config-loader", function() {
       envcloak.setup({
         NODE_ENV: "test",
         LOGOLITE_FULL_LOG_MODE: "false",
-        DEVEBOT_CONFIG_DIR: lab.getAppCfgDir("tdd-cfg", "newcfg"),
-        DEVEBOT_CONFIG_ENV: "dev"
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: lab.getAppCfgDir("tdd-cfg", "newcfg"),
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_ENV"]: "dev"
       });
     });
 
@@ -1924,9 +1926,9 @@ describe("tdd:lib:core:config-loader", function() {
       envcloak.setup({
         NODE_ENV: "test",
         LOGOLITE_FULL_LOG_MODE: "false",
-        DEVEBOT_CONFIG_DIR: lab.getAppCfgDir("tdd-cfg", "newcfg"),
-        DEVEBOT_CONFIG_ENV: "dev",
-        DEVEBOT_SANDBOX: "private1,private2,ev1,ev2"
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: lab.getAppCfgDir("tdd-cfg", "newcfg"),
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_ENV"]: "dev",
+        [FRAMEWORK_NAMESPACE_UCASE + "_SANDBOX"]: "private1,private2,ev1,ev2"
       });
     });
 
@@ -2280,11 +2282,11 @@ describe("tdd:lib:core:config-loader", function() {
       envcloak.setup({
         NODE_ENV: "test",
         LOGOLITE_FULL_LOG_MODE: "false",
-        DEVEBOT_CONFIG_PROFILE_ALIASES: "context",
-        DEVEBOT_CONFIG_SANDBOX_ALIASES: "setting",
-        DEVEBOT_CONFIG_DIR: lab.getAppCfgDir("tdd-cfg-customized-names", "newcfg"),
-        DEVEBOT_CONFIG_ENV: "dev",
-        DEVEBOT_SANDBOX: "private1,private2,ev1,ev2"
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_PROFILE_ALIASES"]: "context",
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_SANDBOX_ALIASES"]: "setting",
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_DIR"]: lab.getAppCfgDir("tdd-cfg-customized-names", "newcfg"),
+        [FRAMEWORK_NAMESPACE_UCASE + "_CONFIG_ENV"]: "dev",
+        [FRAMEWORK_NAMESPACE_UCASE + "_SANDBOX"]: "private1,private2,ev1,ev2"
       });
       chores.clearCache();
     });

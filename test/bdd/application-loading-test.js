@@ -206,11 +206,11 @@ describe("bdd:app:application", function() {
               storeTo: "dependencyInfo"
             },
             {
-              allTags: [ chores.toFullname("devebot-dp-wrapper1", "sublibTrigger"), "bridge-config" ],
+              allTags: [ chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper1", "sublibTrigger"), "bridge-config" ],
               storeTo: "bridgeConfigOfWrapper1"
             },
             {
-              allTags: [ chores.toFullname("devebot-dp-wrapper2", "sublibTrigger"), "bridge-config" ],
+              allTags: [ chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper2", "sublibTrigger"), "bridge-config" ],
               storeTo: "bridgeConfigOfWrapper2"
             },
             {
@@ -248,11 +248,11 @@ describe("bdd:app:application", function() {
           "handlerType": "SERVICE"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper1", "sublibService"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper1", "sublibService"),
           "handlerType": "SERVICE"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper2", "sublibService"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper2", "sublibService"),
           "handlerType": "SERVICE"
         },
         {
@@ -260,11 +260,11 @@ describe("bdd:app:application", function() {
           "handlerType": "TRIGGER"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper1", "sublibTrigger"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper1", "sublibTrigger"),
           "handlerType": "TRIGGER"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper2", "sublibTrigger"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper2", "sublibTrigger"),
           "handlerType": "TRIGGER"
         }
       ];
@@ -274,11 +274,11 @@ describe("bdd:app:application", function() {
           "handlerType": "DIALECT"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper1", "connector1#bean"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper1", "connector1#bean"),
           "handlerType": "DIALECT"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper2", "connector1#bean"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper2", "connector1#bean"),
           "handlerType": "DIALECT"
         },
         {
@@ -286,27 +286,27 @@ describe("bdd:app:application", function() {
           "handlerType": "DIALECT"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper1", "connector2#bean"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper1", "connector2#bean"),
           "handlerType": "DIALECT"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper2", "connector2#bean"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper2", "connector2#bean"),
           "handlerType": "DIALECT"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper1", "bridgeKebabCase1#pointer"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper1", "bridgeKebabCase1#pointer"),
           "handlerType": "DIALECT"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper2", "bridgeKebabCase1#pointer"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper2", "bridgeKebabCase1#pointer"),
           "handlerType": "DIALECT"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper1", "bridgeKebabCase2#pointer"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper1", "bridgeKebabCase2#pointer"),
           "handlerType": "DIALECT"
         },
         {
-          "handlerName": chores.toFullname("devebot-dp-wrapper2", "bridgeKebabCase2#pointer"),
+          "handlerName": chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper2", "bridgeKebabCase2#pointer"),
           "handlerType": "DIALECT"
         });
       };
@@ -326,10 +326,10 @@ describe("bdd:app:application", function() {
       return app.runner.invoke(function(injektor) {
         let sandboxManager = injektor.lookup("sandboxManager");
         let service1 = sandboxManager.getSandboxService("sublibService", {
-          scope: "devebot-dp-wrapper1"
+          scope: FRAMEWORK_NAMESPACE + "-dp-wrapper1"
         });
         assert(service1.getConfig(), { port: 17741, host: "localhost" });
-        let service2 = sandboxManager.getSandboxService(chores.toFullname("devebot-dp-wrapper2", "sublibService"));
+        let service2 = sandboxManager.getSandboxService(chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper2", "sublibService"));
         assert(service2.getConfig(), { port: 17742, host: "localhost" });
       });
     });

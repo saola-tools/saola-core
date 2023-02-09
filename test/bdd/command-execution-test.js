@@ -9,7 +9,7 @@ const debugx = FRWK.require("pinbug")("devteam:bdd:api:command:execution");
 const LogConfig = FRWK.require("logolite").LogConfig;
 const LogTracer = FRWK.require("logolite").LogTracer;
 const envcloak = require("envcloak").instance;
-const ApiClient = require("devebot-api");
+const ApiClient = lab.getFrameworkApi();
 
 const { assert } = require("liberica");
 

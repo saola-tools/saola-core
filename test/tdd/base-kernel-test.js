@@ -12,6 +12,8 @@ const envcloak = Envcloak.instance;
 const { assert } = require("liberica");
 
 const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
 const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
 
 const ManifestHandler = lab.acquireFrameworkModule("backbone/manifest-handler");
@@ -28,8 +30,8 @@ describe("tdd:lib:base:kernel", function() {
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all",
-      DEVEBOT_FORCING_SILENT: "issue-inspector",
-      DEVEBOT_NODE_ENV: "test",
+      [FRAMEWORK_NAMESPACE_UCASE + "_FORCING_SILENT"]: "issue-inspector",
+      [FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV"]: "test",
     });
     LogConfig.reset();
     issueInspector.reset();
@@ -59,9 +61,9 @@ describe("tdd:lib:base:kernel", function() {
         this.skip();
       }
       let bundleMetadata = {
-        "devebot-dp-wrapper1/sandbox": {
+        [FRAMEWORK_NAMESPACE + "-dp-wrapper1/sandbox"]: {
           "default": {
-            "crateScope": "devebot-dp-wrapper1",
+            "crateScope": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
             "pluginCode": "wrapper1",
             "type": "sandbox",
             "subtype": "default",
@@ -78,9 +80,9 @@ describe("tdd:lib:base:kernel", function() {
             }
           }
         },
-        "devebot-dp-wrapper2/sandbox": {
+        [FRAMEWORK_NAMESPACE + "-dp-wrapper2/sandbox"]: {
           "default": {
-            "crateScope": "devebot-dp-wrapper2",
+            "crateScope": FRAMEWORK_NAMESPACE + "-dp-wrapper2",
             "pluginCode": "wrapper2",
             "type": "sandbox",
             "subtype": "default",
@@ -106,7 +108,7 @@ describe("tdd:lib:base:kernel", function() {
         "sandbox": {
           "plugins": {
             "wrapper1": {
-              "crateScope": "devebot-dp-wrapper1",
+              "crateScope": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
               "schema": {
                 "type": "object",
                 "properties": {
@@ -120,7 +122,7 @@ describe("tdd:lib:base:kernel", function() {
               }
             },
             "wrapper2": {
-              "crateScope": "devebot-dp-wrapper2",
+              "crateScope": FRAMEWORK_NAMESPACE + "-dp-wrapper2",
               "schema": {
                 "type": "object",
                 "properties": {
@@ -353,7 +355,7 @@ describe("tdd:lib:base:kernel", function() {
           "name": "bridge4"
         },
         "connector1": {
-          "name": "devebot-co-connector1",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector1",
           "schema": {
             "type": "object",
             "properties": {
@@ -371,7 +373,7 @@ describe("tdd:lib:base:kernel", function() {
           }
         },
         "connector2": {
-          "name": "devebot-co-connector2",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector2",
           "schema": {
             "type": "object",
             "properties": {

@@ -1,9 +1,15 @@
 "use strict";
 
 const http = require("http");
+
+const lab = require("../../../../index");
+const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
+
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 
 const Service = function(params) {
   params = params || {};
@@ -67,8 +73,8 @@ if (chores.isUpgradeSupported("bridge-full-ref")) {
   Service.referenceList = [
     chores.toFullname("application", "connector1#wrapper"),
     chores.toFullname("application", "connector2#wrapper"),
-    chores.toFullname("devebot-dp-wrapper1", "sublibTrigger"),
-    chores.toFullname("devebot-dp-wrapper2", "sublibTrigger")
+    chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper1", "sublibTrigger"),
+    chores.toFullname(FRAMEWORK_NAMESPACE + "-dp-wrapper2", "sublibTrigger")
   ];
 }
 

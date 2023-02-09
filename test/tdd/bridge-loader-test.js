@@ -11,6 +11,9 @@ const envcloak = require("envcloak").instance;
 
 const { assert } = require("liberica");
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+
 describe("tdd:lib:core:bridge-loader", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -69,7 +72,7 @@ describe("tdd:lib:core:bridge-loader", function() {
           "name": "bridge4"
         },
         "connector1": {
-          "name": "devebot-co-connector1",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector1",
           "schema": {
             "type": "object",
             "properties": {
@@ -87,7 +90,7 @@ describe("tdd:lib:core:bridge-loader", function() {
           }
         },
         "connector2": {
-          "name": "devebot-co-connector2",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector2",
           "schema": {
             "type": "object",
             "properties": {
@@ -409,10 +412,10 @@ describe("tdd:lib:core:bridge-loader", function() {
         "crateScope": "plugin1",
         "name": "bridge3#anyname3a"
       };
-      expectedMap[chores.toFullname("application", "devebot-co-connector1", "wrapper")] = {
+      expectedMap[chores.toFullname("application", FRAMEWORK_NAMESPACE + "-co-connector1", "wrapper")] = {
         "construktor": {
           "argumentSchema": {
-            "$id": chores.toFullname("application", "devebot-co-connector1", "wrapper"),
+            "$id": chores.toFullname("application", FRAMEWORK_NAMESPACE + "-co-connector1", "wrapper"),
             "type": "object",
             "properties": {
               "sandboxName": {
@@ -436,10 +439,10 @@ describe("tdd:lib:core:bridge-loader", function() {
         "crateScope": "application",
         "name": "connector1#wrapper"
       };
-      expectedMap[chores.toFullname("application", "devebot-co-connector2", "wrapper")] = {
+      expectedMap[chores.toFullname("application", FRAMEWORK_NAMESPACE + "-co-connector2", "wrapper")] = {
         "construktor": {
           "argumentSchema": {
-            "$id": chores.toFullname("application", "devebot-co-connector2", "wrapper"),
+            "$id": chores.toFullname("application", FRAMEWORK_NAMESPACE + "-co-connector2", "wrapper"),
             "type": "object",
             "properties": {
               "sandboxName": {

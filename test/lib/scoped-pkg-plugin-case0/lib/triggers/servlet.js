@@ -1,9 +1,12 @@
 "use strict";
 
+const http = require("http");
+
+const lab = require("../../../../index");
+const FRWK = lab.getFramework();
 const Promise = FRWK.require("bluebird");
 const chores = FRWK.require("chores");
 const lodash = FRWK.require("lodash");
-const http = require("http");
 
 function Service (params = {}) {
   const { componentId, packageName, loggingFactory, sandboxConfig, bridgeCase0Instance0, handler } = params;
@@ -67,7 +70,7 @@ function Service (params = {}) {
 
 Service.referenceHash = {
   handler: "handler",
-  bridgeCase0Instance0: "@devebot/plugin-case0/bridgeCase0#default"
+  bridgeCase0Instance0: lab.getPrefixScopedName() + "plugin-case0/bridgeCase0#default"
 };
 
 module.exports = Service;

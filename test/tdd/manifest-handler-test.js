@@ -11,6 +11,10 @@ const envcloak = Envcloak.instance;
 
 const { assert, sinon } = require("liberica");
 
+const constx = require(lab.getFrameworkModule("utils/constx"));
+const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
+const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
+
 describe("tdd:lib:core:manifest-handler", function() {
   this.timeout(lab.getDefaultTimeout());
 
@@ -22,8 +26,8 @@ describe("tdd:lib:core:manifest-handler", function() {
       LOGOLITE_FULL_LOG_MODE: "false",
       LOGOLITE_ALWAYS_ENABLED: "all",
       LOGOLITE_ALWAYS_MUTED: "all",
-      DEVEBOT_FORCING_SILENT: "issue-inspector",
-      DEVEBOT_NODE_ENV: "test",
+      [FRAMEWORK_NAMESPACE_UCASE + "_FORCING_SILENT"]: "issue-inspector",
+      [FRAMEWORK_NAMESPACE_UCASE + "_NODE_ENV"]: "test",
     });
     LogConfig.reset();
     issueInspector.reset();
@@ -237,13 +241,13 @@ describe("tdd:lib:core:manifest-handler", function() {
       if (!chores.isUpgradeSupported("manifest-refiner") || chores.isUpgradeSupported("metadata-refiner")) {
         this.skip();
       }
-      let nameResolver = lab.getNameResolver(["devebot-dp-wrapper1", "devebot-dp-wrapper2"], []);
+      let nameResolver = lab.getNameResolver([FRAMEWORK_NAMESPACE + "-dp-wrapper1", FRAMEWORK_NAMESPACE + "-dp-wrapper2"], []);
       let C = {L, T, schemaValidator, nameResolver};
       // note: crateScope = nameResolver.getOriginalNameOf(pluginName, 'plugin')
       let bundleList = [
         {
           "type": "plugin",
-          "name": "devebot-dp-wrapper1",
+          "name": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
           "path": lab.getLibHome("namespace-dp-wrapper1"),
           "presets": {},
           "bridgeDepends": [],
@@ -271,7 +275,7 @@ describe("tdd:lib:core:manifest-handler", function() {
         },
         {
           "type": "plugin",
-          "name": "devebot-dp-wrapper2",
+          "name": FRAMEWORK_NAMESPACE + "-dp-wrapper2",
           "path": lab.getLibHome("namespace-dp-wrapper2"),
           "presets": {},
           "bridgeDepends": [],
@@ -306,7 +310,7 @@ describe("tdd:lib:core:manifest-handler", function() {
         "sandbox": {
           "plugins": {
             "wrapper1": {
-              "crateScope": "devebot-dp-wrapper1",
+              "crateScope": FRAMEWORK_NAMESPACE + "-dp-wrapper1",
               "bridgeDepends": [],
               "pluginDepends": [],
               "schema": {
@@ -323,7 +327,7 @@ describe("tdd:lib:core:manifest-handler", function() {
               },
             },
             "wrapper2": {
-              "crateScope": "devebot-dp-wrapper2",
+              "crateScope": FRAMEWORK_NAMESPACE + "-dp-wrapper2",
               "bridgeDepends": [],
               "pluginDepends": [],
               "schema": {
@@ -791,7 +795,7 @@ describe("tdd:lib:core:manifest-handler", function() {
     let combineBridgeSchema = ManifestHandler.__get__("combineBridgeSchema");
     let {loggingFactory, schemaValidator} = lab.createBasicServices("fullapp");
     let nameResolver = lab.getNameResolver([], [
-      "bridge1", "bridge2", "bridge3", "bridge4", "devebot-co-connector1", "devebot-co-connector2"
+      "bridge1", "bridge2", "bridge3", "bridge4", FRAMEWORK_NAMESPACE + "-co-connector1", FRAMEWORK_NAMESPACE + "-co-connector2"
     ]);
     let L = loggingFactory.getLogger();
     let T = loggingFactory.getTracer();
@@ -874,7 +878,7 @@ describe("tdd:lib:core:manifest-handler", function() {
           },
         },
         "/test/lib/namespace-co-connector1": {
-          "name": "devebot-co-connector1",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector1",
           "type": "bridge",
           "path": "/test/lib/namespace-co-connector1",
           "manifest": {
@@ -901,7 +905,7 @@ describe("tdd:lib:core:manifest-handler", function() {
           },
         },
         "/test/lib/namespace-co-connector2": {
-          "name": "devebot-co-connector2",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector2",
           "type": "bridge",
           "path": "/test/lib/namespace-co-connector2",
           "manifest": {
@@ -1048,7 +1052,7 @@ describe("tdd:lib:core:manifest-handler", function() {
           "name": "bridge4"
         },
         "connector1": {
-          "name": "devebot-co-connector1",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector1",
           "schema": {
             "type": "object",
             "properties": {
@@ -1066,7 +1070,7 @@ describe("tdd:lib:core:manifest-handler", function() {
           }
         },
         "connector2": {
-          "name": "devebot-co-connector2",
+          "name": FRAMEWORK_NAMESPACE + "-co-connector2",
           "schema": {
             "type": "object",
             "properties": {
