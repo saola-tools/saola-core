@@ -1,5 +1,5 @@
 {
-  "name": "@devebot/demo-app",
+  "name": "@saola/demo-app",
   "version": "0.1.0",
   "description": "Demo Application",
   "main": "index.js",

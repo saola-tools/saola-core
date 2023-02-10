@@ -1,5 +1,5 @@
 {
-  "name": "devebot-co-adapter",
+  "name": "saola-co-adapter",
   "version": "0.1.1",
   "description": "A built-in bridge example",
   "main": "dialect.js",

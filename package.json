@@ -1,5 +1,5 @@
 {
-  "name": "devebot",
+  "name": "@saola/core",
   "version": "0.4.1",
   "description": "Nodejs Microservice Framework",
   "main": "index.js",
@@ -20,10 +20,10 @@
     "reset-modules": "npm run clean-modules && npm run setup-modules",
     "check": "npm exec -- eslint config src index.js",
     "check-silent": "npm exec -- eslint --quiet config src index.js",
-    "pretest": "npm run clean && BABEL_ENV=${DEVEBOT_BABEL_ENV:-production} NODE_ENV=${DEVEBOT_NODE_ENV:-test} npm run build",
-    "prove": "npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js",
+    "pretest": "npm run clean && BABEL_ENV=${SAOLA_BABEL_ENV:-production} NODE_ENV=${SAOLA_NODE_ENV:-test} npm run build",
+    "prove": "npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${SAOLA_TESTCASES:-*}-test.js",
     "test": "npm run prove",
-    "prepublishOnly": "npm run check-silent && npm run clean && BABEL_ENV=${DEVEBOT_BABEL_ENV:-test} NODE_ENV=${DEVEBOT_NODE_ENV:-production} npm run build",
+    "prepublishOnly": "npm run check-silent && npm run clean && BABEL_ENV=${SAOLA_BABEL_ENV:-test} NODE_ENV=${SAOLA_NODE_ENV:-production} npm run build",
     "verify": "npm run prepublishOnly && npm run prove",
     "build-without-cleaning": "babel ./src -d ./lib",
     "build": "npm run clean && npm run build-without-cleaning",
@@ -32,27 +32,27 @@
     "eslint-src": "npm exec -- eslint ./src/ --quiet",
     "eslint-src-verbose": "npm exec -- eslint ./src/",
     "test-publish": "npm run prepublishOnly && npm run prove",
-    "test-without-rebuilding": "npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js --reporter dot",
-    "test-to-reports": "npm run build && npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${DEVEBOT_TESTCASES:-*}-test.js --reporter mochawesome --reporter-options reportDir=test-reports,reportFilename=index"
+    "test-without-rebuilding": "npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${SAOLA_TESTCASES:-*}-test.js --reporter dot",
+    "test-to-reports": "npm run build && npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${SAOLA_TESTCASES:-*}-test.js --reporter mochawesome --reporter-options reportDir=test-reports,reportFilename=index"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/devebot/devebot.git"
+    "url": "git+https://github.com/saolajs/saola-core.git"
   },
   "keywords": [
-    "devebot",
+    "saola",
     "framework"
   ],
   "author": {
-    "name": "Devebot",
-    "email": "contact@devebot.com",
-    "url": "https://github.com/devebot"
+    "name": "SaolaJS",
+    "email": "contact@saolajs.com",
+    "url": "https://github.com/saolajs"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/devebot/devebot/issues"
+    "url": "https://github.com/saolajs/saola-core/issues"
   },
-  "homepage": "https://github.com/devebot/devebot#readme",
+  "homepage": "https://github.com/saolajs/saola-core#readme",
   "dependencies": {
     "bluebird": "3.7.2",
     "codetags": "0.1.2",

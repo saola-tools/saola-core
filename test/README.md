@@ -35,18 +35,18 @@ lab.acquireFrameworkModule('$1')
 ### state-verification
 
 ```
-export DEVEBOT_TASKS=print-config,check-config
+export SAOLA_TASKS=print-config,check-config
 DEBUG=none node test/app/state-verification/
 ```
 
 ### tdd-cfg
 
 ```shell
-unset DEVEBOT_CONFIG_PROFILE_ALIASES
-unset DEVEBOT_CONFIG_SANDBOX_ALIASES
-export DEVEBOT_CONFIG_DIR=$(pwd)/test/app/tdd-cfg/newcfg
-export DEVEBOT_CONFIG_ENV=dev
-export DEVEBOT_SANDBOX=private1,private2,ev1,ev2
+unset SAOLA_CONFIG_PROFILE_ALIASES
+unset SAOLA_CONFIG_SANDBOX_ALIASES
+export SAOLA_CONFIG_DIR=$(pwd)/test/app/tdd-cfg/newcfg
+export SAOLA_CONFIG_ENV=dev
+export SAOLA_SANDBOX=private1,private2,ev1,ev2
 export LOGOLITE_DEBUGLOG_ENABLED=true
 export DEBUG=devteam*
 node test/app/tdd-cfg/
@@ -55,11 +55,11 @@ node test/app/tdd-cfg/
 ### tdd-cfg-customized-names
 
 ```shell
-export DEVEBOT_CONFIG_PROFILE_ALIASES=context
-export DEVEBOT_CONFIG_SANDBOX_ALIASES=setting
-export DEVEBOT_CONFIG_DIR=$(pwd)/test/app/tdd-cfg-customized-names/newcfg
-export DEVEBOT_CONFIG_ENV=dev
-export DEVEBOT_SANDBOX=bs1,bs2
+export SAOLA_CONFIG_PROFILE_ALIASES=context
+export SAOLA_CONFIG_SANDBOX_ALIASES=setting
+export SAOLA_CONFIG_DIR=$(pwd)/test/app/tdd-cfg-customized-names/newcfg
+export SAOLA_CONFIG_ENV=dev
+export SAOLA_SANDBOX=bs1,bs2
 export LOGOLITE_DEBUGLOG_ENABLED=true
 export DEBUG=devteam*
 node test/app/tdd-cfg-customized-names/
@@ -82,7 +82,7 @@ export LOGOLITE_DEBUGLOG_ENABLED=true
 ### Turns on/off the features
 
 ```shell
-DEVEBOT_UPGRADE_ENABLED=metadata-refiner \
-DEVEBOT_UPGRADE_DISABLED=manifest-refiner \
+SAOLA_UPGRADE_ENABLED=metadata-refiner \
+SAOLA_UPGRADE_DISABLED=manifest-refiner \
 npm run test
 ```

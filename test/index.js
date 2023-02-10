@@ -22,8 +22,8 @@ const lodash = FRWK.require("lodash");
 
 global.FRWK = FRWK;
 
-const SCOPED_PACKAGE_API_AVAILABLE = false;
-const SCOPED_PACKAGE_CLI_AVAILABLE = false;
+const SCOPED_PACKAGE_API_AVAILABLE = true;
+const SCOPED_PACKAGE_CLI_AVAILABLE = true;
 
 // EventEmitter memory leak detecting
 const max = 12;

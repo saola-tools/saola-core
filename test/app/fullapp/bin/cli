@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var cli = require('devebot-cli');
+var cli = require('@saola/cli');
 cli({
   defaultConfig: {
     path: '/fullapp',
