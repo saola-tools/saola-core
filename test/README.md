@@ -32,6 +32,39 @@ lab.acquireFrameworkModule('$1')
 
 ## Examples
 
+### state-verification
+
+```
+export DEVEBOT_TASKS=print-config,check-config
+DEBUG=none node test/app/state-verification/
+```
+
+### tdd-cfg
+
+```shell
+unset DEVEBOT_CONFIG_PROFILE_ALIASES
+unset DEVEBOT_CONFIG_SANDBOX_ALIASES
+export DEVEBOT_CONFIG_DIR=$(pwd)/test/app/tdd-cfg/newcfg
+export DEVEBOT_CONFIG_ENV=dev
+export DEVEBOT_SANDBOX=private1,private2,ev1,ev2
+export LOGOLITE_DEBUGLOG_ENABLED=true
+export DEBUG=devteam*
+node test/app/tdd-cfg/
+```
+
+### tdd-cfg-customized-names
+
+```shell
+export DEVEBOT_CONFIG_PROFILE_ALIASES=context
+export DEVEBOT_CONFIG_SANDBOX_ALIASES=setting
+export DEVEBOT_CONFIG_DIR=$(pwd)/test/app/tdd-cfg-customized-names/newcfg
+export DEVEBOT_CONFIG_ENV=dev
+export DEVEBOT_SANDBOX=bs1,bs2
+export LOGOLITE_DEBUGLOG_ENABLED=true
+export DEBUG=devteam*
+node test/app/tdd-cfg-customized-names/
+```
+
 ### Presets the configure values from environment variables
 
 ```shell
