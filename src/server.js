@@ -42,12 +42,13 @@ function Server (params = {}) {
   const scriptRenderer = injektor.lookup("scriptRenderer", chores.injektorContext);
   const securityManager = injektor.lookup("securityManager", chores.injektorContext);
 
-  // application root url
-  const appName = injektor.lookup("appName", chores.injektorContext);
-  const appRootUrl = "/" + chores.stringKebabCase(appName);
-
   // framework configures
   const frameworkCfg = chores.getFrameworkProfileConfig(profileConfig);
+
+  // application root url
+  const basepath = lodash.get(frameworkCfg, ["basepath"]);
+  const appName = injektor.lookup("appName", chores.injektorContext);
+  const appRootUrl = basepath || "/-";
 
   const tunnelCfg = lodash.get(frameworkCfg, ["tunnel"], {});
   const sslEnabled = tunnelCfg.enabled && tunnelCfg.key_file && tunnelCfg.crt_file;

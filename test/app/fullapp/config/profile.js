@@ -1,6 +1,6 @@
 module.exports = {
   framework: {
-    verbose: false,
+    verbose: true,
     jobqueue: {
       enabled: true
     }

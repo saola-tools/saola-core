@@ -43,9 +43,9 @@ const lab = module.exports = {
     return lodash.merge({
       host: "127.0.0.1",
       port: 17779,
-      path: "/demo-app",
+      path: "/-",
       authen: {
-        token_key: "devebot",
+        token_key: "master",
         token_secret: "s3cr3tpa$$w0rd"
       },
       stateMap: {

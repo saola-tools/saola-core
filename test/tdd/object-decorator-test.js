@@ -15,6 +15,9 @@ const { assert, sinon } = require("liberica");
 const constx = require(lab.getFrameworkModule("utils/constx"));
 const FRAMEWORK_NAMESPACE = constx.FRAMEWORK.NAMESPACE;
 const FRAMEWORK_NAMESPACE_UCASE = lodash.toUpper(FRAMEWORK_NAMESPACE);
+const FRAMEWORK_PACKAGE_NAME = constx.FRAMEWORK.PACKAGE_NAME;
+
+const SAMPLE_REQUEST_ID = "YkMjPoSoSyOTrLyf76Mzqt";
 
 describe("tdd:lib:core:object-decorator", function() {
   this.timeout(lab.getDefaultTimeout());
@@ -2346,7 +2349,7 @@ describe("tdd:lib:core:object-decorator", function() {
             value: { msg: "Anything" }
           }
         }, {
-          requestId: "YkMjPoSoSyOTrLyf76Mzqt",
+          requestId: SAMPLE_REQUEST_ID,
           input: ["Message #3"],
           output: {
             error: new Error("The action has been failed"),
@@ -2552,7 +2555,7 @@ describe("tdd:lib:core:object-decorator", function() {
             value: { msg: "Anything" }
           }
         }, {
-          requestId: "YkMjPoSoSyOTrLyf76Mzqt",
+          requestId: SAMPLE_REQUEST_ID,
           input: ["Message #3"],
           output: {
             error: new Error("The action has been failed"),
@@ -3662,10 +3665,10 @@ describe("tdd:lib:core:object-decorator", function() {
         return detectRequestId(arguments);
       })(
         { a: {}, b: null, c: function() {}, d: [], e: {} },
-        { requestId: "YkMjPoSoSyOTrLyf76Mzqt" },
+        { requestId: SAMPLE_REQUEST_ID },
         function() {}
       );
-      assert.equal(reqId, "YkMjPoSoSyOTrLyf76Mzqt");
+      assert.equal(reqId, SAMPLE_REQUEST_ID);
     });
   });
 
@@ -3676,19 +3679,19 @@ describe("tdd:lib:core:object-decorator", function() {
       name: "example",
       version: "0.1.1",
       framework: {
-        name: "devebot",
+        name: FRAMEWORK_PACKAGE_NAME,
         version: "0.2.8"
       }
     };
 
     it("return undefined if decorator configuration is not enable", function() {
-      assert.isUndefined(extractStreamId({enabled: false}, appInfo, "YkMjPoSoSyOTrLyf76Mzqt"));
+      assert.isUndefined(extractStreamId({enabled: false}, appInfo, SAMPLE_REQUEST_ID));
     });
 
     it("streamIdExpression will generate a correct streamId", function() {
       assert.equal(extractStreamId({
         streamIdExpression: "#{name}@#{version}"
-      }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt"), "example@0.1.1");
+      }, appInfo, SAMPLE_REQUEST_ID), "example@0.1.1");
     });
 
     it("should keep safety with an unsafe streamIdExtractor", function() {
@@ -3699,9 +3702,9 @@ describe("tdd:lib:core:object-decorator", function() {
             let obj;
             return obj.streamId;
           }
-        }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt");
+        }, appInfo, SAMPLE_REQUEST_ID);
       }, Error);
-      assert.equal(streamId, "YkMjPoSoSyOTrLyf76Mzqt");
+      assert.equal(streamId, SAMPLE_REQUEST_ID);
     });
 
     it("unstring returned value of streamIdExtractor will be skipped", function() {
@@ -3709,27 +3712,27 @@ describe("tdd:lib:core:object-decorator", function() {
         streamIdExtractor: function() {
           return true;
         }
-      }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt"), "YkMjPoSoSyOTrLyf76Mzqt");
+      }, appInfo, SAMPLE_REQUEST_ID), SAMPLE_REQUEST_ID);
       assert.equal(extractStreamId({
         streamIdExtractor: function() {
           return 1024;
         }
-      }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt"), "YkMjPoSoSyOTrLyf76Mzqt");
+      }, appInfo, SAMPLE_REQUEST_ID), SAMPLE_REQUEST_ID);
       assert.equal(extractStreamId({
         streamIdExtractor: function() {
           return {};
         }
-      }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt"), "YkMjPoSoSyOTrLyf76Mzqt");
+      }, appInfo, SAMPLE_REQUEST_ID), SAMPLE_REQUEST_ID);
       assert.equal(extractStreamId({
         streamIdExtractor: function() {
           return null;
         }
-      }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt"), "YkMjPoSoSyOTrLyf76Mzqt");
+      }, appInfo, SAMPLE_REQUEST_ID), SAMPLE_REQUEST_ID);
       assert.equal(extractStreamId({
         streamIdExtractor: function() {
           return undefined;
         }
-      }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt"), "YkMjPoSoSyOTrLyf76Mzqt");
+      }, appInfo, SAMPLE_REQUEST_ID), SAMPLE_REQUEST_ID);
     });
 
     it("streamIdExtractor will generate a correct streamId", function() {
@@ -3737,7 +3740,7 @@ describe("tdd:lib:core:object-decorator", function() {
         streamIdExtractor: function(appInfo, instanceId) {
           return instanceId + "@" + appInfo.version;
         }
-      }, appInfo, "YkMjPoSoSyOTrLyf76Mzqt"), "YkMjPoSoSyOTrLyf76Mzqt@0.1.1");
+      }, appInfo, SAMPLE_REQUEST_ID), "YkMjPoSoSyOTrLyf76Mzqt@0.1.1");
     });
   });
 });

@@ -1,7 +1,7 @@
 {
   "tokens": [
     {
-      "key": "devebot",
+      "key": "master",
       "secret": "s3cr3tpa$$w0rd"
     }
   ]
