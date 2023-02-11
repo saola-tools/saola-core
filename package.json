@@ -1,7 +1,7 @@
 {
   "name": "@saola/core",
-  "version": "0.4.1",
-  "description": "Nodejs Microservice Framework",
+  "version": "0.4.2",
+  "description": "Saola Microservice Framework",
   "main": "index.js",
   "directories": {
     "lib": "lib/"
@@ -49,10 +49,6 @@
     "url": "https://github.com/saola-tools"
   },
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/saola-tools/saola-core/issues"
-  },
-  "homepage": "https://github.com/saola-tools/saola-core#readme",
   "dependencies": {
     "bluebird": "3.7.2",
     "codetags": "0.1.2",
