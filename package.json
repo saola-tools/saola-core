@@ -37,22 +37,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/saolajs/saola-core.git"
+    "url": "git+https://github.com/saola-tools/saola-core.git"
   },
   "keywords": [
     "saola",
-    "framework"
+    "saola-core"
   ],
   "author": {
-    "name": "SaolaJS",
-    "email": "contact@saolajs.com",
-    "url": "https://github.com/saolajs"
+    "name": "Saola Development Team",
+    "email": "saola.tools@gmail.com",
+    "url": "https://github.com/saola-tools"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/saolajs/saola-core/issues"
+    "url": "https://github.com/saola-tools/saola-core/issues"
   },
-  "homepage": "https://github.com/saolajs/saola-core#readme",
+  "homepage": "https://github.com/saola-tools/saola-core#readme",
   "dependencies": {
     "bluebird": "3.7.2",
     "codetags": "0.1.2",
