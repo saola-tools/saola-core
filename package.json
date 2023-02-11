@@ -1,41 +1,83 @@
 {
-  "name": "devebot",
-  "version": "0.2.4",
+  "name": "@saola/core",
+  "version": "0.4.1",
   "description": "Nodejs Microservice Framework",
   "main": "index.js",
+  "directories": {
+    "lib": "lib/"
+  },
+  "files": [
+    "bin/",
+    "config/",
+    "data/",
+    "dist/",
+    "lib/"
+  ],
+  "scripts": {
+    "clean": "rm -rf ./lib",
+    "clean-modules": "rm -rf ./node_modules ./package-lock.json ./test/node_modules ./test/package-lock.json",
+    "setup-modules": "npm install --ignore-scripts; npm --prefix=test install --ignore-scripts",
+    "reset-modules": "npm run clean-modules && npm run setup-modules",
+    "check": "npm exec -- eslint config src index.js",
+    "check-silent": "npm exec -- eslint --quiet config src index.js",
+    "pretest": "npm run clean && BABEL_ENV=${SAOLA_BABEL_ENV:-production} NODE_ENV=${SAOLA_NODE_ENV:-test} npm run build",
+    "prove": "npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${SAOLA_TESTCASES:-*}-test.js",
+    "test": "npm run prove",
+    "prepublishOnly": "npm run check-silent && npm run clean && BABEL_ENV=${SAOLA_BABEL_ENV:-test} NODE_ENV=${SAOLA_NODE_ENV:-production} npm run build",
+    "verify": "npm run prepublishOnly && npm run prove",
+    "build-without-cleaning": "babel ./src -d ./lib",
+    "build": "npm run clean && npm run build-without-cleaning",
+    "eslint-lib": "npm exec -- eslint ./lib/ --quiet",
+    "eslint-lib-verbose": "npm exec -- eslint ./lib/",
+    "eslint-src": "npm exec -- eslint ./src/ --quiet",
+    "eslint-src-verbose": "npm exec -- eslint ./src/",
+    "test-publish": "npm run prepublishOnly && npm run prove",
+    "test-without-rebuilding": "npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${SAOLA_TESTCASES:-*}-test.js --reporter dot",
+    "test-to-reports": "npm run build && npm --prefix=test exec -- mocha --recursive ./test/{bdd,tdd}/${SAOLA_TESTCASES:-*}-test.js --reporter mochawesome --reporter-options reportDir=test-reports,reportFilename=index"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/devebot/devebot.git"
+    "url": "git+https://github.com/saola-tools/saola-core.git"
   },
   "keywords": [
-    "devebot",
-    "framework"
+    "saola",
+    "saola-core"
   ],
-  "author": "Hung Pham <pnhung177@acegik.net> (http://acegik.net/blog)",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/devebot/devebot/issues"
+  "author": {
+    "name": "Saola Development Team",
+    "email": "saola.tools@gmail.com",
+    "url": "https://github.com/saola-tools"
   },
-  "homepage": "https://github.com/devebot/devebot#readme",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/saola-tools/saola-core/issues"
+  },
+  "homepage": "https://github.com/saola-tools/saola-core#readme",
   "dependencies": {
-    "bluebird": "^3.5.1",
-    "death": "^1.1.0",
-    "debug": "^3.1.0",
-    "injektor": "^0.1.15",
-    "jsonschema": "^1.2.2",
-    "lodash": "^4.17.4",
-    "logolite": "^0.1.5",
-    "logzilla": "^0.1.16",
-    "uuid": "^3.1.0",
-    "ws": "^3.3.2"
+    "bluebird": "3.7.2",
+    "codetags": "0.1.2",
+    "envcloak": "0.2.1",
+    "injektor": "0.1.19",
+    "lodash": "4.17.21",
+    "logolite": "^0.4.0",
+    "logzilla": "^0.4.0",
+    "minimist": "^1.2.7",
+    "schemato": "^0.2.0",
+    "semver": "5.7.0",
+    "ws": "3.3.3"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "devebot-api": "^0.2.0",
-    "minimist": "^1.2.0",
-    "mocha": "^3.5.3",
-    "nock": "^7.2.2",
-    "rewire": "^2.5.1",
-    "sinon": "^1.17.3"
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
+    "babel-plugin-minify-mangle-names": "^0.5.1",
+    "babel-plugin-transform-async-to-module-method": "^6.24.1",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
   }
 }

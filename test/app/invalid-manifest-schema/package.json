@@ -1,0 +1,11 @@
+{
+  "name": "invalid-manifest-schema",
+  "version": "0.1.0",
+  "description": "Application invalid-manifest-schema Example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "author": "devteam",
+  "license": "ISC"
+}

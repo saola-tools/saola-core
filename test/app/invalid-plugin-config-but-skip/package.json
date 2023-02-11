@@ -1,0 +1,11 @@
+{
+  "name": "invalid-plugin-config-but-skip",
+  "version": "0.1.0",
+  "description": "Application invalid-plugin-config Example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "author": "devteam",
+  "license": "ISC"
+}

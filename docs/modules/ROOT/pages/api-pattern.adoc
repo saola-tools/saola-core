@@ -1,0 +1,8 @@
+= Khuôn mẫu API Service
+
+Khuôn mẫu chung để xây dựng một dịch vụ Rest API trên khung ứng dụng devebot là:
+
+- Tạo một ứng dụng rỗng trên khung ứng dụng devebot;
+- Cài đặt plugin `Restfront`;
+- Tạo `mainService` cùng với function chức năng rỗng; Khai báo chức năng giả cho các function này;
+- Tạo mapping rules ánh xa

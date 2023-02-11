@@ -1,0 +1,25 @@
+{
+  "name": "private-test",
+  "version": "0.0.0",
+  "scripts": {
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "author": "devteam",
+  "license": "MIT",
+  "devDependencies": {
+    "@saola/api": "^0.4.0",
+    "@saola/cli": "^0.4.0",
+    "app-root-path": "^3.1.0",
+    "axios": "^1.3.2",
+    "chai": "^4.2.0",
+    "death": "^1.1.0",
+    "freshy": "^1.0.4",
+    "liberica": "^0.4.0",
+    "minimist": "^1.2.0",
+    "mocha": "^10.1.0",
+    "mochawesome": "^7.1.3",
+    "rewire": "^3.0.2",
+    "sinon": "^7.4.1",
+    "temporify": "^0.1.2"
+  }
+}

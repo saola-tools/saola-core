@@ -1,28 +1,16 @@
-# devebot
-
-[![NPM](https://nodei.co/npm/devebot.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/devebot/)
+# SaolaJS
 
 > Nodejs Microservice Framework
 
-## Usage
+## Introduction
 
-Installs `devebot` module:
+Saola.JS (formerly Devebot) is tiny microservice framework for Nodejs. It is designed under some important principles:
 
-```shell
-$ npm install --save devebot
-```
+* High modularity
+* Reusable
+* Easy to integrate
 
-Create your `app.js` source file, and appends the following block:
+![Architecture](https://raw.github.com/saolajs/saola-core/master/docs/modules/ROOT/assets/images/devebot-architecture.png)
 
-```javascript
-var Devebot = require('devebot');
 
-var app = Devebot({
-  appRootPath: __dirname
-});
-
-// start the server if run `$ node app.js`
-if (require.main === module) app.server.start();
-
-module.exports = app;
-```
+Based on the Saola framework, the application is decomposed into `plugins`, each of which implements a particular feature. The framework provides `bridges` which wrap or connect to other services such as REST API or database servers.

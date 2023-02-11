@@ -1,0 +1,11 @@
+{
+  "name": "locating-package-json",
+  "version": "0.1.0",
+  "description": "Application locating package.json example",
+  "main": "sub/index",
+  "scripts": {
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "author": "devteam",
+  "license": "ISC"
+}
