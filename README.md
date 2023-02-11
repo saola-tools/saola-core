@@ -1,16 +1,16 @@
-# SaolaJS
+# @saola/core
 
-> Nodejs Microservice Framework
+> Saola Microservice Framework
 
 ## Introduction
 
-Saola.JS (formerly Devebot) is tiny microservice framework for Nodejs. It is designed under some important principles:
+Saola (formerly Devebot) is tiny microservice framework for the Node.JS. It is designed under some important principles:
 
 * High modularity
-* Reusable
 * Easy to integrate
+* Reusable
 
-![Architecture](https://raw.github.com/saolajs/saola-core/master/docs/modules/ROOT/assets/images/devebot-architecture.png)
+![Architecture](https://raw.github.com/saola-tools/saola-core/master/docs/modules/ROOT/assets/images/devebot-architecture.png)
 
 
-Based on the Saola framework, the application is decomposed into `plugins`, each of which implements a particular feature. The framework provides `bridges` which wrap or connect to other services such as REST API or database servers.
+Based on the Saola framework, the application is decomposed into `plugins`, each of which implements a particular feature. The framework provides `linkers` which wrap or connect to other services such as the REST API services or the database servers.
